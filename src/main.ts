@@ -36,6 +36,7 @@ initScreens();
 initWish();
 initAdmin();
 window.claude?.hot?.snapshot?.(() => ({ P: Server.P }));
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
 
 // Móc kiểm thử: chỉ bật khi URL có ?e2e, để Playwright đọc trạng thái game. Người chơi không bị ảnh hưởng.

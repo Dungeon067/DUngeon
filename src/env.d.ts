@@ -6,6 +6,6 @@ declare module "*.yaml" {
 
 interface Window {
   // Móc nạp lại nóng của môi trường xem thử cũ (giữ nguyên từ bản một file).
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   claude?: any;
 }

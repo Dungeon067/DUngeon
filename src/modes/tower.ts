@@ -21,7 +21,7 @@ export function towerWaves(f: any) {
     const list = [];
     const n = 3 + Math.floor(f / 2) + w;
     for (let i = 0; i < n; i++) {
-      let t = pick(
+      const t = pick(
         f < 3
           ? ["slime", "goblin", "slime"]
           : f < 6

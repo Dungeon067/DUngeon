@@ -1,6 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 declare global {
   interface Window {
     __tinhtu: { S: any; Server: any };

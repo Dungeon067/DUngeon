@@ -27,7 +27,7 @@ export function startWorld() {
     const n = 3 + (i % 3);
     const elite = i % 6 === 5;
     for (let k = 0; k < n; k++) {
-      let type = pick(
+      const type = pick(
         lv < 2
           ? ["slime", "slime", "goblin"]
           : lv < 4

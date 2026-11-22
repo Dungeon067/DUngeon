@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // Trạng thái dùng chung giữa các module (trước đây là biến `let` cấp cao nhất trong bản một file).
 export const GS = {
   toastT: undefined as ReturnType<typeof setTimeout> | undefined,

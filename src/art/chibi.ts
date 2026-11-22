@@ -1,4 +1,3 @@
-import { ctx, cv } from "../core/canvas";
 import { TAU, hash2, rgba, rr, shade } from "../core/util";
 import { EL, byId } from "../data/content";
 
