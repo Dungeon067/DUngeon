@@ -3,6 +3,7 @@ import { EL, byId } from "../data/content";
 import { fxBurst, fxRing } from "../entities/fx";
 import { Server, statsOf } from "../server/server";
 import { buildHudParty } from "../ui/hud";
+import { resetFeel } from "../combat/feel";
 
 export function buildParty() {
   return Server.P.party
@@ -13,6 +14,7 @@ export function buildParty() {
     });
 }
 export function newSession(mode: string, opt = {}) {
+  resetFeel();
   const g = {
     mode,
     opt,

@@ -45,4 +45,3 @@ YAML trong `content/` được plugin `yaml-to-json` trong `vite.config.ts` chuy
 
 - Một số biến thừa hoặc cách viết lạ còn sót từ bản gốc được giữ nguyên ở S00 (ESLint báo cảnh báo, không báo lỗi). Các session sau có thể dọn khi đã có test bao phủ.
 - Kiểu dữ liệu của trạng thái game (`GS.G`, quái, hiệu ứng) đang là `any`. Nên thêm interface dần khi sửa từng phần.
-- `index.html` cố ý không có `<!doctype html>` và thẻ `viewport` giống bản gốc: trình duyệt chạy ở quirks mode và điện thoại hiển thị HUD thu nhỏ như cũ. Thêm hai thẻ này sẽ làm đổi bố cục (bảng Hướng dẫn, HUD trên điện thoại), nên chỉ làm khi chủ dự án duyệt. Thẻ `charset` được thêm để Vite giữ đúng dấu tiếng Việt.

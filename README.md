@@ -30,7 +30,7 @@ pnpm exec playwright install chromium   # chỉ cần khi chạy test đầu cu�
 
 ## Bản chơi thử
 
-- Nhánh `main` được triển khai lên GitHub Pages: https://dungeon067.github.io/DUngeon/ (bản gốc ở `/legacy/index.html`).
+- Nhánh `main` được triển khai lên GitHub Pages: https://dungeon067.github.io/DUngeon/ (bản gốc ở `/legacy/`).
 - Mỗi pull request có bản xem thử ở `https://dungeon067.github.io/DUngeon/pr-preview/pr-<số>/`, bot sẽ gắn link vào PR.
 
 ## Sơ đồ thư mục
@@ -40,6 +40,7 @@ content/              dữ liệu YAML (xem docs/content.md)
   characters/*.yaml   12 Hộ Tinh
   enemies/*.yaml      5 loại quái và boss Hắc Giao
   config.yaml         ước nguyện, hồ sơ khởi đầu, nguyên tố, vũ khí, ủy thác
+  combat-feel.yaml    cảm giác đánh (xem docs/combat-feel.md)
 docs/                 tài liệu (kiến trúc, dữ liệu)
   world/              kinh thánh thế giới: vũ trụ, lịch sử, vùng đất, phe phái...
 legacy/index.html     bản thử nghiệm một file gốc

@@ -6,6 +6,10 @@ export function drawEnemy(ctx: CanvasRenderingContext2D, e: any, t: any) {
   const fl = e.flash > 0;
   ctx.save();
   ctx.translate(e.x, e.y);
+  if (e.hitT > 0) {
+    const q = Math.sin((e.hitT / 0.14) * Math.PI) * 0.12;
+    ctx.scale(1 + q, 1 - q);
+  }
   if (e.frozen > 0) {
     ctx.globalAlpha = 0.95;
   }
