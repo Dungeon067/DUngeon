@@ -1,0 +1,27 @@
+id: thachson
+name: Thạch Sơn
+r: 5
+el: earth
+w: great
+title: Thợ Đá Hóa Thần
+desc: Người thợ đá đã khắc nên trăm bia trên đảo. Tấm khiên ngọc của ông che chở cả đội trước mọi đòn đánh.
+hp: 1380
+atk: 108
+skill:
+  name: Ngọc Thạch Hộ Thể
+  type: shield
+  cd: 12
+  m: 1.9
+burst:
+  name: Sơn Băng Địa Liệt
+  type: meteor
+  cost: 60
+  m: 7
+look:
+  hair: "#5b3b22"
+  style: short
+  outfit: "#6b5a3a"
+  accent: "#e9b23a"
+  skin: "#e8bf98"
+  eye: "#e9b23a"
+  coat: true

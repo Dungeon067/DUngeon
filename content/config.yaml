@@ -1,0 +1,151 @@
+# Cấu hình chung. Xem docs/content.md.
+# {pct} trong mô tả kỹ năng được thay bằng hệ số × 100, làm tròn.
+characterOrder:
+  - lachong
+  - thuynguyet
+  - phongvan
+  - loidinh
+  - thachson
+  - tuyetlan
+  - mailinh
+  - suongmai
+  - bachvu
+  - minhkhai
+  - ngocthach
+  - havy
+enemyOrder:
+  - slime
+  - goblin
+  - archer
+  - shaman
+  - golem
+gacha:
+  rate5: 0.6
+  rate4: 5.1
+  soft: 74
+  hard: 90
+  cost: 160
+  featured: lachong
+startProfile:
+  gems: 1600
+  coin: 30000
+  books: 30
+  party:
+    - suongmai
+    - mailinh
+    - bachvu
+elements:
+  fire:
+    vi: Hỏa
+    c: "#ff6a3d"
+    c2: "#ffc08a"
+  water:
+    vi: Thủy
+    c: "#3aa6f5"
+    c2: "#a6dcff"
+  wind:
+    vi: Phong
+    c: "#45dfb1"
+    c2: "#bdf6e4"
+  bolt:
+    vi: Lôi
+    c: "#b47bff"
+    c2: "#e0c8ff"
+  earth:
+    vi: Thổ
+    c: "#e9b23a"
+    c2: "#f8de98"
+  ice:
+    vi: Băng
+    c: "#8fe1ff"
+    c2: "#e6f9ff"
+weapons:
+  sword:
+    vi: Kiếm đơn
+    int: 0.36
+    range: 64
+    arc: 1.2
+    mult:
+      - 0.9
+      - 1
+      - 1.55
+    kind: melee
+  great:
+    vi: Đại kiếm
+    int: 0.6
+    range: 78
+    arc: 1.5
+    mult:
+      - 1.5
+      - 1.7
+      - 2.5
+    kind: melee
+  spear:
+    vi: Thương
+    int: 0.3
+    range: 92
+    arc: 0.55
+    mult:
+      - 0.75
+      - 0.85
+      - 1.3
+    kind: melee
+  bow:
+    vi: Cung
+    int: 0.42
+    mult:
+      - 0.85
+      - 0.9
+      - 1.4
+    kind: arrow
+  cat:
+    vi: Pháp khí
+    int: 0.5
+    mult:
+      - 0.85
+      - 0.95
+      - 1.3
+    kind: orb
+skillDesc:
+  dash: Lao về phía trước, gây {pct}% sát thương nguyên tố lên mọi kẻ địch trên đường đi. Bất tử trong lúc lao.
+  nova: Bùng nổ quanh bản thân, gây {pct}% sát thương nguyên tố và đẩy lùi kẻ địch.
+  turret: Triệu hồi linh vật đứng yên 10 giây, cứ mỗi giây bắn một tia nguyên tố gây {pct}% sát thương.
+  heal: Gây {pct}% sát thương nguyên tố xung quanh và hồi 12% máu tối đa cho cả đội.
+  vortex: Tạo xoáy phía trước 2.5 giây, hút kẻ địch vào giữa và gây {pct}% sát thương mỗi 0.5 giây. Rất hợp để Khuếch Tán.
+  shield: Gây {pct}% sát thương Thổ xung quanh và tạo khiên bằng 30% máu tối đa trong 12 giây.
+burstDesc:
+  inferno: Sau một nhịp, nổ lớn bán kính rộng gây {pct}% sát thương nguyên tố.
+  storm: Gọi 10 đòn sét/tên giáng xuống kẻ địch xung quanh, mỗi đòn {pct}% sát thương.
+  tide: Sóng lớn gây {pct}% sát thương và hồi 30% máu cho cả đội, hồi sinh không được.
+  meteor: Thiên thạch rơi vào kẻ địch gần nhất, gây {pct}% sát thương diện rộng và tạo khiên.
+  blizzard: Tạo vùng bão theo sát bản thân trong 6 giây, mỗi 0.5 giây gây {pct}% sát thương.
+items3:
+  - Kiếm Sắt Cũ
+  - Cung Tre
+  - Sách Phép Rách
+  - Thương Gỗ
+  - Ngọc Vỡ
+  - Bùa Giấy
+  - Đại Kiếm Gỉ
+dailyPool:
+  - id: kill
+    t: Đánh bại 20 quái vật
+    goal: 20
+  - id: react
+    t: Gây 15 phản ứng nguyên tố
+    goal: 15
+  - id: chest
+    t: Mở 2 rương báu trên đảo
+    goal: 2
+  - id: burst
+    t: Dùng kỹ năng nộ 4 lần
+    goal: 4
+  - id: tower
+    t: Vượt 1 tầng Tháp Tinh Tú
+    goal: 1
+  - id: boss
+    t: Đánh bại Hắc Giao 1 lần
+    goal: 1
+  - id: wish
+    t: Ước nguyện 5 lần
+    goal: 5

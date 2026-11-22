@@ -1,0 +1,27 @@
+id: minhkhai
+name: Minh Khải
+r: 4
+el: bolt
+w: bow
+title: Thợ Săn Đêm
+desc: Thợ săn chuyên đi đêm, mang theo ngọn đèn sét để soi đường và đánh bẫy.
+hp: 820
+atk: 94
+skill:
+  name: Đèn Sét Canh Đêm
+  type: turret
+  cd: 10
+  m: 0.95
+burst:
+  name: Mưa Điện
+  type: storm
+  cost: 50
+  m: 1.3
+look:
+  hair: "#1d1d2b"
+  style: spiky
+  outfit: "#4b3a78"
+  accent: "#e0c8ff"
+  skin: "#eac6a4"
+  eye: "#b47bff"
+  coat: true

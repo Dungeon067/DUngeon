@@ -1,0 +1,27 @@
+id: thuynguyet
+name: Thủy Nguyệt
+r: 5
+el: water
+w: cat
+title: Người Giữ Đền Trăng
+desc: Nữ tư tế của đền trăng bên hồ, điều khiển thủy triều bằng tiếng chuông bạc. Vừa đánh vừa chữa trị cho cả đội.
+hp: 1180
+atk: 112
+skill:
+  name: Nguyệt Thủy Linh Chung
+  type: heal
+  cd: 9
+  m: 1.8
+burst:
+  name: Triều Dâng Trăng Rằm
+  type: tide
+  cost: 60
+  m: 4.2
+look:
+  hair: "#dbe6ff"
+  style: long
+  outfit: "#24507f"
+  accent: "#9fd8ff"
+  skin: "#f8dcc6"
+  eye: "#3aa6f5"
+  coat: true

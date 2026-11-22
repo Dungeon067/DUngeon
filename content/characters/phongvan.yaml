@@ -1,0 +1,27 @@
+id: phongvan
+name: Phong Vân
+r: 5
+el: wind
+w: bow
+title: Cung Thủ Đỉnh Mây
+desc: Lớn lên trên đỉnh núi cao nhất đảo, mũi tên của cô cưỡi theo gió và không bao giờ trượt mục tiêu.
+hp: 980
+atk: 124
+skill:
+  name: Tháp Gió Vân Phong
+  type: turret
+  cd: 10
+  m: 1.1
+burst:
+  name: Mưa Tên Phong Vũ
+  type: storm
+  cost: 60
+  m: 1.6
+look:
+  hair: "#2f6b4f"
+  style: pony
+  outfit: "#e8efe6"
+  accent: "#45dfb1"
+  skin: "#f3d0b0"
+  eye: "#2fae86"
+  coat: false

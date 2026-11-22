@@ -1,0 +1,27 @@
+id: suongmai
+name: Sương Mai
+r: 4
+el: water
+w: sword
+title: Kiếm Khách Bình Minh
+desc: Luyện kiếm mỗi sáng bên bờ sông. Đường kiếm nhẹ như giọt sương mà chém đứt cả đá.
+hp: 900
+atk: 86
+skill:
+  name: Giọt Sương Kiếm
+  type: dash
+  cd: 7
+  m: 2.1
+burst:
+  name: Sóng Bạc
+  type: tide
+  cost: 50
+  m: 3.2
+look:
+  hair: "#3b6ea5"
+  style: pony
+  outfit: "#e9f2fb"
+  accent: "#3aa6f5"
+  skin: "#f6d6bc"
+  eye: "#3b6ea5"
+  coat: false

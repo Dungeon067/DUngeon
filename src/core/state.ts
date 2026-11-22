@@ -1,0 +1,23 @@
+// Trạng thái dùng chung giữa các module (trước đây là biến `let` cấp cao nhất trong bản một file).
+export const GS = {
+  toastT: undefined as ReturnType<typeof setTimeout> | undefined,
+  AC: null as AudioContext | null,
+  soundOn: false,
+  WORLD: null as any,
+  VW: 0,
+  VH: 0,
+  DPR: 1,
+  ZOOM: 1,
+  G: null as any,
+  scene: "menu",
+  paused: false,
+  holdAtk: false,
+  holdDash: false,
+  lastSync: 0,
+  hudCache: {} as Record<string, any>,
+  isTouch: matchMedia("(pointer: coarse)").matches,
+  lastT: performance.now(),
+  selChar: null as string | null,
+  draftParty: null as any,
+  wipeArm: 0,
+};

@@ -1,0 +1,8 @@
+id: shaman
+name: Pháp Sư Mặt Nạ
+hp: 440
+atk: 58
+spd: 60
+r: 14
+aggro: 320
+cd: 3

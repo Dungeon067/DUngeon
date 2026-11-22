@@ -1,0 +1,14 @@
+# Boss Hắc Giao. Máu và công tăng theo cấp: giá_trị × (1 + hệ_số × (cấp − 1)).
+id: hacgiao
+name: Hắc Giao
+hp: 14000
+hpPerLv: 0.9
+atk: 90
+atkPerLv: 0.35
+r: 44
+spd: 90
+el: water
+phase2:
+  at: 0.5
+  el: bolt
+  spd: 130
