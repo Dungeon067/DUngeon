@@ -42,6 +42,7 @@ content/              dữ liệu YAML (xem docs/content.md)
   config.yaml         ước nguyện, hồ sơ khởi đầu, nguyên tố, vũ khí, ủy thác
   combat-feel.yaml    cảm giác đánh (xem docs/combat-feel.md)
 docs/                 tài liệu (kiến trúc, dữ liệu)
+  world/              kinh thánh thế giới: vũ trụ, lịch sử, vùng đất, phe phái...
 legacy/index.html     bản thử nghiệm một file gốc
 scripts/              lệnh content:check
 src/
@@ -61,4 +62,4 @@ tests/
   perf/               đo FPS
 ```
 
-Chi tiết các module: [docs/architecture.md](docs/architecture.md). Cách sửa dữ liệu: [docs/content.md](docs/content.md).
+Chi tiết các module: [docs/architecture.md](docs/architecture.md). Cách sửa dữ liệu: [docs/content.md](docs/content.md). Thế giới, cốt truyện và quy tắc đặt tên: [docs/world/](docs/world/README.md).

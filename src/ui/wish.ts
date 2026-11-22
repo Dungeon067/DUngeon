@@ -27,7 +27,7 @@ export function renderWish() {
   const ctx2 = $<HTMLCanvasElement>("featArt").getContext("2d")!;
   ctx2.drawImage(portrait(f.id, 600, 600, "splash"), 0, 0);
   $("rateTxt").innerHTML =
-    `5★: ${cfg.rate5}% (tăng dần từ lần ${cfg.soft}, chắc chắn ở lần ${cfg.hard})<br>4★: ${cfg.rate4}% (chắc chắn mỗi 10 lần)<br>3★: phần còn lại, mỗi vật phẩm 3★ đổi thành 500 Xu.<br>Trùng nhân vật: +1 cung mệnh (tối đa C6, mỗi cung +10% máu và tấn công).`;
+    `5★: ${cfg.rate5}% (tăng dần từ lần ${cfg.soft}, chắc chắn ở lần ${cfg.hard})<br>4★: ${cfg.rate4}% (chắc chắn mỗi 10 lần)<br>3★: phần còn lại, mỗi vật phẩm 3★ đổi thành 500 Xu.<br>Trùng nhân vật: +1 Nét Sao (tối đa N6, mỗi nét +10% máu và tấn công).`;
   $("hist").innerHTML = P.history.length
     ? P.history
         .slice(0, 40)
@@ -174,7 +174,7 @@ export function wishFrame(now: number) {
       c.fillStyle = col;
       c.font = `700 ${Math.min(15, W / 28)}px 'Be Vietnam Pro',sans-serif`;
       c.fillText(
-        it.dup ? (it.max ? "Đã C6: đổi thành Xu" : `Trùng: cung mệnh C${it.cons}`) : "Nhân vật mới!",
+        it.dup ? (it.max ? "Đã N6: đổi thành Xu" : `Trùng: Nét Sao N${it.cons}`) : "Nhân vật mới!",
         W / 2,
         H * 0.86 + 46,
       );
