@@ -122,6 +122,8 @@ export function updateMusic(dt: number) {
       st.out.disconnect();
       st.out = st.explore = st.combat = null;
       st.theme = "";
+      st.inCombat = false;
+      st.linger = 0;
     }
     if (GS.soundOn && playing) audioCtx();
     return;
