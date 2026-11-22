@@ -84,6 +84,7 @@ export function doInteract() {
       m.hp = m.maxHp;
     }
     GS.G.respawn = { x: GS.G.p.x, y: GS.G.p.y };
+    GS.G.statueUsed = true;
     fxRing(it.x, it.y - 20, 70, "#9fe8ff", 0.5, 6);
     fxBurst(it.x, it.y - 30, "#9fe8ff", 20, 160);
     toast("Đã hồi phục cả đội và lưu điểm hồi sinh");

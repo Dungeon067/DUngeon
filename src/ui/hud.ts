@@ -35,7 +35,7 @@ export function hintFor(a: Action) {
   const k = primaryKey(a);
   return k ? keyLabel(k) : "";
 }
-function refreshKeyHints() {
+function refreshKeyHints(party = true) {
   for (const [id, a] of ACT_BTNS) {
     const b = $(id);
     let k = b.querySelector<HTMLElement>(".key");
@@ -52,7 +52,7 @@ function refreshKeyHints() {
   }
   $("pauseBtn").title = `Tạm dừng (${hintFor("pause")})`;
   $("qmMap").title = `Bản đồ (${hintFor("map")})`;
-  if (GS.G) buildHudParty();
+  if (party && GS.G) buildHudParty();
 }
 
 let built = false;
@@ -82,7 +82,7 @@ export function initHud() {
     refreshKeyHints();
     applyLayout();
   });
-  new MutationObserver(refreshKeyHints).observe(document.documentElement, {
+  new MutationObserver(() => refreshKeyHints()).observe(document.documentElement, {
     attributes: true,
     attributeFilter: ["data-input"],
   });
@@ -134,7 +134,7 @@ export function currentObjective(): { text: string; target: string | null } {
     if (o.done.kind === "chests") {
       n = P.chests.length;
       if (o.done.count === "all") max = G.map?.chests.length ?? 0;
-    } else if (o.done.kind === "statue") n = G.respawn ? 1 : 0;
+    } else if (o.done.kind === "statue") n = G.statueUsed ? 1 : 0;
     else if (o.done.kind === "tower") n = Object.keys(P.tower ?? {}).length;
     else if (o.done.kind === "boss") n = Object.values(P.boss ?? {}).some(Boolean) ? 1 : 0;
     if (n < max) return { text: o.text.replace("{n}", String(n)).replace("{max}", String(max)), target: o.target };
@@ -227,7 +227,7 @@ export function updateHud() {
       bb.setAttribute("aria-label", bb.dataset.label);
       bb.style.setProperty("--el", EL[m.c.el].c);
       sb.style.setProperty("--ac", EL[m.c.el].c);
-      refreshKeyHints();
+      refreshKeyHints(false);
     }
     const hp = m.hp / m.maxHp;
     $("actHp").style.width = hp * 100 + "%";
