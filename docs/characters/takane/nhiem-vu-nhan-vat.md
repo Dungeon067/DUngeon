@@ -17,7 +17,7 @@
 - **Mục tiêu:** về trạm canh tuyết thăm bà Fuyu.
 - **Địa điểm:** Đường Thư Núi, trạm canh tuyết, Ranmori.
 - **Nhân vật phụ:** Oroshi Fuyu, Seseragi Kumi.
-- **Diễn biến:** bà Fuyu đã yếu. Cú Tuyết Lặng tấn công trạm vì tiếng chuông. Đánh. Bà đưa Takane lá thư năm NS 1330 và nói bà đã biết người viết là ai từ lâu.
+- **Diễn biến:** bà Fuyu đã yếu. Cú Tuyết Lặng tấn công trạm vì tiếng chuông. Đánh. Bà bảo Takane lấy lá thư năm NS 1330 ra đọc lại và nói bà đã biết người viết là ai từ lâu.
 - **Lựa chọn:** hỏi tên người viết, hoặc để bà tự kể khi muốn.
 - **Kết thúc:** bà không nói tên, chỉ nói người ấy đã mất làng như anh.
 - **Phần thưởng gợi ý:** 40 Đá Sao, Bảo Ấn ngẫu nhiên 3★.

@@ -32,7 +32,7 @@ Bản kết luận ấy treo ở quảng trường ba ngày. Mực của cô kh�
 
 ## 4. Hiện tại: người chép đi xa
 
-Năm NS 1347, cô đỗ Phong Khảo thứ mười một và được nhận chức Chép Luật. Cô làm việc giỏi, ít nói, được Chưởng Bút Lục Thanh Hà tin. Không ai biết rằng mỗi đêm, sau khi chép xong luật, cô ngồi chép một cuốn sổ khác.
+Năm NS 1348, ở kỳ thi kế tiếp, cô đỗ Phong Khảo thứ mười một và được nhận chức Chép Luật. Cô làm việc giỏi, ít nói, được Chưởng Bút Lục Thanh Hà tin. Không ai biết rằng mỗi đêm, sau khi chép xong luật, cô ngồi chép một cuốn sổ khác.
 
 Đó là sổ của **Thành Không Tên**. Thời Trăm Bến, Thính Phong đã xé hết sổ của thành ấy vì cả thành lừa ông. Thành mất lịch sử. Luật Lũng Vân nói chỉ Ông Nghe được ghi sổ thành. Nghiên Thu vẫn đi khắp thung lũng hỏi người già, chép những mảnh vách đá gió mài ở Hẻm Thư Pháp, gom từng câu hát ru còn sót lại. Cô đã có ba mươi trang. Cô vẫn chưa tìm được cái tên.
 
@@ -40,6 +40,6 @@ Năm NS 1347, cô đỗ Phong Khảo thứ mười một và được nhận ch�
 
 ## 5. Điều chưa nói ra
 
-Mỗi mùa thu, kể từ NS 1347, Nghiên Thu nhận được một xấp giấy trắng không đề tên người gửi. Giấy tốt, hơi ngả xám, có mùi gió. Cô dùng xấp giấy ấy để chép sổ Thành Không Tên. Cô nghĩ đó là của một học sĩ thương cô. [Hé lộ Ch.2: đó là giấy của Các Nghe Gió. Thính Phong biết cô làm gì, và để cô làm.]
+Mỗi mùa thu, kể từ NS 1348, Nghiên Thu nhận được một xấp giấy trắng không đề tên người gửi. Giấy tốt, hơi ngả xám, có mùi gió. Cô dùng xấp giấy ấy để chép sổ Thành Không Tên. Cô nghĩ đó là của một học sĩ thương cô. [Hé lộ Ch.2: đó là giấy của Các Nghe Gió. Thính Phong biết cô làm gì, và để cô làm.]
 
 Cô cũng chưa nói với Bạch Vũ rằng mình là người chép bản kết luận năm NS 1345. Cô sợ cậu sẽ nghĩ cô trách cậu. Cô không trách. Cô chỉ muốn hỏi cậu một câu, câu mà cô đã ghi sẵn trong sổ nhỏ từ năm năm trước: _"Nếu được nói lại, cậu sẽ nói gì?"_ Cô chưa dám hỏi, vì cô chưa biết câu trả lời của chính mình.

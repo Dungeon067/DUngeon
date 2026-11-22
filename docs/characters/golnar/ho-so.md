@@ -50,7 +50,7 @@ Nhà băng sống nhờ nước kênh ngầm. Hội Đồng Giếng là nơi chi
 
 ### Xưng hô
 
-- Với Người Ước Nguyện: **tôi – cậu**. Lần đầu gặp cô gọi **"vị khách quý"** theo phép Golbaran, và chỉ gọi "cậu" khi Người Ước Nguyện đã ăn cùng cô một bữa (mốc: giữa phần 1 nhiệm vụ nhân vật). Lý do: ở Golbaran, khách chỉ thành bạn sau khi đã chia bánh.
+- Với Người Ước Nguyện: **tôi – cậu**. Lần đầu gặp cô gọi **"vị khách quý"** theo phép Golbaran, và chỉ gọi "cậu" khi Người Ước Nguyện đã ăn cùng cô một bữa (mốc: giữa phần 1 nhiệm vụ nhân vật). Lý do: ở Golbaran, khách chỉ thành bạn sau khi đã chia bánh. Câu nhận qua Ước nguyện và câu chào lần đầu chỉ dùng "vị khách quý"/"khách". Các câu thoại menu khác (Khai Tinh, chào theo giờ) dùng "cậu", vì người chơi có thể nhận cô trước khi làm nhiệm vụ.
 - Với Hộ Tinh khác: "tôi – cậu", gọi tên.
 - Gọi riêng: gọi Ostad Khesht là **"Thầy Gạch"**. Gọi mẹ là "mẹ", em là "Arash".
 
@@ -76,7 +76,7 @@ Nhà băng sống nhờ nước kênh ngầm. Hội Đồng Giếng là nơi chi
 
 ### Câu mẫu
 
-- Chào lần đầu: "Vị khách quý, nắng đã làm cậu mệt rồi. Golnar Yakhzad, Người Giữ Nhà Băng. Mời vào, ở đây mát."
+- Chào lần đầu: "Vị khách quý, nắng đã làm khách mệt rồi. Golnar Yakhzad, Người Giữ Nhà Băng. Mời vào, ở đây mát."
 - Khi nhập đội: "Đội này đẹp như bốn cánh vườn lựu. Tôi sẽ giữ cho không cánh nào héo."
 - Dùng kỹ năng (≤ 20 ký tự): "Mát lại nào."
 - Dùng nộ (≤ 20 ký tự): "Đêm dài, băng xuống!"

@@ -6,7 +6,7 @@
 
 | #   | Tình huống                 | Lời thoại                                                                                                          |
 | --- | -------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| 1   | Nhận qua Ước nguyện        | "Vị khách quý, nắng đã làm cậu mệt rồi. Golnar Yakhzad, Người Giữ Nhà Băng. Mời vào, ở đây mát."                   |
+| 1   | Nhận qua Ước nguyện        | "Vị khách quý, nắng đã làm khách mệt rồi. Golnar Yakhzad, Người Giữ Nhà Băng. Mời vào, ở đây mát."                 |
 | 2   | Vào đội                    | "Đội này đẹp như bốn cánh vườn lựu. Tôi sẽ giữ cho không cánh nào héo."                                            |
 | 3   | Đổi vào trận               | "Để tôi giữ."                                                                                                      |
 | 4   | Kỹ năng 1                  | "Mát lại nào."                                                                                                     |

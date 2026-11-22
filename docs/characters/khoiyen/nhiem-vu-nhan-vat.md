@@ -28,8 +28,8 @@
 - **Địa điểm:** Thung Mây Ngủ, bến thuyền mây.
 - **Nhân vật phụ:** Bạch Vũ.
 - **Diễn biến:** Bạch Vũ lái thuyền mây đưa cả đội đi. Lính Mặt Nạ Trắng canh bến. Đánh. Ở bến cũ có một hòm giấy ước chưa cháy.
-- **Lựa chọn:** đốt ngay tại chỗ, hoặc mang về Các Nghe Gió.
-- **Kết thúc:** trong hòm có lời ước của Nghiên Thu.
+- **Lựa chọn:** đốt ngay các lời ước vô chủ, hoặc mang cả hòm về Các Nghe Gió. Dù chọn cách nào, Khởi Yên cũng giữ lại một tờ có nét chữ quen.
+- **Kết thúc:** tờ được giữ lại là lời ước của Nghiên Thu.
 - **Phần thưởng gợi ý:** 60 Đá Sao, nguyên liệu Khai Tinh hệ Hỏa ×3.
 
 ### Phần 4: Lời Ước Của Chị Thu
