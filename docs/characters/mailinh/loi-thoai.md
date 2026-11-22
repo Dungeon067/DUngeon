@@ -57,16 +57,16 @@ Xưng hô: **tớ – cậu**, gọi người chơi là **"Sao Rơi"**. Sau ph�
 
 ## 5. Nói về nhân vật khác
 
-| #   | Về          | Lời thoại                                                                                                          |
-| --- | ----------- | ------------------------------------------------------------------------------------------------------------------ |
-| 34  | Lạc Hồng    | "Trống Cái gõ cửa xưởng tớ to lắm, nan tre rung hết. Nhưng mà hôm cháy phố, Trống Cái là người chạy lên đầu tiên." |
-| 35  | Thủy Nguyệt | "Thủy Nguyệt hát ru hay nhất đảo. Tớ nghe hai câu là ngủ. Cậu thử đi, không ngủ tớ bao chè."                       |
-| 36  | Sương Mai   | "Sương Mai chưa cười thành tiếng bao giờ. Tớ đang tìm cách. Cậu có ý gì không? Thọc lét được không?"               |
-| 37  | Ngọc Thạch  | "Ngọc Thạch bịt mắt mà bắt đèn giỏi hơn tớ! Năm nay tớ phải thắng lại. Tớ luyện mỗi tối đó!"                       |
-| 38  | Hạ Vy       | "Hạ Vy làm cho tớ một bông hoa băng không tan. Tớ muốn tặng lại một chiếc đèn, mà sợ đèn nóng làm tan băng."       |
-| 39  | Minh Khải   | "Đèn sét của Minh Khải không cần dầu! Tớ hỏi ba câu, cậu ấy trả lời có một. Lần sau tớ hỏi bốn câu."               |
-| 40  | Thạch Sơn   | "Thợ Cả cho tớ đục một góc bia, tớ làm mẻ mất. Thợ Cả để nguyên luôn. Giờ đó là chữ của tớ đó."                    |
-| 41  | Phong Vân   | "Phong Vân ở trên núi cao lắm. Tớ muốn thả một chiếc đèn bay lên tới chỗ cậu ấy. Chắc phải to gấp mười."           |
+| #   | Về          | Lời thoại                                                                                                              |
+| --- | ----------- | ---------------------------------------------------------------------------------------------------------------------- |
+| 34  | Lạc Hồng    | "Trống Cái gõ cửa xưởng tớ to lắm, nan tre rung hết. Nhưng mà hôm cháy phố, Trống Cái là người chạy lên đầu tiên."     |
+| 35  | Thủy Nguyệt | "Thủy Nguyệt hát ru hay nhất đảo. Tớ nghe hai câu là ngủ. Cậu thử đi, không ngủ tớ bao chè."                           |
+| 36  | Sương Mai   | "Sương Mai chưa cười thành tiếng bao giờ. Tớ đang tìm cách. Cậu có ý gì không? Thọc lét được không?"                   |
+| 37  | Ngọc Thạch  | "Ngọc Thạch bịt mắt mà bắt đèn giỏi hơn tớ! Năm nay tớ phải thắng lại. Tớ luyện mỗi tối đó!"                           |
+| 38  | Hạ Vy       | "Hạ Vy làm cho tớ một bông hoa băng không tan. Tớ muốn tặng lại một chiếc đèn, mà sợ đèn nóng làm tan băng."           |
+| 39  | Minh Khải   | "Đèn sét của Minh Khải không cần dầu! Tớ sửa kính cho cậu ấy, cậu ấy trả bằng cá khô. Tớ vẫn chưa được xem bên trong." |
+| 40  | Thạch Sơn   | "Thợ Cả cho tớ đục một góc bia, tớ làm mẻ mất. Thợ Cả để nguyên luôn. Giờ đó là chữ của tớ đó."                        |
+| 41  | Phong Vân   | "Phong Vân ở trên núi cao lắm. Tớ muốn thả một chiếc đèn bay lên tới chỗ cậu ấy. Chắc phải to gấp mười."               |
 
 ## 6. Trò chuyện
 

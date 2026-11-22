@@ -88,8 +88,8 @@ Xưng hô: **tôi – cậu** từ đầu, giọng nhà binh theo lệ nghề h�
 
 ### 46. Một bí mật
 
-"Đêm có giông năm ấy, tôi sốt. Không nặng như mẹ nghĩ. Tôi đi được. Tôi ở nhà vì sợ biển đêm. Cát đi một mình. Đây là điều tôi chưa báo cho ai. Giờ thì đã báo. Cho cậu."
+"Đêm có giông năm ấy, tôi sốt. Không nặng như mẹ nghĩ. Tôi đi được. Tôi ở nhà vì sợ biển đêm. Cò đi một mình. Đây là điều tôi chưa báo cho ai. Giờ thì đã báo. Cho cậu."
 
 ### 47. Sau phần 3 (đổi sang "mình")
 
-"Ngồi xuống đây. Không phải ca tuần. Mình chỉ muốn ngồi. … Lạ thật. Nói "mình" thì câu dài ra. Cậu chịu khó nghe nhé. Mình kể chuyện Cát cho cậu."
+"Ngồi xuống đây. Không phải ca tuần. Mình chỉ muốn ngồi. … Lạ thật. Nói "mình" thì câu dài ra. Cậu chịu khó nghe nhé. Mình kể chuyện Cò cho cậu."

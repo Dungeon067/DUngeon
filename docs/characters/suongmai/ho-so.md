@@ -35,7 +35,7 @@
 2. **Tự gánh hết.** Cô coi mọi tai nạn trên sông là lỗi trong ca tuần của mình.
 3. **Không biết nghỉ.** Cô không biết làm gì khi không có nhiệm vụ, nên tự giao nhiệm vụ cho mình.
 
-**Mâu thuẫn nội tâm cốt lõi:** lệ nghề hộ vệ là thấy gì báo nấy. Sương Mai sống theo lệ đó. Nhưng cô đã thấy ông Neo, người hàng xóm dạy cô câu cá, ngồi khắc một chiếc mặt nạ gỗ dưới gầm nhà sàn lúc nửa đêm. Cô chưa báo. Cô biết ông mất con trai, Cát, người bạn thân nhất của cô, trong cơn giông mùa đông năm NS 1339, ngay trước Tết Sao Rơi NS 1340. Cô cũng biết hôm ấy lẽ ra cô ở trên thuyền với Cát, nếu không bị sốt. Cô sợ rằng nếu báo, cô sẽ mất người cuối cùng còn nhớ Cát như cô nhớ. Nếu không báo, cô phản lại chính nghề mình.
+**Mâu thuẫn nội tâm cốt lõi:** lệ nghề hộ vệ là thấy gì báo nấy. Sương Mai sống theo lệ đó. Nhưng cô đã thấy ông Neo, người hàng xóm dạy cô câu cá, ngồi khắc một chiếc mặt nạ gỗ dưới gầm nhà sàn lúc nửa đêm. Cô chưa báo. Cô biết ông mất con trai, Cò, người bạn thân nhất của cô, trong cơn giông mùa đông năm NS 1339, ngay trước Tết Sao Rơi NS 1340. Cô cũng biết hôm ấy lẽ ra cô ở trên thuyền với Cò, nếu không bị sốt. Cô sợ rằng nếu báo, cô sẽ mất người cuối cùng còn nhớ Cò như cô nhớ. Nếu không báo, cô phản lại chính nghề mình.
 
 ## 3. Thẻ giọng nói: Sương Mai (`suongmai`)
 
@@ -47,7 +47,7 @@
 
 - Với Người Ước Nguyện: **tôi – cậu** ngay từ đầu (chủ dự án duyệt). Câu ngắn, cứng, theo lệ nghề hộ vệ: mở bằng "Báo cáo:", đáp bằng "Rõ." hoặc "Đã nhận.", có lúc **xưng chức trách** thay cho "tôi" trong việc công ("Hộ vệ Đền Trăng có mặt.", "Hộ vệ xin đi trước.").
 - Khi đã thân (mốc chuyển): **mình – cậu**, sau **phần 3** chuỗi nhiệm vụ "Báo Cáo Chưa Viết", khi cô kể cho người chơi chuyện cô thấy ông Neo khắc mặt nạ. Từ đó, khi không làm nhiệm vụ, cô nói "mình" và câu dài hơn một chút. Khi vào trận hoặc báo cáo, cô vẫn giữ giọng cũ.
-- Lý do: lệ của Đền với người được hộ tống là giữ khoảng cách để giữ tỉnh táo. Đổi sang "mình" nghĩa là cô đã bỏ khoảng cách ấy với người chơi, chuyện mà cô chỉ làm với Cát trước đây. Không dùng "ngài": theo quyết định của chủ dự án, chỉ Tuyết Lan (S05) gọi "ngài".
+- Lý do: lệ của Đền với người được hộ tống là giữ khoảng cách để giữ tỉnh táo. Đổi sang "mình" nghĩa là cô đã bỏ khoảng cách ấy với người chơi, chuyện mà cô chỉ làm với Cò trước đây. Không dùng "ngài": theo quyết định của chủ dự án, chỉ Tuyết Lan (S05) gọi "ngài".
 - Với Hộ Tinh khác: tên trần, kể cả với Thủy Nguyệt, người cô bảo vệ.
 - Gọi riêng ai bằng gì:
   - Gọi mẹ là **"mẹ"** (người nhà, được phép).
@@ -71,7 +71,7 @@
 ### Chủ đề
 
 - Hay nói về: mực nước, thời tiết, đường tuần, kiếm, cá.
-- Tránh nói về (và vì sao): Cát và cơn giông mùa đông NS 1339 (cô thấy có lỗi); ông Neo (cô đang giữ bí mật).
+- Tránh nói về (và vì sao): Cò và cơn giông mùa đông NS 1339 (cô thấy có lỗi); ông Neo (cô đang giữ bí mật).
 - Không bao giờ nói: lời khoe khoang; lời hứa mà cô không chắc giữ được.
 - Thơ hoặc câu sáng tác: **không**. Cô thuộc vài câu tục ngữ nghề sông của Làng Vạn Lưới và chỉ trích lại.
 

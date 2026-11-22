@@ -19,8 +19,8 @@
 - **Mục tiêu:** cùng Sương Mai tới Bãi Sao Rơi đêm trước Tết Sao Rơi.
 - **Địa điểm:** Bãi Sao Rơi.
 - **Nhân vật phụ:** Lạc Hồng (gõ thử trống), bọn trẻ nhặt cát sáng.
-- **Diễn biến:** Sương Mai kể chuyện Cát và đêm Tết Sao Rơi NS 1340, câu ngắn như báo cáo. Bóng Cặn kéo lên từ mép biển (trận đánh). Lạc Hồng gõ một hồi trống thử, Sương Mai đứng nghe, không nói.
-- **Lựa chọn:** hỏi về chiếc móc câu đồng, hoặc không hỏi. Nhánh hỏi mở một câu thoại riêng về Cát.
+- **Diễn biến:** Sương Mai kể chuyện Cò và đêm Tết Sao Rơi NS 1340, câu ngắn như báo cáo. Bóng Cặn kéo lên từ mép biển (trận đánh). Lạc Hồng gõ một hồi trống thử, Sương Mai đứng nghe, không nói.
+- **Lựa chọn:** hỏi về chiếc móc câu đồng, hoặc không hỏi. Nhánh hỏi mở một câu thoại riêng về Cò.
 - **Kết thúc:** một ngôi sao nhỏ rơi sau hồi trống thử. Sương Mai báo: "Có sao rơi. Đã ghi."
 - **Phần thưởng gợi ý:** 40 Đá Sao, Bảo Ấn hệ Thủy (3★) ×1, 25.000 Xu.
 
@@ -39,14 +39,14 @@
 - **Mục tiêu:** tìm chiếc thuyền chìm đêm giông mùa đông NS 1339.
 - **Địa điểm:** Vịnh Khơi và Làng Chìm.
 - **Nhân vật phụ:** Thủy Nguyệt (hát nhịp ru để làm dịu nước), Lôi Đình (cần khớp S04, báo giông).
-- **Diễn biến:** Sương Mai lặn xuống vùng nước đen, điều mà cô đã sợ mười năm. Bóng Cặn bám quanh xác thuyền (trận đánh dưới nước). Trong khoang thuyền có chiếc cần câu tre của Cát, cán khắc chữ "Cát" vụng về.
+- **Diễn biến:** Sương Mai lặn xuống vùng nước đen, điều mà cô đã sợ mười năm. Bóng Cặn bám quanh xác thuyền (trận đánh dưới nước). Trong khoang thuyền có chiếc cần câu tre của Cò, cán khắc chữ "Cò" vụng về.
 - **Lựa chọn:** không có.
 - **Kết thúc:** Sương Mai mang cần câu lên bờ, ngồi rất lâu. Lần đầu người chơi thấy cô khóc. Cô báo: "Tìm được. Mình ổn. Một lát."
 - **Phần thưởng gợi ý:** 40 Đá Sao, 30.000 Xu, Bảo Ấn hệ Thủy (4★) ×1.
 
 ### Phần 5: Nút Lưới Vạn Lưới
 
-- **Mục tiêu:** mang cần câu của Cát tới cho ông Neo.
+- **Mục tiêu:** mang cần câu của Cò tới cho ông Neo.
 - **Địa điểm:** Phố Vạn Đăng (Đình Trống Đồng, nơi ông Neo đang bị giữ), rồi Bến Sông Sương.
 - **Nhân vật phụ:** ông Neo, Cụ Trưởng Đình Đoan Khang, Lạc Hồng, bà Sen.
 - **Diễn biến:** Sương Mai xin Cụ Trưởng Đình cho gặp ông Neo. Ông nhận cần câu, không nói gì. Trên đường về, Nguyện Cặn hệ Thủy còn sót của ông Neo trào lên từ Sông Sương (trận đánh chính). Sương Mai dẹp xong và đứng một mình ở bến.

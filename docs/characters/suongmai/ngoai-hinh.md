@@ -31,7 +31,7 @@ Nữ, 19 tuổi, người Làng Vạn Lưới. Cao ngang Người Ước Nguyệ
 4. **Quần:** quần ống gọn màu trắng sương, dài tới mắt cá.
 5. **Xà cạp:** bắp chân quấn xà cạp vải xanh chàm từ mắt cá tới dưới gối.
 6. **Giày:** giày vải đế mỏng màu xám tro, buộc dây quanh cổ chân. Đi êm, không tiếng.
-7. **Cổ:** đeo một **móc câu đồng nhỏ** xâu bằng dây gai, nằm trên cổ áo (của Cát, người bạn đã mất).
+7. **Cổ:** đeo một **móc câu đồng nhỏ** xâu bằng dây gai, nằm trên cổ áo (của Cò, người bạn đã mất).
 8. **Không có áo khoác** (đúng `coat: false`).
 
 ### Tinh Văn và điểm sáng nguyên tố

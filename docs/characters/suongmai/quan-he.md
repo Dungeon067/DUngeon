@@ -31,7 +31,7 @@ Viết từ góc nhìn Sương Mai. Quan hệ với nhân vật của S04, S05 �
 ### Phong Vân: tín hiệu mực nước (cần khớp, S04)
 
 - **Quan hệ:** đồng nghiệp từ xa.
-- **Kỷ niệm:** từ năm NS 1348, mỗi sáng, Sương Mai ghi mực nước ở cửa Sông Sương rồi treo cờ theo mã. Trên Đỉnh Vọng Vân, Phong Vân nhìn cờ và bắn một mũi tên tín hiệu đáp lại để báo đã nhận. Hai người chưa nói với nhau quá mười câu. Có một sáng sương dày, cờ không nhìn thấy được, và mũi tên của Phong Vân vẫn tới đúng lúc. Sau này cô mới biết anh đã đi bộ xuống lưng chừng núi để nhìn cho rõ.
+- **Kỷ niệm:** từ năm NS 1348, mỗi sáng, Sương Mai ghi mực nước ở cửa Sông Sương rồi treo cờ theo mã. Trên Đỉnh Vọng Vân, Phong Vân nhìn cờ và bắn một mũi tên tín hiệu đáp lại để báo đã nhận. Hai người chưa nói với nhau quá mười câu. Có một sáng sương dày, cờ không nhìn thấy được, và mũi tên của Phong Vân vẫn tới đúng lúc. Sau này cô mới biết Phong Vân đã đi bộ xuống lưng chừng núi để nhìn cho rõ.
 - **Bây giờ:** cô coi đó là người đáng tin nhất mà cô chưa thực sự quen.
 
 ### Lôi Đình: người hay hô to (cần khớp, S04)
@@ -40,17 +40,23 @@ Viết từ góc nhìn Sương Mai. Quan hệ với nhân vật của S04, S05 �
 - **Kỷ niệm:** đêm Đội Giông đi tuần giông qua Làng Vạn Lưới, Lôi Đình hô to gọi ngư dân vào bờ. Sương Mai đi bên cạnh, báo từng thuyền còn ngoài khơi bằng số. Anh nói: "Cậu báo nhanh hơn tôi hô." Cô đáp: "Cậu hô to hơn tôi báo." Đêm ấy không ai mất tích.
 - **Bây giờ:** cô vẫn thấy Lôi Đình ồn. Nhưng nếu có giông, cô muốn anh ở gần.
 
+### Minh Khải: người cùng làng (cần khớp, S04)
+
+- **Quan hệ:** người cùng Làng Vạn Lưới, lớn hơn bảy tuổi. Từng là "anh Khải" mà Cò muốn được giống.
+- **Kỷ niệm:** hồi bé, Cò và Sương Mai hay ngồi ở mũi thuyền đêm của bố Minh Khải lúc thuyền vừa cập bãi, xem anh gỡ cá dưới ngọn đèn dầu. Sau mùa giông NS 1339, Minh Khải thôi đi thuyền đêm và vào rừng. Giờ hai người chỉ gặp nhau lúc rạng sáng ở Bến Sông Sương: anh về hết ca đêm, cô bắt đầu ca sáng. Hai người gật đầu với nhau, không nói gì.
+- **Bây giờ:** cô để ý anh luôn đi đường vòng để khỏi ngang qua nhà ông Neo. Cô không hỏi vì sao. Cô cũng đang tránh một câu hỏi về ông Neo.
+
 ## 2. Nhân vật phụ và gia đình
 
 ### Ông Neo (Mặt Nạ Gỗ)
 
 - 61 tuổi, hàng xóm sát vách, người dạy cô câu cá và thắt nút lưới. Cô gọi "ông Neo", xưng "cháu", có "dạ", "ạ". Ông gọi cô là "con".
-- **Kỷ niệm:** chiều đầu tiên câu cá năm cô sáu tuổi, Cát ném cần xuống sông vì thua, ông lội ra vớt và nói: "Thua cá thì câu lại, đừng ném cần."
+- **Kỷ niệm:** chiều đầu tiên câu cá năm cô sáu tuổi, Cò ném cần xuống sông vì thua, ông lội ra vớt và nói: "Thua cá thì câu lại, đừng ném cần."
 - **Bây giờ:** cô đã thấy ông khắc mặt nạ gỗ lúc nửa đêm năm NS 1348. Cô chưa báo. Theo `docs/world/07-hac-giao-va-hoi-mat-na.md`, ông là Mặt Nạ Gỗ của Hội Bất Nguyện. Sương Mai không biết chắc điều đó cho tới cuối Chương 1.
 
-### Cát
+### Cò
 
-- Con trai ông Neo, bạn thân nhất của cô, chết đuối trong cơn giông mùa đông NS 1339. Chiếc móc câu đồng cô đeo là của Cát.
+- Con trai ông Neo, bạn thân nhất của cô, chết đuối trong cơn giông mùa đông NS 1339. Chiếc móc câu đồng cô đeo là của Cò.
 
 ### Mẹ (bà Sen)
 

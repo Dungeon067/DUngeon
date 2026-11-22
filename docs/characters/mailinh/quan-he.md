@@ -36,9 +36,9 @@ Viết từ góc nhìn Mai Linh. Quan hệ với nhân vật của S04, S05 đư
 
 ### Minh Khải: người có ngọn đèn sét (cần khớp, S04)
 
-- **Quan hệ:** tò mò, muốn học hỏi.
-- **Kỷ niệm:** một đêm mưa ở chợ đêm Vạn Đăng, mọi ngọn đèn trên phố tắt vì gió. Chỉ còn ngọn đèn sét của Minh Khải sáng trắng ở đầu phố. Mai Linh chạy tới hỏi liền ba câu "đèn của cậu dùng dầu gì", "sao không tắt", "cho tớ xem bên trong được không". Minh Khải chỉ đáp "Không cần dầu" rồi đi mất.
-- **Bây giờ:** cô đã làm một chiếc chụp đèn bằng giấy dó tẩm sáp, chờ dịp đưa cho Minh Khải để che mưa cho ngọn đèn sét. Cô chưa dám đưa.
+- **Quan hệ:** người sửa đèn cho anh. Tò mò, muốn học hỏi.
+- **Kỷ niệm:** một đêm mưa ở chợ đêm Vạn Đăng, mọi ngọn đèn trên phố tắt vì gió. Chỉ còn ngọn đèn sét của Minh Khải sáng trắng ở đầu phố. Mai Linh chạy tới hỏi liền ba câu "đèn của cậu dùng dầu gì", "sao không tắt", "cho tớ xem bên trong được không". Minh Khải chỉ đáp "Không cần dầu" rồi đi mất. Năm NS 1349, anh tự tìm tới Phố Cũ với một mặt kính đèn sét bị vỡ. Mai Linh sửa trong một buổi chiều, hàn khung đồng mới, và tia sét bên trong sáng hơn trước. Cô không lấy tiền, chỉ nói: "Đèn biết đi đêm thì phải có người sửa ban ngày." Từ đó, đầu tháng nào anh cũng mang đèn qua cho cô xem, kèm một gói cá khô.
+- **Bây giờ:** cô đã làm một chiếc chụp đèn bằng giấy dó tẩm sáp để che mưa cho ngọn đèn sét. Lần nào Minh Khải mang đèn qua, cô cũng định đưa, rồi lại quên vì mải hỏi chuyện tia sét bên trong.
 
 ### Thạch Sơn: "Thợ Cả" (cần khớp, S05)
 

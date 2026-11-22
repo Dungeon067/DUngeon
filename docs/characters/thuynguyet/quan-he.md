@@ -31,7 +31,7 @@ Viết từ góc nhìn Thủy Nguyệt. Quan hệ với nhân vật của S04, S
 ### Phong Vân: mũi tên trên Đêm Ru Bà (cần khớp, S04)
 
 - **Quan hệ:** dè chừng, đã làm lành. Phong Vân là cung thủ đưa tín hiệu của Người Đếm Sao trên Đỉnh Vọng Vân.
-- **Kỷ niệm:** Đêm Ru Bà lớn năm NS 1349, một mũi tên tín hiệu sáng rực bay ngang trời Hồ Gương, đúng lúc mọi người đang hát. Đó là tín hiệu báo Vịnh Khơi đen thêm một mảng. Cả bờ hồ im bặt. Thủy Nguyệt không giận to. Cô chỉ nhắn lên đài một câu: "Lần sau, đợi hết bài." Ba hôm sau Phong Vân xuống núi, đứng ở cổng Đền và nói xin lỗi. Rằm tháng sau, anh đến hát cùng mọi người, đứng ở hàng cuối.
+- **Kỷ niệm:** Đêm Ru Bà lớn năm NS 1349, một mũi tên tín hiệu sáng rực bay ngang trời Hồ Gương, đúng lúc mọi người đang hát. Đó là tín hiệu báo Vịnh Khơi đen thêm một mảng. Cả bờ hồ im bặt. Thủy Nguyệt không giận to. Cô chỉ nhắn lên đài một câu: "Lần sau, đợi hết bài." Ba hôm sau Phong Vân xuống núi, đứng ở cổng Đền và nói xin lỗi. Rằm tháng sau, cô ấy đến hát cùng mọi người, đứng ở hàng cuối.
 - **Bây giờ:** cô biết Người Đếm Sao vẫn muốn đo Bà Khơi. Cô không nghĩ Phong Vân là người sẽ làm điều đó.
 
 ## 2. Nhân vật phụ (không phải Hộ Tinh)

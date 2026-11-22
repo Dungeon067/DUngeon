@@ -6,17 +6,17 @@
 
 Sương Mai sinh ra vào mùng một tháng Lúa, ngày đầu mùa gieo, trong một căn nhà sàn tre sát Bến Sông Sương. Mẹ cô, bà Sen, đan lưới cho cả xóm. Bố cô đi biển và không về khi cô hai tuổi. Cô không nhớ mặt bố. Cô chỉ nhớ mẹ ngồi đan lưới tới khuya mỗi lần có giông, như thể đan nhanh thì người ngoài biển sẽ về nhanh.
 
-Sát vách nhà cô là nhà ông Neo, một ngư dân giỏi nhất làng, và con trai ông là Cát, bằng tuổi cô. Hai đứa lớn lên như anh em trong một nhà. Ông Neo dạy cả hai câu cá, vá lưới, thắt nút lưới kiểu Vạn Lưới. Năm sáu tuổi, ông đưa cho mỗi đứa một chiếc cần câu tre. Chiều đầu tiên, Sương Mai câu được con cá bằng bàn tay, Cát chỉ được con bằng ngón tay. Cát giận, ném cần xuống sông. Ông Neo phải lội ra vớt. Lưỡi câu của cô móc vào cằm trong lúc cô cười, để lại một vết sẹo nhỏ tới giờ.
+Sát vách nhà cô là nhà ông Neo, một ngư dân giỏi nhất làng, và con trai ông là Cò, bằng tuổi cô. Hai đứa lớn lên như anh em trong một nhà. Ông Neo dạy cả hai câu cá, vá lưới, thắt nút lưới kiểu Vạn Lưới. Năm sáu tuổi, ông đưa cho mỗi đứa một chiếc cần câu tre. Chiều đầu tiên, Sương Mai câu được con cá bằng bàn tay, Cò chỉ được con bằng ngón tay. Cò giận, ném cần xuống sông. Ông Neo phải lội ra vớt. Lưỡi câu của cô móc vào cằm trong lúc cô cười, để lại một vết sẹo nhỏ tới giờ.
 
-Cát nói nhiều, Sương Mai nói ít. Cát hứa lớn lên sẽ đi biển xa như bố cô. Sương Mai hứa sẽ đứng ở bến chờ. Cát tặng cô một chiếc móc câu đồng nhỏ, bảo đó là "móc để câu người về". Cô xâu nó bằng dây gai và đeo lên cổ.
+Cò nói nhiều, Sương Mai nói ít. Cò hứa lớn lên sẽ đi biển xa như bố cô. Sương Mai hứa sẽ đứng ở bến chờ. Cò tặng cô một chiếc móc câu đồng nhỏ, bảo đó là "móc để câu người về". Cô xâu nó bằng dây gai và đeo lên cổ.
 
 Mỗi sáng, cô ra bến xem người lớn đẩy thuyền ra khơi. Cô thích giờ ấy nhất: sương phủ mặt sông, mặt nước chưa có ánh vàng mà chỉ ánh bạc. Cô cầm một cành tre, đứng ở mép bến, chém vào sương. Ông Neo nhìn thấy, cười: "Chém sương thì sương có đứt đâu, con." Cô đáp: "Cháu chém tới khi nó đứt."
 
 ## 2. Biến cố
 
-Mùa đông năm NS 1339, Cát xin ông Neo cho đi một chuyến thuyền đánh cá đêm cùng đoàn. Sương Mai cũng muốn đi. Đêm trước ngày đi, cô lên cơn sốt. Bà Sen giữ cô ở nhà.
+Mùa đông năm NS 1339, Cò muốn đi đánh cá đêm như anh Khải, cậu con trai lớn nhà bên vẫn theo bố ra khơi. Ông Neo không cho. Cò rủ Sương Mai lén theo một thuyền khác của làng. Đêm trước ngày đi, cô lên cơn sốt. Bà Sen giữ cô ở nhà.
 
-Đêm ấy có giông. Mấy chiếc thuyền của Làng Vạn Lưới không về. Chiếc của ông Neo về được, nhưng không có Cát. Ông Neo kể rằng một con sóng lớn đã cuốn cậu bé khỏi mạn thuyền trong chớp mắt. Sương Mai nằm trong nhà, nghe tiếng giông, ước một câu: "Cát về đi." Cát không về.
+Đêm ấy có giông. Mấy chiếc thuyền của Làng Vạn Lưới không về. Chiếc của ông Neo về được. Chiếc mà Cò lén trèo lên thì không. Sáng hôm sau ông Neo mới biết con mình không nằm trong nhà. Sương Mai nằm trong nhà, nghe tiếng giông, ước một câu: "Cò về đi." Cò không về.
 
 Mấy hôm sau là Tết Sao Rơi NS 1340. Cả đảo gõ trống đồng và ước chung một lời: mong người đi biển trở về. Sương Mai đứng ở Bãi Sao Rơi cạnh ông Neo, nắm chặt chiếc móc câu đồng. Năm nào sau hồi trống cũng có sao rơi. Năm ấy không có. Ông Neo đứng tới sáng. Cô đứng cạnh ông tới sáng.
 
@@ -46,6 +46,6 @@ Một đêm cuối năm NS 1348, Sương Mai đi tuần về muộn qua Làng V�
 
 Cô biết Hội Mặt Nạ đang hoạt động quanh đảo. Lệ nghề hộ vệ là thấy gì báo nấy. Cô đã viết bản báo cáo ấy trong đầu không biết bao nhiêu lần. Cô chưa viết nó ra giấy.
 
-Cô nói với mình rằng chưa đủ chứng cứ. Một ông già khắc mặt nạ gỗ thì có gì lạ. Nhưng cô biết đó không phải lý do. Lý do là ông Neo là người cuối cùng còn nhớ Cát như cô nhớ. Nếu cô báo, cô sẽ mất cả hai người.
+Cô nói với mình rằng chưa đủ chứng cứ. Một ông già khắc mặt nạ gỗ thì có gì lạ. Nhưng cô biết đó không phải lý do. Lý do là ông Neo là người cuối cùng còn nhớ Cò như cô nhớ. Nếu cô báo, cô sẽ mất cả hai người.
 
-Có một điều nữa cô chưa nói với ai, kể cả mẹ. Đêm có giông năm ấy, cơn sốt của cô không nặng như mẹ nghĩ. Cô đã có thể đi. Cô ở nhà vì sợ biển đêm. Mười năm nay, mỗi nhát kiếm buổi sáng là một lần cô tự hỏi, nếu hôm ấy cô có mặt trên thuyền, Cát có còn không.
+Có một điều nữa cô chưa nói với ai, kể cả mẹ. Đêm có giông năm ấy, cơn sốt của cô không nặng như mẹ nghĩ. Cô đã có thể đi. Cô ở nhà vì sợ biển đêm. Mười năm nay, mỗi nhát kiếm buổi sáng là một lần cô tự hỏi, nếu hôm ấy cô có mặt trên thuyền, Cò có còn không.

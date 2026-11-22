@@ -25,7 +25,7 @@ Viết từ góc nhìn Lạc Hồng. Quan hệ với nhân vật của S04, S05 
 ### Lôi Đình: đối thủ ở bến đua (cần khớp, S04)
 
 - **Quan hệ:** đối thủ thân thiết. Hai người hay tranh xem ai tới chỗ có chuyện trước, người của Đình hay Đội Giông của Quân Trấn Thủ.
-- **Kỷ niệm:** Hội Đua Thuyền Vạn Lưới năm NS 1346, Hội Đồng và Quân Trấn Thủ ghép chung một thuyền để làm gương "hai bên đoàn kết". Lạc Hồng và Lôi Đình ngồi hai mái chèo đầu, mỗi người chèo theo một nhịp. Thuyền lật ngay trước vạch đích. Cả hai bơi vào bờ, không ai nhận lỗi. Năm sau, họ tự tập riêng với nhau ba tháng, và về thứ hai.
+- **Kỷ niệm:** Hội Đua Thuyền Vạn Lưới năm NS 1346, Hội Đồng và Quân Trấn Thủ ghép chung một thuyền để làm gương "hai bên đoàn kết". Lạc Hồng và Lôi Đình ngồi hai mái chèo đầu, mỗi người chèo theo một nhịp. Thuyền lật ngay trước vạch đích. Cả hai bơi vào bờ, không ai nhận lỗi. Năm sau, họ tự tập riêng với nhau ba tháng, và về thứ hai. Mùa Hội Vạn Đăng NS 1349, Lính Mặt Nạ Trắng phá đèn ở Phố Vạn Đăng; anh từ Đình, Lôi Đình từ Trại Bắc, tới cùng một lúc. Đánh xong, hai người ngồi ăn Bánh Trống ở chợ đêm và vẫn cãi xem ai tới trước.
 - **Bây giờ:** gọi nhau bằng tên trần. Khi trang trọng, anh gọi "Đội trưởng Lôi Đình". Anh ghen tị một chút vì Lôi Đình biết rõ ai trao thương cho mình (Aianga, trong một trận đua giông), còn anh thì không chắc ai đã cho mình sức mạnh.
 
 ### Thạch Sơn: người khắc tên mẹ anh (cần khớp, S05)
