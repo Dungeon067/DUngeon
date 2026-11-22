@@ -4,7 +4,7 @@ import { BURSTDESC, CHARS, EL, SKILLDESC, WEAP, byId } from "../../../data/conte
 import { MENU } from "../../../data/menu-content";
 import { affinityLevel, affinityNext, hasProfile, loadProfile, sectionLevel } from "../../../data/profiles";
 import { Server, lvCost, statsOf } from "../../../server/server";
-import { button, charCard, elementBadge, h, progress, stars, tabs, tag, toast } from "../../ds";
+import { button, charCard, elementBadge, h, progress, stars, tabs, tag } from "../../ds";
 import { blocksEl, sectionsEl, typewriter } from "../md";
 import { registerScreen, rerender } from "../shell";
 
@@ -244,7 +244,6 @@ function kit(t: string, d: string) {
 function lvUp(id: string, times: number) {
   const r = Server.req("levelUp", { id, times });
   if (r.ok) rerender();
-  else toast(r.error ?? "Không lên cấp được", "warn");
 }
 
 registerScreen("chars", {
