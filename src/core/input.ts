@@ -6,32 +6,32 @@ import { switchTo } from "../entities/party";
 import { doInteract } from "../modes/world";
 import { pause, resume } from "../ui/modal";
 
-export const keys = {};
-export const joy = { x: 0, y: 0, active: false, id: null, ox: 0, oy: 0 };
+export const keys: any = {};
+export const joy: any = { x: 0, y: 0, active: false, id: null, ox: 0, oy: 0 };
 // joystick
 export const jz = $("joyZone"),
   jEl = $("joy"),
   jK = $("joyKnob");
-export const jEnd = (e) => {
+export const jEnd = (e: any) => {
   if (e.pointerId !== joy.id) return;
   joy.active = false;
   joy.x = 0;
   joy.y = 0;
   jEl.style.display = "none";
 };
-export function holdBtn(el, down, up) {
-  el.addEventListener("pointerdown", (e) => {
+export function holdBtn(el: HTMLElement, down: () => void, up?: () => void) {
+  el.addEventListener("pointerdown", (e: any) => {
     e.preventDefault();
     el.setPointerCapture(e.pointerId);
     down();
   });
   el.addEventListener("pointerup", () => up && up());
   el.addEventListener("pointercancel", () => up && up());
-  el.addEventListener("contextmenu", (e) => e.preventDefault());
+  el.addEventListener("contextmenu", (e: any) => e.preventDefault());
 }
 
 export function init(): void {
-  addEventListener("keydown", (e) => {
+  addEventListener("keydown", (e: any) => {
     const k = e.key.toLowerCase();
     if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
     if (GS.scene === "play" && !GS.paused) {
@@ -63,7 +63,7 @@ export function init(): void {
     GS.holdDash = false;
     if (GS.scene === "play" && !GS.paused && GS.G && !GS.G.over) pause();
   });
-  cv.addEventListener("pointerdown", (e) => {
+  cv.addEventListener("pointerdown", (e: PointerEvent) => {
     if (GS.scene === "play" && e.pointerType === "mouse") {
       GS.holdAtk = true;
     }

@@ -13,7 +13,7 @@ import { init as initAdmin } from "./ui/admin";
 /* =========================================================
    BOOT
    ========================================================= */
-function start(data) {
+function start(data: any) {
   Server.load();
   if (data && data.P) Server.P = data.P;
   go("hub");
@@ -22,7 +22,7 @@ function start(data) {
     document.fonts.ready.then(() => {
       for (const k in portraitCache) delete portraitCache[k];
       if (GS.scene === "menu") {
-        const vis = [...document.querySelectorAll(".screen")].find((s) => !s.hidden);
+        const vis = [...document.querySelectorAll(".screen")].find((s: any) => !s.hidden);
         if (vis === $("sHub")) renderHub();
       }
     });

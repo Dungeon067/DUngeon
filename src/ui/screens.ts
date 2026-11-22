@@ -38,7 +38,7 @@ export function exitToMenu(screen = "hub") {
 /* =========================================================
    MENU SCREENS
    ========================================================= */
-export const SCREENS = {
+export const SCREENS: any = {
   hub: "sHub",
   wish: "sWish",
   chars: "sChars",
@@ -48,15 +48,15 @@ export const SCREENS = {
   server: "sServer",
   help: "sHelp",
 };
-export function go(name) {
+export function go(name: string) {
   if (name === "world") {
     startWorld();
     return;
   }
-  document.querySelectorAll(".screen").forEach((s) => (s.hidden = true));
+  document.querySelectorAll(".screen").forEach((s: any) => (s.hidden = true));
   $(SCREENS[name]).hidden = false;
   $(SCREENS[name]).scrollTop = 0;
-  ({
+  (<Record<string, () => void>>{
     hub: renderHub,
     wish: renderWish,
     chars: renderChars,
@@ -77,31 +77,31 @@ export function updateWallets() {
   $("wHub").innerHTML = h;
   document.querySelectorAll(".wl").forEach((w) => (w.innerHTML = h));
 }
-export function headCanvas(id, size = 60) {
+export function headCanvas(id: string, size = 60) {
   const c = document.createElement("canvas");
   c.width = c.height = size;
-  c.getContext("2d").drawImage(portrait(id, size, size, "head"), 0, 0);
+  c.getContext("2d")!.drawImage(portrait(id, size, size, "head"), 0, 0);
   return c;
 }
 export function renderHub() {
   const box = $("hubParty");
   box.innerHTML = "";
-  Server.P.party.forEach((id) => {
+  Server.P.party.forEach((id: string) => {
     const d = document.createElement("span");
     d.className = "pchip";
     d.appendChild(headCanvas(id, 60));
     d.insertAdjacentHTML("beforeend", `${esc(byId[id].name)} <span class="muted">Lv${statsOf(id).lv}</span>`);
     box.appendChild(d);
   });
-  const dl = Server.P.daily,
-    ready = dl.tasks.filter((t) => t.prog >= t.goal && !t.claimed).length;
+  const dl = Server.P.daily!,
+    ready = dl.tasks.filter((t: any) => t.prog >= t.goal && !t.claimed).length;
   const db = $("dailyBtn");
   db.querySelector(".badge")?.remove();
   if (ready) db.insertAdjacentHTML("beforeend", `<span class="badge">${ready}</span>`);
 }
 
 export function init(): void {
-  document.querySelectorAll("[data-go]").forEach((b) => b.addEventListener("click", () => go(b.dataset.go)));
+  document.querySelectorAll("[data-go]").forEach((b: any) => b.addEventListener("click", () => go(b.dataset.go)));
   document.querySelectorAll(".back").forEach((b) => b.addEventListener("click", () => go("hub")));
   $("sndBtn").addEventListener("click", () => {
     GS.soundOn = !GS.soundOn;

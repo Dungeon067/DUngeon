@@ -4,7 +4,7 @@ import { ctx } from "../core/canvas";
 import { rgba, shade } from "../core/util";
 import { EL } from "../data/content";
 
-export function drawCine(tm) {
+export function drawCine(tm: number) {
   const c = GS.G.cine,
     m = c.m,
     k = 1 - c.t / c.max,

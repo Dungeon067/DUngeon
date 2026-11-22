@@ -18,7 +18,7 @@ export function resume() {
   closeModal();
   GS.paused = false;
 }
-export function openModal(html) {
+export function openModal(html: string) {
   $("modalBox").innerHTML = html;
   $("modal").hidden = false;
   GS.paused = true;
@@ -28,7 +28,7 @@ export function closeModal() {
 }
 
 export function init(): void {
-  $("modal").addEventListener("click", (e) => {
+  $("modal").addEventListener("click", (e: any) => {
     const a = e.target.closest("[data-act]");
     if (!a) return;
     const act = a.dataset.act;

@@ -6,7 +6,7 @@ import { fxBolt, fxBurst, fxRing, fxSlash } from "../entities/fx";
 import { cur } from "../entities/party";
 import { blocked, moveC } from "../world/collision";
 
-export function makeEnemy(type, x, y, lv, el) {
+export function makeEnemy(type: string, x: number, y: number, lv: number, el?: string | null) {
   const T = ENEMY[type],
     hpM = 1 + 0.5 * (lv - 1),
     atkM = 1 + 0.28 * (lv - 1);
@@ -49,7 +49,7 @@ export function makeEnemy(type, x, y, lv, el) {
 /* =========================================================
    ENEMY AI
    ========================================================= */
-export function updateEnemy(e, dt) {
+export function updateEnemy(e: any, dt: number) {
   const p = GS.G.p,
     T = ENEMY[e.type];
   e.flash -= dt;
@@ -177,7 +177,7 @@ export function updateEnemy(e, dt) {
     }
   }
 }
-export function inArc(px, py, tl) {
+export function inArc(px: number, py: number, tl: any) {
   const d = dist(tl.x, tl.y, px, py);
   if (d > tl.r + 10) return false;
   let da = Math.atan2(py - tl.y, px - tl.x) - tl.ang;
@@ -185,7 +185,7 @@ export function inArc(px, py, tl) {
   while (da < -Math.PI) da += TAU;
   return Math.abs(da) < tl.arc;
 }
-export function resolveTele(e, tl) {
+export function resolveTele(e: any, tl: any) {
   const p = GS.G.p;
   if (tl.kind === "arc") {
     e.swing = 1;

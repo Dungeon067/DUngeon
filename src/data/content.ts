@@ -1,6 +1,6 @@
 import config from "../../content/config.yaml";
 import { validateContent } from "./schema";
-import type { Character } from "./schema";
+import type { Character, Config, EnemyDef } from "./schema";
 
 const characters = import.meta.glob<unknown>("../../content/characters/*.yaml", { eager: true, import: "default" });
 const enemies = import.meta.glob<unknown>("../../content/enemies/*.yaml", { eager: true, import: "default" });
@@ -12,8 +12,10 @@ const fillPct = (t: string) => (m: number) => t.replace("{pct}", String(Math.rou
 const mapValues = <T, U>(o: Record<string, T>, f: (v: T) => U): Record<string, U> =>
   Object.fromEntries(Object.entries(o).map(([k, v]) => [k, f(v)]));
 
-export const EL = C.elements;
-export const WEAP = C.weapons;
+export type ElementDef = Config["elements"]["fire"];
+export type WeaponDef = Config["weapons"]["sword"];
+export const EL: Record<string, ElementDef> = C.elements;
+export const WEAP: Record<string, WeaponDef> = C.weapons;
 export const SKILLDESC = mapValues(C.skillDesc, fillPct);
 export const BURSTDESC = mapValues(C.burstDesc, fillPct);
 export const CHARS: Character[] = CONTENT.characters;
@@ -22,6 +24,6 @@ export const ITEMS3 = C.items3;
 export const DEFAULT_CFG = C.gacha;
 export const START_PROFILE = C.startProfile;
 export const DAILY_POOL = C.dailyPool;
-export const ENEMY = Object.fromEntries(C.enemyOrder.map((id) => [id, CONTENT.enemies[id]!]));
+export const ENEMY: Record<string, EnemyDef> = Object.fromEntries(C.enemyOrder.map((id) => [id, CONTENT.enemies[id]!]));
 export const BOSS = CONTENT.boss;
-export const ELS = Object.keys(EL) as (keyof typeof EL)[];
+export const ELS = Object.keys(EL);

@@ -30,16 +30,16 @@ export function genWorld() {
       if (x < 2 || y < 2 || x >= MW - 2 || y >= MH - 2) t = TL.DEEP;
       m[y * MW + x] = t;
     }
-  const set = (x, y, t) => {
+  const set = (x: number, y: number, t: any) => {
     if (x > 1 && y > 1 && x < MW - 2 && y < MH - 2) m[y * MW + x] = t;
   };
-  const get = (x, y) => m[y * MW + x];
+  const get = (x: number, y: number) => m[y * MW + x];
   for (let y = -6; y <= 6; y++)
     for (let x = -6; x <= 6; x++)
       if (x * x + y * y <= 36) set(cx + x, cy + y, hash2(x, y, 2) < 0.07 ? TL.FLOWER : TL.GRASS);
   // POIs: try to put on land at angles
   const poi = [];
-  function landNear(ang, rad) {
+  function landNear(ang: number, rad: number) {
     for (let k = 0; k < 30; k++) {
       const a = ang + (k % 2 ? 1 : -1) * k * 0.05,
         rd = rad - k * 0.6;
@@ -53,7 +53,7 @@ export function genWorld() {
   const statues = [{ x: cx + 2, y: cy - 3 }, landNear(0.6, 30), landNear(2.6, 32), landNear(4.4, 30)];
   const tower = landNear(1.6, 26),
     gate = landNear(5.4, 40);
-  function carve(ax, ay, bx, by, wid) {
+  function carve(ax: number, ay: number, bx: number, by: number, wid: number) {
     let x = ax,
       y = ay;
     let guard = 0;
@@ -84,7 +84,7 @@ export function genWorld() {
     q = [[cx, cy]];
   reach[cy * MW + cx] = 1;
   while (q.length) {
-    const [x, y] = q.pop();
+    const [x, y] = q.pop()!;
     for (const [dx, dy] of [
       [1, 0],
       [-1, 0],
@@ -107,7 +107,7 @@ export function genWorld() {
     s = (s * 16807) % 2147483647;
     return s / 2147483647;
   };
-  const far = (p, list, dmin) => list.every((o) => Math.hypot(o.x - p.x, o.y - p.y) >= dmin);
+  const far = (p: any, list: any, dmin: number) => list.every((o: any) => Math.hypot(o.x - p.x, o.y - p.y) >= dmin);
   const allPoi = [...statues, tower, gate];
   for (let tries = 0; tries < 4000 && camps.length < 22; tries++) {
     const x = 2 + Math.floor(rnd() * (MW - 4)),
@@ -130,9 +130,9 @@ export function genWorld() {
   const mini = document.createElement("canvas");
   mini.width = MW;
   mini.height = MH;
-  const mc = mini.getContext("2d");
+  const mc = mini.getContext("2d")!;
   const id = mc.createImageData(MW, MH);
-  const MC = {
+  const MC: any = {
     0: [70, 130, 80],
     1: [50, 120, 180],
     2: [34, 88, 52],

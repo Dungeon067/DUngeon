@@ -4,19 +4,19 @@ import { GS } from "../core/state";
    SOUND (tiny synth, off by default)
    ========================================================= */
 
-export function sfx(kind) {
+export function sfx(kind: string) {
   if (!GS.soundOn) return;
   try {
-    if (!GS.AC) GS.AC = new (window.AudioContext || window.webkitAudioContext)();
+    if (!GS.AC) GS.AC = new (window.AudioContext || (window as any).webkitAudioContext)();
   } catch (e) {
     return;
   }
   const now = GS.AC.currentTime,
-    o = GS.AC.createOscillator(),
+    o: any = GS.AC.createOscillator(),
     g = GS.AC.createGain();
   o.connect(g);
   g.connect(GS.AC.destination);
-  const S = {
+  const S: any = {
     hit: [220, 90, 0.06, "square", 0.04],
     swing: [500, 200, 0.07, "triangle", 0.03],
     skill: [300, 900, 0.25, "sawtooth", 0.05],

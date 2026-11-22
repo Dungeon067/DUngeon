@@ -9,7 +9,7 @@ export const menuStars = Array.from({ length: 180 }, (_, i) => ({
   s: hash2(i, 3, 3) * 1.6 + 0.3,
   p: hash2(i, 4, 3) * 6,
 }));
-export function drawMenuBg(tm) {
+export function drawMenuBg(tm: number) {
   const g = ctx.createLinearGradient(0, 0, 0, GS.VH);
   g.addColorStop(0, "#0b0f28");
   g.addColorStop(0.6, "#1a1f4a");
@@ -48,7 +48,8 @@ export function drawMenuBg(tm) {
   ctx.fillStyle = "#141a3a";
   ctx.beginPath();
   ctx.moveTo(0, GS.VH);
-  for (let x = 0; x <= GS.VW; x += 20) ctx.lineTo(x, GS.VH * 0.82 + Math.sin(x * 0.006) * 30 + Math.sin(x * 0.017) * 12);
+  for (let x = 0; x <= GS.VW; x += 20)
+    ctx.lineTo(x, GS.VH * 0.82 + Math.sin(x * 0.006) * 30 + Math.sin(x * 0.017) * 12);
   ctx.lineTo(GS.VW, GS.VH);
   ctx.fill();
   ctx.fillStyle = "#0e1230";

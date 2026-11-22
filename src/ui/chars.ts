@@ -16,7 +16,7 @@ export function renderChars() {
   const L = $("clist");
   L.innerHTML = "";
   [...CHARS]
-    .sort((a, b) => !!P.owned[b.id] - !!P.owned[a.id] || b.r - a.r)
+    .sort((a, b) => +!!P.owned[b.id] - +!!P.owned[a.id] || b.r - a.r)
     .forEach((c) => {
       const own = P.owned[c.id];
       const b = document.createElement("button");
@@ -24,7 +24,7 @@ export function renderChars() {
       const cvp = document.createElement("canvas");
       cvp.width = 150;
       cvp.height = 150;
-      cvp.getContext("2d").drawImage(portrait(c.id, 150, 200, "card"), 0, -20);
+      cvp.getContext("2d")!.drawImage(portrait(c.id, 150, 200, "card"), 0, -20);
       b.appendChild(cvp);
       b.insertAdjacentHTML(
         "beforeend",
@@ -50,7 +50,7 @@ export function renderTeamSlots() {
       s.insertAdjacentHTML("beforeend", `<span>${esc(byId[id].name)}</span>`);
       s.title = "Bấm để bỏ khỏi đội";
       s.addEventListener("click", () => {
-        const np = Server.P.party.filter((x) => x !== id);
+        const np = Server.P.party.filter((x: any) => x !== id);
         if (!np.length) return toast("Đội cần ít nhất 1 người");
         Server.req("setParty", { party: np });
         renderChars();
@@ -60,13 +60,13 @@ export function renderTeamSlots() {
   }
 }
 export function renderDetail() {
-  const c = byId[GS.selChar],
+  const c = byId[GS.selChar!],
     P = Server.P,
     own = P.owned[c.id],
     st = statsOf(c.id),
-    box = $("cdetail");
+    box: any = $("cdetail");
   const inParty = P.party.includes(c.id);
-  const cost = own ? lvCost(own.lv) : null;
+  const cost: any = own ? lvCost(own.lv) : null;
   box.innerHTML = `<div class="detail"><div><canvas class="big" width="480" height="640"></canvas></div><div style="display:flex;flex-direction:column;gap:12px;min-width:0">
     <div><div class="eyebrow">${"★".repeat(c.r)} · ${EL[c.el].vi} · ${WEAP[c.w].vi}</div><h2 class="title" style="font-size:36px;margin-top:4px">${esc(c.name)}</h2><div class="muted">${esc(c.title)}</div></div>
     <p class="muted" style="margin:0">${esc(c.desc)}</p>
@@ -85,7 +85,7 @@ export function renderDetail() {
     </div></div></div>`;
   box
     .querySelector("canvas.big")
-    .getContext("2d")
+    .getContext("2d")!
     .drawImage(portrait(c.id, 480, 640, "splash"), 0, 0);
   const b1 = $("lv1"),
     b10 = $("lv10"),

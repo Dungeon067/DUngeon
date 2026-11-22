@@ -5,7 +5,7 @@ import { fxRing } from "../entities/fx";
 import { newSession } from "../entities/party";
 import { endRun, enterPlay, showBanner } from "../modes/session";
 
-export function startTower(floor) {
+export function startTower(floor: number) {
   GS.G = newSession("tower", { floor });
   GS.G.bounds = { x: 0, y: 0, w: 1000, h: 760 };
   GS.G.p.x = 500;
@@ -14,7 +14,7 @@ export function startTower(floor) {
   enterPlay();
   showBanner(`Tầng ${floor}`);
 }
-export function towerWaves(f) {
+export function towerWaves(f: any) {
   const lv = 1 + Math.round(f * 0.75),
     waves = [];
   for (let w = 0; w < 2; w++) {
@@ -40,7 +40,7 @@ export function spawnTowerWave() {
   const T = GS.G.tower,
     w = T.waves[T.wave];
   const B = GS.G.bounds;
-  w.list.forEach((type, i) => {
+  w.list.forEach((type: any, i: number) => {
     const a = (i / w.list.length) * Math.PI + Math.PI;
     const x = B.w / 2 + Math.cos(a) * 300 + rand(-30, 30),
       y = 300 + Math.sin(a) * 160 + rand(-20, 20);
@@ -51,7 +51,7 @@ export function spawnTowerWave() {
   });
   showBanner(`Đợt ${T.wave + 1}/${T.waves.length}`);
 }
-export function towerLogic(dt) {
+export function towerLogic(dt: number) {
   const T = GS.G.tower;
   if (GS.G.over) return;
   T.timeLeft -= dt;
@@ -59,7 +59,7 @@ export function towerLogic(dt) {
     endRun(false, "Hết thời gian");
     return;
   }
-  const alive = GS.G.enemies.some((e) => !e.dead);
+  const alive = GS.G.enemies.some((e: any) => !e.dead);
   if (!alive) {
     T.gap -= dt;
     if (T.gap <= 0) {

@@ -3,7 +3,7 @@ import { BOSS } from "../data/content";
 import { newSession } from "../entities/party";
 import { enterPlay, showBanner } from "../modes/session";
 
-export function startBoss(lv) {
+export function startBoss(lv: number) {
   GS.G = newSession("boss", { lv });
   GS.G.bounds = { x: 0, y: 0, w: 1300, h: 960 };
   GS.G.p.x = 650;
@@ -28,8 +28,8 @@ export function startBoss(lv) {
     vuln: 0,
     ec: null,
     r: BOSS.r,
-    segs: [],
-    trail: [],
+    segs: [] as { x: number; y: number }[],
+    trail: [] as { x: number; y: number }[],
     tele: null,
     act: null,
     isBoss: true,

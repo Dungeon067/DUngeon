@@ -3,7 +3,7 @@ import { ctx } from "../core/canvas";
 import { TAU, rgba, rr } from "../core/util";
 import { EL, ENEMY } from "../data/content";
 
-export function drawTurret(t, tm) {
+export function drawTurret(t: any, tm: number) {
   const col = EL[t.el].c,
     c2 = EL[t.el].c2;
   ctx.fillStyle = "rgba(0,0,0,.25)";
@@ -28,7 +28,7 @@ export function drawTurret(t, tm) {
   if (t.life < 2 && Math.floor(tm * 8) % 2) ctx.globalAlpha = 0.5;
   ctx.globalAlpha = 1;
 }
-export function drawTele(e) {
+export function drawTele(e: any) {
   const tl = e.tele;
   if (!tl) return;
   const k = tl.t / tl.dur;
@@ -76,7 +76,7 @@ export function drawTele(e) {
   }
   ctx.restore();
 }
-export function drawBossTele(b) {
+export function drawBossTele(b: any) {
   const tl = b.tele;
   if (!tl) return;
   const k = b.t / tl.dur;
@@ -116,7 +116,7 @@ export function drawBossTele(b) {
   }
   ctx.restore();
 }
-export function drawEnemyUi(e) {
+export function drawEnemyUi(e: any) {
   const top = e.type === "golem" ? 78 : e.type === "slime" ? 34 : 46;
   if (e.hp < e.maxHp) {
     const w = e.type === "golem" ? 56 : 36;

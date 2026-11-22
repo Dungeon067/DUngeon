@@ -43,13 +43,13 @@ export function render() {
         if (t === TL.TREE) dr.push({ y: (y + 0.85) * TS, f: () => drawTree(x, y, tm) });
         else if (t === TL.ROCK) dr.push({ y: (y + 0.8) * TS, f: () => drawRock(x, y) });
       }
-    const vis = (X, Y) => Math.abs(X - GS.G.cam.x) < hw + 60 && Math.abs(Y - GS.G.cam.y) < hh + 80;
-    W.statues.forEach((s) => {
+    const vis = (X: number, Y: number) => Math.abs(X - GS.G.cam.x) < hw + 60 && Math.abs(Y - GS.G.cam.y) < hh + 80;
+    W.statues.forEach((s: any) => {
       const X = (s.x + 0.5) * TS,
         Y = (s.y + 0.9) * TS;
       if (vis(X, Y)) dr.push({ y: Y, f: () => drawStatue(X, Y, tm) });
     });
-    W.chests.forEach((c, i) => {
+    W.chests.forEach((c: any, i: any) => {
       if (Server.P.chests.includes(i)) return;
       const X = (c.x + 0.5) * TS,
         Y = (c.y + 0.6) * TS;

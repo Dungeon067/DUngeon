@@ -21,7 +21,7 @@ export function startWorld() {
   GS.G.p.y = (s.y + 2.5) * TS;
   GS.G.respawn = { x: GS.G.p.x, y: GS.G.p.y };
   // camps
-  GS.WORLD.camps.forEach((c, i) => {
+  GS.WORLD.camps.forEach((c: any, i: number) => {
     const d = Math.hypot(c.x - GS.WORLD.cx, c.y - GS.WORLD.cy),
       lv = Math.max(1, Math.min(8, 1 + Math.floor((d - 8) / 6)));
     const n = 3 + (i % 3);
@@ -44,20 +44,22 @@ export function startWorld() {
   enterPlay();
   showBanner("Đảo Lạc");
 }
-export function worldLogic(dt) {
+export function worldLogic(dt: number) {
   const p = GS.G.p,
     W = GS.G.map;
   let best = null,
     bd = 60;
-  const check = (x, y, kind, i, label) => {
+  const check = (x: number, y: number, kind: string, i: number, label: string) => {
     const d = dist(p.x, p.y, x, y);
     if (d < bd) {
       bd = d;
       best = { kind, i, label, x, y };
     }
   };
-  W.statues.forEach((s, i) => check((s.x + 0.5) * TS, (s.y + 0.9) * TS, "statue", i, "Bia Đá: hồi phục đội"));
-  W.chests.forEach((c, i) => {
+  W.statues.forEach((s: any, i: number) =>
+    check((s.x + 0.5) * TS, (s.y + 0.9) * TS, "statue", i, "Bia Đá: hồi phục đội"),
+  );
+  W.chests.forEach((c: any, i: any) => {
     if (!Server.P.chests.includes(i)) check((c.x + 0.5) * TS, (c.y + 0.6) * TS, "chest", i, "Mở rương báu");
   });
   check((W.tower.x + 0.5) * TS, (W.tower.y + 0.8) * TS, "tower", 0, "Vào Tháp Tinh Tú");

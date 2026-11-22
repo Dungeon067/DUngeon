@@ -13,7 +13,7 @@ export const TILEC = {
   6: ["#3f7d48"],
   8: ["#8a6440"],
 };
-export function drawTile(x, y, t, tm) {
+export function drawTile(x: number, y: number, t: any, tm: number) {
   const X = x * TS,
     Y = y * TS,
     h = hash2(x, y, 1);
@@ -63,7 +63,7 @@ export function drawTile(x, y, t, tm) {
     ctx.fill();
   }
 }
-export function drawTree(x, y, tm) {
+export function drawTree(x: number, y: number, tm: number) {
   const X = (x + 0.5) * TS,
     Y = (y + 0.85) * TS,
     h = hash2(x, y, 3),
@@ -97,7 +97,7 @@ export function drawTree(x, y, tm) {
     }
   }
 }
-export function drawRock(x, y) {
+export function drawRock(x: number, y: number) {
   const X = (x + 0.5) * TS,
     Y = (y + 0.8) * TS,
     h = hash2(x, y, 4);
@@ -123,7 +123,7 @@ export function drawRock(x, y) {
   ctx.closePath();
   ctx.fill();
 }
-export function drawStatue(X, Y, tm) {
+export function drawStatue(X: number, Y: number, tm: number) {
   ctx.fillStyle = "rgba(0,0,0,.28)";
   ctx.beginPath();
   ctx.ellipse(X, Y, 26, 8, 0, 0, TAU);
@@ -150,7 +150,7 @@ export function drawStatue(X, Y, tm) {
   ctx.fillRect(-5, -5, 10, 10);
   ctx.restore();
 }
-export function drawChest(X, Y, open) {
+export function drawChest(X: number, Y: number, open: any) {
   ctx.fillStyle = "rgba(0,0,0,.25)";
   ctx.beginPath();
   ctx.ellipse(X, Y, 16, 5, 0, 0, TAU);
@@ -174,7 +174,7 @@ export function drawChest(X, Y, open) {
     ctx.fill();
   }
 }
-export function drawPortal(X, Y, tm, col, label) {
+export function drawPortal(X: number, Y: number, tm: number, col: string, label: string) {
   ctx.save();
   ctx.translate(X, Y - 34);
   ctx.fillStyle = "rgba(0,0,0,.3)";
@@ -210,7 +210,7 @@ export function drawPortal(X, Y, tm, col, label) {
   ctx.fillText(label, 0, -58);
   ctx.restore();
 }
-export function drawArena(tm) {
+export function drawArena(tm: number) {
   const B = GS.G.bounds,
     boss = GS.G.mode === "boss";
   ctx.fillStyle = boss ? "#132038" : "#1b1f3e";

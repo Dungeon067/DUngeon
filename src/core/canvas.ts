@@ -4,8 +4,8 @@ import { $, clamp } from "../core/util";
 /* =========================================================
    GAME STATE
    ========================================================= */
-export const cv = $("game"),
-  ctx = cv.getContext("2d");
+export const cv: any = $("game"),
+  ctx = cv.getContext("2d")!;
 export function resize() {
   GS.DPR = Math.min(2, window.devicePixelRatio || 1);
   GS.VW = window.innerWidth;

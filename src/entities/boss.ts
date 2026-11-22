@@ -7,7 +7,7 @@ import { fxBolt, fxBurst, fxRing, later } from "../entities/fx";
 import { endRun, showBanner } from "../modes/session";
 
 /* ---------- boss ---------- */
-export function updateBoss(b, dt) {
+export function updateBoss(b: any, dt: number) {
   const p = GS.G.p;
   b.flash -= dt;
   if (b.auraT > 0) {

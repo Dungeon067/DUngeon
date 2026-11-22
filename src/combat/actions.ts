@@ -24,7 +24,7 @@ export function tryAttack() {
     el = m.c.w === "cat" || step === 2 ? m.c.el : null,
     mult = W.mult[step];
   if (W.kind === "melee") {
-    fxSlash(p.x, p.y - 16, ang, W.range, el ? EL[el].c : "#ffffff", m.c.w);
+    fxSlash(p.x, p.y - 16, ang, W.range!, el ? EL[el].c : "#ffffff", m.c.w);
     p.x += Math.cos(ang) * 4;
     p.y += Math.sin(ang) * 4;
     for (const e of GS.G.enemies) {
@@ -36,7 +36,7 @@ export function tryAttack() {
       let da = Math.atan2(ey - (p.y - 12), ex - p.x) - ang;
       while (da > Math.PI) da -= TAU;
       while (da < -Math.PI) da += TAU;
-      if (Math.abs(da) > W.arc && d > e.r + 10) continue;
+      if (Math.abs(da) > W.arc! && d > e.r + 10) continue;
       hitEnemy(e, m, mult, el, { ang, kb: m.c.w === "great" ? 160 : 70 });
     }
     sfx("swing");
@@ -147,7 +147,7 @@ export function castBurst() {
   sfx("burst");
   GS.G.cine = { t: 0.95, max: 0.95, m, fire: () => doBurst(m) };
 }
-export function doBurst(m) {
+export function doBurst(m: any) {
   const p = GS.G.p,
     B = m.c.burst,
     el = m.c.el,
@@ -165,7 +165,7 @@ export function doBurst(m) {
     for (let i = 0; i < 10; i++)
       later(i * 0.2, () => {
         let tg = nearestEnemy(p.x, p.y, 340);
-        const alive = GS.G.enemies.filter((e) => !e.dead && dist(p.x, p.y, e.x, e.y) < 340);
+        const alive = GS.G.enemies.filter((e: any) => !e.dead && dist(p.x, p.y, e.x, e.y) < 340);
         if (alive.length) tg = pick(alive);
         const x = tg ? tg.x + rand(-10, 10) : p.x + rand(-200, 200),
           y = tg ? tg.y + rand(-6, 6) : p.y + rand(-150, 150);

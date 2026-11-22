@@ -4,13 +4,13 @@ import { TAU, rand } from "../core/util";
 /* =========================================================
    FX
    ========================================================= */
-export function fxText(x, y, txt, col, size = 16, crit = false) {
+export function fxText(x: number, y: number, txt: string, col: string, size = 16, crit = false) {
   GS.G.texts.push({ x: x + rand(-8, 8), y, txt, col, size: crit ? size * 1.35 : size, life: 0.9, max: 0.9, vy: -55 });
 }
-export function fxRing(x, y, r, col, life = 0.35, w = 4) {
+export function fxRing(x: number, y: number, r: number, col: string, life = 0.35, w = 4) {
   GS.G.fx.push({ k: "ring", x, y, r, col, life, max: life, w });
 }
-export function fxBurst(x, y, col, n = 10, sp = 140, size = 3) {
+export function fxBurst(x: number, y: number, col: string, n = 10, sp = 140, size = 3) {
   for (let i = 0; i < n; i++) {
     const a = rand(0, TAU),
       v = rand(sp * 0.3, sp);
@@ -27,7 +27,7 @@ export function fxBurst(x, y, col, n = 10, sp = 140, size = 3) {
     });
   }
 }
-export function fxSlash(x, y, ang, range, col, w) {
+export function fxSlash(x: number, y: number, ang: number, range: number, col: string, w: any) {
   GS.G.fx.push({
     k: "slash",
     x,
@@ -41,9 +41,9 @@ export function fxSlash(x, y, ang, range, col, w) {
     arc: w === "spear" ? 0.35 : 1.1,
   });
 }
-export function fxBolt(x, y, col) {
+export function fxBolt(x: number, y: number, col: string) {
   GS.G.fx.push({ k: "bolt", x, y, col, life: 0.25, max: 0.25, seed: Math.random() * 100 });
 }
-export function later(t, fn) {
+export function later(t: any, fn: any) {
   GS.G.later.push({ t, fn });
 }

@@ -42,7 +42,9 @@ test("mở game, đánh quái, ước 10 lần, vào Tháp, vào Boss, không l�
   // Đánh quái: đưa người chơi tới cạnh con quái gần nhất rồi giữ chuột để chém
   const hp0 = await page.evaluate(() => {
     const G = window.__tinhtu.S.G;
-    const e = G.enemies.filter((x: any) => !x.dead).sort((a: any, b: any) => Math.hypot(a.x - G.p.x, a.y - G.p.y) - Math.hypot(b.x - G.p.x, b.y - G.p.y))[0];
+    const e = G.enemies
+      .filter((x: any) => !x.dead)
+      .sort((a: any, b: any) => Math.hypot(a.x - G.p.x, a.y - G.p.y) - Math.hypot(b.x - G.p.x, b.y - G.p.y))[0];
     G.p.x = e.x;
     G.p.y = e.y + e.r + 18;
     G.__target = e;

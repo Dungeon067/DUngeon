@@ -5,10 +5,10 @@ import { dist, rand } from "../core/util";
 import { EL } from "../data/content";
 import { fxBurst, fxRing, fxText, later } from "../entities/fx";
 
-export function applyElement(e, el, m) {
+export function applyElement(e: any, el: string, m: any) {
   if (!el) return { mult: 1 };
   const a = e.aura;
-  const react = (name, col) => {
+  const react = (name: string, col: string) => {
     GS.G.pending.react++;
     fxText(e.x, e.y - (e.isBoss ? 80 : 44), name, col, 15);
     sfx("react");
@@ -36,7 +36,7 @@ export function applyElement(e, el, m) {
   }
   e.aura = null;
   const pair = new Set([a, el]);
-  const has = (x, y) => pair.has(x) && pair.has(y);
+  const has = (x: string, y: string) => pair.has(x) && pair.has(y);
   if (has("fire", "water")) {
     react("Bốc Hơi", "#ffb27a");
     return { mult: el === "water" ? 2 : 1.5 };
@@ -95,7 +95,7 @@ export function applyElement(e, el, m) {
   e.auraT = 7;
   return { mult: 1 };
 }
-export function swirl(e, el, m) {
+export function swirl(e: any, el: string, m: any) {
   later(0, () => {
     fxRing(e.x, e.y - 10, 110, EL[el].c, 0.45, 7);
     fxBurst(e.x, e.y - 12, EL[el].c, 14, 200);

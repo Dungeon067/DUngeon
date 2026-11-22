@@ -14,17 +14,17 @@ export function renderWish() {
   $("featName").textContent = f.name;
   $("featTitle").textContent = `${f.title} · ${EL[f.el].vi} · ${WEAP[f.w].vi}`;
   $("featDesc").textContent = f.desc;
-  $("p5").textContent = P.pity5;
-  $("hp").textContent = cfg.hard;
-  $("p4").textContent = P.pity4;
+  $("p5").textContent = String(P.pity5);
+  $("hp").textContent = String(cfg.hard);
+  $("p4").textContent = String(P.pity4);
   $("guar").innerHTML = P.guaranteed
     ? `<b style="color:var(--gold)">Lần 5★ tiếp theo chắc chắn là ${esc(f.name)}</b>`
     : `<span>Khi ra 5★: 50% là ${esc(f.name)}, lệch thì lần sau chắc chắn.</span>`;
   $("c1").textContent = fmt(cfg.cost);
   $("c10").textContent = fmt(cfg.cost * 10);
-  $("pull1").disabled = P.gems < cfg.cost;
-  $("pull10").disabled = P.gems < cfg.cost * 10;
-  const ctx2 = $("featArt").getContext("2d");
+  $<HTMLButtonElement>("pull1").disabled = P.gems < cfg.cost;
+  $<HTMLButtonElement>("pull10").disabled = P.gems < cfg.cost * 10;
+  const ctx2 = $<HTMLCanvasElement>("featArt").getContext("2d")!;
   ctx2.drawImage(portrait(f.id, 600, 600, "splash"), 0, 0);
   $("rateTxt").innerHTML =
     `5★: ${cfg.rate5}% (tăng dần từ lần ${cfg.soft}, chắc chắn ở lần ${cfg.hard})<br>4★: ${cfg.rate4}% (chắc chắn mỗi 10 lần)<br>3★: phần còn lại, mỗi vật phẩm 3★ đổi thành 500 Xu.<br>Trùng nhân vật: +1 cung mệnh (tối đa C6, mỗi cung +10% máu và tấn công).`;
@@ -32,29 +32,29 @@ export function renderWish() {
     ? P.history
         .slice(0, 40)
         .map(
-          (h) =>
+          (h: any) =>
             `<div><span class="r${h.r}t">${"★".repeat(h.r)} ${esc(h.n)}</span><span class="muted">${new Date(h.t).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" })}</span></div>`,
         )
         .join("")
     : `<span class="muted">Chưa có lần ước nào.</span>`;
 }
-export function doPull(n) {
+export function doPull(n: number) {
   const r = Server.req("pull", { count: n });
   if (!r.ok) return;
   updateWallets();
   playWish(r.data);
 }
 /* ---------- wish animation ---------- */
-export const WF = { on: false, list: [], phase: "", t: 0, idx: 0 };
-export const wcv = $("wishCv"),
-  wctx = wcv.getContext("2d");
-export function playWish(list) {
+export const WF: any = { on: false, list: [], phase: "", t: 0, idx: 0 };
+export const wcv: any = $("wishCv"),
+  wctx = wcv.getContext("2d")!;
+export function playWish(list: any) {
   WF.list = list;
   WF.phase = "fall";
   WF.t = 0;
   WF.idx = 0;
   WF.on = true;
-  WF.best = Math.max(...list.map((x) => x.r));
+  WF.best = Math.max(...list.map((x: any) => x.r));
   $("wishFx").hidden = false;
   sizeWish();
   sfx("star" + WF.best);
@@ -66,8 +66,8 @@ export function sizeWish() {
   wcv.height = innerHeight * d;
   WF.d = d;
 }
-export const RCOL = { 3: "#7fb0e0", 4: "#b48cff", 5: "#ffd06a" };
-export function wishFrame(now) {
+export const RCOL: any = { 3: "#7fb0e0", 4: "#b48cff", 5: "#ffd06a" };
+export function wishFrame(now: number) {
   if (!WF.on) return;
   const dt = 1 / 60;
   WF.t += dt;
@@ -227,7 +227,7 @@ export function wishFrame(now) {
       ch = cw * 1.45;
     const ox = (W - (cw + 8) * cols + 8) / 2,
       oy = Math.max(70, (H - (ch + 10) * rows) / 2);
-    WF.list.forEach((it, i) => {
+    WF.list.forEach((it: any, i: number) => {
       const x = ox + (i % cols) * (cw + 8),
         y = oy + Math.floor(i / cols) * (ch + 10);
       const a = clamp((WF.t - i * 0.05) / 0.25, 0, 1);
@@ -265,7 +265,7 @@ export function closeWish() {
 export function init(): void {
   $("pull1").addEventListener("click", () => doPull(1));
   $("pull10").addEventListener("click", () => doPull(10));
-  $("wishFx").addEventListener("pointerdown", (e) => {
+  $("wishFx").addEventListener("pointerdown", (e: any) => {
     if (e.target.id === "wishSkip") return;
     if (WF.phase === "fall") {
       if (WF.t > 0.4) {

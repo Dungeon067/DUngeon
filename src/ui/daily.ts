@@ -5,12 +5,12 @@ import { toast } from "../ui/toast";
 
 export function renderDaily() {
   Server.ensureDaily();
-  const d = Server.P.daily,
+  const d = Server.P.daily!,
     box = $("tasks");
   $("dailyDate").textContent =
     `Ngày ${new Date().toLocaleDateString("vi-VN")} · Mỗi nhiệm vụ: 30 Đá Sao và 3.000 Xu · Hoàn thành cả 4: thêm 60 Đá Sao và 5 Sách KN`;
   box.innerHTML = "";
-  d.tasks.forEach((t, i) => {
+  d.tasks.forEach((t: any, i: number) => {
     const done = t.prog >= t.goal;
     const el = document.createElement("div");
     el.className = "task";
@@ -29,7 +29,7 @@ export function renderDaily() {
     el.appendChild(b);
     box.appendChild(el);
   });
-  const all = d.tasks.every((t) => t.claimed);
+  const all = d.tasks.every((t: any) => t.claimed);
   const el = document.createElement("div");
   el.className = "task";
   el.innerHTML = `<div class="tt"><b>Thưởng hoàn thành ngày</b><div class="muted">60 Đá Sao, 5 Sách KN</div></div>`;

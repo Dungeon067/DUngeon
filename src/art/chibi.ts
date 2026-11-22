@@ -5,7 +5,7 @@ import { EL, byId } from "../data/content";
 /* =========================================================
    ART: procedural chibi characters, enemies, portraits
    ========================================================= */
-export function drawBackHair(ctx, L) {
+export function drawBackHair(ctx: CanvasRenderingContext2D, L: any) {
   ctx.fillStyle = shade(L.hair, -0.12);
   if (L.style === "long") {
     rr(ctx, -11.5, -36, 23, 27, 8);
@@ -22,7 +22,7 @@ export function drawBackHair(ctx, L) {
     ctx.fill();
   }
 }
-export function drawWeapon(ctx, c, L, t) {
+export function drawWeapon(ctx: CanvasRenderingContext2D, c: any, L: any, t: any) {
   const w = c.w,
     acc = L.accent,
     el = EL[c.el].c;
@@ -78,7 +78,7 @@ export function drawWeapon(ctx, c, L, t) {
     ctx.stroke();
   }
 }
-export function drawCatalyst(ctx, c, t) {
+export function drawCatalyst(ctx: CanvasRenderingContext2D, c: any, t: any) {
   const el = EL[c.el];
   const y = -34 + Math.sin(t * 3) * 2;
   const g = ctx.createRadialGradient(13, y, 0, 13, y, 9);
@@ -96,7 +96,7 @@ export function drawCatalyst(ctx, c, t) {
   ctx.restore();
 }
 /* Chibi: ~44 units tall, feet at (0,0). o: {fx,back,walk,moving,atk,t,flash,noShadow} */
-export function drawChibi(ctx, c, x, y, s, o = {}) {
+export function drawChibi(ctx: CanvasRenderingContext2D, c: any, x: number, y: number, s: any, o: any = {}) {
   const L = c.look,
     fx = o.fx || 1,
     back = !!o.back,
@@ -320,18 +320,18 @@ export function drawChibi(ctx, c, x, y, s, o = {}) {
   ctx.restore();
   ctx.restore();
 }
-export const portraitCache = {};
-export function portrait(id, w, h, kind = "card") {
+export const portraitCache: any = {};
+export function portrait(id: string, w: number, h: number, kind = "card") {
   const key = id + w + "x" + h + kind;
   if (portraitCache[key]) return portraitCache[key];
   const cv = document.createElement("canvas");
   cv.width = w;
   cv.height = h;
-  paintPortrait(cv.getContext("2d"), byId[id], w, h, kind);
+  paintPortrait(cv.getContext("2d")!, byId[id], w, h, kind);
   portraitCache[key] = cv;
   return cv;
 }
-export function paintPortrait(ctx, c, w, h, kind) {
+export function paintPortrait(ctx: CanvasRenderingContext2D, c: any, w: number, h: number, kind: string) {
   const el = EL[c.el];
   if (kind !== "head") {
     const g = ctx.createLinearGradient(0, 0, w, h);

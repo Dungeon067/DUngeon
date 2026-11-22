@@ -17,7 +17,7 @@ export function renderBossScr() {
     box.appendChild(b);
   }
   // art
-  const c = $("bossArt").getContext("2d"),
+  const c = $<HTMLCanvasElement>("bossArt").getContext("2d")!,
     W = 520,
     H = 360;
   const g = c.createLinearGradient(0, 0, 0, H);
@@ -31,7 +31,7 @@ export function renderBossScr() {
     c.ellipse(hash2(i, 1) * W, 200 + hash2(i, 2) * 150, 80, 16, 0, 0, TAU);
     c.fill();
   }
-  const fake = { segs: [], ang: -0.4, phase: 1, flash: 0 };
+  const fake = { segs: [] as { x: number; y: number }[], ang: -0.4, phase: 1, flash: 0 };
   for (let i = 0; i < 14; i++) {
     const a = i * 0.45;
     fake.segs.push({ x: 300 - i * 22, y: 230 + Math.sin(a) * 40 });
@@ -41,7 +41,7 @@ export function renderBossScr() {
   drawBossWith(c, fake, 1.2);
   c.restore();
 }
-export function drawBossWith(c, b, t) {
+export function drawBossWith(c: any, b: any, t: any) {
   const col = "#1f3f6a",
     acc = EL.water.c;
   for (let i = b.segs.length - 1; i >= 0; i--) {

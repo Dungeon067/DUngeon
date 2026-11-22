@@ -9,14 +9,14 @@ import { openModal } from "../ui/modal";
 export function enterPlay() {
   GS.scene = "play";
   GS.paused = false;
-  document.querySelectorAll(".screen").forEach((s) => (s.hidden = true));
+  document.querySelectorAll(".screen").forEach((s: any) => (s.hidden = true));
   $("hud").hidden = false;
   $("bossBar").hidden = !GS.G.boss;
   if (GS.G.boss) $("bossName").textContent = `Hắc Giao · Cấp độ ${GS.G.boss.lv}`;
   buildHudParty();
   snapCam();
 }
-export function showBanner(t) {
+export function showBanner(t: any) {
   GS.G.banner = { t: 2.2, txt: t };
 }
 export function partyWipe() {
@@ -38,7 +38,7 @@ export function partyWipe() {
     });
   } else endRun(false, "Cả đội đã gục ngã");
 }
-export function endRun(win, reason = "", stars = 0) {
+export function endRun(win: any, reason = "", stars = 0) {
   if (GS.G._ended) return;
   GS.G._ended = true;
   GS.G.over = true;
@@ -63,7 +63,7 @@ export function endRun(win, reason = "", stars = 0) {
   }
   setTimeout(() => openModal(html), win ? 300 : 900);
 }
-export function coinHtml(k, v) {
+export function coinHtml(k: string, v: any) {
   const ic = { gem: "i-gem", coin: "i-coin", book: "i-book" }[k];
   return `<span class="coin"><i class="${ic}"></i>${k === "gem" ? "" : ""}+${fmt(v)} ${k === "gem" ? "Đá Sao" : k === "coin" ? "Xu" : "Sách KN"}</span>`;
 }

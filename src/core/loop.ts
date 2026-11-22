@@ -21,7 +21,7 @@ import { MH, MW, TL, TS } from "../world/map";
    MAIN UPDATE
    ========================================================= */
 
-export function update(dt) {
+export function update(dt: number) {
   if (GS.G.cine) {
     GS.G.cine.t -= dt;
     if (GS.G.cine.t <= 0) {
@@ -136,7 +136,7 @@ export function update(dt) {
       }
     }
   }
-  GS.G.enemies = GS.G.enemies.filter((e) => !e.dead || e.isBoss);
+  GS.G.enemies = GS.G.enemies.filter((e: any) => !e.dead || e.isBoss);
   // projectiles
   for (const pr of GS.G.projs) {
     pr.life -= dt;
@@ -185,7 +185,7 @@ export function update(dt) {
           size: pr.r * 0.5,
         });
   }
-  GS.G.projs = GS.G.projs.filter((x) => x.life > 0);
+  GS.G.projs = GS.G.projs.filter((x: any) => x.life > 0);
   // turrets
   for (const t of GS.G.turrets) {
     t.life -= dt;
@@ -213,7 +213,7 @@ export function update(dt) {
       } else t.cd = 0.3;
     }
   }
-  GS.G.turrets = GS.G.turrets.filter((t) => t.life > 0);
+  GS.G.turrets = GS.G.turrets.filter((t: any) => t.life > 0);
   // fields
   for (const f of GS.G.fields) {
     f.life -= dt;
@@ -252,7 +252,7 @@ export function update(dt) {
         size: rand(2, 4),
       });
   }
-  GS.G.fields = GS.G.fields.filter((f) => f.life > 0);
+  GS.G.fields = GS.G.fields.filter((f: any) => f.life > 0);
   // pickups
   for (const k of GS.G.pickups) {
     k.t -= dt;
@@ -286,7 +286,7 @@ export function update(dt) {
       }
     }
   }
-  GS.G.pickups = GS.G.pickups.filter((k) => k.t > 0);
+  GS.G.pickups = GS.G.pickups.filter((k: any) => k.t > 0);
   // fx
   for (const f of GS.G.fx) {
     f.life -= dt;
@@ -296,13 +296,13 @@ export function update(dt) {
       f.vy += 200 * dt;
     }
   }
-  GS.G.fx = GS.G.fx.filter((f) => f.life > 0);
+  GS.G.fx = GS.G.fx.filter((f: any) => f.life > 0);
   for (const t of GS.G.texts) {
     t.life -= dt;
     t.y += t.vy * dt;
     t.vy *= Math.pow(0.15, dt);
   }
-  GS.G.texts = GS.G.texts.filter((t) => t.life > 0);
+  GS.G.texts = GS.G.texts.filter((t: any) => t.life > 0);
   if (GS.G.banner.t > 0) GS.G.banner.t -= dt;
   GS.G.shake = Math.max(0, GS.G.shake - dt * 30);
   // mode logic
@@ -346,7 +346,7 @@ export function clampCam() {
    LOOP
    ========================================================= */
 
-export function frame(now) {
+export function frame(now: number) {
   const dt = Math.min(0.05, (now - GS.lastT) / 1000);
   GS.lastT = now;
   try {

@@ -1,9 +1,9 @@
+import type { LogEntry, Profile } from "./types";
 import { fmt, pick, todayKey } from "../core/util";
 import { CHARS, DAILY_POOL, DEFAULT_CFG, ITEMS3, START_PROFILE, byId } from "../data/content";
-import { give } from "../ui/admin";
 import { toast } from "../ui/toast";
 
-export function freshProfile() {
+export function freshProfile(): Profile {
   return {
     v: 2,
     gems: START_PROFILE.gems,
@@ -24,7 +24,7 @@ export function freshProfile() {
     stats: { kills: 0, reacts: 0 },
   };
 }
-export function genDaily(seedKey) {
+export function genDaily(seedKey: string) {
   const pool = DAILY_POOL;
   let s = 0;
   for (const ch of seedKey) s = (s * 31 + ch.charCodeAt(0)) | 0;
@@ -37,8 +37,8 @@ export function genDaily(seedKey) {
   return { date: seedKey, tasks: arr.slice(0, 4).map((t) => ({ ...t, prog: 0, claimed: false })), bonus: false };
 }
 export const Server = {
-  P: null,
-  log: [],
+  P: null as unknown as Profile,
+  log: [] as LogEntry[],
   load() {
     try {
       const s = localStorage.getItem("tinhtu-v2");
@@ -56,15 +56,15 @@ export const Server = {
     const k = todayKey();
     if (!this.P.daily || this.P.daily.date !== k) this.P.daily = genDaily(k);
   },
-  req(action, payload = {}) {
-    const fn = this.routes[action];
+  req(action: string, payload = {}) {
+    const fn = (this.routes as Record<string, (p: any) => any>)[action];
     let res;
     if (!fn) res = { ok: false, error: "Không có lệnh này" };
     else {
       try {
         res = { ok: true, data: fn.call(this, payload) };
         this.save();
-      } catch (e) {
+      } catch (e: any) {
         res = { ok: false, error: e.message };
       }
     }
@@ -75,7 +75,7 @@ export const Server = {
     if (!res.ok) toast(res.error);
     return res;
   },
-  grant(id) {
+  grant(id: string) {
     const P = this.P,
       c = byId[id];
     if (P.owned[id]) {
@@ -126,13 +126,13 @@ export const Server = {
     if (P.history.length > 100) P.history.pop();
     return out;
   },
-  bumpDaily(id, n = 1) {
+  bumpDaily(id: string, n = 1) {
     const d = this.P.daily;
     if (!d) return;
     for (const t of d.tasks) if (t.id === id && !t.claimed) t.prog = Math.min(t.goal, t.prog + n);
   },
   routes: {
-    pull({ count }) {
+    pull(this: any, { count }: any) {
       const n = count === 10 ? 10 : 1,
         P = this.P,
         cost = P.cfg.cost * n;
@@ -143,14 +143,14 @@ export const Server = {
       this.bumpDaily("wish", n);
       return out;
     },
-    setParty({ party }) {
+    setParty(this: any, { party }: any) {
       if (!Array.isArray(party) || party.length < 1 || party.length > 4) throw new Error("Đội cần từ 1 đến 4 người");
       if (party.some((id) => !this.P.owned[id])) throw new Error("Bạn chưa có nhân vật này");
       if (new Set(party).size !== party.length) throw new Error("Nhân vật bị trùng");
       this.P.party = party;
       return party;
     },
-    levelUp({ id, times }) {
+    levelUp(this: any, { id, times }: any) {
       const P = this.P,
         o = P.owned[id];
       if (!o) throw new Error("Bạn chưa có nhân vật này");
@@ -167,14 +167,14 @@ export const Server = {
       if (!n) throw new Error(o.lv >= 60 ? "Đã đạt cấp tối đa" : "Không đủ Sách Kinh Nghiệm hoặc Xu");
       return o.lv;
     },
-    reward({ gems = 0, coin = 0, books = 0 }) {
+    reward(this: any, { gems = 0, coin = 0, books = 0 }) {
       const P = this.P;
       P.gems += Math.max(0, gems | 0);
       P.coin += Math.max(0, coin | 0);
       P.books += Math.max(0, books | 0);
       return true;
     },
-    openChest({ idx }) {
+    openChest(this: any, { idx }: any) {
       const P = this.P;
       if (P.chests.includes(idx)) throw new Error("Rương này đã mở");
       P.chests.push(idx);
@@ -187,7 +187,7 @@ export const Server = {
       this.bumpDaily("chest");
       return { gems: g, coin: c, books: b };
     },
-    towerClear({ floor, stars }) {
+    towerClear(this: any, { floor, stars }: any) {
       const P = this.P,
         old = P.tower[floor] || 0,
         gain = Math.max(0, stars - old);
@@ -201,7 +201,7 @@ export const Server = {
       this.bumpDaily("tower");
       return { gems, coin, books, newStars: gain };
     },
-    bossClear({ lv }) {
+    bossClear(this: any, { lv }: any) {
       const P = this.P,
         first = !P.boss[lv];
       P.boss[lv] = true;
@@ -214,13 +214,13 @@ export const Server = {
       this.bumpDaily("boss");
       return { gems, coin, books, first };
     },
-    progress({ id, n }) {
+    progress(this: any, { id, n }: any) {
       this.bumpDaily(id, n);
       if (id === "kill") this.P.stats.kills += n;
       if (id === "react") this.P.stats.reacts += n;
       return true;
     },
-    claimTask({ i }) {
+    claimTask(this: any, { i }: any) {
       const d = this.P.daily,
         t = d.tasks[i];
       if (!t) throw new Error("Không có nhiệm vụ này");
@@ -231,17 +231,17 @@ export const Server = {
       this.P.coin += 3000;
       return { gems: 30, coin: 3000 };
     },
-    claimBonus() {
+    claimBonus(this: any) {
       const d = this.P.daily;
       if (d.bonus) throw new Error("Đã nhận thưởng");
-      if (!d.tasks.every((t) => t.claimed)) throw new Error("Nhận đủ 4 nhiệm vụ trước");
+      if (!d.tasks.every((t: any) => t.claimed)) throw new Error("Nhận đủ 4 nhiệm vụ trước");
       d.bonus = true;
       this.P.gems += 60;
       this.P.books += 5;
       return { gems: 60, books: 5 };
     },
     // ---- admin ----
-    setConfig(c) {
+    setConfig(this: any, c: any) {
       const cfg = this.P.cfg;
       for (const k of ["rate5", "rate4", "soft", "hard", "cost"]) {
         const v = Number(c[k]);
@@ -256,43 +256,43 @@ export const Server = {
       }
       return cfg;
     },
-    give({ kind, amount }) {
+    give(this: any, { kind, amount }: any) {
       const a = Math.floor(Number(amount));
       if (!isFinite(a)) throw new Error("Số lượng không hợp lệ");
-      const k = { gem: "gems", coin: "coin", book: "books" }[kind];
+      const k = ({ gem: "gems", coin: "coin", book: "books" } as Record<string, string>)[kind];
       if (!k) throw new Error("Loại không hợp lệ");
       this.P[k] = Math.max(0, this.P[k] + a);
       return this.P[k];
     },
-    giveChar({ id }) {
+    giveChar(this: any, { id }: any) {
       if (!byId[id]) throw new Error("Không có nhân vật này");
       return this.grant(id);
     },
-    maxLv({ id }) {
+    maxLv(this: any, { id }: any) {
       const o = this.P.owned[id];
       if (!o) throw new Error("Bạn chưa có nhân vật này");
       o.lv = 60;
       return 60;
     },
-    setGm(g) {
+    setGm(this: any, g: any) {
       Object.assign(this.P.gm, g);
       return this.P.gm;
     },
-    resetDaily() {
+    resetDaily(this: any) {
       this.P.daily = genDaily(todayKey() + "-" + Date.now());
       return true;
     },
-    wipe() {
+    wipe(this: any) {
       this.P = freshProfile();
       this.ensureDaily();
       return true;
     },
   },
 };
-export function lvCost(lv) {
+export function lvCost(lv: number) {
   return { books: 1 + Math.floor(lv / 6), coin: 300 + lv * 120 };
 }
-export function statsOf(id) {
+export function statsOf(id: string) {
   const c = byId[id],
     o = Server.P.owned[id] || { lv: 1, cons: 0 };
   const g = 1 + (o.lv - 1) * 0.07,

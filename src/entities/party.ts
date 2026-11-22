@@ -1,18 +1,18 @@
 import { GS } from "../core/state";
 import { EL, byId } from "../data/content";
-import { fxBurst, fxRing, later } from "../entities/fx";
+import { fxBurst, fxRing } from "../entities/fx";
 import { Server, statsOf } from "../server/server";
 import { buildHudParty } from "../ui/hud";
 
 export function buildParty() {
   return Server.P.party
-    .filter((id) => Server.P.owned[id])
-    .map((id) => {
+    .filter((id: string) => Server.P.owned[id])
+    .map((id: string) => {
       const st = statsOf(id);
       return { id, c: byId[id], st, hp: st.hp, maxHp: st.hp, energy: 20, skillCd: 0, alive: true };
     });
 }
-export function newSession(mode, opt = {}) {
+export function newSession(mode: string, opt = {}) {
   const g = {
     mode,
     opt,
@@ -71,7 +71,7 @@ export function newSession(mode, opt = {}) {
 export function cur() {
   return GS.G.party[GS.G.act];
 }
-export function switchTo(i) {
+export function switchTo(i: number) {
   if (!GS.G || GS.G.over || i === GS.G.act || !GS.G.party[i] || !GS.G.party[i].alive || GS.G.switchCd > 0) return;
   GS.G.act = i;
   GS.G.switchCd = 0.8;

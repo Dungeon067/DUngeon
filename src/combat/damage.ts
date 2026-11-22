@@ -13,7 +13,7 @@ import { buildHudParty } from "../ui/hud";
 /* =========================================================
    COMBAT
    ========================================================= */
-export function nearestEnemy(x, y, maxD) {
+export function nearestEnemy(x: number, y: number, maxD: number) {
   let best = null,
     bd = maxD;
   for (const e of GS.G.enemies) {
@@ -35,7 +35,7 @@ export function aim() {
   if (Math.abs(Math.cos(p.ang)) > 0.2) p.fx = Math.cos(p.ang) > 0 ? 1 : -1;
   p.back = Math.sin(p.ang) < -0.75;
 }
-export function dealRaw(e, dmg, col) {
+export function dealRaw(e: any, dmg: number, col: string) {
   if (e.dead) return;
   if (Server.P.gm.one) dmg = e.hp + 1;
   dmg *= e.vuln > 0 ? 1.25 : 1;
@@ -44,7 +44,7 @@ export function dealRaw(e, dmg, col) {
   fxText(e.x, e.y - (e.isBoss ? 70 : 34), fmt(dmg), col, 14);
   if (e.hp <= 0) killEnemy(e);
 }
-export function hitEnemy(e, m, mult, el, o = {}) {
+export function hitEnemy(e: any, m: any, mult: number, el: string, o: any = {}) {
   if (e.dead) return 0;
   const crit = Math.random() < m.st.crit;
   let dmg = m.st.atk * mult * (crit ? 1 + m.st.cdmg : 1) * rand(0.95, 1.05);
@@ -84,7 +84,7 @@ export function hitEnemy(e, m, mult, el, o = {}) {
   if (e.state === "idle" && !e.isBoss) e.state = "chase";
   return dmg;
 }
-export function gainEnergy(n, x, y, m) {
+export function gainEnergy(n: number, x: number, y: number, m: any) {
   for (const pm of GS.G.party) {
     if (!pm.alive) continue;
     const add = pm === cur() ? n : n * 0.35;
@@ -102,7 +102,7 @@ export function gainEnergy(n, x, y, m) {
       delay: rand(0.1, 0.35),
     });
 }
-export function killEnemy(e) {
+export function killEnemy(e: any) {
   if (e.dead) return;
   e.dead = true;
   e.hp = 0;
@@ -121,7 +121,7 @@ export function killEnemy(e) {
       GS.G.pickups.push({ k: "book", x: e.x, y: e.y, v: e.type === "golem" ? 3 : 1, t: 30, vy: 0 });
   }
 }
-export function hurtPlayer(dmg, col = "#ff7070") {
+export function hurtPlayer(dmg: number, col = "#ff7070") {
   const p = GS.G.p,
     m = cur();
   if (!m || !m.alive || p.iframes > 0 || GS.G.over) return;
@@ -150,7 +150,7 @@ export function hurtPlayer(dmg, col = "#ff7070") {
     m.hp = 0;
     m.alive = false;
     fxBurst(p.x, p.y - 20, "#ffffff", 20, 180);
-    const nx = GS.G.party.findIndex((x) => x.alive);
+    const nx = GS.G.party.findIndex((x: any) => x.alive);
     if (nx >= 0) {
       GS.G.act = nx;
       GS.G.switchCd = 0.5;

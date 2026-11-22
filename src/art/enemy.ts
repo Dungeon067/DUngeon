@@ -1,9 +1,8 @@
-import { ctx } from "../core/canvas";
 import { TAU, rgba, rr } from "../core/util";
 import { EL, ENEMY } from "../data/content";
 
 // ---- enemies ----
-export function drawEnemy(ctx, e, t) {
+export function drawEnemy(ctx: CanvasRenderingContext2D, e: any, t: any) {
   const fl = e.flash > 0;
   ctx.save();
   ctx.translate(e.x, e.y);
@@ -160,7 +159,7 @@ export function drawEnemy(ctx, e, t) {
   }
   ctx.restore();
 }
-export function drawBoss(ctx, b, t) {
+export function drawBoss(ctx: CanvasRenderingContext2D, b: any, t: any) {
   const col = b.flash > 0 ? "#ffffff" : b.phase === 2 ? "#4a2f7a" : "#1f3f6a",
     acc = b.phase === 2 ? EL.bolt.c : EL.water.c;
   for (let i = b.segs.length - 1; i >= 0; i--) {
