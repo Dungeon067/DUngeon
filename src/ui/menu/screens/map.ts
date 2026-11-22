@@ -208,7 +208,7 @@ function panel() {
       );
     else if (p.kind !== "you") {
       const b = button("Đánh dấu tại đây", {
-        icon: "ghim",
+        icon: "sao",
         onClick: () => {
           const r = Server.req("addMark", { x: +p.x.toFixed(2), y: +p.y.toFixed(2), label: p.kind === "point" ? `Điểm ${Server.P.marks.length + 1}` : p.name });
           if (r.ok) sel = { kind: "mark", x: p.x, y: p.y, name: r.data.at(-1).label, i: r.data.length - 1 };
@@ -251,7 +251,7 @@ function render(host: HTMLElement, params: any) {
       button("Thu nhỏ", { iconOnly: true, icon: "bot", onClick: () => zoom(0.8) }),
       button("Về vị trí của bạn", {
         iconOnly: true,
-        icon: "vi-tri",
+        icon: "tim-kiem",
         onClick: () => {
           if (GS.G?.p) [V.x, V.y] = [GS.G.p.x / TS, GS.G.p.y / TS];
           draw();
