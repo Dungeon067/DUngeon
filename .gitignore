@@ -7,3 +7,6 @@ blob-report/
 .vite/
 *.log
 .DS_Store
+
+# Ảnh thô và file .blend của quy trình nhân vật (S15)
+media/characters/build/

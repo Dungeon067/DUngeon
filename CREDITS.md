@@ -13,6 +13,8 @@ Tải từ Google Fonts lúc chạy, không lưu trong repo.
 
 Toàn bộ nhân vật, quái, bản đồ và hiệu ứng được vẽ bằng code Canvas 2D trong `src/art/` và `src/world/`. Chưa dùng ảnh bên ngoài hay ảnh do AI tạo.
 
+Nhân vật 3D thử nghiệm (S15) dựng bằng script Python trong [Blender](https://www.blender.org/) 5.3 (GPL; ảnh render là của dự án), mặt vẽ bằng SVG trong `tools/art/mat.ts`. Ảnh mẫu ở `docs/art/mau/`.
+
 ## Âm thanh
 
 Hiệu ứng đánh, trúng đòn, lướt, rương và xu dùng mẫu âm thanh của Kenney, lưu ở `public/audio/kenney/` (34 file `.ogg`, khoảng 410 KB). File giấy phép gốc nằm cùng thư mục.

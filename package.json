@@ -15,7 +15,9 @@
     "test:e2e": "playwright test",
     "content:check": "tsx scripts/content-check.ts",
     "fps": "tsx tests/perf/fps.ts",
-    "record": "tsx tests/perf/record.ts"
+    "record": "tsx tests/perf/record.ts",
+    "art:mau": "tsx tools/art/mau.ts",
+    "art:mau:ghep": "tsx tools/art/ghep-mau.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9",
@@ -25,6 +27,7 @@
     "globals": "^15",
     "jsdom": "^25",
     "prettier": "^3",
+    "sharp": "^0.35.5",
     "tsx": "^4",
     "typescript": "~5.6",
     "typescript-eslint": "^8",

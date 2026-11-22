@@ -1,0 +1,23 @@
+# Chi tiết dựng 3D của Lạc Hồng (bổ sung cho content/characters/lachong.yaml).
+# Khi có docs/characters/lachong/ngoai-hinh.md (S03–S05) thì đồng bộ lại theo hồ sơ đó.
+than:
+  gioi_tinh: nam
+  dang: vua
+  ti_le: 5.5
+bang_mau:
+  # Áo khoác đỏ son theo `outfit`, áo trong màu kem lụa (Đảo Lạc #f3e6c4) cho tương phản,
+  # viền và đai vàng đồng theo `accent`, quần nâu đen.
+  ao_ngoai: "#9a2a26"
+  ao_trong: "#f3e6c4"
+  vien_ao: "#f2c14e"
+  dai: "#c8962d"
+  quan: "#2a1a1e"
+  giay: "#3a2418"
+trang_phuc:
+  tay_ao: 0.95
+  tay_ao_ngoai: 1.0
+  co_giay: 0.6
+  bao_tay: true
+  vat_dai: 0.25
+  vien_vat: true
+  duoi_ao: 0.35
