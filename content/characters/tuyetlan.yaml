@@ -1,0 +1,27 @@
+id: tuyetlan
+name: Tuyết Lan
+r: 5
+el: ice
+w: sword
+title: Hoa Lan Trên Tuyết
+desc: Kiếm khách lặng lẽ từ vùng núi tuyết phía bắc. Lưỡi kiếm của nàng nở ra những đóa lan băng.
+hp: 1020
+atk: 130
+skill:
+  name: Lan Băng Kiếm Vũ
+  type: nova
+  cd: 8
+  m: 2.8
+burst:
+  name: Tuyết Phủ Trường Sơn
+  type: blizzard
+  cost: 60
+  m: 0.9
+look:
+  hair: "#eef6ff"
+  style: buns
+  outfit: "#cfe9f7"
+  accent: "#3e9fd6"
+  skin: "#fae3d2"
+  eye: "#5fb7e0"
+  coat: false

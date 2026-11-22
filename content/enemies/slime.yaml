@@ -1,0 +1,8 @@
+id: slime
+name: Slime
+hp: 340
+atk: 36
+spd: 55
+r: 15
+aggro: 230
+cd: 1.8

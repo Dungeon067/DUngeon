@@ -1,0 +1,27 @@
+id: loidinh
+name: Lôi Đình
+r: 5
+el: bolt
+w: spear
+title: Tướng Quân Giông Tố
+desc: Vị tướng trẻ được thần sấm truyền ngọn thương. Lao vào trận như tia chớp và gọi sét đánh xuống kẻ thù.
+hp: 1000
+atk: 136
+skill:
+  name: Lôi Thương Đột Kích
+  type: dash
+  cd: 6
+  m: 2.3
+burst:
+  name: Thiên Lôi Giáng Thế
+  type: storm
+  cost: 60
+  m: 1.8
+look:
+  hair: "#3a2a5e"
+  style: short
+  outfit: "#2a2240"
+  accent: "#b47bff"
+  skin: "#f1cfae"
+  eye: "#b47bff"
+  coat: true

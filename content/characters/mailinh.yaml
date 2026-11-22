@@ -1,0 +1,27 @@
+id: mailinh
+name: Mai Linh
+r: 4
+el: fire
+w: cat
+title: Cô Bé Đèn Lồng
+desc: Cô bé làm đèn lồng ở phố cổ, mang theo những chiếc đèn biết bắn lửa.
+hp: 820
+atk: 92
+skill:
+  name: Đèn Lồng Hoa Mai
+  type: turret
+  cd: 10
+  m: 0.9
+burst:
+  name: Pháo Hoa Đêm Hội
+  type: inferno
+  cost: 50
+  m: 4.5
+look:
+  hair: "#ff9a6b"
+  style: buns
+  outfit: "#d1495b"
+  accent: "#ffd27a"
+  skin: "#fbe0c8"
+  eye: "#d1495b"
+  coat: false

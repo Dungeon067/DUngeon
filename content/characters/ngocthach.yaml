@@ -1,0 +1,27 @@
+id: ngocthach
+name: Ngọc Thạch
+r: 4
+el: earth
+w: spear
+title: Thiếu Nữ Mỏ Ngọc
+desc: Con gái của người thợ mỏ. Ngọn thương của cô có thể gọi thiên thạch từ lòng núi.
+hp: 960
+atk: 82
+skill:
+  name: Thương Trấn Địa
+  type: nova
+  cd: 8
+  m: 2.2
+burst:
+  name: Thiên Thạch Ngọc
+  type: meteor
+  cost: 50
+  m: 5
+look:
+  hair: "#8a5a2b"
+  style: long
+  outfit: "#2f5d46"
+  accent: "#e9b23a"
+  skin: "#f2cfae"
+  eye: "#e9b23a"
+  coat: false

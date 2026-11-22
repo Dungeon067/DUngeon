@@ -1,0 +1,27 @@
+id: havy
+name: Hạ Vy
+r: 4
+el: ice
+w: bow
+title: Cung Thủ Sương Giá
+desc: Cô gái mùa hè lại mang sức mạnh băng giá, khiến ai cũng ngạc nhiên.
+hp: 840
+atk: 90
+skill:
+  name: Hoa Băng Nở
+  type: nova
+  cd: 8
+  m: 2
+burst:
+  name: Gió Lạnh Đầu Mùa
+  type: blizzard
+  cost: 50
+  m: 0.75
+look:
+  hair: "#a8d8f0"
+  style: bob
+  outfit: "#3e5f8a"
+  accent: "#e6f9ff"
+  skin: "#f8dcc6"
+  eye: "#8fe1ff"
+  coat: false

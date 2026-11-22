@@ -1,0 +1,81 @@
+import { GS } from "../core/state";
+import { EL, byId } from "../data/content";
+import { fxBurst, fxRing, later } from "../entities/fx";
+import { Server, statsOf } from "../server/server";
+import { buildHudParty } from "../ui/hud";
+
+export function buildParty() {
+  return Server.P.party
+    .filter((id) => Server.P.owned[id])
+    .map((id) => {
+      const st = statsOf(id);
+      return { id, c: byId[id], st, hp: st.hp, maxHp: st.hp, energy: 20, skillCd: 0, alive: true };
+    });
+}
+export function newSession(mode, opt = {}) {
+  const g = {
+    mode,
+    opt,
+    time: 0,
+    party: buildParty(),
+    act: 0,
+    switchCd: 0,
+    p: {
+      x: 0,
+      y: 0,
+      fx: 1,
+      back: false,
+      dirX: 1,
+      dirY: 0,
+      ang: 0,
+      walk: 0,
+      moving: false,
+      atkCd: 0,
+      atkAnim: 0,
+      combo: 0,
+      comboT: 0,
+      dashT: 0,
+      dvx: 0,
+      dvy: 0,
+      iframes: 0,
+      stamina: 100,
+      shield: 0,
+      shieldT: 0,
+      shieldMax: 1,
+      hurt: 0,
+      dashHeld: 0,
+    },
+    enemies: [],
+    projs: [],
+    fx: [],
+    texts: [],
+    fields: [],
+    turrets: [],
+    pickups: [],
+    later: [],
+    boss: null,
+    cam: { x: 0, y: 0 },
+    shake: 0,
+    map: null,
+    bounds: null,
+    cine: null,
+    banner: { t: 0, txt: "" },
+    pending: { kill: 0, react: 0, burst: 0 },
+    loot: { coin: 0, books: 0 },
+    over: false,
+    interact: null,
+    respawn: null,
+  };
+  return g;
+}
+export function cur() {
+  return GS.G.party[GS.G.act];
+}
+export function switchTo(i) {
+  if (!GS.G || GS.G.over || i === GS.G.act || !GS.G.party[i] || !GS.G.party[i].alive || GS.G.switchCd > 0) return;
+  GS.G.act = i;
+  GS.G.switchCd = 0.8;
+  fxRing(GS.G.p.x, GS.G.p.y - 14, 40, EL[cur().c.el].c, 0.35, 5);
+  fxBurst(GS.G.p.x, GS.G.p.y - 14, EL[cur().c.el].c, 12, 150);
+  buildHudParty();
+}

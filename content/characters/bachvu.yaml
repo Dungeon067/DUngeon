@@ -1,0 +1,27 @@
+id: bachvu
+name: Bạch Vũ
+r: 4
+el: wind
+w: sword
+title: Lữ Khách Lông Trắng
+desc: Kẻ lang thang khắp đảo cùng chiếc áo choàng lông vũ. Gió tụ lại quanh cậu thành những cơn lốc xoáy.
+hp: 860
+atk: 84
+skill:
+  name: Lốc Xoáy Lông Vũ
+  type: vortex
+  cd: 9
+  m: 0.55
+burst:
+  name: Bão Trắng
+  type: blizzard
+  cost: 50
+  m: 0.7
+look:
+  hair: "#f1f1f1"
+  style: short
+  outfit: "#3d7a68"
+  accent: "#bdf6e4"
+  skin: "#f1cfb0"
+  eye: "#45dfb1"
+  coat: true
