@@ -7,6 +7,7 @@ import { Server } from "../../server/server";
 import { button, currency, h } from "../ds";
 import { icon } from "../icons/icons";
 import { wishKey, wishPlaying } from "../wish/player";
+import "./menu.css";
 
 /**
  * Khung menu lớp phủ (S10). Người chơi luôn ở trong thế giới; menu tạm dừng game và vẽ màn lên trên.

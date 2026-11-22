@@ -80,7 +80,7 @@ function buildQuickMenu() {
 }
 export function refreshQuickDots() {
   const b = document.getElementById("qm-daily");
-  if (!b) return;
+  if (!b || !Server.P) return;
   const n = dailyReady();
   if (n) badgeDot(b, n);
   else b.querySelector(":scope > .tt-dot")?.remove();

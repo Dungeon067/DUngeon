@@ -7,7 +7,7 @@ import { init as initInput } from "./core/input";
 import { init as initModal } from "./ui/modal";
 import { exitToMenu } from "./ui/screens";
 import { initHud } from "./ui/hud";
-import { initMenuShell } from "./ui/menu/shell";
+import { closeMenu, currentScreen, initMenuShell, openMenu } from "./ui/menu/shell";
 import "./ui/menu/screens";
 import { initLayoutEditor } from "./ui/hud/layout";
 import { initRotate } from "./ui/hud/rotate";
@@ -46,4 +46,4 @@ window.claude?.hot?.snapshot?.(() => ({ P: Server.P }));
 window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
 
 // Móc kiểm thử: chỉ bật khi URL có ?e2e, để Playwright đọc trạng thái game. Người chơi không bị ảnh hưởng.
-if (new URLSearchParams(location.search).has("e2e")) Object.assign(window, { __tinhtu: { S: GS, Server } });
+if (new URLSearchParams(location.search).has("e2e")) Object.assign(window, { __tinhtu: { S: GS, Server, menu: { openMenu, closeMenu, currentScreen } } });

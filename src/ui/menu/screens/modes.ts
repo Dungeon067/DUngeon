@@ -95,7 +95,7 @@ registerScreen("tower", {
 
 registerScreen("boss", {
   title: "Hắc Giao",
-  icon: "thu",
+  icon: "canh-bao",
   render(host) {
     host.classList.add("tt-menu-boss");
     const art = h("canvas", { width: 520, height: 360, class: "tt-boss-art", "aria-hidden": "true" }) as HTMLCanvasElement;
