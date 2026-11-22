@@ -503,7 +503,7 @@ const table = h("div", { class: "tt-table-wrap" }, [
       {},
       [
         ["Khách 01", 182, 1600, tag("Hoạt động", "ok")],
-        ["Khách 02", 90, 0, tag("Chạm bảo hiểm", "warn")],
+        ["Khách 02", 90, 0, tag("Chạm Bảo Hộ Vận Sao", "warn")],
         ["Khách 03", 12, 3200, tag("Lỗi lưu", "bad")],
       ].map((r) =>
         h("tr", {}, [
@@ -553,12 +553,12 @@ page.append(
         h("dl", { class: "tt-kv" }, [
           h("dt", {}, ["Tỉ lệ 5★ gốc"]),
           h("dd", {}, ["0,6%"]),
-          h("dt", {}, ["Bảo hiểm"]),
+          h("dt", {}, ["Bảo Hộ Vận Sao"]),
           h("dd", {}, ["90 lần"]),
         ]),
         h("div", { class: "tt-form-row" }, [
           field("Tỉ lệ 5★ (%)", { value: "0.6", type: "number" }),
-          field("Bảo hiểm cứng", { value: "90", type: "number" }),
+          field("Bảo Hộ Vận Sao (mốc cứng)", { value: "90", type: "number" }),
           button("Lưu cấu hình", { variant: "primary", icon: "xac-nhan" }),
         ]),
       ]),

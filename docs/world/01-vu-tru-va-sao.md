@@ -57,9 +57,9 @@ Nếu Hộ Tinh phản bội chính việc mà vì sao đã thấy ở họ, Tin
 | Tím           | Sao trẻ, dẫn tới Hộ Tinh trẻ hoặc mới được chọn                                  | 4★                                     |
 | Xanh lam nhạt | Mảnh sao vỡ, không đủ sức dẫn người, chỉ mang theo một món đồ cũ đã thấm ánh sao | Vật phẩm 3★ (Kiếm Sắt Cũ, Cung Tre...) |
 
-### 4.3. Bảo hiểm 90 lần và 50/50
+### 4.3. Bảo Hộ Vận Sao 90 lần và 50/50
 
-- **Luật Chín Mươi Lời** [Công khai, dân gian]: người xưa nói "chín mươi lời cùng một ý thì sao cổ phải quay đầu". Lời ước của Người Ước Nguyện dồn lại. Khi đủ nặng, một sao cổ bắt buộc phải trả lời. Đây là lý do trong truyện của bảo hiểm 90 lần.
+- **Luật Chín Mươi Lời** [Công khai, dân gian]: người xưa nói "chín mươi lời cùng một ý thì sao cổ phải quay đầu". Lời ước của Người Ước Nguyện dồn lại. Khi đủ nặng, một sao cổ bắt buộc phải trả lời. Đây là lý do trong truyện của Bảo Hộ Vận Sao 90 lần.
 - **Sao Mùa**: mỗi mùa có một sao cổ sáng nhất bầu trời. Trong game, đó là Hộ Tinh nổi bật. Khi sao cổ trả lời, có lúc sao mùa trả lời, có lúc là một sao cổ khác đang ở gần hơn. Nếu lần trước sao mùa bị "chen lời", lần sau nó chắc chắn đáp. Đây là lý do trong truyện của 50/50.
 
 ### 4.4. Gặp lại cùng một Hộ Tinh: Nét Sao

@@ -13,29 +13,30 @@ Tài liệu cho mọi người viết chữ trong **Tinh Tú Ước Nguyện**: 
 
 Viết đúng chữ và đúng chữ hoa như bảng. Không dùng tên khác cho cùng một khái niệm trong lời thoại.
 
-| Khái niệm                     | Viết là                                                                                                        |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| Thế giới                      | Vọng Tinh Giới                                                                                                 |
-| Thần hộ mệnh mỗi vùng         | Trấn Tinh                                                                                                      |
-| Dấu ấn sức mạnh trên người    | Tinh Văn                                                                                                       |
-| Nơi các vì sao ngự            | Tinh Hải                                                                                                       |
-| Người mang sức mạnh nguyên tố | Hộ Tinh                                                                                                        |
-| Nhân vật chính                | Người Ước Nguyện (dân Đảo Lạc gọi "người từ Bãi Sao Rơi")                                                      |
-| Tiền tệ                       | Đá Sao, Xu                                                                                                     |
-| Lần quay                      | Ước nguyện, lần ước                                                                                            |
-| Cung mệnh                     | Nét Sao (N0–N6)                                                                                                |
-| Trang bị phụ, bộ trang bị     | Bảo Ấn, Bộ Ấn                                                                                                  |
-| Đột phá giới hạn cấp          | Khai Tinh                                                                                                      |
-| Điểm dịch chuyển, hồi phục    | Bia Đá                                                                                                         |
-| Tháp thử thách                | Tháp Tinh Tú                                                                                                   |
-| Nhiệm vụ hằng ngày            | Ủy thác                                                                                                        |
-| Bí cảnh nguyên liệu           | Lòng Sao                                                                                                       |
-| Cấp danh vọng                 | Đom Đóm, Đèn Lồng, Ngọn Đuốc, Vầng Trăng, Sao Mai                                                              |
-| Phản diện                     | Hắc Giao; Hội Bất Nguyện (lời thoại thường gọi Hội Mặt Nạ)                                                     |
-| Nguyên tố                     | Hỏa, Thủy, Phong, Lôi, Thổ, Băng, Mộc                                                                          |
-| Phản ứng                      | Bốc Hơi, Tan Chảy, Quá Tải, Điện Cảm, Đóng Băng, Siêu Dẫn, Khuếch Tán, Kết Tinh                                |
-| Quái `slime`                  | Giọt Nhầy                                                                                                      |
-| Tên riêng khác                | Tra [`09-tu-dien.md`](../world/09-tu-dien.md); quy tắc đặt tên mới ở [`11-dat-ten.md`](../world/11-dat-ten.md) |
+| Khái niệm                        | Viết là                                                                                                        |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Thế giới                         | Vọng Tinh Giới                                                                                                 |
+| Thần hộ mệnh mỗi vùng            | Trấn Tinh                                                                                                      |
+| Dấu ấn sức mạnh trên người       | Tinh Văn                                                                                                       |
+| Nơi các vì sao ngự               | Tinh Hải                                                                                                       |
+| Người mang sức mạnh nguyên tố    | Hộ Tinh                                                                                                        |
+| Nhân vật chính                   | Người Ước Nguyện (dân Đảo Lạc gọi "người từ Bãi Sao Rơi")                                                      |
+| Tiền tệ                          | Đá Sao, Xu                                                                                                     |
+| Cơ chế bảo đảm sau 90 lần (pity) | Bảo Hộ Vận Sao, ví dụ "Bảo Hộ Vận Sao 5★: 37/90"                                                               |
+| Lần quay                         | Ước nguyện, lần ước                                                                                            |
+| Cung mệnh                        | Nét Sao (N0–N6)                                                                                                |
+| Trang bị phụ, bộ trang bị        | Bảo Ấn, Bộ Ấn                                                                                                  |
+| Đột phá giới hạn cấp             | Khai Tinh                                                                                                      |
+| Điểm dịch chuyển, hồi phục       | Bia Đá                                                                                                         |
+| Tháp thử thách                   | Tháp Tinh Tú                                                                                                   |
+| Nhiệm vụ hằng ngày               | Ủy thác                                                                                                        |
+| Bí cảnh nguyên liệu              | Lòng Sao                                                                                                       |
+| Cấp danh vọng                    | Đom Đóm, Đèn Lồng, Ngọn Đuốc, Vầng Trăng, Sao Mai                                                              |
+| Phản diện                        | Hắc Giao; Hội Bất Nguyện (lời thoại thường gọi Hội Mặt Nạ)                                                     |
+| Nguyên tố                        | Hỏa, Thủy, Phong, Lôi, Thổ, Băng, Mộc                                                                          |
+| Phản ứng                         | Bốc Hơi, Tan Chảy, Quá Tải, Điện Cảm, Đóng Băng, Siêu Dẫn, Khuếch Tán, Kết Tinh                                |
+| Quái `slime`                     | Giọt Nhầy                                                                                                      |
+| Tên riêng khác                   | Tra [`09-tu-dien.md`](../world/09-tu-dien.md); quy tắc đặt tên mới ở [`11-dat-ten.md`](../world/11-dat-ten.md) |
 
 ## 1. Giọng văn chung
 
@@ -459,42 +460,42 @@ Theo [`11-dat-ten.md`](../world/11-dat-ten.md) mục 1 và 2: mỗi chữ có l�
 
 ### 5.1. Từ tiếng Anh và chữ viết tắt
 
-| Không dùng               | Dùng                                                         |
-| ------------------------ | ------------------------------------------------------------ |
-| skill                    | kỹ năng                                                      |
-| ult, burst               | nộ                                                           |
-| buff, debuff             | tăng sức, làm yếu (hoặc gọi đúng hiệu ứng)                   |
-| dmg, damage              | sát thương                                                   |
-| HP                       | Máu                                                          |
-| ATK                      | Tấn công                                                     |
-| crit                     | chí mạng                                                     |
-| CD, cooldown             | hồi chiêu                                                    |
-| stamina                  | thể lực                                                      |
-| dash                     | lướt                                                         |
-| shield                   | khiên                                                        |
-| combo                    | chuỗi đòn                                                    |
-| AoE                      | diện rộng                                                    |
-| level, Lv                | cấp                                                          |
-| EXP                      | kinh nghiệm                                                  |
-| boss                     | gọi đúng tên (Hắc Giao); nhãn chung: quái đầu đàn            |
-| elite                    | tinh anh                                                     |
-| gacha, roll, pull, quay  | ước nguyện, lần ước                                          |
-| banner                   | Sao Mùa                                                      |
-| pity                     | Luật Chín Mươi Lời (trong truyện), bảo hiểm (trên giao diện) |
-| C0–C6, constellation     | Nét Sao N0–N6                                                |
-| artifact, set            | Bảo Ấn, Bộ Ấn                                                |
-| ascension                | Khai Tinh                                                    |
-| waypoint, teleport       | Bia Đá, dịch chuyển                                          |
-| daily, daily quest       | Ủy thác                                                      |
-| domain, dungeon          | Lòng Sao                                                     |
-| quest, event, item, drop | nhiệm vụ, sự kiện, vật phẩm, rơi ra                          |
-| farm                     | đi săn nguyên liệu                                           |
-| team, party              | đội                                                          |
-| slime                    | Giọt Nhầy                                                    |
-| admin, server            | quản trị, máy chủ                                            |
-| OK, cancel               | Được, Đồng ý; Thôi, Quay lại                                 |
-| loading, save, reset     | Đang tải, Lưu, Làm mới                                       |
-| noob, pro                | người mới, giỏi                                              |
+| Không dùng               | Dùng                                                    |
+| ------------------------ | ------------------------------------------------------- |
+| skill                    | kỹ năng                                                 |
+| ult, burst               | nộ                                                      |
+| buff, debuff             | tăng sức, làm yếu (hoặc gọi đúng hiệu ứng)              |
+| dmg, damage              | sát thương                                              |
+| HP                       | Máu                                                     |
+| ATK                      | Tấn công                                                |
+| crit                     | chí mạng                                                |
+| CD, cooldown             | hồi chiêu                                               |
+| stamina                  | thể lực                                                 |
+| dash                     | lướt                                                    |
+| shield                   | khiên                                                   |
+| combo                    | chuỗi đòn                                               |
+| AoE                      | diện rộng                                               |
+| level, Lv                | cấp                                                     |
+| EXP                      | kinh nghiệm                                             |
+| boss                     | gọi đúng tên (Hắc Giao); nhãn chung: quái đầu đàn       |
+| elite                    | tinh anh                                                |
+| gacha, roll, pull, quay  | ước nguyện, lần ước                                     |
+| banner                   | Sao Mùa                                                 |
+| pity, bảo hiểm           | Bảo Hộ Vận Sao (lý do trong truyện: Luật Chín Mươi Lời) |
+| C0–C6, constellation     | Nét Sao N0–N6                                           |
+| artifact, set            | Bảo Ấn, Bộ Ấn                                           |
+| ascension                | Khai Tinh                                               |
+| waypoint, teleport       | Bia Đá, dịch chuyển                                     |
+| daily, daily quest       | Ủy thác                                                 |
+| domain, dungeon          | Lòng Sao                                                |
+| quest, event, item, drop | nhiệm vụ, sự kiện, vật phẩm, rơi ra                     |
+| farm                     | đi săn nguyên liệu                                      |
+| team, party              | đội                                                     |
+| slime                    | Giọt Nhầy                                               |
+| admin, server            | quản trị, máy chủ                                       |
+| OK, cancel               | Được, Đồng ý; Thôi, Quay lại                            |
+| loading, save, reset     | Đang tải, Lưu, Làm mới                                  |
+| noob, pro                | người mới, giỏi                                         |
 
 ### 5.2. Từ lóng mạng
 

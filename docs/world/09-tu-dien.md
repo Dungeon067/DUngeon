@@ -147,22 +147,22 @@ Tên trong bảng là tên đang dùng. Tên cũ đã đổi có ghi chú ở đ
 
 ## L
 
-| Tên                    | Loại      | Định nghĩa                                                                                      |
-| ---------------------- | --------- | ----------------------------------------------------------------------------------------------- |
-| **Lạc Hồng**           | Nhân vật  | Hộ Tinh hệ Hỏa 5★, kiếm sĩ giữ Đình của Hội Đồng Đình Trống.                                    |
-| **Làng Chìm**          | Địa danh  | Ba làng chìm ở Vịnh Khơi trong Mùa Nước Đen năm NS 1046.                                        |
-| **Làng Vạn Lưới**      | Địa danh  | Làng chài lớn nhất Đảo Lạc, bên cửa Sông Sương.                                                 |
-| **Lão Neo**            | Nhân vật  | Mặt Nạ Gỗ, ngư dân Làng Vạn Lưới, chỉ huy Hội Mặt Nạ ở Đảo Lạc.                                 |
-| **Lễ Nhớ Ba Làng**     | Lễ hội    | Rằm tháng Lưới, thả hoa ở Vịnh Khơi tưởng nhớ ba làng chìm.                                     |
-| **Lính Mặt Nạ Trắng**  | Quái      | Thành viên mới của Hội Mặt Nạ, đánh gần.                                                        |
-| **Lò Lớn**             | Địa danh  | Xưởng rèn của Faber trong lòng Mons Fornax.                                                     |
-| **Lõi sao**            | Thuật ngữ | Viên đá giữ ánh sao trong Bia Đá. Bia Đông và Bia Tây mất lõi năm NS 1347.                      |
-| **Lõi sao giả**        | Thuật ngữ | Lõi do Mặt Nạ Sáp rèn, hút ánh sao khỏi mạch sao. Công cụ của Đêm Không Sao.                    |
-| **Lòng Sao**           | Thuật ngữ | Bí cảnh lấy nguyên liệu: khoảng đất bị sao rơi cuốn vào lòng mình. Trước đây gọi là Động Thiên. |
-| **Lôi**                | Nguyên tố | Tính khí khoảnh khắc quyết định. Gắn Khokhtal và Aianga.                                        |
-| **Lôi Đình**           | Nhân vật  | Hộ Tinh hệ Lôi 5★, Đội trưởng Đội Giông của Quân Trấn Thủ, danh hiệu "Ngọn Thương Gọi Sấm".     |
-| **Luật Chín Mươi Lời** | Thuật ngữ | Câu dân gian: chín mươi lời cùng một ý thì sao cổ phải trả lời. Lý do của bảo hiểm 90 lần.      |
-| **Lũng Vân**           | Vùng      | Vùng cảm hứng Trung Hoa cổ, hệ Phong, Trấn Tinh Thính Phong. "Thung lũng mây".                  |
+| Tên                    | Loại      | Định nghĩa                                                                                       |
+| ---------------------- | --------- | ------------------------------------------------------------------------------------------------ |
+| **Lạc Hồng**           | Nhân vật  | Hộ Tinh hệ Hỏa 5★, kiếm sĩ giữ Đình của Hội Đồng Đình Trống.                                     |
+| **Làng Chìm**          | Địa danh  | Ba làng chìm ở Vịnh Khơi trong Mùa Nước Đen năm NS 1046.                                         |
+| **Làng Vạn Lưới**      | Địa danh  | Làng chài lớn nhất Đảo Lạc, bên cửa Sông Sương.                                                  |
+| **Lão Neo**            | Nhân vật  | Mặt Nạ Gỗ, ngư dân Làng Vạn Lưới, chỉ huy Hội Mặt Nạ ở Đảo Lạc.                                  |
+| **Lễ Nhớ Ba Làng**     | Lễ hội    | Rằm tháng Lưới, thả hoa ở Vịnh Khơi tưởng nhớ ba làng chìm.                                      |
+| **Lính Mặt Nạ Trắng**  | Quái      | Thành viên mới của Hội Mặt Nạ, đánh gần.                                                         |
+| **Lò Lớn**             | Địa danh  | Xưởng rèn của Faber trong lòng Mons Fornax.                                                      |
+| **Lõi sao**            | Thuật ngữ | Viên đá giữ ánh sao trong Bia Đá. Bia Đông và Bia Tây mất lõi năm NS 1347.                       |
+| **Lõi sao giả**        | Thuật ngữ | Lõi do Mặt Nạ Sáp rèn, hút ánh sao khỏi mạch sao. Công cụ của Đêm Không Sao.                     |
+| **Lòng Sao**           | Thuật ngữ | Bí cảnh lấy nguyên liệu: khoảng đất bị sao rơi cuốn vào lòng mình. Trước đây gọi là Động Thiên.  |
+| **Lôi**                | Nguyên tố | Tính khí khoảnh khắc quyết định. Gắn Khokhtal và Aianga.                                         |
+| **Lôi Đình**           | Nhân vật  | Hộ Tinh hệ Lôi 5★, Đội trưởng Đội Giông của Quân Trấn Thủ, danh hiệu "Ngọn Thương Gọi Sấm".      |
+| **Luật Chín Mươi Lời** | Thuật ngữ | Câu dân gian: chín mươi lời cùng một ý thì sao cổ phải trả lời. Lý do của Bảo Hộ Vận Sao 90 lần. |
+| **Lũng Vân**           | Vùng      | Vùng cảm hứng Trung Hoa cổ, hệ Phong, Trấn Tinh Thính Phong. "Thung lũng mây".                   |
 
 ## M
 
