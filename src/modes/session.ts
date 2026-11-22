@@ -1,3 +1,4 @@
+import { toast } from "../ui/toast";
 import { GS } from "../core/state";
 import { flushPending, snapCam } from "../core/loop";
 import { $, esc, fmt } from "../core/util";
@@ -38,7 +39,8 @@ export function partyWipe() {
       GS.G.over = false;
       snapCam();
       buildHudParty();
-      showBanner("Hồi sinh tại bia đá");
+      showBanner("Hồi sinh tại Bia Đá");
+      toast("Cả đội về Bia Đá đã chạm gần nhất, máu đầy, không mất vật phẩm");
     });
   } else endRun(false, "Cả đội đã gục ngã");
 }

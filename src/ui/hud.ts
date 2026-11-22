@@ -281,6 +281,8 @@ export function updateHud() {
   }
   if (GS.G.mode === "boss") {
     info = `Hang Hắc Giao · Cấp độ ${GS.G.opt.lv}`;
+    const bn = `Hắc Giao · Cấp độ ${GS.G.boss.lv} · Giai đoạn ${GS.G.boss.phase === 2 ? "2: nổi giận" : "1"}`;
+    if (C.boss !== bn) $("bossName").textContent = C.boss = bn;
     $("bossHp").style.width = Math.max(0, (GS.G.boss.hp / GS.G.boss.maxHp) * 100) + "%";
   }
   if (C.info !== info) $("modeInfo").textContent = C.info = info;
