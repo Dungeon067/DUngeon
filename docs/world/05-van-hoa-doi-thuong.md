@@ -77,6 +77,8 @@ Xưng hô trong game **trung tính**, giống "I – you" của tiếng Anh: kh�
 - **Mặc định:** "tôi – cậu". "Cậu" dùng cho mọi giới, không ngầm nói ai lớn tuổi hơn.
 - **Biến thể theo tính cách, không theo tuổi:** "mình – cậu" (cởi mở, hoặc khi đã thân), "tôi – ngài" (lễ độ trang trọng), "ta – cậu" (Trấn Tinh, người đứng đầu), "ta – ngươi" (kiêu kỳ hoặc thù địch).
 - **Ngoại lệ người già:** NPC được thiết kế là cụ ông, cụ bà thì người khác gọi "ông", "bà", "cụ", có thể kèm "ạ"; người già được gọi người trẻ là "cháu". Ngoại lệ này không áp dụng cho Hộ Tinh chơi được.
+- **Cách xưng hô riêng:** nhân vật được có cách xưng riêng nếu hợp concept (ví dụ gọi "ngài" rồi thân hơn mới gọi "cậu"), ghi lý do và mốc thay đổi trong thẻ giọng nói.
+- **Người thân trong gia đình** gọi nhau theo quan hệ gia đình ("Mẹ ơi", "Anh ơi").
 - **Tuổi** vẫn ghi trong hồ sơ nhân vật, nhưng không quyết định cách xưng hô.
 - **Người Ước Nguyện** do người chơi chọn giới tính: viết trung tính, chỉ dùng biến `{anh|chị}` khi bắt buộc.
 
