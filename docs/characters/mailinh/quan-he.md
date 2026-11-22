@@ -25,7 +25,7 @@ Viết từ góc nhìn Mai Linh. Quan hệ với nhân vật của S04, S05 đư
 ### Ngọc Thạch: đối thủ Bịt Mắt Bắt Đèn (cần khớp, S05)
 
 - **Quan hệ:** bạn, đối thủ trò chơi.
-- **Kỷ niệm:** Hội Vạn Đăng năm NS 1349, Ngọc Thạch xuống phố lần đầu và tham gia Bịt Mắt Bắt Đèn. Mai Linh vô địch ba năm liền, nghĩ thắng chắc. Ngọc Thạch bịt mắt mà đi thẳng tới chiếc đèn, vì "nghe được tiếng đất dưới chân đèn". Mai Linh thua, giận cả buổi, rồi tối hôm ấy kéo Ngọc Thạch đi ăn ba bát Chè Sao Rơi.
+- **Kỷ niệm:** Hội Vạn Đăng năm NS 1349, Ngọc Thạch lần đầu chơi Bịt Mắt Bắt Đèn. Mai Linh vô địch ba năm liền, nghĩ thắng chắc. Ngọc Thạch bịt mắt mà đi thẳng tới chiếc đèn, vì "nghe được tiếng đất dưới chân đèn". Mai Linh thua, giận cả buổi, rồi tối hôm ấy kéo Ngọc Thạch đi ăn ba bát Chè Sao Rơi. Ngọc Thạch vẫn đục đế đá cho hàng đèn của cô. Có lần Ngọc Thạch đục một đế hình con mèo, cái đuôi gãy ngay hôm sau. Mai Linh làm thêm một chiếc đèn nhỏ hình đuôi mèo treo vào chỗ gãy.
 - **Bây giờ:** hai người hẹn đấu lại năm nay. Mai Linh đã luyện bằng cách bịt mắt đi dọc Phố Cũ mỗi tối.
 
 ### Hạ Vy: người mang thư bố (cần khớp, S05)
@@ -43,7 +43,7 @@ Viết từ góc nhìn Mai Linh. Quan hệ với nhân vật của S04, S05 đư
 ### Thạch Sơn: "Thợ Cả" (cần khớp, S05)
 
 - **Quan hệ:** kính trọng. Cùng là thợ.
-- **Kỷ niệm:** khi dựng lại Phố Cũ sau trận cháy, Thạch Sơn khắc một tấm bia đường nhỏ ở góc hẻm Nàng Vạn Đăng. Mai Linh ngồi xem Thạch Sơn khắc suốt một buổi chiều và hỏi vì sao đục đá mà không vỡ. Thạch Sơn đưa cô một cái đục nhỏ, bảo thử. Cô làm mẻ một góc bia. Thạch Sơn để nguyên góc mẻ, nói: "Giờ bia này có chữ của cậu."
+- **Kỷ niệm:** khi dựng lại Phố Cũ sau trận cháy, Thạch Sơn khắc một tấm bia đường nhỏ ở góc hẻm Nàng Vạn Đăng. Mai Linh ngồi xem Thạch Sơn khắc suốt một buổi chiều và hỏi vì sao đục đá mà không vỡ. Thạch Sơn đưa cô một cái đục nhỏ, bảo thử. Cô làm mẻ một góc bia. Thạch Sơn để nguyên góc mẻ, nói: "Giờ bia này có chữ của cậu." Mấy năm sau, Thạch Sơn khắc cho chiếc đèn lồng lớn nhất của cô một cái đế đá hình con trâu nằm. Cô chê "trông hơi buồn ngủ", rồi vẫn dùng nó ba năm liền.
 - **Bây giờ:** cô gọi Thạch Sơn là "Thợ Cả". Mỗi lần đi qua góc hẻm, cô sờ vào góc mẻ ấy.
 
 ## 2. Gia đình
