@@ -139,7 +139,13 @@ function panelControls(close: () => void) {
         icon: "bang-dieu-khien",
         onClick: () => {
           close();
-          onLayoutClosed(() => openSettings("controls"));
+          const pm = document.getElementById("modal");
+          const pmOpen = !!pm && !pm.hidden;
+          if (pm) pm.hidden = true;
+          onLayoutClosed(() => {
+            if (pm && pmOpen) pm.hidden = false;
+            openSettings("controls");
+          });
           openLayoutEditor(pausedBefore);
         },
       }),
