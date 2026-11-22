@@ -30,7 +30,7 @@ pnpm exec playwright install chromium   # chỉ cần khi chạy test đầu cu�
 
 ## Bản chơi thử
 
-- Nhánh `main` được triển khai lên GitHub Pages: https://dungeon067.github.io/DUngeon/ (bản gốc ở `/legacy/`).
+- Nhánh `main` được triển khai lên GitHub Pages: https://dungeon067.github.io/DUngeon/ (bản gốc ở `/legacy/index.html`).
 - Mỗi pull request có bản xem thử ở `https://dungeon067.github.io/DUngeon/pr-preview/pr-<số>/`, bot sẽ gắn link vào PR.
 
 ## Sơ đồ thư mục
