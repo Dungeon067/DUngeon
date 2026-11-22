@@ -123,8 +123,10 @@ function confirm() {
 }
 function back() {
   const layer = topLayer();
-  const b = layer.querySelector<HTMLElement>('[data-back], [data-act="resume"], [data-close]');
-  if (b && visible(b)) return b.click();
+  const b = [...layer.querySelectorAll<HTMLElement>('[data-back], [data-act="resume"], [data-close], .back')].find(
+    visible,
+  );
+  if (b) return b.click();
   document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", code: "Escape", bubbles: true }));
 }
 
@@ -144,6 +146,8 @@ export function pollGamepad() {
     if (padState.connected) {
       padState.connected = false;
       pad.x = pad.y = 0;
+      for (const [i, a] of buttonActions()) if (prev[i]) actionUp(a);
+      prev.length = 0;
     }
     return;
   }
