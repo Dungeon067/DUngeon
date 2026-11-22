@@ -331,6 +331,91 @@ export const ICONS: Record<string, IconDef> = {
     label: "Bảo Ấn",
     body: S("M8.2 3.6h7.6v3.8l-1.6 2.2H9.8L8.2 7.4ZM9.8 9.6V13M14.2 9.6V13M5.6 13h12.8v3.4H5.6ZM4.6 20h14.8"),
   },
+  /* ---------- Kỹ năng riêng từng nhân vật (S09): gắn qua skill.icon trong content/characters ---------- */
+  "kn-lachong": {
+    group: "hanh-dong",
+    label: "Kỹ năng Lạc Hồng: cánh chim lửa vút qua lưỡi kiếm",
+    body:
+      S("M3.6 18.6 18.8 3.4M15.6 3.6l4.8 4.8") +
+      F("M5 11.6c3.4-.6 6.2.4 8 2.8-3.2-.2-5.4.8-6.8 3-0.2-2.4-.6-4.2-1.2-5.8Z") +
+      S("M9.6 9c1.8-1.6 4-2.2 6.4-1.8"),
+  },
+  "kn-thuynguyet": {
+    group: "hanh-dong",
+    label: "Kỹ năng Thủy Nguyệt: chuông bạc trên sóng triều",
+    body:
+      S("M8 13.6V10a4 4 0 0 1 8 0v3.6l1.4 1.6H6.6ZM12 4.4V6") +
+      Ci(12, 17.2, 1.2, true) +
+      S("M3.4 20.4c1.4 1 2.8 1 4.2 0s2.8-1 4.2 0 2.8 1 4.2 0 2.8-1 4.2 0"),
+  },
+  "kn-phongvan": {
+    group: "hanh-dong",
+    label: "Kỹ năng Phong Vân: mũi tên cưỡi luồng gió",
+    body: S("M4 20 19.4 4.6M14.4 4.4h5.2v5.2M3.6 9.6c2.4-1.6 4.6-1.6 6.4 0M9.8 18.6c1.6-2.2 1.8-4.4.4-6.6"),
+  },
+  "kn-loidinh": {
+    group: "hanh-dong",
+    label: "Kỹ năng Lôi Đình: ngọn thương gọi tia sấm",
+    body: S("M4 20 16.6 7.4M15 3.6l5.4 0-0 5.4-3.8-1.6Z") + F("M8.4 3.4 5.2 9h2.8L6 14l5.2-6.6H8.4l2-4Z"),
+  },
+  "kn-thachson": {
+    group: "hanh-dong",
+    label: "Kỹ năng Thạch Sơn: khiên ngọc sáu cạnh",
+    body:
+      S("M12 2.8 19.8 7.4v9.2L12 21.2 4.2 16.6V7.4ZM12 7.2l4 2.4v4.8l-4 2.4-4-2.4V9.6Z") +
+      F("M12 9.6l2 1.2v2.4L12 14.4 10 13.2v-2.4Z"),
+  },
+  "kn-tuyetlan": {
+    group: "hanh-dong",
+    label: "Kỹ năng Tuyết Lan: hoa lan nở từ tinh thể băng",
+    body: S(
+      "M12 21V12M12 12c-1.6-2.8-1.6-5.6 0-8.4 1.6 2.8 1.6 5.6 0 8.4ZM12 12c-3-.4-5.4-2-6.6-4.6 3 .2 5.2 1.8 6.6 4.6ZM12 12c3-.4 5.4-2 6.6-4.6-3 .2-5.2 1.8-6.6 4.6ZM8.6 17.4h6.8M9.6 15.2l4.8 4.4M14.4 15.2l-4.8 4.4",
+    ),
+  },
+  "kn-mailinh": {
+    group: "hanh-dong",
+    label: "Kỹ năng Mai Linh: đèn lồng phun lửa",
+    body:
+      S(
+        "M12 2.6v2.2M9 4.8h6M7.6 7.4c0-1.4 2-2.6 4.4-2.6s4.4 1.2 4.4 2.6v6.8c0 1.4-2 2.6-4.4 2.6s-4.4-1.2-4.4-2.6ZM7.6 10.8h8.8M10.4 16.8v2.6M13.6 16.8v2.6",
+      ) + F("M12 8.6c.9 1 1.4 1.8 1.4 2.6a1.4 1.4 0 0 1-2.8 0c0-.8.5-1.6 1.4-2.6Z"),
+  },
+  "kn-suongmai": {
+    group: "hanh-dong",
+    label: "Kỹ năng Sương Mai: đường kiếm vẽ giọt sương",
+    body:
+      S("M4.2 19.8 17.4 6.6M15.8 4.2l4 4M3.4 9.2c3-3.6 7-5 11.4-4.4") +
+      F(
+        "M7.6 13c1 1.2 1.6 2.1 1.6 3a1.6 1.6 0 0 1-3.2 0c0-.9.6-1.8 1.6-3ZM17.4 13.6c.8 1 1.2 1.7 1.2 2.4a1.2 1.2 0 0 1-2.4 0c0-.7.4-1.4 1.2-2.4Z",
+      ),
+  },
+  "kn-bachvu": {
+    group: "hanh-dong",
+    label: "Kỹ năng Bạch Vũ: lông vũ xoáy thành lốc",
+    body:
+      S(
+        "M6 20.4 16.4 8.2M16.4 8.2c2.6-3 3.2-5 2.8-5.4-2.4.2-6.6 2.2-9 6.2-1.6 2.6-1.8 5-1.2 6.6 2.4-.2 5.4-2.2 7.4-7.4ZM12.4 12.6l-3.2-.6M14.4 10.2l-3-.6",
+      ) + S("M3.6 14.6c-.6-2 .2-3.6 2-4.2"),
+  },
+  "kn-minhkhai": {
+    group: "hanh-dong",
+    label: "Kỹ năng Minh Khải: ngọn đèn sét của thợ săn",
+    body:
+      S("M9.2 3.6h5.6M10 3.6v2.6M14 3.6v2.6M7.4 8.2l1.4-2h6.4l1.4 2v8.4l-2 2.6H9.4l-2-2.6ZM12 19.2v2") +
+      F("M12.8 9 10 13.2h2l-.8 3.6 2.8-4.4h-2Z"),
+  },
+  "kn-ngocthach": {
+    group: "hanh-dong",
+    label: "Kỹ năng Ngọc Thạch: thiên thạch rơi xuống mỏ ngọc",
+    body: Ci(15.4, 15.4, 4.4) + S("M3.4 3.4l8 8M6.8 2.8l6 6M2.8 6.8l6 6M13.6 13.8l3.4 3.2M17.2 13.4l-3.4 3.6"),
+  },
+  "kn-havy": {
+    group: "hanh-dong",
+    label: "Kỹ năng Hạ Vy: mũi tên sương giá",
+    body:
+      S("M4 20 17.6 6.4M13.2 4.6l6.2-1-1 6.2M4.6 13.4l2.6 2.6M7.6 10.6l2.6 2.6") +
+      S("M17.2 15.4v5.2M14.6 18h5.2M15.4 16.2l3.6 3.6M19 16.2l-3.6 3.6"),
+  },
 };
 
 export type IconName = keyof typeof ICONS;

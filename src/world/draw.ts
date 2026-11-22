@@ -36,6 +36,17 @@ export function drawTile(x: number, y: number, t: any, tm: number) {
     for (let i = 0; i < 4; i++) ctx.fillRect(X + 3, Y + i * 10 + 8, TS - 6, 1.5);
     return;
   }
+  if (t === TL.LEDGE) {
+    // Bệ đá cao một bậc (S09): mặt trên sáng, mép dưới tối như vách đứng.
+    ctx.fillStyle = h < 0.5 ? "#8f8a7c" : "#999382";
+    ctx.fillRect(X, Y, TS + 0.5, TS + 0.5);
+    ctx.fillStyle = "#6a6558";
+    ctx.fillRect(X, Y + TS - 9, TS + 0.5, 9.5);
+    ctx.fillStyle = "rgba(255,255,255,.16)";
+    ctx.fillRect(X + 4 + h * 10, Y + 6, 10, 2);
+    ctx.fillRect(X + 18, Y + 18 + h * 6, 8, 2);
+    return;
+  }
   const base = t === TL.SAND ? TILEC[5] : t === TL.PATH ? TILEC[4] : TILEC[0];
   ctx.fillStyle = base[Math.floor(h * base.length)];
   ctx.fillRect(X, Y, TS + 0.5, TS + 0.5);

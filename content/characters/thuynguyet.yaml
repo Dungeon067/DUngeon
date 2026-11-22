@@ -12,6 +12,7 @@ skill:
   type: heal
   cd: 9
   m: 1.8
+  icon: kn-thuynguyet
 burst:
   name: Triều Dâng Trăng Rằm
   type: tide

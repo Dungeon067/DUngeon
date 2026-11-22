@@ -12,6 +12,7 @@ skill:
   type: dash
   cd: 7
   m: 2.6
+  icon: kn-lachong
 burst:
   name: Lạc Hỏa Liệu Nguyên
   type: inferno

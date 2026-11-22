@@ -35,6 +35,18 @@ Không đổi tên, nguyên tố, vũ khí, độ hiếm của 12 nhân vật hi
 
 Dừng hình, rung, camera, đệm lệnh, chịu đòn và cân nặng của quái, báo trước đòn, âm lượng, hiệu ứng riêng từng nhân vật. Mọi nhân vật trong `characters/` và mọi quái (kể cả `hacgiao`) phải có mục tương ứng. Giải thích từng thông số ở [combat-feel.md](combat-feel.md).
 
+## Điều khiển: `content/controls.yaml`
+
+Phím mặc định, bảng nút tay cầm, cần điều khiển, bố cục nút cảm ứng mặc định, vùng giữa không đặt nút và giá trị mặc định của Cài đặt. Giải thích ở `docs/ux/hud-dieu-khien.md`.
+
+## Mục tiêu trên HUD: `content/objectives.yaml`
+
+Danh sách mục tiêu trên đảo theo thứ tự (hiện mục đầu tiên chưa xong), câu cho Tháp và Boss.
+
+## Địa hình và vùng: `content/terrain.yaml`
+
+Loại địa hình và bộ hiệu ứng theo vùng. S09 chỉ định dạng, S12 áp hiệu ứng. Xem `docs/world/dinh-dang-ban-do.md`.
+
 ## Cấu hình: `content/config.yaml`
 
 | Mục                      | Ý nghĩa                                                                                                                                                     |

@@ -1,0 +1,74 @@
+# Điều khiển và giá trị mặc định của Cài đặt (S09). Giải thích ở docs/ux/hud-dieu-khien.md.
+# Người chơi chỉnh trong Cài đặt; lựa chọn lưu ở localStorage khóa "tinhtu-settings-v1".
+
+# Phím mặc định trên máy tính, theo KeyboardEvent.code. Mỗi thao tác tối đa 2 phím.
+keys:
+  up: [KeyW, ArrowUp]
+  down: [KeyS, ArrowDown]
+  left: [KeyA, ArrowLeft]
+  right: [KeyD, ArrowRight]
+  attack: [KeyJ]
+  skill: [KeyE]
+  burst: [KeyQ]
+  dash: [ShiftLeft, ShiftRight]
+  jump: [Space]
+  interact: [KeyF]
+  p1: [Digit1]
+  p2: [Digit2]
+  p3: [Digit3]
+  p4: [Digit4]
+  map: [KeyM]
+  pause: [Escape]
+
+# Tay cầm theo bố cục chuẩn của Gamepad API (số thứ tự nút).
+# 0 nút dưới (A hoặc ✕), 1 nút phải (B hoặc ○), 2 nút trái (X hoặc □), 3 nút trên (Y hoặc △),
+# 4 vai trái, 5 vai phải (R1), 6 cò trái, 7 cò phải (R2), 8 chọn, 9 bắt đầu, 12–15 phím hướng.
+gamepad:
+  deadzone: 0.2
+  buttons:
+    jump: 0
+    attack: 2
+    dash: 1
+    interact: 3
+    skill: 5
+    burst: 7
+    map: 8
+    pause: 9
+    p1: 12
+    p2: 15
+    p3: 13
+    p4: 14
+
+# Cần điều khiển trên màn cảm ứng.
+joystick:
+  mode: dynamic # dynamic: hiện ở chỗ đặt ngón; fixed: đứng yên ở góc dưới trái
+  deadzone: 0.15 # 0–0,5 bán kính
+  sensitivity: 1 # 0,5–2; lớn hơn thì chạy hết tốc khi kéo ít hơn
+  radius: 54 # bán kính vòng cần, điểm ảnh CSS
+
+# Bố cục nút cảm ứng mặc định. Toạ độ là tâm nút, tính từ góc neo (sau vùng an toàn),
+# đơn vị "u" bằng cỡ nút Đánh (--tt-hud-xl: 64–96 px theo chiều cao màn hình).
+# scale 0,7–1,6; opacity 0,3–1. Chế độ chỉnh bố cục ghi đè từng nút.
+layout:
+  atk: { anchor: br, dx: 1.75, dy: 1, scale: 1, opacity: 0.92 }
+  skill: { anchor: br, dx: 2.95, dy: 0.78, scale: 1, opacity: 0.92 }
+  burst: { anchor: br, dx: 2.7, dy: 1.95, scale: 1, opacity: 0.92 }
+  jump: { anchor: br, dx: 0.62, dy: 0.72, scale: 1, opacity: 0.92 }
+  dash: { anchor: br, dx: 0.62, dy: 1.58, scale: 1, opacity: 0.92 }
+  interact: { anchor: br, dx: 4.05, dy: 1.05, scale: 1, opacity: 0.92 }
+  joy: { anchor: bl, dx: 1.9, dy: 1.55, scale: 1, opacity: 0.6 }
+
+# Vùng giữa màn hình (quanh nhân vật) không được đặt nút, tính theo phần của bề rộng và cao.
+centerSafe: { w: 0.3, h: 0.42 }
+
+defaults:
+  master: 0.8
+  music: 0.55
+  sfx: 0.9
+  quality: high # high | medium | low
+  shake: true
+  vibrate: true
+  fontScale: 1 # 0,9 | 1 | 1,15 | 1,3
+  colorMode: none # none | protan | deutan | tritan
+  mouseAim: false
+  showHints: true

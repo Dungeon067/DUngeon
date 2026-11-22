@@ -12,6 +12,7 @@ skill:
   type: vortex
   cd: 9
   m: 0.55
+  icon: kn-bachvu
 burst:
   name: Bão Trắng
   type: blizzard

@@ -24,6 +24,11 @@ export const CharacterSchema = z
         type: z.enum(SKILL_TYPES),
         cd: z.number().positive(),
         m: z.number().positive(),
+        /** Biểu tượng riêng trong src/ui/icons/icons.ts (S09). */
+        icon: z
+          .string()
+          .regex(/^kn-[a-z0-9]+$/)
+          .optional(),
       })
       .strict(),
     burst: z
@@ -220,8 +225,159 @@ export const FeelSchema = z
       })
       .strict(),
     characters: z.record(z.string(), CharFxSchema),
+    jump: z
+      .object({
+        dur: pos,
+        height: pos,
+        levelPx: pos,
+        stamina: nonneg,
+        airControl: z.number().min(0).max(1),
+        longJump: pos,
+        airDashStamina: nonneg,
+        dodgeHeight: nonneg,
+        plunge: z.object({ base: pos, perLevel: nonneg, radius: pos, speed: pos }).strict(),
+        fall: z.object({ safeLevels: nonneg, dmgPerLevel: z.number().min(0).max(0.5), landAnim: nonneg }).strict(),
+      })
+      .strict(),
   })
   .strict();
+
+export const ACTIONS = [
+  "up",
+  "down",
+  "left",
+  "right",
+  "attack",
+  "skill",
+  "burst",
+  "dash",
+  "jump",
+  "interact",
+  "p1",
+  "p2",
+  "p3",
+  "p4",
+  "map",
+  "pause",
+] as const;
+export const HUD_BUTTONS = ["atk", "skill", "burst", "jump", "dash", "interact", "joy"] as const;
+const unit = z.number().min(0).max(1);
+const LayoutItemSchema = z
+  .object({
+    anchor: z.enum(["br", "bl"]),
+    dx: z.number().min(0).max(12),
+    dy: z.number().min(0).max(8),
+    scale: z.number().min(0.7).max(1.6),
+    opacity: z.number().min(0.3).max(1),
+  })
+  .strict();
+/** content/controls.yaml: phím, tay cầm, cần điều khiển, bố cục nút và mặc định Cài đặt (S09). */
+export const ObjectivesSchema = z
+  .object({
+    world: z
+      .array(
+        z
+          .object({
+            id: z.string().regex(/^[a-z0-9-]+$/),
+            text: z.string().min(1),
+            done: z
+              .object({
+                kind: z.enum(["statue", "chests", "tower", "boss"]),
+                count: z.union([z.number().int().positive(), z.literal("all")]),
+              })
+              .strict(),
+            target: z.enum(["statue", "chest", "tower", "gate"]),
+          })
+          .strict(),
+      )
+      .min(1),
+    tower: z.string().min(1),
+    boss: z.string().min(1),
+  })
+  .strict();
+export type Objectives = z.infer<typeof ObjectivesSchema>;
+
+export const ControlsSchema = z
+  .object({
+    keys: z.object(Object.fromEntries(ACTIONS.map((a) => [a, z.array(z.string().min(1)).min(1).max(2)]))).strict(),
+    gamepad: z
+      .object({
+        deadzone: z.number().min(0).max(0.6),
+        buttons: z.record(z.enum(ACTIONS), z.number().int().min(0).max(16)),
+      })
+      .strict(),
+    joystick: z
+      .object({
+        mode: z.enum(["dynamic", "fixed"]),
+        deadzone: z.number().min(0).max(0.5),
+        sensitivity: z.number().min(0.5).max(2),
+        radius: z.number().min(30).max(90),
+      })
+      .strict(),
+    layout: z.object(Object.fromEntries(HUD_BUTTONS.map((b) => [b, LayoutItemSchema]))).strict(),
+    centerSafe: z.object({ w: unit, h: unit }).strict(),
+    defaults: z
+      .object({
+        master: unit,
+        music: unit,
+        sfx: unit,
+        quality: z.enum(["high", "medium", "low"]),
+        shake: z.boolean(),
+        vibrate: z.boolean(),
+        fontScale: z.number().min(0.8).max(1.4),
+        colorMode: z.enum(["none", "protan", "deutan", "tritan"]),
+        mouseAim: z.boolean(),
+        showHints: z.boolean(),
+      })
+      .strict(),
+  })
+  .strict();
+export type Action = (typeof ACTIONS)[number];
+export type HudButton = (typeof HUD_BUTTONS)[number];
+export type LayoutItem = z.infer<typeof LayoutItemSchema>;
+export type Controls = {
+  keys: Record<Action, string[]>;
+  gamepad: { deadzone: number; buttons: Partial<Record<Action, number>> };
+  joystick: z.infer<typeof ControlsSchema>["joystick"];
+  layout: Record<HudButton, LayoutItem>;
+  centerSafe: { w: number; h: number };
+  defaults: z.infer<typeof ControlsSchema>["defaults"];
+};
+
+const EffectsSchema = z.record(z.string(), z.number().min(0.5).max(1.5));
+/** content/terrain.yaml: loại địa hình và bộ hiệu ứng theo vùng (định dạng cho S12). */
+export const TerrainSchema = z
+  .object({
+    terrains: z
+      .array(
+        z
+          .object({
+            id: z.string().regex(/^[a-z][a-z-]*$/),
+            name: z.string().min(1),
+            walkable: z.boolean().optional(),
+            effects: EffectsSchema.optional(),
+          })
+          .strict(),
+      )
+      .min(1)
+      .max(255),
+    regions: z
+      .array(
+        z
+          .object({
+            id: z.string().regex(/^[a-z][a-z-]*$/),
+            name: z.string().min(1),
+            effects: EffectsSchema,
+            terrain: z.record(z.string(), EffectsSchema),
+          })
+          .strict(),
+      )
+      .min(1)
+      .max(255),
+    effectKeys: z.array(z.string()).min(1),
+  })
+  .strict();
+export type TerrainData = z.infer<typeof TerrainSchema>;
 
 export type Character = z.infer<typeof CharacterSchema>;
 export type Feel = z.infer<typeof FeelSchema>;
@@ -237,6 +393,9 @@ export interface RawContent {
   characters: Record<string, unknown>;
   enemies: Record<string, unknown>;
   feel: unknown;
+  controls: unknown;
+  terrain: unknown;
+  objectives: unknown;
 }
 
 export interface Content {
@@ -245,6 +404,9 @@ export interface Content {
   enemies: Record<string, EnemyDef>;
   boss: BossDef;
   feel: Feel;
+  controls: Controls;
+  terrain: TerrainData;
+  objectives: Objectives;
 }
 
 /** Kiểm tra và ghép dữ liệu. Ném lỗi kèm danh sách mọi vấn đề tìm thấy. */
@@ -295,6 +457,44 @@ export function validateContent(raw: RawContent): Content {
     for (const id of [...Object.keys(enemies), "hacgiao"])
       if (!f.enemies[id]) errors.push(`combat-feel.yaml: enemies thiếu cân nặng và chịu đòn cho "${id}"`);
   }
+  const ctlRes = ControlsSchema.safeParse(raw.controls);
+  if (!ctlRes.success) fmtErr("controls.yaml", ctlRes.error);
+  else {
+    const seen = new Map<string, string>();
+    for (const [a, ks] of Object.entries(ctlRes.data.keys) as [string, string[]][])
+      for (const k of ks) {
+        if (seen.has(k)) errors.push(`controls.yaml: phím "${k}" dùng cho cả "${seen.get(k)}" và "${a}"`);
+        seen.set(k, a);
+      }
+    const used = new Map<number, string>();
+    for (const [a, b] of Object.entries(ctlRes.data.gamepad.buttons)) {
+      if (used.has(b!)) errors.push(`controls.yaml: nút tay cầm ${b} dùng cho cả "${used.get(b!)}" và "${a}"`);
+      used.set(b!, a);
+    }
+  }
+  const objRes = ObjectivesSchema.safeParse(raw.objectives);
+  if (!objRes.success) fmtErr("objectives.yaml", objRes.error);
+  else if (new Set(objRes.data.world.map((o) => o.id)).size !== objRes.data.world.length)
+    errors.push("objectives.yaml: id mục tiêu trùng");
+  const terRes = TerrainSchema.safeParse(raw.terrain);
+  if (!terRes.success) fmtErr("terrain.yaml", terRes.error);
+  else {
+    const t = terRes.data;
+    const ids = new Set(t.terrains.map((x) => x.id));
+    if (ids.size !== t.terrains.length) errors.push("terrain.yaml: id địa hình trùng");
+    const keyOk = (o: Record<string, number> | undefined, where: string) => {
+      for (const k of Object.keys(o ?? {}))
+        if (!t.effectKeys.includes(k)) errors.push(`terrain.yaml: ${where} có hiệu ứng lạ "${k}"`);
+    };
+    for (const x of t.terrains) keyOk(x.effects, x.id);
+    for (const r of t.regions) {
+      keyOk(r.effects, r.id);
+      for (const [tid, eff] of Object.entries(r.terrain)) {
+        if (!ids.has(tid)) errors.push(`terrain.yaml: vùng ${r.id} có địa hình lạ "${tid}"`);
+        keyOk(eff, `${r.id}.${tid}`);
+      }
+    }
+  }
   const characters: Character[] = [];
   if (cfgRes.success) {
     const cfg = cfgRes.data;
@@ -322,5 +522,14 @@ export function validateContent(raw: RawContent): Content {
       errors.push("Cần ít nhất một nhân vật 5★ ngoài nhân vật nổi bật");
   }
   if (errors.length) throw new Error("Dữ liệu content/ không hợp lệ:\n- " + errors.join("\n- "));
-  return { config: cfgRes.data!, characters, enemies, boss: boss!, feel: feelRes.data! };
+  return {
+    config: cfgRes.data!,
+    characters,
+    enemies,
+    boss: boss!,
+    feel: feelRes.data!,
+    controls: ctlRes.data as Controls,
+    terrain: terRes.data!,
+    objectives: objRes.data!,
+  };
 }

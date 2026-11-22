@@ -12,6 +12,7 @@ skill:
   type: nova
   cd: 8
   m: 2.8
+  icon: kn-tuyetlan
 burst:
   name: Tuyết Phủ Trường Sơn
   type: blizzard

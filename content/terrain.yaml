@@ -1,0 +1,43 @@
+# Loại địa hình và bộ hiệu ứng theo vùng (định dạng cho S12; S09 chưa áp hiệu ứng nào).
+# Mô tả đầy đủ ở docs/world/dinh-dang-ban-do.md.
+#
+# Mỗi ô bản đồ có: tile (hình vẽ), terrain (chỉ số trong danh sách dưới), h (độ cao, đơn vị bậc),
+# region (chỉ số vùng). Hiệu ứng là hệ số nhân, 1 = không đổi; chỉ nên lệch nhẹ (0,85–1,15).
+
+# Thứ tự trong danh sách là chỉ số lưu trong bản đồ: không đổi thứ tự, chỉ thêm vào cuối.
+terrains:
+  - id: co
+    name: Cỏ
+  - id: da
+    name: Đá
+  - id: cat
+    name: Cát
+    effects: { moveSpeed: 0.95 }
+  - id: tuyet
+    name: Tuyết
+    effects: { moveSpeed: 0.92, staminaRegen: 0.9 }
+  - id: nuoc-nong
+    name: Nước nông
+    effects: { moveSpeed: 0.85, dashStamina: 1.15 }
+  - id: bun
+    name: Bùn
+    effects: { moveSpeed: 0.85, jumpHeight: 0.9 }
+  - id: bang
+    name: Băng
+    effects: { moveSpeed: 1.08, friction: 0.6 }
+  - id: nuoc-sau
+    name: Nước sâu
+    walkable: false
+  - id: dat
+    name: Đường đất
+
+# Bộ hiệu ứng của vùng: áp lên toàn vùng (all) và riêng từng loại địa hình (terrain).
+# Hiệu ứng vùng nhân với hiệu ứng địa hình. Đảo Lạc là vùng gốc nên chưa có hiệu ứng.
+regions:
+  - id: dao-lac
+    name: Đảo Lạc
+    effects: {}
+    terrain: {}
+
+# Các hệ số hiệu ứng được phép (S12 thêm mục mới thì khai báo ở đây trước).
+effectKeys: [moveSpeed, staminaRegen, dashStamina, jumpHeight, friction, elementDmg]

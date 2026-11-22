@@ -12,6 +12,7 @@ skill:
   type: shield
   cd: 12
   m: 1.9
+  icon: kn-thachson
 burst:
   name: Sơn Băng Địa Liệt
   type: meteor
