@@ -1,4 +1,5 @@
 import { portrait } from "../../../art/chibi";
+import { GS } from "../../../core/state";
 import { fmt } from "../../../core/util";
 import { BURSTDESC, CHARS, EL, SKILLDESC, WEAP, byId } from "../../../data/content";
 import { MENU } from "../../../data/menu-content";
@@ -263,7 +264,16 @@ function kit(t: string, d: string) {
 
 function lvUp(id: string, times: number) {
   const r = Server.req("levelUp", { id, times });
-  if (r.ok) rerender();
+  if (!r.ok) return;
+  // Nhân vật đang ra trận: cập nhật chỉ số ngay, giữ tỉ lệ máu hiện có.
+  const m = GS.G?.party?.find((x: any) => x.id === id);
+  if (m) {
+    const st = statsOf(id);
+    m.hp = m.alive ? Math.round((m.hp / m.maxHp) * st.hp) : m.hp;
+    m.st = st;
+    m.maxHp = st.hp;
+  }
+  rerender();
 }
 
 registerScreen("chars", {
