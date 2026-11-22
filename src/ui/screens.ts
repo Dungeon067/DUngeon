@@ -1,11 +1,9 @@
 import { GS } from "../core/state";
 import { releaseAll } from "../core/input";
 import { flushPending } from "../core/loop";
-import { fmt } from "../core/util";
 import { startWorld } from "../modes/world";
 import { Server } from "../server/server";
 import { closeModal } from "../ui/modal";
-import { toast } from "../ui/toast";
 import { refreshQuickDots } from "./hud";
 import { closeMenu, openMenu, refreshWallets } from "./menu/shell";
 
@@ -17,11 +15,6 @@ export function leaveWorld() {
   const G = GS.G;
   if (G?.mode !== "world") return;
   flushPending();
-  if (G.loot && (G.loot.coin || G.loot.books)) {
-    Server.req("reward", { coin: G.loot.coin, books: G.loot.books });
-    toast(`Mang về: ${fmt(G.loot.coin)} Xu, ${G.loot.books} Sách KN`);
-    G.loot.coin = G.loot.books = 0;
-  }
   GS.worldPos = { x: G.p.x, y: G.p.y, rx: G.respawn.x, ry: G.respawn.y };
 }
 

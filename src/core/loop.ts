@@ -350,6 +350,12 @@ export function flushPending() {
       pd[k] = 0;
     }
   }
+  // Trên đảo không có lúc "kết thúc trận": Xu và Sách KN nhặt được ghi ngay vào hồ sơ.
+  const L = GS.G.loot;
+  if (GS.G.mode === "world" && L && (L.coin || L.books)) {
+    Server.req("reward", { coin: L.coin, books: L.books });
+    L.coin = L.books = 0;
+  }
 }
 export function snapCam() {
   GS.G.cam.x = GS.G.p.x;
