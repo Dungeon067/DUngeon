@@ -19,9 +19,15 @@ export interface Daily {
   bonus: boolean;
 }
 
-/** Hồ sơ người chơi, lưu ở localStorage khóa "tinhtu-v2". */
+export interface MapMark {
+  x: number;
+  y: number;
+  label: string;
+}
+
+/** Hồ sơ người chơi, lưu ở localStorage khóa "tinhtu-v3" (tự chuyển từ "tinhtu-v2"). */
 export interface Profile {
-  v: 2;
+  v: 3;
   gems: number;
   coin: number;
   books: number;
@@ -38,6 +44,22 @@ export interface Profile {
   cfg: Config["gacha"];
   gm: { god: boolean; one: boolean; nocd: boolean };
   stats: { kills: number; reacts: number };
+  /** 4 đội lưu sẵn; `party` luôn là bản sao của `teams[team]`. */
+  teams: string[][];
+  team: number;
+  /** Túi đồ: id vật phẩm trong content/items.yaml → số lượng. */
+  bag: Record<string, number>;
+  quests: { tracked: string | null; done: string[] };
+  /** Sương bản đồ: mỗi ký tự là một khối FOG×FOG ô, "1" là đã đi qua. */
+  fog: string;
+  marks: MapMark[];
+  /** Mục Bách khoa đã mở, ví dụ "quai:slime", "vat:den-troi". */
+  codex: string[];
+  /** Độ thân thiết theo nhân vật (điểm thô, đổi ra mức ở content/menu.yaml). */
+  affinity: Record<string, number>;
+  /** Số liệu cho Admin: Đá Sao vào và ra theo nguồn, lần rời trận giữa chừng. */
+  econ: Record<string, number>;
+  quits: { mode: string; t: number; at: string }[];
 }
 
 export interface LogEntry {
