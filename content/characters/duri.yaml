@@ -1,0 +1,28 @@
+id: duri
+name: Duri
+r: 4
+el: earth
+w: great
+title: Thợ Vò Lò Rồng
+desc: Thợ nặn vò sành ở Purunae, từng đứng chặn đất trôi trước lò rồng của cả xóm. Dựng thành vò bằng đất che người đứng sau.
+hp: 1060
+atk: 80
+skill:
+  name: Thành Vò Che
+  type: shield
+  cd: 12
+  m: 1.6
+burst:
+  name: Lò Rồng Thức Giấc
+  type: inferno
+  cost: 50
+  m: 4.5
+look:
+  hair: "#2a1a14"
+  style: pony
+  outfit: "#8a4a2a"
+  accent: "#2f6a4a"
+  skin: "#e8c2a0"
+  eye: "#4a2a1a"
+  coat: true
+  pants: "#5a4030"

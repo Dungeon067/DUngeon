@@ -4,7 +4,7 @@ import { validateContent } from "../../src/data/schema";
 import { loadRawContent } from "../../scripts/load-content";
 
 describe("content/", () => {
-  it("đủ 18 nhân vật, 5 loại quái và boss", () => {
+  it("đủ 24 nhân vật, 5 loại quái và boss", () => {
     expect(CHARS.map((c) => c.id)).toEqual([
       "lachong",
       "thuynguyet",
@@ -24,6 +24,12 @@ describe("content/", () => {
       "kumi",
       "golnar",
       "payam",
+      "ardo",
+      "pruina",
+      "naraa",
+      "shonkhor",
+      "duri",
+      "urae",
     ]);
     expect(Object.keys(ENEMY)).toEqual(["slime", "goblin", "archer", "shaman", "golem"]);
     expect(BOSS.hp).toBe(14000);

@@ -1,7 +1,7 @@
 # Tổng hợp dàn nhân vật
 
 > Bảng tổng hợp cho S05B. Nguồn dữ liệu chiến đấu: `content/characters/<id>.yaml`. Nguồn quê quán: `docs/characters/<id>/ho-so.md`.
-> Trạng thái: **18/24 nhân vật đã có** (12 cũ + 6 mới của lần 1). Sáu nhân vật lần 2 (Marevia, Khokhtal, Purunae) ghi ở mục 3 dưới dạng dự kiến và sẽ được bổ sung đầy đủ ở PR lần 2.
+> Trạng thái: **đủ 24/24 nhân vật** (12 cũ + 12 mới của S05B), tất cả đã có trong `content/config.yaml` `characterOrder`, chơi được và có trong Ước nguyện.
 
 ## 1. Bảng nhân vật
 
@@ -27,31 +27,41 @@ Vai trò ghi theo kiểu kỹ năng và nộ trong game: **sát thương chính*
 | 16  | `kumi`       | Kumi        | Shizukane | 4   | Thủy      | Kiếm đơn | nova    | tide     | Sát thương phụ tầm gần, áp Thủy |
 | 17  | `golnar`     | Golnar      | Golbaran  | 5   | Băng      | Pháp khí | heal    | blizzard | Hồi máu, áp Băng                |
 | 18  | `payam`      | Payam       | Golbaran  | 4   | Thổ       | Đại kiếm | dash    | meteor   | Sát thương chính, phá giáp      |
+| 19  | `ardo`       | Ardo        | Marevia   | 5   | Hỏa       | Đại kiếm | nova    | inferno  | Sát thương chính, dọn đám đông  |
+| 20  | `pruina`     | Pruina      | Marevia   | 4   | Băng      | Thương   | vortex  | tide     | Gom quái, áp Băng               |
+| 21  | `naraa`      | Naraa       | Khokhtal  | 5   | Lôi       | Cung     | dash    | inferno  | Sát thương chính, cơ động       |
+| 22  | `shonkhor`   | Shonkhor    | Khokhtal  | 4   | Phong     | Thương   | turret  | blizzard | Sát thương phụ, khuếch tán      |
+| 23  | `duri`       | Duri        | Purunae   | 4   | Thổ       | Đại kiếm | shield  | inferno  | Bảo hộ, kết tinh                |
+| 24  | `urae`       | Urae        | Purunae   | 4   | Lôi       | Kiếm đơn | nova    | blizzard | Sát thương phụ tầm gần, áp Lôi  |
 
 Ghi chú: Bạch Vũ (Lũng Vân) và Tuyết Lan (Shizukane) là hai nhân vật cũ có quê ngoài Đảo Lạc, theo hồ sơ S03–S05.
 
-## 2. Bảng đếm (18 nhân vật hiện có)
+## 2. Bảng đếm (24 nhân vật)
 
 ### 2.1. Theo nguyên tố
 
-| Nguyên tố | 5★                      | 4★                 | Tổng |
-| --------- | ----------------------- | ------------------ | ---- |
-| Hỏa       | Lạc Hồng                | Mai Linh, Khởi Yên | 3    |
-| Thủy      | Thủy Nguyệt, Nghiên Thu | Sương Mai, Kumi    | 4    |
-| Phong     | Phong Vân, Takane       | Bạch Vũ            | 3    |
-| Lôi       | Lôi Đình                | Minh Khải          | 2    |
-| Thổ       | Thạch Sơn               | Ngọc Thạch, Payam  | 3    |
-| Băng      | Tuyết Lan, Golnar       | Hạ Vy              | 3    |
+| Nguyên tố | 5★                      | 4★                      | Tổng |
+| --------- | ----------------------- | ----------------------- | ---- |
+| Hỏa       | Lạc Hồng, Ardo          | Mai Linh, Khởi Yên      | 4    |
+| Thủy      | Thủy Nguyệt, Nghiên Thu | Sương Mai, Kumi         | 4    |
+| Phong     | Phong Vân, Takane       | Bạch Vũ, Shonkhor       | 4    |
+| Lôi       | Lôi Đình, Naraa         | Minh Khải, Urae         | 4    |
+| Thổ       | Thạch Sơn               | Ngọc Thạch, Payam, Duri | 4    |
+| Băng      | Tuyết Lan, Golnar       | Hạ Vy, Pruina           | 4    |
+
+Mỗi nguyên tố có đúng 4 nhân vật. Thổ có một 5★ (các nguyên tố khác có hai) vì 5★ mới đã chia cho Thủy, Phong, Băng, Hỏa, Lôi; Thổ được bù bằng hai 4★ mới.
 
 ### 2.2. Theo vũ khí
 
-| Vũ khí   | Nhân vật                                      | Tổng |
-| -------- | --------------------------------------------- | ---- |
-| Kiếm đơn | Lạc Hồng, Tuyết Lan, Sương Mai, Bạch Vũ, Kumi | 5    |
-| Đại kiếm | Thạch Sơn, Payam                              | 2    |
-| Thương   | Lôi Đình, Ngọc Thạch, Takane                  | 3    |
-| Cung     | Phong Vân, Minh Khải, Hạ Vy, Khởi Yên         | 4    |
-| Pháp khí | Thủy Nguyệt, Mai Linh, Nghiên Thu, Golnar     | 4    |
+| Vũ khí   | Nhân vật                                            | Cũ  | Mới | Tổng |
+| -------- | --------------------------------------------------- | --- | --- | ---- |
+| Kiếm đơn | Lạc Hồng, Tuyết Lan, Sương Mai, Bạch Vũ, Kumi, Urae | 4   | 2   | 6    |
+| Đại kiếm | Thạch Sơn, Payam, Ardo, Duri                        | 1   | 3   | 4    |
+| Thương   | Lôi Đình, Ngọc Thạch, Takane, Pruina, Shonkhor      | 2   | 3   | 5    |
+| Cung     | Phong Vân, Minh Khải, Hạ Vy, Khởi Yên, Naraa        | 3   | 2   | 5    |
+| Pháp khí | Thủy Nguyệt, Mai Linh, Nghiên Thu, Golnar           | 2   | 2   | 4    |
+
+Không vũ khí nào dưới 4 hoặc trên 6. Đại kiếm (trước đây chỉ có 1) được bù nhiều nhất.
 
 ### 2.3. Theo vùng (quê quán)
 
@@ -61,21 +71,27 @@ Ghi chú: Bạch Vũ (Lũng Vân) và Tuyết Lan (Shizukane) là hai nhân vậ
 | Lũng Vân  | Bạch Vũ     | Nghiên Thu, Khởi Yên | 3    |
 | Shizukane | Tuyết Lan   | Takane, Kumi         | 3    |
 | Golbaran  | 0           | Golnar, Payam        | 2    |
+| Marevia   | 0           | Ardo, Pruina         | 2    |
+| Khokhtal  | 0           | Naraa, Shonkhor      | 2    |
+| Purunae   | 0           | Duri, Urae           | 2    |
+
+Mỗi vùng mới có 2 nhân vật mới (tính cả nhân vật cũ thì mỗi vùng ngoài Đảo Lạc có 2–3 người).
 
 ### 2.4. Theo độ hiếm
 
-- 5★: 9 (6 cũ + 3 mới).
-- 4★: 9 (6 cũ + 3 mới).
+| Độ hiếm | Cũ  | Mới | Tổng |
+| ------- | --- | --- | ---- |
+| 5★      | 6   | 5   | 11   |
+| 4★      | 6   | 7   | 13   |
 
-## 3. Dự kiến lần 2 (chưa có trong game)
+5★ mới: Nghiên Thu, Takane, Golnar, Ardo, Naraa. 4★ mới: Khởi Yên, Kumi, Payam, Pruina, Shonkhor, Duri, Urae.
 
-| ID         | Tên dự kiến       | Vùng     | ★   | Nguyên tố | Vũ khí   |
-| ---------- | ----------------- | -------- | --- | --------- | -------- |
-| `ardo`     | Ardo Fusor        | Marevia  | 5   | Hỏa       | Đại kiếm |
-| `pruina`   | Pruina Siphonaria | Marevia  | 4   | Băng      | Thương   |
-| `naraa`    | Naraa Temuulen    | Khokhtal | 5   | Lôi       | Cung     |
-| `shonkhor` | Shonkhor          | Khokhtal | 4   | Phong     | Thương   |
-| `duri`     | Jang Duri         | Purunae  | 4   | Thổ       | Đại kiếm |
-| `urae`     | Na Urae           | Purunae  | 4   | Lôi       | Kiếm đơn |
+### 2.5. Theo vai trò (24 nhân vật)
 
-Sau lần 2, 12 nhân vật mới gồm 5 nhân vật 5★ và 7 nhân vật 4★, mỗi nguyên tố 2 người, mỗi vùng 2 người. Tổng 24 nhân vật: mỗi nguyên tố 4 người; kiếm đơn 6, đại kiếm 4, thương 5, cung 5, pháp khí 4.
+| Vai trò chính    | Nhân vật                                                                          | Tổng |
+| ---------------- | --------------------------------------------------------------------------------- | ---- |
+| Sát thương chính | Lạc Hồng, Lôi Đình, Tuyết Lan, Sương Mai, Takane, Payam, Ardo, Naraa              | 8    |
+| Sát thương phụ   | Phong Vân, Mai Linh, Minh Khải, Ngọc Thạch, Hạ Vy, Khởi Yên, Kumi, Shonkhor, Urae | 9    |
+| Hồi máu          | Thủy Nguyệt, Golnar                                                               | 2    |
+| Bảo hộ           | Thạch Sơn, Duri                                                                   | 2    |
+| Gom quái         | Bạch Vũ, Nghiên Thu, Pruina                                                       | 3    |
