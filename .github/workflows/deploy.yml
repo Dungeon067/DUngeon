@@ -26,6 +26,9 @@ jobs:
           cache: pnpm
       - name: Build
         if: github.event.action != 'closed'
+        env:
+          # Bản xem thử PR có thêm trang /styleguide/; bản main thì không.
+          STYLEGUIDE: ${{ github.event_name == 'pull_request' && '1' || '' }}
         run: |
           pnpm install --frozen-lockfile
           pnpm build

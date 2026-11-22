@@ -2,16 +2,42 @@ import { GS } from "../core/state";
 import { aim, hitEnemy, nearestEnemy } from "../combat/damage";
 import { sfx } from "../core/audio";
 import { TAU, dist, pick, rand } from "../core/util";
-import { EL, WEAP } from "../data/content";
-import { fxBolt, fxBurst, fxRing, fxSlash, fxText, later } from "../entities/fx";
+import { groundAt } from "../world/collision";
+import { WEAP } from "../data/content";
+import { fxBolt, fxBurst, fxParticles, fxRing, fxSlash, fxText, later } from "../entities/fx";
 import { cur } from "../entities/party";
+import { FEEL, charFx, feelState, hitstop, inputBuffer, shake } from "../combat/feel";
 import { Server } from "../server/server";
+import { canAirDash, tryJump, tryPlunge } from "./jump";
+
+/* ---------- đệm lệnh: bấm sớm trong FEEL.input.buffer giây vẫn được nhận ---------- */
+export type BufferedAct = "atk" | "skill" | "burst" | "dash" | "jump";
+const ACTS: Record<BufferedAct, () => boolean> = {
+  atk: () => tryAttack(),
+  skill: () => castSkill(),
+  burst: () => castBurst(),
+  dash: () => doDash(),
+  jump: () => tryJump(),
+};
+export function press(a: BufferedAct) {
+  if (ACTS[a]()) inputBuffer[a] = 0;
+  else inputBuffer[a] = FEEL.input.buffer;
+}
+export function updateBuffer(dt: number) {
+  for (const a of Object.keys(inputBuffer) as BufferedAct[]) {
+    if (inputBuffer[a] <= 0) continue;
+    if (ACTS[a]()) inputBuffer[a] = 0;
+    else inputBuffer[a] -= dt;
+  }
+}
 
 /* ---------- player actions ---------- */
-export function tryAttack() {
+export function tryAttack(): boolean {
   const p = GS.G.p,
     m = cur();
-  if (!m || !m.alive || p.atkCd > 0 || p.dashT > 0 || GS.G.over) return;
+  if (!m || !m.alive || GS.G.over || GS.G.cine) return false;
+  if (p.air) return tryPlunge();
+  if (p.atkCd > 0 || p.dashT > 0) return false;
   const W = WEAP[m.c.w];
   if (p.comboT <= 0) p.combo = 0;
   const step = p.combo;
@@ -22,9 +48,12 @@ export function tryAttack() {
   aim();
   const ang = p.ang,
     el = m.c.w === "cat" || step === 2 ? m.c.el : null,
-    mult = W.mult[step];
+    mult = W.mult[step],
+    F = charFx(m.c.id);
   if (W.kind === "melee") {
-    fxSlash(p.x, p.y - 16, ang, W.range!, el ? EL[el].c : "#ffffff", m.c.w);
+    fxSlash(p.x, p.y - 16, ang, W.range!, el ? F.c : F.c2, m.c.w, F.trail, el ? F.c2 : "#ffffff");
+    if (el) fxParticles(p.x + Math.cos(ang) * W.range! * 0.7, p.y - 16 + Math.sin(ang) * W.range! * 0.7, F, 5);
+    let landed = false;
     p.x += Math.cos(ang) * 4;
     p.y += Math.sin(ang) * 4;
     for (const e of GS.G.enemies) {
@@ -37,13 +66,19 @@ export function tryAttack() {
       while (da > Math.PI) da -= TAU;
       while (da < -Math.PI) da += TAU;
       if (Math.abs(da) > W.arc! && d > e.r + 10) continue;
-      hitEnemy(e, m, mult, el, { ang, kb: m.c.w === "great" ? 160 : 70 });
+      hitEnemy(e, m, mult, el, { ang, kb: m.c.w === "great" ? 160 : 70, heavy: step === 2 || m.c.w === "great" });
+      landed = true;
     }
-    sfx("swing");
+    if (landed && (step === 2 || m.c.w === "great")) {
+      hitstop("heavy");
+      shake("heavy");
+    }
+    sfx(m.c.w === "great" ? "swing_great" : "swing");
   } else {
     const sp = W.kind === "arrow" ? 640 : 400;
     GS.G.projs.push({
       own: "p",
+      h0: groundAt(p.x, p.y),
       x: p.x + Math.cos(ang) * 14,
       y: p.y - 16 + Math.sin(ang) * 14,
       vx: Math.cos(ang) * sp,
@@ -55,14 +90,28 @@ export function tryAttack() {
       el,
       kind: W.kind,
       home: W.kind === "orb",
+      heavy: step === 2,
     });
-    sfx("swing");
+    sfx(W.kind === "arrow" ? "shoot" : "cast");
   }
+  return true;
 }
-export function doDash() {
+export function doDash(): boolean {
   const p = GS.G.p;
-  if (p.dashT > 0 || p.stamina < 20 || GS.G.over) return;
-  p.stamina -= 20;
+  if (p.dashT > 0 || GS.G.over || GS.G.cine) return false;
+  if (p.air) {
+    if (!canAirDash(p)) return false;
+    p.airDash = true;
+    p.stamina -= FEEL.jump.airDashStamina;
+  } else {
+    if (p.stamina < 20) return false;
+    p.stamina -= 20;
+  }
+  if (FEEL.input.dashCancel) {
+    // Lướt né hủy hoạt ảnh và thời gian chờ của đòn đánh; combo vẫn giữ để nối tiếp.
+    p.atkAnim = 0;
+    p.atkCd = 0;
+  }
   let dx = p.dirX,
     dy = p.dirY;
   const L = Math.hypot(dx, dy) || 1;
@@ -73,15 +122,18 @@ export function doDash() {
   p.dvy = dy * 460;
   p.iframes = Math.max(p.iframes, 0.32);
   fxBurst(p.x, p.y - 6, "#ffffff", 8, 90, 2);
+  sfx("dash");
+  return true;
 }
-export function castSkill() {
+export function castSkill(): boolean {
   const p = GS.G.p,
     m = cur();
-  if (!m || !m.alive || GS.G.over) return;
-  if (m.skillCd > 0 && !Server.P.gm.nocd) return;
+  if (!m || !m.alive || GS.G.over || GS.G.cine) return false;
+  if (m.skillCd > 0 && !Server.P.gm.nocd) return false;
   const S = m.c.skill,
     el = m.c.el,
-    col = EL[el].c;
+    F = charFx(m.c.id),
+    col = F.c;
   m.skillCd = S.cd;
   aim();
   const ang = p.ang;
@@ -95,12 +147,13 @@ export function castSkill() {
     p.atkAnim = 1;
     const hit = new Set();
     p.dashHit = { set: hit, m, mult: S.m, el, cast };
-    fxSlash(p.x, p.y - 16, ang, 90, col, "great");
+    fxSlash(p.x, p.y - 16, ang, 90, col, "great", F.trail, F.c2);
   } else if (S.type === "nova" || S.type === "shield" || S.type === "heal") {
     const R = S.type === "heal" ? 120 : 130;
     fxRing(p.x, p.y - 12, R, col, 0.45, 10);
     fxBurst(p.x, p.y - 12, col, 24, 260, 3.5);
-    GS.G.shake = 4;
+    fxParticles(p.x, p.y - 12, F, 14, 220);
+    shake("skill");
     for (const e of GS.G.enemies) {
       if (!e.dead && dist(p.x, p.y, e.x, e.y) < R + e.r) hitEnemy(e, m, S.m, el, { cast, kb: 180 });
     }
@@ -135,28 +188,34 @@ export function castSkill() {
       y = p.y + Math.sin(ang) * 110;
     GS.G.fields.push({ k: "vortex", x, y, r: 150, el, m, life: 2.5, tick: 0, ti: 0.5, mult: S.m, cast, pull: 180 });
   }
+  return true;
 }
-export function castBurst() {
+export function castBurst(): boolean {
   const p = GS.G.p,
     m = cur();
-  if (!m || !m.alive || GS.G.over || GS.G.cine) return;
-  if (m.energy < m.c.burst.cost && !Server.P.gm.nocd) return;
+  if (!m || !m.alive || GS.G.over || GS.G.cine) return false;
+  if (m.energy < m.c.burst.cost && !Server.P.gm.nocd) return false;
+  feelState.burstT = FEEL.camera.burstHold;
   m.energy = 0;
   GS.G.pending.burst++;
   p.iframes = 1.4;
   sfx("burst");
   GS.G.cine = { t: 0.95, max: 0.95, m, fire: () => doBurst(m) };
+  return true;
 }
 export function doBurst(m: any) {
   const p = GS.G.p,
     B = m.c.burst,
     el = m.c.el,
-    col = EL[el].c,
+    F = charFx(m.c.id),
+    col = F.c,
     cast = { gave: false, amount: 0 };
-  GS.G.shake = 8;
+  shake("burst");
+  hitstop("burst");
+  fxParticles(p.x, p.y - 12, F, 24, 320);
   if (B.type === "inferno") {
     fxRing(p.x, p.y - 12, 230, col, 0.6, 16);
-    fxRing(p.x, p.y - 12, 150, EL[el].c2, 0.5, 8);
+    fxRing(p.x, p.y - 12, 150, F.c2, 0.5, 8);
     fxBurst(p.x, p.y - 12, col, 50, 420, 5);
     for (const e of GS.G.enemies) {
       if (!e.dead && dist(p.x, p.y, e.x, e.y) < 230 + e.r) hitEnemy(e, m, B.m, el, { noEnergy: true, kb: 260 });
@@ -179,8 +238,8 @@ export function doBurst(m: any) {
       });
   } else if (B.type === "tide") {
     fxRing(p.x, p.y - 12, 240, col, 0.7, 18);
-    fxRing(p.x, p.y - 12, 180, EL[el].c2, 0.6, 10);
-    fxBurst(p.x, p.y - 12, EL[el].c2, 40, 360, 4);
+    fxRing(p.x, p.y - 12, 180, F.c2, 0.6, 10);
+    fxBurst(p.x, p.y - 12, F.c2, 40, 360, 4);
     for (const e of GS.G.enemies) {
       if (!e.dead && dist(p.x, p.y, e.x, e.y) < 240 + e.r) hitEnemy(e, m, B.m, el, { noEnergy: true, kb: 300 });
     }
@@ -192,7 +251,8 @@ export function doBurst(m: any) {
       y = tg ? tg.y : p.y + Math.sin(p.ang) * 150;
     GS.G.fx.push({ k: "meteor", x, y, col, life: 0.8, max: 0.8 });
     later(0.8, () => {
-      GS.G.shake = 14;
+      shake("meteor");
+      sfx("slam");
       fxRing(x, y, 170, col, 0.6, 16);
       fxBurst(x, y, col, 50, 420, 5);
       for (const e of GS.G.enemies) {

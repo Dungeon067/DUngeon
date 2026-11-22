@@ -1,0 +1,121 @@
+/* Khung trang trí (S08): viền trống đồng cho hộp thoại, đường phân cách sóng và mây, nền giấy dó, hoa văn góc.
+   Toàn bộ là SVG nội tuyến hoặc CSS, không có ảnh bitmap. */
+:root {
+  /* Dải vành trống đồng: chấm tròn xen vạch chéo */
+  --tt-deco-drum-band: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='8'%3E%3Ccircle cx='4' cy='4' r='1.6' fill='%23c8962d'/%3E%3Cpath d='M9 7 13 1' stroke='%23c8962d' stroke-width='1.2'/%3E%3C/svg%3E");
+  /* Sóng nước */
+  --tt-deco-wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='8'%3E%3Cpath d='M0 5c3-3 6-3 9 0s6 3 9 0 4-2 6-1' fill='none' stroke='%23c8962d' stroke-width='1.3'/%3E%3C/svg%3E");
+  /* Mây cuộn ở góc */
+  --tt-deco-corner: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='none' stroke='%23e2b453' stroke-width='1.4' stroke-linecap='round'%3E%3Cpath d='M2 26V8a6 6 0 0 1 6-6h18'/%3E%3Cpath d='M6 26V12a6 6 0 0 1 6-6h14'/%3E%3Cpath d='M12 16a3 3 0 1 1 3 3'/%3E%3C/svg%3E");
+  /* Mặt trời 12 tia ở giữa trống đồng */
+  --tt-deco-sun: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Ccircle r='11.4' fill='%230f1b3d' stroke='%23c8962d'/%3E%3Cpath fill='%23e2b453' d='M0-9.5 1.1-4 4.75-8.2 3.4-3.1 8.2-4.75 4-1.1 9.5 0 4 1.1 8.2 4.75 3.4 3.1 4.75 8.2 1.1 4 0 9.5-1.1 4-4.75 8.2-3.4 3.1-8.2 4.75-4 1.1-9.5 0-4-1.1-8.2-4.75-3.4-3.1-4.75-8.2-1.1-4Z'/%3E%3C/svg%3E");
+  /* Vân giấy dó: nhiễu sợi rất nhẹ */
+  --tt-deco-paper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9 .06' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .31 0 0 0 0 .16 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23f)'/%3E%3C/svg%3E");
+}
+
+/* Khung trống đồng: viền đồng đôi + dải vành + mặt trời ở đỉnh. Dùng cho hộp thoại quan trọng. */
+.tt-frame-drum {
+  position: relative;
+  border: 1px solid var(--tt-bronze-lo);
+  box-shadow:
+    inset 0 0 0 3px var(--tt-surface-1),
+    inset 0 0 0 4px rgb(200 150 45 / 0.55),
+    var(--tt-shadow-3);
+}
+.tt-frame-drum::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: 8px;
+  height: 8px;
+  background: var(--tt-deco-drum-band) repeat-x center / 16px 8px;
+  opacity: 0.55;
+  pointer-events: none;
+}
+.tt-frame-drum::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -17px;
+  width: 34px;
+  height: 34px;
+  transform: translateX(-50%);
+  background: var(--tt-deco-sun) center / contain no-repeat;
+  pointer-events: none;
+}
+
+/* Hoa văn mây ở 4 góc. Thêm vào bất kỳ khung nào có position: relative. */
+.tt-corners {
+  position: relative;
+}
+.tt-corners > .tt-corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background: var(--tt-deco-corner) center / contain no-repeat;
+  pointer-events: none;
+}
+.tt-corner.tl {
+  left: 4px;
+  top: 4px;
+}
+.tt-corner.tr {
+  right: 4px;
+  top: 4px;
+  transform: scaleX(-1);
+}
+.tt-corner.bl {
+  left: 4px;
+  bottom: 4px;
+  transform: scaleY(-1);
+}
+.tt-corner.br {
+  right: 4px;
+  bottom: 4px;
+  transform: scale(-1);
+}
+
+/* Đường phân cách */
+.tt-divider {
+  border: 0;
+  height: 8px;
+  margin: var(--tt-sp-4) 0;
+  background: var(--tt-deco-wave) repeat-x center / 24px 8px;
+  opacity: 0.7;
+}
+.tt-divider-star {
+  display: flex;
+  align-items: center;
+  gap: var(--tt-sp-3);
+  margin: var(--tt-sp-4) 0;
+  color: var(--tt-bronze-hi);
+  font-family: var(--tt-font-display);
+  font-size: var(--tt-fs-lg);
+  font-weight: var(--tt-fw-bold);
+}
+.tt-divider-star::before,
+.tt-divider-star::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--tt-bronze) 30%, var(--tt-bronze) 70%, transparent);
+}
+
+/* Nền giấy dó: cho thư, bia đá, trang truyện */
+.tt-paper {
+  background-color: var(--tt-paper);
+  background-image: var(--tt-deco-paper), radial-gradient(120% 90% at 50% 40%, transparent 60%, rgb(140 100 40 / 0.18));
+  color: var(--tt-paper-ink);
+}
+.tt-paper .tt-dim {
+  color: var(--tt-paper-ink-dim);
+}
+
+/* Nền sơn mài: lớp sơn đen đỏ có vệt vàng mờ */
+.tt-lacquer {
+  background-color: var(--tt-lacquer);
+  background-image:
+    radial-gradient(80% 60% at 20% 0%, rgb(158 43 38 / 0.35), transparent 70%),
+    radial-gradient(40% 30% at 85% 90%, rgb(226 180 83 / 0.12), transparent 70%);
+}

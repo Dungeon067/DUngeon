@@ -1,3 +1,4 @@
+import { toast } from "../ui/toast";
 import { GS } from "../core/state";
 import { flushPending, snapCam } from "../core/loop";
 import { $, esc, fmt } from "../core/util";
@@ -5,6 +6,8 @@ import { later } from "../entities/fx";
 import { Server } from "../server/server";
 import { buildHudParty } from "../ui/hud";
 import { openModal } from "../ui/modal";
+import { requestLandscape } from "../ui/hud/rotate";
+import { showFirstHints } from "../ui/hud/hints";
 
 export function enterPlay() {
   GS.scene = "play";
@@ -15,6 +18,8 @@ export function enterPlay() {
   if (GS.G.boss) $("bossName").textContent = `Hắc Giao · Cấp độ ${GS.G.boss.lv}`;
   buildHudParty();
   snapCam();
+  void requestLandscape();
+  showFirstHints();
 }
 export function showBanner(t: any) {
   GS.G.banner = { t: 2.2, txt: t };
@@ -34,7 +39,8 @@ export function partyWipe() {
       GS.G.over = false;
       snapCam();
       buildHudParty();
-      showBanner("Hồi sinh tại bia đá");
+      showBanner("Hồi sinh tại Bia Đá");
+      toast("Cả đội về Bia Đá đã chạm gần nhất, máu đầy, không mất vật phẩm");
     });
   } else endRun(false, "Cả đội đã gục ngã");
 }

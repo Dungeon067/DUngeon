@@ -1,125 +1,271 @@
 import { GS } from "../core/state";
-import { castBurst, castSkill, doDash, tryAttack } from "../combat/actions";
+import { press } from "../combat/actions";
 import { cv } from "../core/canvas";
 import { $ } from "../core/util";
 import { switchTo } from "../entities/party";
 import { doInteract } from "../modes/world";
 import { pause, resume } from "../ui/modal";
+import { ACTIONS, type Action } from "../data/schema";
+import { CONTROLS } from "../data/content";
+import { actionForKey, settings } from "./settings";
 
-export const keys: any = {};
-export const joy: any = { x: 0, y: 0, active: false, id: null, ox: 0, oy: 0 };
-// joystick
-export const jz = $("joyZone"),
-  jEl = $("joy"),
-  jK = $("joyKnob");
-export const jEnd = (e: any) => {
-  if (e.pointerId !== joy.id) return;
-  joy.active = false;
-  joy.x = 0;
-  joy.y = 0;
-  jEl.style.display = "none";
-};
-export function holdBtn(el: HTMLElement, down: () => void, up?: () => void) {
-  el.addEventListener("pointerdown", (e: any) => {
-    e.preventDefault();
-    el.setPointerCapture(e.pointerId);
-    down();
-  });
-  el.addEventListener("pointerup", () => up && up());
-  el.addEventListener("pointercancel", () => up && up());
-  el.addEventListener("contextmenu", (e: any) => e.preventDefault());
+/* =========================================================
+   NHẬP LIỆU (S09): bàn phím theo phím đã đặt, chuột, cần điều khiển
+   cảm ứng (cố định hoặc động), nút cảm ứng. Tay cầm ở core/gamepad.ts.
+   ========================================================= */
+
+/** Thao tác đang giữ (bàn phím hoặc tay cầm). */
+export const held = Object.fromEntries(ACTIONS.map((a) => [a, false])) as Record<Action, boolean>;
+const keyHeld = new Set<string>();
+export const joy = { x: 0, y: 0, active: false, id: null as number | null, ox: 0, oy: 0 };
+/** Cần trái của tay cầm, gamepad.ts ghi vào. */
+export const pad = { x: 0, y: 0 };
+
+/** Đổi độ lệch ngón tay thành hướng chạy, áp vùng chết và độ nhạy. Trả về [x, y] với độ dài ≤ 1. */
+export function joyVector(dx: number, dy: number, radius: number, deadzone: number, sensitivity: number) {
+  const L = Math.hypot(dx, dy) / radius;
+  if (L <= deadzone || L === 0) return [0, 0] as [number, number];
+  const mag = Math.min(1, ((Math.min(L, 1) - deadzone) / (1 - deadzone)) * sensitivity);
+  const n = Math.hypot(dx, dy);
+  return [(dx / n) * mag, (dy / n) * mag] as [number, number];
 }
 
-export function init(): void {
-  addEventListener("keydown", (e: any) => {
-    const k = e.key.toLowerCase();
-    if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
-    if (GS.scene === "play" && !GS.paused) {
-      if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault();
-      if (k === "e" && !e.repeat) castSkill();
-      if (k === "q" && !e.repeat) castBurst();
-      if (k === "shift" && !e.repeat) {
-        GS.holdDash = true;
-        GS.G.p.dashHeld = 0;
-        doDash();
-      }
-      if (k === "f" && !e.repeat) doInteract();
-      if (["1", "2", "3", "4"].includes(k)) switchTo(+k - 1);
+export function moveAxis(): [number, number] {
+  const kx = (held.right ? 1 : 0) - (held.left ? 1 : 0),
+    ky = (held.down ? 1 : 0) - (held.up ? 1 : 0);
+  return [kx + joy.x + pad.x, ky + joy.y + pad.y];
+}
+
+/** Đang chờ người chơi bấm phím mới (màn đổi phím). */
+let capture: ((code: string) => void) | null = null;
+export function captureNextKey(f: ((code: string) => void) | null) {
+  capture = f;
+}
+
+const playing = () => GS.scene === "play" && !!GS.G && !GS.paused;
+let mapToggle: () => void = () => {};
+export function onMapAction(f: () => void) {
+  mapToggle = f;
+}
+
+/** Bấm một thao tác (bàn phím, tay cầm). */
+export function actionDown(a: Action) {
+  if (a === "pause") {
+    if (GS.scene !== "play" || !GS.G) return;
+    if (GS.overlay) return;
+    if (GS.paused && !$("modal").hidden && !GS.G._ended) resume();
+    else if (!GS.paused) pause();
+    return;
+  }
+  if (a === "map") {
+    if (GS.scene === "play" && GS.G?.mode === "world" && (!GS.paused || GS.overlay === "map")) mapToggle();
+    return;
+  }
+  held[a] = true;
+  if (!playing()) return;
+  if (a === "attack") press("atk");
+  else if (a === "skill") press("skill");
+  else if (a === "burst") press("burst");
+  else if (a === "jump") press("jump");
+  else if (a === "dash") {
+    GS.holdDash = true;
+    GS.G.p.dashHeld = 0;
+    press("dash");
+  } else if (a === "interact") doInteract();
+  else if (a === "p1" || a === "p2" || a === "p3" || a === "p4") switchTo(+a[1]! - 1);
+}
+export function actionUp(a: Action) {
+  held[a] = false;
+  if (a === "dash") GS.holdDash = false;
+}
+export function releaseAll() {
+  joy.x = joy.y = 0;
+  pad.x = pad.y = 0;
+  for (const a of ACTIONS) held[a] = false;
+  keyHeld.clear();
+  GS.holdAtk = false;
+  GS.holdDash = false;
+}
+
+export function holdBtn(el: HTMLElement, down: () => void, up?: () => void) {
+  el.addEventListener("pointerdown", (e: PointerEvent) => {
+    e.preventDefault();
+    if (document.body.classList.contains("hud-editing")) return;
+    try {
+      el.setPointerCapture(e.pointerId);
+    } catch {
+      /* phần tử đã bị gỡ */
     }
-    if (k === "escape" && GS.scene === "play") {
-      if (GS.paused && !$("modal").hidden && GS.G && !GS.G._ended) resume();
-      else if (!GS.paused) pause();
-    }
-    keys[k] = true;
+    el.classList.add("is-active");
+    down();
   });
-  addEventListener("keyup", (e) => {
-    const k = e.key.toLowerCase();
-    keys[k] = false;
-    if (k === "shift") GS.holdDash = false;
+  const end = () => {
+    el.classList.remove("is-active");
+    if (up) up();
+  };
+  el.addEventListener("pointerup", end);
+  el.addEventListener("pointercancel", end);
+  el.addEventListener("contextmenu", (e) => e.preventDefault());
+}
+
+/** Toạ độ thế giới của điểm trên màn hình (cùng phép biến đổi với render.ts). */
+export function screenToWorld(sx: number, sy: number) {
+  const G = GS.G;
+  return { x: G.cam.x + (sx - GS.VW / 2) / GS.ZOOM, y: G.cam.y + (sy - GS.VH / 2) / GS.ZOOM };
+}
+
+const isField = (t: any) => t && (t.tagName === "INPUT" || t.tagName === "SELECT" || t.tagName === "TEXTAREA");
+
+export function init(): void {
+  addEventListener(
+    "keydown",
+    (e: KeyboardEvent) => {
+      if (capture) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        const f = capture;
+        capture = null;
+        f(e.code);
+        return;
+      }
+      if (isField(e.target)) return;
+      const a = actionForKey(e.code);
+      if (!a) return;
+      if (GS.scene === "play" && !GS.paused && a !== "pause") e.preventDefault();
+      if (e.repeat) return;
+      keyHeld.add(e.code);
+      actionDown(a);
+    },
+    true,
+  );
+  addEventListener("keyup", (e: KeyboardEvent) => {
+    keyHeld.delete(e.code);
+    const a = actionForKey(e.code);
+    if (!a) return;
+    // Thao tác còn phím khác đang giữ thì chưa thả.
+    if (settings.keys[a].some((k) => keyHeld.has(k))) return;
+    actionUp(a);
   });
   addEventListener("blur", () => {
-    for (const k in keys) keys[k] = false;
-    GS.holdAtk = false;
-    GS.holdDash = false;
+    releaseAll();
     if (GS.scene === "play" && !GS.paused && GS.G && !GS.G.over) pause();
   });
+
+  /* ---------- chuột ---------- */
   cv.addEventListener("pointerdown", (e: PointerEvent) => {
-    if (GS.scene === "play" && e.pointerType === "mouse") {
-      GS.holdAtk = true;
-    }
+    if (GS.scene === "play" && e.pointerType === "mouse" && e.button === 0) GS.holdAtk = true;
   });
   addEventListener("pointerup", (e) => {
     if (e.pointerType === "mouse") GS.holdAtk = false;
   });
-  jz.addEventListener("pointerdown", (e) => {
+  const hover = (e: PointerEvent) => {
+    if (e.pointerType !== "mouse") return;
+    GS.mouse.sx = e.clientX;
+    GS.mouse.sy = e.clientY;
+    GS.mouse.inside = true;
+    if (GS.scene !== "play" || !GS.G) return;
+    const w = screenToWorld(e.clientX, e.clientY);
+    GS.mouse.wx = w.x;
+    GS.mouse.wy = w.y;
+    const over = GS.G.enemies.some(
+      (en: any) => !en.dead && Math.hypot(en.x - w.x, en.y - (en.isBoss ? 30 : 14) - w.y) < en.r + 14,
+    );
+    document.body.classList.toggle("cursor-enemy", over);
+  };
+  cv.addEventListener("pointermove", hover);
+  $("joyZone").addEventListener("pointermove", hover);
+  cv.addEventListener("pointerleave", () => {
+    GS.mouse.inside = false;
+    document.body.classList.remove("cursor-enemy");
+  });
+
+  /* ---------- cần điều khiển cảm ứng ---------- */
+  const jz = $("joyZone"),
+    jEl = $("joy"),
+    jK = $("joyKnob");
+  const R = () => CONTROLS.joystick.radius;
+  const jEnd = (e: PointerEvent) => {
+    if (e.pointerId !== joy.id) return;
+    joy.active = false;
+    joy.id = null;
+    joy.x = 0;
+    joy.y = 0;
+    jEl.classList.remove("is-active");
+    jEl.style.left = "";
+    jEl.style.top = "";
+    jK.style.transform = "";
+  };
+  jz.addEventListener("pointerdown", (e: PointerEvent) => {
     if (e.pointerType === "mouse") {
       GS.holdAtk = true;
       return;
     }
+    if (document.body.classList.contains("hud-editing") || joy.active) return;
     GS.isTouch = true;
+    document.documentElement.dataset.input = "touch";
     joy.active = true;
     joy.id = e.pointerId;
-    joy.ox = e.clientX;
-    joy.oy = e.clientY;
-    jEl.style.display = "block";
-    jEl.style.left = e.clientX - 60 + "px";
-    jEl.style.top = e.clientY - 60 + "px";
-    jK.style.transform = "translate(0,0)";
-    jz.setPointerCapture(e.pointerId);
+    if (settings.joystick.mode === "dynamic") {
+      joy.ox = e.clientX;
+      joy.oy = e.clientY;
+      const box = jEl.offsetParent?.getBoundingClientRect() ?? { left: 0, top: 0 };
+      jEl.style.left = e.clientX - box.left + "px";
+      jEl.style.top = e.clientY - box.top + "px";
+    } else {
+      const r = jEl.getBoundingClientRect();
+      joy.ox = r.left + r.width / 2;
+      joy.oy = r.top + r.height / 2;
+    }
+    jEl.classList.add("is-active");
+    jK.style.transform = "translate(-50%,-50%)";
+    try {
+      jz.setPointerCapture(e.pointerId);
+    } catch {
+      /* bỏ qua */
+    }
     e.preventDefault();
+    moveKnob(e);
   });
-  jz.addEventListener("pointermove", (e) => {
+  const moveKnob = (e: PointerEvent) => {
     if (!joy.active || e.pointerId !== joy.id) return;
     let dx = e.clientX - joy.ox,
       dy = e.clientY - joy.oy;
-    const L = Math.hypot(dx, dy),
-      mx = 50;
-    if (L > mx) {
-      dx = (dx / L) * mx;
-      dy = (dy / L) * mx;
+    const [vx, vy] = joyVector(dx, dy, R(), settings.joystick.deadzone, settings.joystick.sensitivity);
+    joy.x = vx;
+    joy.y = vy;
+    const L = Math.hypot(dx, dy);
+    if (L > R()) {
+      dx = (dx / L) * R();
+      dy = (dy / L) * R();
     }
-    joy.x = dx / mx;
-    joy.y = dy / mx;
-    jK.style.transform = `translate(${dx}px,${dy}px)`;
-  });
+    jK.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+  };
+  jz.addEventListener("pointermove", moveKnob);
   jz.addEventListener("pointerup", jEnd);
   jz.addEventListener("pointercancel", jEnd);
+  addEventListener("touchstart", () => (document.documentElement.dataset.input = "touch"), { passive: true });
+  addEventListener("mousemove", () => {
+    if (!GS.isTouch) document.documentElement.dataset.input = "mouse";
+  });
+
+  /* ---------- nút cảm ứng ---------- */
   holdBtn(
     $("bAtk"),
     () => {
       GS.holdAtk = true;
-      tryAttack();
+      press("atk");
     },
     () => (GS.holdAtk = false),
   );
-  holdBtn($("bSkill"), () => castSkill());
-  holdBtn($("bBurst"), () => castBurst());
+  holdBtn($("bSkill"), () => press("skill"));
+  holdBtn($("bBurst"), () => press("burst"));
+  holdBtn($("bJump"), () => press("jump"));
   holdBtn(
     $("bDash"),
     () => {
       GS.holdDash = true;
       GS.G.p.dashHeld = 0;
-      doDash();
+      press("dash");
     },
     () => (GS.holdDash = false),
   );

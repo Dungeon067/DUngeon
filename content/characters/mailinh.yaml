@@ -12,6 +12,7 @@ skill:
   type: turret
   cd: 10
   m: 0.9
+  icon: kn-mailinh
 burst:
   name: Pháo Hoa Đêm Hội
   type: inferno

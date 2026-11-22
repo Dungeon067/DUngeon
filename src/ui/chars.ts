@@ -28,7 +28,7 @@ export function renderChars() {
       b.appendChild(cvp);
       b.insertAdjacentHTML(
         "beforeend",
-        `<div>${esc(c.name)}</div><div class="muted" style="font-size:10px">${own ? `Lv${own.lv} · C${own.cons}` : "Chưa có"}</div>${P.party.includes(c.id) ? `<span class="inp">Đội</span>` : ""}`,
+        `<div>${esc(c.name)}</div><div class="muted" style="font-size:10px">${own ? `Lv${own.lv} · N${own.cons}` : "Chưa có"}</div>${P.party.includes(c.id) ? `<span class="inp">Đội</span>` : ""}`,
       );
       b.addEventListener("click", () => {
         GS.selChar = c.id;
@@ -72,8 +72,8 @@ export function renderDetail() {
     <p class="muted" style="margin:0">${esc(c.desc)}</p>
     ${
       own
-        ? `<div class="stats"><div><span>Cấp</span>${st.lv}/60</div><div><span>Cung mệnh</span>C${st.cons}</div><div><span>Máu</span>${fmt(st.hp)}</div><div><span>Tấn công</span>${fmt(st.atk)}</div><div><span>Tỉ lệ chí mạng</span>${Math.round(st.crit * 100)}%</div><div><span>Sát thương chí mạng</span>${Math.round(st.cdmg * 100)}%</div></div>
-      <div class="cons">${[1, 2, 3, 4, 5, 6].map((i) => `<i class="${i <= st.cons ? "on" : ""}" title="Cung mệnh ${i}"></i>`).join("")}</div>
+        ? `<div class="stats"><div><span>Cấp</span>${st.lv}/60</div><div><span>Nét Sao</span>N${st.cons}</div><div><span>Máu</span>${fmt(st.hp)}</div><div><span>Tấn công</span>${fmt(st.atk)}</div><div><span>Tỉ lệ chí mạng</span>${Math.round(st.crit * 100)}%</div><div><span>Sát thương chí mạng</span>${Math.round(st.cdmg * 100)}%</div></div>
+      <div class="cons">${[1, 2, 3, 4, 5, 6].map((i) => `<i class="${i <= st.cons ? "on" : ""}" title="Nét Sao ${i}"></i>`).join("")}</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${st.lv < 60 ? `<button class="btn gold sm" id="lv1">Lên 1 cấp · ${cost.books} Sách, ${fmt(cost.coin)} Xu</button><button class="btn sm" id="lv10">Lên 10 cấp</button>` : `<span class="muted">Đã đạt cấp tối đa</span>`}
       ${inParty ? `<span class="muted">Đang trong đội</span>` : `<button class="btn sm" id="toParty">Vào đội</button>`}</div>`
         : `<p class="muted" style="margin:0">Chưa sở hữu. Ước nguyện để nhận nhân vật này${c.r === 5 && P.cfg.featured !== c.id ? " (hoặc đặt làm banner trong tab Server)" : ""}.</p>`

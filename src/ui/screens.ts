@@ -1,7 +1,7 @@
 import { GS } from "../core/state";
 import { portrait } from "../art/chibi";
-import { sfx } from "../core/audio";
-import { joy, keys } from "../core/input";
+import { preloadSfx, sfx } from "../core/audio";
+import { releaseAll } from "../core/input";
 import { flushPending } from "../core/loop";
 import { $, esc, fmt } from "../core/util";
 import { byId } from "../data/content";
@@ -29,10 +29,8 @@ export function exitToMenu(screen = "hub") {
   GS.paused = false;
   $("hud").hidden = true;
   closeModal();
-  for (const k in keys) keys[k] = false;
-  GS.holdAtk = false;
-  GS.holdDash = false;
-  joy.x = joy.y = 0;
+  releaseAll();
+  GS.overlay = null;
   go(screen);
 }
 /* =========================================================
@@ -106,6 +104,9 @@ export function init(): void {
   $("sndBtn").addEventListener("click", () => {
     GS.soundOn = !GS.soundOn;
     $("sndBtn").textContent = "Âm thanh: " + (GS.soundOn ? "bật" : "tắt");
-    if (GS.soundOn) sfx("coin");
+    if (GS.soundOn) {
+      preloadSfx();
+      sfx("coin");
+    }
   });
 }

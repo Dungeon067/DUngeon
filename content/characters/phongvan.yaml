@@ -12,6 +12,7 @@ skill:
   type: turret
   cd: 10
   m: 1.1
+  icon: kn-phongvan
 burst:
   name: Mưa Tên Phong Vũ
   type: storm

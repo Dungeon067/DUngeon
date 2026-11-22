@@ -1,0 +1,126 @@
+# Thông số cảm giác chiến đấu (S14). Giải thích từng mục ở docs/combat-feel.md.
+# Bảng chỉnh nhanh (F9 ở bản phát triển hoặc URL có ?dev) đọc và sửa trực tiếp các giá trị này,
+# rồi xuất lại YAML để dán vào đây.
+
+# Dừng hình khi trúng đòn, đơn vị giây (0,04–0,08 là vùng dễ chịu).
+hitstop:
+  heavy: 0.05 # đòn 3 của combo, đòn đại kiếm
+  crit: 0.06
+  react: 0.065 # phản ứng nguyên tố
+  skill: 0.06
+  burst: 0.08
+  break: 0.08 # vỡ thanh chịu đòn
+  max: 0.08 # trần cho mọi lần dừng hình
+
+# Chậm hình khi hạ boss.
+slowmo:
+  bossKill:
+    scale: 0.25
+    dur: 1.2
+
+# Rung màn hình theo từng loại đòn, đơn vị điểm ảnh, nhân với scale.
+shake:
+  scale: 1
+  decay: 30
+  light: 1.5
+  heavy: 3.5
+  skill: 4
+  burst: 8
+  meteor: 14
+  react: 6
+  break: 7
+  hurt: 5
+  golem: 7
+  boss: 6
+  bossPhase: 12
+  bossKill: 16
+
+camera:
+  follow: 8 # tốc độ bám theo nhân vật
+  lead: 46 # khoảng nhìn trước theo hướng chạy
+  leadSpeed: 3
+  bossZoom: 0.88 # kéo ra khi đánh boss
+  burstZoom: 1.1 # kéo vào khi dùng nộ
+  burstHold: 1.3 # giây giữ góc gần sau khi bấm nộ
+  zoomSpeed: 4
+
+input:
+  buffer: 0.15 # bấm sớm tối đa 150 ms vẫn nhận
+  dashCancel: true
+
+hit:
+  flash: 0.12 # thời gian nháy trắng
+  squash: 0.14 # thời gian co giãn khi trúng đòn
+
+poise:
+  stun: 2.4 # giây choáng khi vỡ thanh chịu đòn
+  stunVuln: 1.25 # hệ số sát thương nhận vào khi choáng
+  regenDelay: 2 # giây không trúng đòn trước khi hồi thanh
+  regen: 0.35 # phần thanh hồi mỗi giây
+  # Lượng chịu đòn bị trừ mỗi đòn = weapon × hệ số đòn.
+  weapon:
+    sword: 9
+    great: 20
+    spear: 11
+    bow: 6
+    cat: 7
+
+# Cân nặng (giật lùi chia cho cân nặng, 0 là không bị đẩy) và thanh chịu đòn từng loại quái.
+enemies:
+  slime: { mass: 0.7, poise: 40 }
+  goblin: { mass: 1, poise: 55 }
+  archer: { mass: 0.9, poise: 45 }
+  shaman: { mass: 1, poise: 50 }
+  golem: { mass: 3.5, poise: 150 }
+  hacgiao: { mass: 0, poise: 520, stun: 3 }
+
+telegraph:
+  line: 3 # độ dày viền, điểm ảnh trên màn hình
+  touchScale: 1.5 # phóng thêm trên điện thoại, máy tính bảng
+  flashAt: 0.75 # từ mốc này viền nháy báo sắp đánh
+  warnRange: 520 # chỉ phát âm báo khi quái ở gần
+  sound: true
+
+audio:
+  sfx: 0.8
+  music: 0.45
+  crossfade: 1.5 # giây chuyển giữa nhạc khám phá và nhạc chiến đấu
+  combatRange: 420 # có quái đang đuổi trong bán kính này thì chuyển sang nhạc chiến đấu
+  combatLinger: 3 # giây giữ nhạc chiến đấu sau khi hết quái
+
+# Hiệu ứng riêng từng nhân vật: màu chính, màu lõi sáng, kiểu hạt và hình vệt chém.
+# particle: ember | drop | leaf | spark | shard | petal | lantern | feather | snow | mist
+# trail: arc | wing | crescent | thrust | heavy | twin | zigzag
+characters:
+  lachong: { c: "#ff5a2c", c2: "#ffd36b", particle: feather, trail: wing }
+  thuynguyet: { c: "#3ea8ff", c2: "#d6f2ff", particle: drop, trail: crescent }
+  phongvan: { c: "#4fe0b0", c2: "#e2fff4", particle: leaf, trail: arc }
+  loidinh: { c: "#b06bff", c2: "#f0e0ff", particle: spark, trail: zigzag }
+  thachson: { c: "#e0a83a", c2: "#fff0c2", particle: shard, trail: heavy }
+  tuyetlan: { c: "#8fe3ff", c2: "#ffffff", particle: petal, trail: twin }
+  mailinh: { c: "#ff8a3d", c2: "#ffe7a8", particle: lantern, trail: arc }
+  suongmai: { c: "#6cc7ff", c2: "#eefaff", particle: mist, trail: crescent }
+  bachvu: { c: "#9df0cf", c2: "#ffffff", particle: feather, trail: twin }
+  minhkhai: { c: "#c58bff", c2: "#fff4b8", particle: spark, trail: arc }
+  ngocthach: { c: "#7fd38a", c2: "#f4ffd8", particle: shard, trail: thrust }
+  havy: { c: "#b5ecff", c2: "#ffffff", particle: snow, trail: arc }
+
+# Nhảy và độ cao (S09). Một "bậc" là độ cao của một bệ đá, vẽ cao levelPx điểm ảnh.
+jump:
+  dur: 0.55 # giây trên không khi nhảy tại chỗ trên mặt phẳng
+  height: 1.25 # đỉnh nhảy, đơn vị bậc: đủ lên gờ một bậc
+  levelPx: 22
+  stamina: 0 # nhảy không tốn thể lực
+  airControl: 0.35 # 0 = không đổi hướng được trên không, 1 = như dưới đất
+  longJump: 1.8 # nhảy khi đang lướt: quãng bay gấp ngần này nhảy thường
+  airDashStamina: 20 # lướt trên không một lần mỗi lần nhảy
+  dodgeHeight: 0.35 # cao hơn mức này (bậc) thì né được đòn sát đất
+  plunge:
+    base: 1.2 # đòn lao xuống: 120% sát thương đánh thường
+    perLevel: 0.4 # cộng 40% cho mỗi bậc độ cao
+    radius: 78
+    speed: 9 # bậc mỗi giây khi lao xuống
+  fall:
+    safeLevels: 1 # rơi tối đa 1 bậc không mất máu; từ 2 bậc trở lên mới mất
+    dmgPerLevel: 0.08 # phần máu tối đa mất cho mỗi bậc vượt
+    landAnim: 0.22

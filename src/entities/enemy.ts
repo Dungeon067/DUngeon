@@ -1,8 +1,11 @@
 import { GS } from "../core/state";
+import { FEEL, shake } from "../combat/feel";
+import { teleWarn } from "./telegraph";
 import { dealRaw, hurtPlayer } from "../combat/damage";
 import { TAU, dist, pick, rand } from "../core/util";
 import { EL, ELS, ENEMY } from "../data/content";
-import { fxBolt, fxBurst, fxRing, fxSlash } from "../entities/fx";
+import { fxBolt, fxBurst, fxRing, fxSlash, fxText } from "../entities/fx";
+import { dodgesGround, spawnWave } from "../combat/jump";
 import { cur } from "../entities/party";
 import { blocked, moveC } from "../world/collision";
 
@@ -59,6 +62,8 @@ export function updateEnemy(e: any, dt: number) {
     if (e.auraT <= 0) e.aura = null;
   }
   if (e.vuln > 0) e.vuln -= dt;
+  if (e.hitT > 0) e.hitT -= dt;
+  tickPoise(e, dt);
   if (e.ec) {
     e.ec.t -= dt;
     if (e.ec.t <= 0) {
@@ -83,6 +88,11 @@ export function updateEnemy(e: any, dt: number) {
     e.tele = null;
     return;
   }
+  if (e.stun > 0) {
+    e.tele = null;
+    e.hop = 0;
+    return;
+  }
   const d = dist(e.x, e.y, p.x, p.y),
     alive = cur() && cur().alive && !GS.G.over;
   e.cd -= dt;
@@ -90,6 +100,7 @@ export function updateEnemy(e: any, dt: number) {
   if (e.tele) {
     const tl = e.tele;
     tl.t += dt;
+    teleWarn(e, tl, tl.t / tl.dur);
     if (e.type === "slime" && tl.kind === "hop") {
       e.hop = tl.t / tl.dur;
       const k = dt / tl.dur;
@@ -192,11 +203,16 @@ export function resolveTele(e: any, tl: any) {
     if (inArc(p.x, p.y, tl)) hurtPlayer(e.atk);
     fxSlash(e.x, e.y - 12, tl.ang, tl.r, "#ff9a9a", "sword");
   } else if (tl.kind === "circle") {
-    if (dist(p.x, p.y, tl.x, tl.y) < tl.r + 6)
-      hurtPlayer(e.atk * (e.type === "golem" ? 1.3 : 1), tl.el ? EL[tl.el].c : "#ff7070");
+    // Đòn đập đất của Golem là đòn sát đất: nhảy lên thì né được, kèm sóng xung kích lan ra.
+    const ground = e.type === "golem";
+    if (dist(p.x, p.y, tl.x, tl.y) < tl.r + 6) {
+      if (ground && dodgesGround(p)) fxText(p.x, p.y - 52, "Né", "#e8f0ff", 13);
+      else hurtPlayer(e.atk * (ground ? 1.3 : 1), tl.el ? EL[tl.el].c : "#ff7070");
+    }
+    if (ground) spawnWave(tl.x, tl.y, tl.r, tl.r + 90, e.atk * 0.6, "earth", 240);
     fxRing(tl.x, tl.y, tl.r, tl.el ? EL[tl.el].c : "#ff8080", 0.35, 8);
     fxBurst(tl.x, tl.y, tl.el ? EL[tl.el].c : "#ff8080", 14, 160);
-    if (e.type === "golem") GS.G.shake = Math.max(GS.G.shake, 7);
+    if (e.type === "golem") shake("golem");
   } else if (tl.kind === "hop") {
     if (dist(p.x, p.y, e.x, e.y) < tl.r + 6) hurtPlayer(e.atk);
     fxRing(e.x, e.y, tl.r, EL[e.el].c, 0.3, 5);
@@ -215,4 +231,20 @@ export function resolveTele(e: any, tl: any) {
     });
     e.swing = 1;
   }
+}
+
+/** Hồi thanh chịu đòn sau một lúc không bị đánh; đếm ngược thời gian choáng. */
+export function tickPoise(e: any, dt: number) {
+  if (e.maxPoise === undefined) return;
+  if (e.stun > 0) {
+    e.stun -= dt;
+    if (e.stun <= 0) {
+      e.stun = 0;
+      e.poise = e.maxPoise;
+    }
+    return;
+  }
+  e.poiseT = (e.poiseT || 0) + dt;
+  if (e.poiseT > FEEL.poise.regenDelay && e.poise < e.maxPoise)
+    e.poise = Math.min(e.maxPoise, e.poise + e.maxPoise * FEEL.poise.regen * dt);
 }

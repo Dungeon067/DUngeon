@@ -12,6 +12,7 @@ skill:
   type: turret
   cd: 10
   m: 0.95
+  icon: kn-minhkhai
 burst:
   name: Mưa Điện
   type: storm

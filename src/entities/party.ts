@@ -3,6 +3,7 @@ import { EL, byId } from "../data/content";
 import { fxBurst, fxRing } from "../entities/fx";
 import { Server, statsOf } from "../server/server";
 import { buildHudParty } from "../ui/hud";
+import { resetFeel } from "../combat/feel";
 
 export function buildParty() {
   return Server.P.party
@@ -13,6 +14,7 @@ export function buildParty() {
     });
 }
 export function newSession(mode: string, opt = {}) {
+  resetFeel();
   const g = {
     mode,
     opt,
@@ -44,9 +46,21 @@ export function newSession(mode: string, opt = {}) {
       shieldMax: 1,
       hurt: 0,
       dashHeld: 0,
+      zh: 0,
+      air: false,
+      vz: 0,
+      jvx: 0,
+      jvy: 0,
+      peak: 0,
+      airDash: false,
+      plunge: false,
+      long: false,
+      land: 0,
+      safe: null as any,
     },
     enemies: [],
     projs: [],
+    waves: [] as any[],
     fx: [],
     texts: [],
     fields: [],
