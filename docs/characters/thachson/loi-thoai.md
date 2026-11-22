@@ -16,7 +16,7 @@
 | 8   | Nộ 2                | "Một nhát. Sâu."                                                                        |
 | 9   | Nộ 3                | "Đá rơi đúng chỗ."                                                                      |
 | 10  | Trúng đòn nặng      | "Chưa nứt."                                                                             |
-| 11  | Gục ngã             | "Nét... chưa xong."                                                                 |
+| 11  | Gục ngã             | "Nét... chưa xong."                                                                     |
 | 12  | Mở rương            | "Rương gỗ lim. Người đóng nó làm kỹ đấy."                                               |
 | 13  | Nhặt vật phẩm hiếm  | "Vân đá này đẹp. Để tôi xem kỹ đã."                                                     |
 | 14  | Khai Tinh bậc 1     | "Tay còn chắc. Tốt."                                                                    |
