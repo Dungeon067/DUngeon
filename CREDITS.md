@@ -12,3 +12,5 @@ Tải từ Google Fonts lúc chạy, không lưu trong repo.
 ## Hình ảnh và âm thanh
 
 Toàn bộ nhân vật, quái, bản đồ và hiệu ứng được vẽ bằng code Canvas 2D trong `src/art/` và `src/world/`. Âm thanh được tạo bằng Web Audio trong `src/core/audio.ts`. Chưa dùng asset bên ngoài hay ảnh do AI tạo.
+
+Video ước nguyện (`media/cinematic/`) dựng bằng Blender 5.3 (GPL, miễn phí) từ script trong repo; âm thanh tự tổng hợp, không dùng asset bên ngoài.
