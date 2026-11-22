@@ -206,8 +206,8 @@ async function run(browser: Browser, vp: Vp, data: Record<string, unknown>) {
     `(()=>{const G=__tinhtu.S.G;G.party.forEach((m,i)=>{if(i!==G.act){m.alive=false;m.hp=0}});G.party[G.act].hp=Math.max(1,G.party[G.act].maxHp*0.12);})()`,
   );
   await sleep(300);
-  await shot("mau-thap", "Máu thấp, 3 người đã gục");
-  await ev(`__M.session.partyWipe()`);
+  await shot("mau-thap", "Máu thấp, các thành viên khác đã gục");
+  await ev(`(()=>{const m=__tinhtu.S.G.party[__tinhtu.S.G.act];m.hp=0;m.alive=false;__M.session.partyWipe();})()`);
   await sleep(500);
   await shot("ca-doi-guc", "Cả đội gục ở Đảo Lạc");
   await sleep(2600);
