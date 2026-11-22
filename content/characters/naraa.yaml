@@ -1,0 +1,28 @@
+id: naraa
+name: Naraa
+r: 5
+el: bolt
+w: bow
+title: Mũi Tên Đuổi Giông
+desc: Cung thủ Đội Cưỡi Giông của Khokhtal, đua với cả cơn giông và chưa từng bỏ ai lại phía sau. Lướt như tia chớp phi ngựa.
+hp: 980
+atk: 134
+skill:
+  name: Tia Chớp Phi
+  type: dash
+  cd: 7
+  m: 2.4
+burst:
+  name: Giông Đầu Mùa
+  type: inferno
+  cost: 60
+  m: 6.4
+look:
+  hair: "#2a1a30"
+  style: long
+  outfit: "#b0302a"
+  accent: "#b06bff"
+  skin: "#d8a77a"
+  eye: "#c99a3a"
+  coat: true
+  pants: "#3a2a40"
