@@ -1,0 +1,28 @@
+id: khoiyen
+name: Khởi Yên
+r: 4
+el: fire
+w: bow
+title: Người Đốt Diều Ước
+desc: Người của Phường Diều ở Lũng Vân. Bắn tên lửa đốt giấy ước sau Hội Thả Diều Thư, thả diều cháy canh trời.
+hp: 820
+atk: 92
+skill:
+  name: Diều Lửa Canh
+  type: turret
+  cd: 10
+  m: 0.9
+burst:
+  name: Trăm Diều Rực Trời
+  type: storm
+  cost: 50
+  m: 1.3
+look:
+  hair: "#4a2a1f"
+  style: pony
+  outfit: "#b8312f"
+  accent: "#f2b33d"
+  skin: "#e9c29f"
+  eye: "#e07b2e"
+  coat: false
+  pants: "#5a3a2a"
