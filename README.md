@@ -18,6 +18,7 @@ pnpm exec playwright install chromium   # chỉ cần khi chạy test đầu cu�
 | Lệnh                 | Việc làm                                                           |
 | -------------------- | ------------------------------------------------------------------ |
 | `pnpm dev`           | Chạy máy chủ phát triển tại http://localhost:5173                  |
+| `/styleguide/`       | Trang hệ thống thiết kế (chỉ có ở `pnpm dev` hoặc `STYLEGUIDE=1`)  |
 | `pnpm build`         | Kiểm tra kiểu rồi build ra `dist/` (kèm `dist/legacy/` là bản gốc) |
 | `pnpm preview`       | Xem bản đã build                                                   |
 | `pnpm typecheck`     | Kiểm tra kiểu TypeScript                                           |

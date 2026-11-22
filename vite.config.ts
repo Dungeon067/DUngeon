@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import type { Plugin } from "vite";
 import { defineConfig } from "vitest/config";
 import { parse } from "yaml";
@@ -16,7 +17,18 @@ function yamlToJson(): Plugin {
 export default defineConfig({
   base: process.env.BASE_PATH ?? "./",
   plugins: [yamlToJson()],
-  build: { target: "es2020" },
+  build: {
+    target: "es2020",
+    /* Trang /styleguide/ luôn có khi chạy `pnpm dev`; khi build chỉ có nếu STYLEGUIDE=1 (bản xem thử PR). */
+    rollupOptions: {
+      input: {
+        main: fileURLToPath(new URL("index.html", import.meta.url)),
+        ...(process.env.STYLEGUIDE === "1"
+          ? { styleguide: fileURLToPath(new URL("styleguide/index.html", import.meta.url)) }
+          : {}),
+      },
+    },
+  },
   test: {
     environment: "jsdom",
     include: ["tests/unit/**/*.test.ts"],
