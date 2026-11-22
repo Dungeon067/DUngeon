@@ -71,15 +71,18 @@ const SAMPLES: Record<string, Sample> = {
   bossKill: { files: ["impactBell_heavy_000"], vol: 0.7, rate: [0.5, 0.5], synth: "boom" },
 };
 const buffers = new Map<string, AudioBuffer | null>();
+const failedAt = new Map<string, number>();
 function load(ac: AudioContext, name: string) {
-  if (buffers.has(name)) return;
+  if (buffers.has(name) || ac.currentTime - (failedAt.get(name) ?? -Infinity) < 5) return;
   buffers.set(name, null);
   fetch(K(name))
     .then((r) => r.arrayBuffer())
     .then((b) => ac.decodeAudioData(b))
     .then((buf) => buffers.set(name, buf))
     .catch(() => {
-      /* thiếu file thì im lặng, không làm hỏng trận đánh */
+      // Lỗi tải tạm thời: bỏ đánh dấu để thử lại sau 5 giây, không làm hỏng trận đánh.
+      buffers.delete(name);
+      failedAt.set(name, ac.currentTime);
     });
 }
 /** Tải trước toàn bộ mẫu khi người chơi bật âm thanh (~450 KB). */
