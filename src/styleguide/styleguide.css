@@ -161,3 +161,7 @@ body.sg-embed {
     margin-top: var(--tt-sp-6);
   }
 }
+.sg-frame[hidden],
+.sg-sec[hidden] {
+  display: none;
+}

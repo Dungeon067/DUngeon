@@ -98,6 +98,10 @@ test("styleguide: hộp thoại mở bằng nút, đóng bằng Esc và trả fo
   await open.click();
   await expect(page.getByRole("dialog", { name: "Hộp thoại mẫu" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Đã hiểu" })).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  await expect(page.getByRole("button", { name: "Đã hiểu" })).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: "Đã hiểu" })).toBeFocused();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog", { name: "Hộp thoại mẫu" })).toHaveCount(0);
   await expect(open).toBeFocused();
@@ -111,5 +115,9 @@ test("styleguide: khung điện thoại 844×390", async ({ page }, info) => {
   const frame = page.locator("iframe");
   await expect(frame).toHaveAttribute("width", "844");
   await expect(frame.contentFrame().locator(".tt-act[data-kind=nhay]").first()).toBeAttached();
+  await page.getByRole("tab", { name: "Máy tính" }).click();
+  await expect(frame).toBeHidden();
+  await expect(page.locator("#hud")).toBeVisible();
+  await page.getByRole("tab", { name: /Điện thoại/ }).click();
   await page.screenshot({ path: `${SHOT_DIR}/styleguide-khung-dien-thoai.png` });
 });
