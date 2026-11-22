@@ -54,29 +54,12 @@ export function update(dt: number) {
   }
   if (p.air) {
     updateAir(p, dt, GS.G.over ? 0 : mx, GS.G.over ? 0 : my);
+    dashHitStep(p);
+    if (p.dashT <= 0) p.dashHit = null;
   } else if (p.dashT > 0) {
     p.dashT -= dt;
     moveC(p, p.dvx * dt, p.dvy * dt, 9);
-    if (p.dashHit) {
-      for (const e of GS.G.enemies) {
-        if (e.dead || p.dashHit.set.has(e)) continue;
-        if (dist(p.x, p.y, e.x, e.y) < 50 + e.r) {
-          p.dashHit.set.add(e);
-          hitEnemy(e, p.dashHit.m, p.dashHit.mult, p.dashHit.el, { cast: p.dashHit.cast, kb: 140 });
-        }
-      }
-      GS.G.fx.push({
-        k: "dot",
-        x: p.x + rand(-6, 6),
-        y: p.y - 14 + rand(-8, 8),
-        vx: 0,
-        vy: 0,
-        col: EL[p.dashHit.el].c,
-        life: 0.3,
-        max: 0.3,
-        size: 5,
-      });
-    }
+    dashHitStep(p);
     if (p.dashT <= 0) p.dashHit = null;
   } else if (p.moving) {
     const sprint = GS.holdDash && p.dashHeld > 0.25 && p.stamina > 0;
@@ -184,8 +167,10 @@ export function update(dt: number) {
       });
     }
     if (GS.G.map && solidTile(pr.x, pr.y + 14, GS.G.map) && pr.kind !== "bossorb") {
-      const t = GS.G.map.m[Math.floor((pr.y + 14) / TS) * MW + Math.floor(pr.x / TS)];
-      if (t === TL.TREE || t === TL.ROCK) pr.life = 0;
+      const i = Math.floor((pr.y + 14) / TS) * MW + Math.floor(pr.x / TS);
+      const t = GS.G.map.m[i];
+      const above = GS.G.map.h && GS.G.map.h[i] <= (pr.h0 ?? 0);
+      if ((t === TL.TREE || t === TL.ROCK) && !above) pr.life = 0;
     }
     if (GS.G.bounds && (pr.x < 0 || pr.y < 0 || pr.x > GS.G.bounds.w || pr.y > GS.G.bounds.h)) pr.life = 0;
     if (pr.own === "p") {
@@ -395,4 +380,28 @@ export function frame(now: number) {
     console.error(err);
   }
   requestAnimationFrame(frame);
+}
+
+/** Lướt kèm sát thương (kỹ năng lướt), dùng cả trên mặt đất và trên không. */
+function dashHitStep(p: any) {
+  if (p.dashHit) {
+    for (const e of GS.G.enemies) {
+      if (e.dead || p.dashHit.set.has(e)) continue;
+      if (dist(p.x, p.y, e.x, e.y) < 50 + e.r) {
+        p.dashHit.set.add(e);
+        hitEnemy(e, p.dashHit.m, p.dashHit.mult, p.dashHit.el, { cast: p.dashHit.cast, kb: 140 });
+      }
+    }
+    GS.G.fx.push({
+      k: "dot",
+      x: p.x + rand(-6, 6),
+      y: p.y - 14 + rand(-8, 8),
+      vx: 0,
+      vy: 0,
+      col: EL[p.dashHit.el].c,
+      life: 0.3,
+      max: 0.3,
+      size: 5,
+    });
+  }
 }

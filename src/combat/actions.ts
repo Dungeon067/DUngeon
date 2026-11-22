@@ -2,6 +2,7 @@ import { GS } from "../core/state";
 import { aim, hitEnemy, nearestEnemy } from "../combat/damage";
 import { sfx } from "../core/audio";
 import { TAU, dist, pick, rand } from "../core/util";
+import { groundAt } from "../world/collision";
 import { WEAP } from "../data/content";
 import { fxBolt, fxBurst, fxParticles, fxRing, fxSlash, fxText, later } from "../entities/fx";
 import { cur } from "../entities/party";
@@ -77,6 +78,7 @@ export function tryAttack(): boolean {
     const sp = W.kind === "arrow" ? 640 : 400;
     GS.G.projs.push({
       own: "p",
+      h0: groundAt(p.x, p.y),
       x: p.x + Math.cos(ang) * 14,
       y: p.y - 16 + Math.sin(ang) * 14,
       vx: Math.cos(ang) * sp,
