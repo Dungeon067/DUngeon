@@ -1,0 +1,145 @@
+# Bách khoa (S10). Nội dung lấy từ docs/world/06-sinh-vat.md và docs/world/03-dia-ly.md (S01).
+# Nhân vật đọc thẳng từ content/characters/, vật phẩm từ content/items.yaml.
+# creatures[].inGame: quái đã có trong bản thử nghiệm; mở khi hạ được (khóa "quai:<id>").
+# places[].at: neo trên bản đồ: start (Bia Đá xuất phát), center, statue:<i>, tower, gate,
+#   dir:<góc độ>:<số ô từ tâm đảo> (0° là hướng đông, 90° là hướng nam). Mở khi sương ở đó tan.
+creatures:
+- id: slime
+  name: Giọt Nhầy
+  tag: slime
+  habitat: ruộng, bờ sông, rìa rừng Đảo Lạc. Biến thể có ở mọi vùng.
+  lore: hạt nguyện nhỏ rơi xuống đất ẩm rồi đông thành khối nhầy trong. Chúng đi theo nhóm, bò về chỗ có tiếng người vì "nhớ" mình từng là lời ước của người.
+  weak: chậm, dễ bị đẩy lùi. Phong thổi bay.
+  rumor: '"Giọt nhầy nào vỡ ra mà có tiếng cười là lời ước của trẻ con."'
+  inGame: true
+- id: goblin
+  name: Yêu Rừng
+  tag: goblin
+  habitat: Rừng Trúc Mây.
+  lore: dân rừng nhỏ bé, mặt xanh, tai dài, sống thành làng trên ngọn trúc. Trước đây chúng chỉ trộm cơm nắm của người đi rừng. Từ khi Hội Mặt Nạ đốt bãi trúc phía nam, chúng coi mọi người lạ là kẻ thù và lập trại ra tận bìa rừng.
+  weak: Hỏa (sợ lửa vì bãi trúc bị đốt). Nếu đánh tan trại, chúng chạy về rừng chứ không biến mất.
+  rumor: '"Để một nắm xôi ở gốc trúc thì đêm đó Yêu Rừng không vào làng."'
+  inGame: true
+- id: archer
+  name: Yêu Rừng Cung Thủ
+  tag: archer
+  habitat: Rừng Trúc Mây, trên cành cao.
+  lore: Yêu Rừng lớn tuổi hơn, canh gác làng. Bắn mũi tên trúc từ xa.
+  weak: Phong (gió làm lệch tên), đánh gần.
+  rumor: '"Nghe tiếng trúc gõ ba lần là Yêu Rừng Cung Thủ báo động."'
+  inGame: true
+- id: shaman
+  name: Pháp Sư Mặt Nạ
+  tag: shaman
+  habitat: quanh các Bia Đá, trại quái, phế tích. Có ở mọi vùng.
+  lore: thành viên cấp thấp của Hội Mặt Nạ (bậc Mặt Nạ Trắng có học phép). Họ là người thật, không phải quái. Họ dùng Nguyện Cặn chứa trong mặt nạ để bắn những cầu năng lượng tối.
+  weak: đánh gần, ngắt phép. Khi bị đánh bại, mặt nạ nứt và họ bỏ chạy. Người chơi không bao giờ thấy mặt họ trong bản thử nghiệm.
+  rumor: '"Ai đeo mặt nạ trắng ba năm thì quên mặt mình."'
+  inGame: true
+- id: golem
+  name: Hộ Vệ Đá Cổ
+  tag: golem, tinh anh
+  habitat: quanh Hang Hắc Giao và các phế tích Thời Nước Đen.
+  lore: tượng đá Tô Khuyết khắc năm NS 1052 để canh miệng hang. Lõi chứa một mảnh sao nhỏ. Ba trăm năm qua, lõi bị Nguyện Cặn thấm vào nên tượng không còn phân biệt bạn thù, đánh mọi ai đến gần.
+  weak: chậm, sau mỗi cú đập mạnh phải đứng nghỉ. Lõi sao lộ ra ở lưng. Lôi và Băng làm đá giòn.
+  rumor: '"Hộ Vệ Đá Cổ là Tô Khuyết hóa đá." (Sai, nhưng có lý do: mặt tượng được khắc theo mặt anh.)'
+  inGame: true
+- id: hacgiao
+  name: Hắc Giao
+  tag: hacgiao, boss
+  habitat: Hang Hắc Giao, nối thông xuống Biển Lặng.
+  lore: con giao (rồng nước không sừng) đen dài hàng trăm sải, thân bằng Nguyện Cặn đông lại. Nó không ăn, không ngủ, chỉ cuộn mình và **thì thầm** những lời ước chưa ai nghe.
+  weak: giai đoạn 1 yếu với Lôi (Điện Cảm) và Băng (Đóng Băng). Giai đoạn 2 yếu với Băng (Siêu Dẫn) và Thổ (Kết Tinh làm khiên).
+  rumor: '"Đêm Vịnh Khơi đen, đừng nói lời ước thành tiếng, kẻo Hắc Giao nghe được mà học theo."'
+  inGame: true
+- id: cua-mai-dong
+  name: Cua Mai Đồng
+  tag: null
+  habitat: Bãi Sao Rơi, Làng Vạn Lưới, bờ đá Vịnh Khơi.
+  lore: cua đá to như cái thúng. Mai của chúng bám đầy mảnh đồng vỡ từ những chiếc trống ở ba làng chìm. Bình thường hiền, chỉ đánh khi bị dẫm vào tổ.
+  weak: bụng mềm. Lật ngửa bằng Phong (Khuếch Tán) hoặc đòn hất tung. Lôi lan qua mai đồng.
+  rumor: '"Gõ vào mai cua đồng mà nghe tiếng trống thì năm ấy được mùa cá."'
+  inGame: false
+- id: dom-dom-lac-loi
+  name: Đom Đóm Lạc Lối
+  tag: null
+  habitat: Rừng Trúc Mây, ruộng lúa đêm.
+  lore: bầy đom đóm bị lời ước "mong được về nhà" của người lạc bám vào, nên mỗi bầy là một cơn lốc ánh sáng tìm đường. Chúng dẫn người lạc vào sâu hơn và chích điện ai đuổi theo.
+  weak: Thủy (gây Điện Cảm làm cả bầy tê liệt). Đèn lồng của Mai Linh hút chúng lại.
+  rumor: '"Đom đóm bay thành vòng là có người lạc trong rừng."'
+  inGame: false
+- id: bong-can
+  name: Bóng Cặn
+  tag: null
+  habitat: Vịnh Khơi lúc nước đen, Hang Hắc Giao, Lòng Sao bị nhiễm bùn.
+  lore: những mảnh Nguyện Cặn nhỏ tách khỏi Hắc Giao, mang hình người mờ đen. Mỗi Bóng Cặn lặp đi lặp lại một lời ước không thành, ví dụ "giá mà ta đã ở lại".
+  weak: Hỏa (Bốc Hơi), ánh sáng của Bia Đá. Đứng gần Bia Đá thì chúng yếu đi.
+  rumor: '"Nghe Bóng Cặn nói đến câu thứ ba thì đừng đáp lại."'
+  inGame: false
+- id: trau-da-ngu
+  name: Trâu Đá Ngủ
+  tag: tinh anh
+  habitat: Mỏ Ngọc Lòng Chảo, tầng sâu.
+  lore: con trâu khổng lồ hóa đá từ thời Bảy Sao Xuống, ngủ cuộn trong lòng mỏ. Thợ mỏ đào sâu quá làm nó tỉnh dậy. Nó không ác, chỉ cáu vì bị đánh thức.
+  weak: sau mỗi cú húc phải dừng lại thở. Thủy làm đá trơn khiến nó trượt ngã.
+  rumor: '"Thợ mỏ hát ru thì Trâu Đá ngủ tiếp." Thực tế đúng: nếu có Thủy Nguyệt trong đội, trận đấu ngắn hơn.'
+  inGame: false
+- id: linh-mat-na-trang
+  name: Lính Mặt Nạ Trắng
+  tag: null
+  habitat: mọi vùng, quanh trại của Hội Mặt Nạ.
+  lore: thành viên mới của Hội Mặt Nạ, chưa học phép, dùng gậy và dao găm. Phần lớn là người nghèo, Người Tắt Sao, hoặc người trẻ giận đời.
+  weak: thiếu kỷ luật. Nếu Pháp Sư Mặt Nạ đi cùng bị đánh bại, họ bỏ chạy.
+  rumor: '"Lính mặt nạ ban ngày là thợ, là phu, là người bán hàng ngay cạnh nhà mình."'
+  inGame: false
+places:
+- id: bai-sao-roi
+  name: Bãi Sao Rơi
+  lore: Bãi cát đen lấp lánh ở mũi nam, cát có những hạt sáng như mảnh sao. Nơi Bà Lưới thấy vì sao đầu tiên năm NS 1, và nơi Người Ước Nguyện tỉnh dậy.
+  secret: Đào sâu một sải tay sẽ gặp lớp cát trắng như sứ, đó là nơi sao băng vàng chạm đất đêm đầu năm NS 1350.
+  at: dir:180:34
+- id: lang-van-luoi
+  name: Làng Vạn Lưới
+  lore: Làng chài lớn nhất đảo, nhà sàn tre bên cửa Sông Sương đổ ra biển, lưới phơi kín bãi. Khu nhỏ **Bến Sông Sương** là nơi Sương Mai luyện kiếm mỗi sáng.
+  secret: Dưới gầm nhà trưởng làng có một chiếc thuyền nhỏ không bao giờ được hạ thủy. Người ta nói đó là thuyền của con trai Bà Lưới.
+  at: dir:200:22
+- id: pho-van-dang
+  name: Phố Vạn Đăng
+  lore: Thủ phủ, phố cảng mái ngói rêu phong, đêm nào cũng treo hàng nghìn đèn lồng. Có **Đình Trống Đồng** (trụ sở Hội Đồng, giữ trống đồng cổ nhất), chợ đêm, bến thuyền buôn. Trên đồi phía sau là **Phố Cũ**, nơi Mai Linh mở hàng đèn.
+  secret: Đèn lồng đầu tiên của Nàng Vạn Đăng vẫn treo ở góc một con hẻm trong Phố Cũ và chưa bao giờ tắt. Không ai biết ai châm dầu cho nó.
+  at: start
+- id: rung-truc-may
+  name: Rừng Trúc Mây
+  lore: Rừng trúc phía tây, thân trúc cao đến mức ngọn chìm trong mây thấp. Gió qua rừng tạo tiếng như sáo. Nơi ở của Yêu Rừng.
+  secret: Có một lối đi chỉ hiện ra khi trăng non, dẫn tới một khoảng đất trống có bàn cờ đá. Không ai biết ai đã chơi dở ván cờ trên đó.
+  at: dir:250:28
+- id: ho-guong-va-den-trang
+  name: Hồ Gương và Đền Trăng
+  lore: Hồ tròn hoàn hảo giữa đảo, mặt nước phẳng như gương. Đền Trăng mái cong nằm bên bờ, có chuông bạc, chỉ mở cửa trong cho khách vào đêm rằm. Bà Khơi ngủ dưới đáy hồ.
+  secret: Vào những đêm không trăng, mặt hồ phản chiếu bầu trời của ba trăm năm trước. Thủy Nguyệt biết chuyện này và giữ kín.
+  at: center
+- id: dinh-vong-van
+  name: Đỉnh Vọng Vân
+  lore: Đỉnh núi cao nhất đảo ở phía bắc, có **Đài Đếm Sao** của Người Đếm Sao. Phong Vân lớn lên ở đây.
+  secret: Trên vách đá sau đài có một danh sách tên được khắc rồi bị đục xóa. Một trong những tên đó là Tô Khuyết.
+  at: dir:280:40
+- id: mo-ngoc-long-chao
+  name: Mỏ Ngọc Lòng Chảo
+  lore: Mỏ ngọc bích trong một thung lũng hình lòng chảo dưới chân núi. Phường Đá Ngọc khai thác ở đây. Ngọc Thạch là con gái một thợ mỏ ở đây.
+  secret: Tầng sâu nhất của mỏ đã bị bịt từ NS 1052, vì từ đó nghe được tiếng thở của Hắc Giao.
+  at: statue:2
+- id: vinh-khoi-va-lang-chim
+  name: Vịnh Khơi và Làng Chìm
+  lore: Vịnh phía đông, nơi Bà Khơi rơi xuống thời Bảy Sao Xuống và nơi Hắc Giao trồi lên năm NS 1046. Khi triều xuống thấp, thấy mái đình ba làng chìm.
+  secret: Trong đình chìm lớn nhất vẫn còn một chiếc trống đồng. Gõ đúng nhịp ru của Bà Hiên thì nước quanh vịnh trong trở lại trong một đêm.
+  at: dir:20:36
+- id: thap-tinh-tu
+  name: Tháp Tinh Tú
+  lore: Tháp đá mười hai tầng dựng năm NS 1110 trên một vết sao rơi nhỏ ở phía đông bắc. Mỗi tầng khắc một chòm sao của lịch. Ánh sao rơi vào tháp rồi chảy xuống mạch sao nuôi bốn Bia Đá.
+  secret: Có tầng thứ mười ba không có cầu thang, chỉ thấy được từ bên ngoài vào đêm sao rơi.
+  at: tower
+- id: hang-hac-giao
+  name: Hang Hắc Giao
+  lore: 'Hang sâu dưới núi phía bắc, miệng hang có bốn Bia Đá cổ trấn ở bốn hướng: Bia Đông, Bia Tây, Bia Nam, Bia Bắc. Nước trong hang đen như mực.'
+  secret: Bia Bắc khắc tên Hà Thanh. Ai đứng trước bia này lâu sẽ nghe một giọng con gái đếm nhịp thở.
+  at: gate

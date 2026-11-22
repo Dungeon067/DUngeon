@@ -1,0 +1,65 @@
+# Nhật ký nhiệm vụ (S10). Mỗi nhiệm vụ có các bước; tiến độ tính từ hồ sơ và lượt chơi.
+# kind của bước: objective (theo id trong content/objectives.yaml), kills, reacts, chests,
+#   tower (tầng đã vượt), boss (lần thắng), pulls (lần ước), owned (số nhân vật), codex (mục đã mở).
+# target: điểm chỉ đường: statue | chest | tower | gate | camp (trại quái gần nhất).
+# type: chinh (cốt truyện), phu, hang-ngay.
+quests:
+  - id: tieng-goi-bia-da
+    type: chinh
+    name: Tiếng gọi của Bia Đá
+    giver: Quan Trấn Thủ Cao Lũy
+    desc: Cậu tỉnh dậy trên Bãi Sao Rơi mà không nhớ đường về. Người ta bảo cứ tìm Bia Đá, đá cổ sẽ giữ cho cậu một chỗ để quay lại.
+    steps:
+      - { text: Chạm Bia Đá gần nơi xuất phát, kind: objective, id: bia-da, target: statue }
+      - { text: "Mở rương báu trên đảo ({n}/{max})", kind: objective, id: ruong-dau, target: chest }
+    reward: 60 Đá Sao (qua rương)
+  - id: thap-mo-cua
+    type: chinh
+    name: Tháp mở cửa
+    giver: Đầu Sổ Kỳ Lam
+    desc: Ánh sao rơi vào Tháp Tinh Tú rồi chảy về bốn Bia Đá. Dạo này dòng ấy yếu đi. Đầu Sổ muốn biết tầng đầu còn ai canh không.
+    steps:
+      - { text: Vượt tầng 1 Tháp Tinh Tú, kind: objective, id: thap, target: tower }
+      - { text: "Vượt tầng 3 ({n}/{max})", kind: tower, count: 3, target: tower }
+    reward: Đá Sao, Xu, Sách Kinh Nghiệm theo tầng
+  - id: nuoc-den-duoi-nui
+    type: chinh
+    name: Nước đen dưới núi
+    giver: Bà Cả Thu Vọng
+    desc: Nước trong hang phía bắc đen như mực. Bà Cả không nói gì thêm, chỉ đưa cho cậu một nắm muối và bảo đi sớm về sớm.
+    steps:
+      - { text: Tìm hang Hắc Giao và đánh bại ác long, kind: objective, id: hac-giao, target: gate }
+    reward: 300 Đá Sao, Vảy rơi từ trận đánh
+  - id: don-duong-lang
+    type: phu
+    name: Dọn đường cho làng
+    giver: Bà Bảy Sóng
+    desc: Giọt Nhầy và Yêu Rừng chặn lối mang cá lên chợ. Bà Bảy Sóng trả công bằng một nụ cười to và lời hứa chở hàng miễn phí.
+    steps:
+      - { text: "Hạ quái quanh đảo ({n}/{max})", kind: kills, count: 30, target: camp }
+    reward: Xu và tiếng thơm ở chợ đêm
+  - id: hai-nguyen-to
+    type: phu
+    name: Khi hai ngôi sao gặp nhau
+    giver: Đầu Sổ Kỳ Lam
+    desc: '"Một vì sao thì sáng. Hai vì sao chạm nhau thì nổ." Đầu Sổ muốn cậu thử cho bà nghe.'
+    steps:
+      - { text: "Tạo phản ứng nguyên tố ({n}/{max})", kind: reacts, count: 10, target: camp }
+    reward: Một dòng ghi trong sổ sao
+  - id: nguoi-tim-den
+    type: phu
+    name: Những người tìm đến
+    giver: Bà Trùm Kha
+    desc: Mỗi lần có lời ước được đáp, một Hộ Tinh lại tìm về đảo. Bà Trùm Kha muốn khắc tên họ lên một tấm bia mới.
+    steps:
+      - { text: "Ước nguyện ({n}/{max} lần)", kind: pulls, count: 10 }
+      - { text: "Có Hộ Tinh trong đội ngũ ({n}/{max})", kind: owned, count: 6 }
+    reward: Tên cậu trên bia mới
+  - id: so-tay-nguoi-di-duong
+    type: phu
+    name: Sổ tay người đi đường
+    giver: Đầu Sổ Kỳ Lam
+    desc: Thấy gì thì ghi lại. Một con cua, một cái tên, một hòn đá lạ. Người Đếm Sao tin rằng không có gì là nhỏ.
+    steps:
+      - { text: "Mở mục trong Bách khoa ({n}/{max})", kind: codex, count: 15 }
+    reward: Bách khoa đầy hơn

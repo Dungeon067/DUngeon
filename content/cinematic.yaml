@@ -1,0 +1,13 @@
+# Hoạt ảnh ước nguyện (S10). Bản chạy bằng code là bản chính và là dự phòng cho video S20.
+# Nhịp các cảnh (giây), giữ nguyên bản mẫu uoc-nguyen-mau.html:
+#   s1 vách đá thả đèn trời, s2 lên trời vẽ chòm sao, s3 sao băng xuyên không gian,
+#   s4 sao rơi xuống trống đồng; sau đó là giới thiệu từng nhân vật và bảng tổng kết lật thẻ.
+shots: { s1: 2.6, s2: 2.2, s3: 2.3, s4: 1.9 }
+# 5★: sao băng giả làm 4★ rồi chậm lại (hệ số tốc độ) và bùng vàng.
+slowMo: 0.28
+# Video S20. Khi S20 đưa file vào media/cinematic/ thì ghi đường dẫn ở đây (tính từ gốc site),
+# theo độ hiếm cao nhất của lượt ước. Để trống nghĩa là dùng bản code.
+# Ví dụ: videos: { "5": /media/cinematic/uoc-5.webm, "4": /media/cinematic/uoc-4.webm }
+videos: {}
+# Video tải quá thời gian này (ms) hoặc lỗi thì chuyển sang bản code.
+videoTimeoutMs: 4000
