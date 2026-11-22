@@ -383,7 +383,7 @@
             "h": 4
           },
           {
-            "a": "div.hud-bl \"Sương Mai · Lv1 727 / 900\"",
+            "a": "div.hud-bl \"Sương Mai · Lv1 834 / 900\"",
             "b": "#keysHint \"WASD di chuyển · J/chuột đánh · E kỹ năn\"",
             "w": 21,
             "h": 46
@@ -432,7 +432,7 @@
             "h": 4
           },
           {
-            "a": "div.hud-bl \"Sương Mai · Lv1 727 / 900\"",
+            "a": "div.hud-bl \"Sương Mai · Lv1 834 / 900\"",
             "b": "#keysHint \"WASD di chuyển · J/chuột đánh · E kỹ năn\"",
             "w": 21,
             "h": 46
@@ -530,7 +530,7 @@
             "h": 4
           },
           {
-            "a": "div.hud-bl \"Mai Linh · Lv1 658 / 820\"",
+            "a": "div.hud-bl \"Mai Linh · Lv1 754 / 820\"",
             "b": "#keysHint \"WASD di chuyển · J/chuột đánh · E kỹ năn\"",
             "w": 21,
             "h": 46
@@ -579,7 +579,7 @@
             "h": 4
           },
           {
-            "a": "div.hud-bl \"Mai Linh · Lv1 658 / 820\"",
+            "a": "div.hud-bl \"Mai Linh · Lv1 754 / 820\"",
             "b": "#keysHint \"WASD di chuyển · J/chuột đánh · E kỹ năn\"",
             "w": 21,
             "h": 46
@@ -604,7 +604,7 @@
         }
       },
       "mau-thap": {
-        "note": "Máu thấp, 3 người đã gục",
+        "note": "Máu thấp, các thành viên khác đã gục",
         "vw": 844,
         "vh": 390,
         "screen": null,
@@ -636,6 +636,22 @@
             "grad": false
           },
           {
+            "el": "div.pmn \"Mai Linh\"",
+            "ratio": 3.06,
+            "need": 4.5,
+            "px": 12,
+            "canvas": false,
+            "grad": false
+          },
+          {
+            "el": "span.key \"2\"",
+            "ratio": 2.1,
+            "need": 4.5,
+            "px": 11,
+            "canvas": false,
+            "grad": false
+          },
+          {
             "el": "div.pmn \"Bạch Vũ\"",
             "ratio": 3.32,
             "need": 4.5,
@@ -661,7 +677,7 @@
             "h": 4
           },
           {
-            "a": "div.hud-bl \"Mai Linh · Lv1 98 / 820\"",
+            "a": "div.hud-bl \"Mai Linh · Lv1 0 / 820\"",
             "b": "#keysHint \"WASD di chuyển · J/chuột đánh · E kỹ năn\"",
             "w": 21,
             "h": 46
@@ -718,6 +734,22 @@
             "grad": false
           },
           {
+            "el": "div.pmn \"Mai Linh\"",
+            "ratio": 3.06,
+            "need": 4.5,
+            "px": 12,
+            "canvas": false,
+            "grad": false
+          },
+          {
+            "el": "span.key \"2\"",
+            "ratio": 2.1,
+            "need": 4.5,
+            "px": 11,
+            "canvas": false,
+            "grad": false
+          },
+          {
             "el": "div.pmn \"Bạch Vũ\"",
             "ratio": 3.32,
             "need": 4.5,
@@ -743,7 +775,7 @@
             "h": 4
           },
           {
-            "a": "div.hud-bl \"Mai Linh · Lv1 98 / 820\"",
+            "a": "div.hud-bl \"Mai Linh · Lv1 0 / 820\"",
             "b": "#keysHint \"WASD di chuyển · J/chuột đánh · E kỹ năn\"",
             "w": 21,
             "h": 46
@@ -875,7 +907,7 @@
         "low": [
           {
             "el": "div \"Lạc Hồng\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -883,7 +915,7 @@
           },
           {
             "el": "div.muted \"Chưa có\"",
-            "ratio": 1.72,
+            "ratio": 1.68,
             "need": 4.5,
             "px": 10,
             "canvas": false,
@@ -891,7 +923,7 @@
           },
           {
             "el": "div \"Thủy Nguyệt\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -899,7 +931,7 @@
           },
           {
             "el": "div \"Phong Vân\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -907,7 +939,7 @@
           },
           {
             "el": "div \"Lôi Đình\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -915,7 +947,7 @@
           },
           {
             "el": "div \"Thạch Sơn\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -923,7 +955,7 @@
           },
           {
             "el": "div \"Tuyết Lan\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -931,7 +963,7 @@
           },
           {
             "el": "div \"Minh Khải\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -939,7 +971,7 @@
           },
           {
             "el": "div \"Ngọc Thạch\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -947,7 +979,7 @@
           },
           {
             "el": "div \"Hạ Vy\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -993,7 +1025,7 @@
         "low": [
           {
             "el": "div \"Lạc Hồng\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1001,7 +1033,7 @@
           },
           {
             "el": "div.muted \"Chưa có\"",
-            "ratio": 1.72,
+            "ratio": 1.68,
             "need": 4.5,
             "px": 10,
             "canvas": false,
@@ -1009,7 +1041,7 @@
           },
           {
             "el": "div \"Thủy Nguyệt\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1017,7 +1049,7 @@
           },
           {
             "el": "div \"Phong Vân\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1025,7 +1057,7 @@
           },
           {
             "el": "div \"Lôi Đình\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1033,7 +1065,7 @@
           },
           {
             "el": "div \"Thạch Sơn\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1041,7 +1073,7 @@
           },
           {
             "el": "div \"Tuyết Lan\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1049,7 +1081,7 @@
           },
           {
             "el": "div \"Minh Khải\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1057,7 +1089,7 @@
           },
           {
             "el": "div \"Ngọc Thạch\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1065,7 +1097,7 @@
           },
           {
             "el": "div \"Hạ Vy\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1097,7 +1129,7 @@
         "low": [
           {
             "el": "div \"Lạc Hồng\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1105,7 +1137,7 @@
           },
           {
             "el": "div.muted \"Chưa có\"",
-            "ratio": 1.72,
+            "ratio": 1.68,
             "need": 4.5,
             "px": 10,
             "canvas": false,
@@ -1113,7 +1145,7 @@
           },
           {
             "el": "div \"Thủy Nguyệt\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1121,7 +1153,7 @@
           },
           {
             "el": "div \"Phong Vân\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1129,7 +1161,7 @@
           },
           {
             "el": "div \"Lôi Đình\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1137,7 +1169,7 @@
           },
           {
             "el": "div \"Thạch Sơn\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1145,7 +1177,7 @@
           },
           {
             "el": "div \"Tuyết Lan\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1153,7 +1185,7 @@
           },
           {
             "el": "div \"Minh Khải\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1161,7 +1193,7 @@
           },
           {
             "el": "div \"Ngọc Thạch\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1169,7 +1201,7 @@
           },
           {
             "el": "div \"Hạ Vy\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1215,7 +1247,7 @@
         "low": [
           {
             "el": "div \"Lạc Hồng\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1223,7 +1255,7 @@
           },
           {
             "el": "div.muted \"Chưa có\"",
-            "ratio": 1.72,
+            "ratio": 1.68,
             "need": 4.5,
             "px": 10,
             "canvas": false,
@@ -1231,7 +1263,7 @@
           },
           {
             "el": "div \"Thủy Nguyệt\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1239,7 +1271,7 @@
           },
           {
             "el": "div \"Phong Vân\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1247,7 +1279,7 @@
           },
           {
             "el": "div \"Lôi Đình\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1255,7 +1287,7 @@
           },
           {
             "el": "div \"Thạch Sơn\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1263,7 +1295,7 @@
           },
           {
             "el": "div \"Tuyết Lan\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1271,7 +1303,7 @@
           },
           {
             "el": "div \"Minh Khải\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1279,7 +1311,7 @@
           },
           {
             "el": "div \"Ngọc Thạch\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1287,7 +1319,7 @@
           },
           {
             "el": "div \"Hạ Vy\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1333,7 +1365,7 @@
         "low": [
           {
             "el": "div \"Lạc Hồng\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1341,7 +1373,7 @@
           },
           {
             "el": "div.muted \"Chưa có\"",
-            "ratio": 1.72,
+            "ratio": 1.68,
             "need": 4.5,
             "px": 10,
             "canvas": false,
@@ -1349,7 +1381,7 @@
           },
           {
             "el": "div \"Thủy Nguyệt\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1357,7 +1389,7 @@
           },
           {
             "el": "div \"Phong Vân\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1365,7 +1397,7 @@
           },
           {
             "el": "div \"Lôi Đình\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1373,7 +1405,7 @@
           },
           {
             "el": "div \"Thạch Sơn\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1381,7 +1413,7 @@
           },
           {
             "el": "div \"Tuyết Lan\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1389,7 +1421,7 @@
           },
           {
             "el": "div \"Minh Khải\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1397,7 +1429,7 @@
           },
           {
             "el": "div \"Ngọc Thạch\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1405,7 +1437,7 @@
           },
           {
             "el": "div \"Hạ Vy\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -1594,7 +1626,7 @@
         "low": [
           {
             "el": "#pull1 \"Ước 1 lần · 160\"",
-            "ratio": 3.57,
+            "ratio": 3.61,
             "need": 4.5,
             "px": 14,
             "canvas": false,
@@ -1602,7 +1634,7 @@
           },
           {
             "el": "#c1 \"160\"",
-            "ratio": 3.57,
+            "ratio": 3.61,
             "need": 4.5,
             "px": 14,
             "canvas": false,
@@ -1610,7 +1642,7 @@
           },
           {
             "el": "#pull10 \"Ước 10 lần · 1.600\"",
-            "ratio": 2.49,
+            "ratio": 3.1,
             "need": 4.5,
             "px": 14,
             "canvas": false,
@@ -1618,7 +1650,7 @@
           },
           {
             "el": "#c10 \"1.600\"",
-            "ratio": 2.49,
+            "ratio": 3.1,
             "need": 4.5,
             "px": 14,
             "canvas": false,
@@ -1658,7 +1690,7 @@
           },
           {
             "el": "b \"Tầng 2\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -1666,7 +1698,7 @@
           },
           {
             "el": "span.muted \"Quái Lv3\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -1674,7 +1706,7 @@
           },
           {
             "el": "b \"Tầng 3\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -1682,7 +1714,7 @@
           },
           {
             "el": "b \"Tầng 4\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -1690,7 +1722,7 @@
           },
           {
             "el": "span.muted \"Quái Lv4 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -1698,7 +1730,7 @@
           },
           {
             "el": "b \"Tầng 5\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -1706,7 +1738,7 @@
           },
           {
             "el": "span.muted \"Quái Lv5 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -1714,7 +1746,7 @@
           },
           {
             "el": "b \"Tầng 6\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -1722,7 +1754,7 @@
           },
           {
             "el": "span.muted \"Quái Lv6 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -1730,7 +1762,7 @@
           },
           {
             "el": "b \"Tầng 7\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -1738,7 +1770,7 @@
           },
           {
             "el": "b \"Tầng 8\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -1746,7 +1778,7 @@
           },
           {
             "el": "span.muted \"Quái Lv7 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -1754,7 +1786,7 @@
           },
           {
             "el": "b \"Tầng 9\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -1762,7 +1794,7 @@
           },
           {
             "el": "span.muted \"Quái Lv8 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -1770,7 +1802,7 @@
           },
           {
             "el": "b \"Tầng 10\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -1778,7 +1810,7 @@
           },
           {
             "el": "span.muted \"Quái Lv9 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -1786,7 +1818,7 @@
           },
           {
             "el": "b \"Tầng 11\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -1794,7 +1826,7 @@
           },
           {
             "el": "b \"Tầng 12\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -1802,7 +1834,7 @@
           },
           {
             "el": "span.muted \"Quái Lv10 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -2301,7 +2333,7 @@
         "low": [
           {
             "el": "button.btn.sm \"Chưa xong\"",
-            "ratio": 3.57,
+            "ratio": 3.56,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -2309,7 +2341,7 @@
           },
           {
             "el": "button.btn.sm \"Nhận\"",
-            "ratio": 3.57,
+            "ratio": 3.56,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -3185,7 +3217,7 @@
         }
       },
       "mau-thap": {
-        "note": "Máu thấp, 3 người đã gục",
+        "note": "Máu thấp, các thành viên khác đã gục",
         "vw": 1440,
         "vh": 900,
         "screen": null,
@@ -3280,6 +3312,22 @@
           {
             "el": "span.key \"1\"",
             "ratio": 2.28,
+            "need": 4.5,
+            "px": 11,
+            "canvas": false,
+            "grad": false
+          },
+          {
+            "el": "div.pmn \"Mai Linh\"",
+            "ratio": 3.06,
+            "need": 4.5,
+            "px": 12,
+            "canvas": false,
+            "grad": false
+          },
+          {
+            "el": "span.key \"2\"",
+            "ratio": 2.1,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3430,7 +3478,7 @@
         "low": [
           {
             "el": "div \"Lạc Hồng\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3438,7 +3486,7 @@
           },
           {
             "el": "div.muted \"Chưa có\"",
-            "ratio": 1.72,
+            "ratio": 1.68,
             "need": 4.5,
             "px": 10,
             "canvas": false,
@@ -3446,7 +3494,7 @@
           },
           {
             "el": "div \"Thủy Nguyệt\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3454,7 +3502,7 @@
           },
           {
             "el": "div \"Phong Vân\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3462,7 +3510,7 @@
           },
           {
             "el": "div \"Lôi Đình\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3470,7 +3518,7 @@
           },
           {
             "el": "div \"Thạch Sơn\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3478,7 +3526,7 @@
           },
           {
             "el": "div \"Tuyết Lan\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3486,7 +3534,7 @@
           },
           {
             "el": "div \"Minh Khải\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3494,7 +3542,7 @@
           },
           {
             "el": "div \"Ngọc Thạch\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3502,7 +3550,7 @@
           },
           {
             "el": "div \"Hạ Vy\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3548,7 +3596,7 @@
         "low": [
           {
             "el": "div \"Lạc Hồng\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3556,7 +3604,7 @@
           },
           {
             "el": "div.muted \"Chưa có\"",
-            "ratio": 1.72,
+            "ratio": 1.68,
             "need": 4.5,
             "px": 10,
             "canvas": false,
@@ -3564,7 +3612,7 @@
           },
           {
             "el": "div \"Thủy Nguyệt\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3572,7 +3620,7 @@
           },
           {
             "el": "div \"Phong Vân\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3580,7 +3628,7 @@
           },
           {
             "el": "div \"Lôi Đình\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3588,7 +3636,7 @@
           },
           {
             "el": "div \"Thạch Sơn\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3596,7 +3644,7 @@
           },
           {
             "el": "div \"Tuyết Lan\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3604,7 +3652,7 @@
           },
           {
             "el": "div \"Minh Khải\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3612,7 +3660,7 @@
           },
           {
             "el": "div \"Ngọc Thạch\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3620,7 +3668,7 @@
           },
           {
             "el": "div \"Hạ Vy\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3652,7 +3700,7 @@
         "low": [
           {
             "el": "div \"Lạc Hồng\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3660,7 +3708,7 @@
           },
           {
             "el": "div.muted \"Chưa có\"",
-            "ratio": 1.72,
+            "ratio": 1.68,
             "need": 4.5,
             "px": 10,
             "canvas": false,
@@ -3668,7 +3716,7 @@
           },
           {
             "el": "div \"Thủy Nguyệt\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3676,7 +3724,7 @@
           },
           {
             "el": "div \"Phong Vân\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3684,7 +3732,7 @@
           },
           {
             "el": "div \"Lôi Đình\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3692,7 +3740,7 @@
           },
           {
             "el": "div \"Thạch Sơn\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3700,7 +3748,7 @@
           },
           {
             "el": "div \"Tuyết Lan\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3708,7 +3756,7 @@
           },
           {
             "el": "div \"Minh Khải\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3716,7 +3764,7 @@
           },
           {
             "el": "div \"Ngọc Thạch\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3724,7 +3772,7 @@
           },
           {
             "el": "div \"Hạ Vy\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3770,7 +3818,7 @@
         "low": [
           {
             "el": "div \"Lạc Hồng\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3778,7 +3826,7 @@
           },
           {
             "el": "div.muted \"Chưa có\"",
-            "ratio": 1.72,
+            "ratio": 1.68,
             "need": 4.5,
             "px": 10,
             "canvas": false,
@@ -3786,7 +3834,7 @@
           },
           {
             "el": "div \"Thủy Nguyệt\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3794,7 +3842,7 @@
           },
           {
             "el": "div \"Phong Vân\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3802,7 +3850,7 @@
           },
           {
             "el": "div \"Lôi Đình\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3810,7 +3858,7 @@
           },
           {
             "el": "div \"Thạch Sơn\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3818,7 +3866,7 @@
           },
           {
             "el": "div \"Tuyết Lan\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3826,7 +3874,7 @@
           },
           {
             "el": "div \"Minh Khải\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3834,7 +3882,7 @@
           },
           {
             "el": "div \"Ngọc Thạch\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3842,7 +3890,7 @@
           },
           {
             "el": "div \"Hạ Vy\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3888,7 +3936,7 @@
         "low": [
           {
             "el": "div \"Lạc Hồng\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3896,7 +3944,7 @@
           },
           {
             "el": "div.muted \"Chưa có\"",
-            "ratio": 1.72,
+            "ratio": 1.68,
             "need": 4.5,
             "px": 10,
             "canvas": false,
@@ -3904,7 +3952,7 @@
           },
           {
             "el": "div \"Thủy Nguyệt\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3912,7 +3960,7 @@
           },
           {
             "el": "div \"Phong Vân\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3920,7 +3968,7 @@
           },
           {
             "el": "div \"Lôi Đình\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3928,7 +3976,7 @@
           },
           {
             "el": "div \"Thạch Sơn\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3936,7 +3984,7 @@
           },
           {
             "el": "div \"Tuyết Lan\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3944,7 +3992,7 @@
           },
           {
             "el": "div \"Minh Khải\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3952,7 +4000,7 @@
           },
           {
             "el": "div \"Ngọc Thạch\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -3960,7 +4008,7 @@
           },
           {
             "el": "div \"Hạ Vy\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -4149,7 +4197,7 @@
         "low": [
           {
             "el": "#pull1 \"Ước 1 lần · 160\"",
-            "ratio": 3.57,
+            "ratio": 3.61,
             "need": 4.5,
             "px": 14,
             "canvas": false,
@@ -4157,7 +4205,7 @@
           },
           {
             "el": "#c1 \"160\"",
-            "ratio": 3.57,
+            "ratio": 3.61,
             "need": 4.5,
             "px": 14,
             "canvas": false,
@@ -4165,7 +4213,7 @@
           },
           {
             "el": "#pull10 \"Ước 10 lần · 1.600\"",
-            "ratio": 2.49,
+            "ratio": 3.1,
             "need": 4.5,
             "px": 14,
             "canvas": false,
@@ -4173,7 +4221,7 @@
           },
           {
             "el": "#c10 \"1.600\"",
-            "ratio": 2.49,
+            "ratio": 3.1,
             "need": 4.5,
             "px": 14,
             "canvas": false,
@@ -4213,7 +4261,7 @@
           },
           {
             "el": "b \"Tầng 2\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -4221,7 +4269,7 @@
           },
           {
             "el": "span.muted \"Quái Lv3\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -4229,7 +4277,7 @@
           },
           {
             "el": "b \"Tầng 3\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -4237,7 +4285,7 @@
           },
           {
             "el": "b \"Tầng 4\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -4245,7 +4293,7 @@
           },
           {
             "el": "span.muted \"Quái Lv4 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -4253,7 +4301,7 @@
           },
           {
             "el": "b \"Tầng 5\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -4261,7 +4309,7 @@
           },
           {
             "el": "span.muted \"Quái Lv5 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -4269,7 +4317,7 @@
           },
           {
             "el": "b \"Tầng 6\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -4277,7 +4325,7 @@
           },
           {
             "el": "span.muted \"Quái Lv6 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -4285,7 +4333,7 @@
           },
           {
             "el": "b \"Tầng 7\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -4293,7 +4341,7 @@
           },
           {
             "el": "b \"Tầng 8\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -4301,7 +4349,7 @@
           },
           {
             "el": "span.muted \"Quái Lv7 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -4309,7 +4357,7 @@
           },
           {
             "el": "b \"Tầng 9\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -4317,7 +4365,7 @@
           },
           {
             "el": "span.muted \"Quái Lv8 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -4325,7 +4373,7 @@
           },
           {
             "el": "b \"Tầng 10\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -4333,7 +4381,7 @@
           },
           {
             "el": "span.muted \"Quái Lv9 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -4341,7 +4389,7 @@
           },
           {
             "el": "b \"Tầng 11\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -4349,7 +4397,7 @@
           },
           {
             "el": "b \"Tầng 12\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -4357,7 +4405,7 @@
           },
           {
             "el": "span.muted \"Quái Lv10 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -4835,7 +4883,7 @@
         "low": [
           {
             "el": "button.btn.sm \"Chưa xong\"",
-            "ratio": 3.57,
+            "ratio": 3.56,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -4843,7 +4891,7 @@
           },
           {
             "el": "button.btn.sm \"Nhận\"",
-            "ratio": 3.57,
+            "ratio": 3.56,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -4892,7 +4940,7 @@
         "vh": 900,
         "screen": "sServer",
         "scr": {
-          "scrollH": 938,
+          "scrollH": 965,
           "clientH": 900
         },
         "small": [
@@ -5069,7 +5117,7 @@
         "vh": 900,
         "screen": "sServer",
         "scr": {
-          "scrollH": 938,
+          "scrollH": 965,
           "clientH": 900
         },
         "small": [
@@ -5078,161 +5126,161 @@
             "w": 72,
             "h": 30,
             "x": 230,
-            "y": -24
+            "y": -51
           },
           {
             "el": "#cR5 \"0.6\"",
             "w": 449,
             "h": 38,
             "x": 247,
-            "y": 169
+            "y": 142
           },
           {
             "el": "#cR4 \"5.1\"",
             "w": 449,
             "h": 38,
             "x": 247,
-            "y": 240
+            "y": 213
           },
           {
             "el": "#cSoft \"74\"",
             "w": 449,
             "h": 38,
             "x": 247,
-            "y": 312
+            "y": 285
           },
           {
             "el": "#cHard \"90\"",
             "w": 449,
             "h": 38,
             "x": 247,
-            "y": 383
+            "y": 356
           },
           {
             "el": "#cCost \"160\"",
             "w": 449,
             "h": 38,
             "x": 247,
-            "y": 455
+            "y": 428
           },
           {
             "el": "#cFeat \"Lạc Hồng Thủy Nguyệt Phong Vân Lôi Đình \"",
             "w": 449,
             "h": 40,
             "x": 247,
-            "y": 526
+            "y": 499
           },
           {
             "el": "#saveCfg \"Lưu cấu hình\"",
             "w": 449,
             "h": 40,
             "x": 247,
-            "y": 576
+            "y": 549
           },
           {
             "el": "#gAmt \"16000\"",
             "w": 449,
             "h": 38,
             "x": 744,
-            "y": 169
+            "y": 142
           },
           {
             "el": "#gGem \"Cấp Đá Sao\"",
             "w": 102,
             "h": 30,
             "x": 744,
-            "y": 217
+            "y": 190
           },
           {
             "el": "#gCoin \"Cấp Xu\"",
             "w": 73,
             "h": 30,
             "x": 852,
-            "y": 217
+            "y": 190
           },
           {
             "el": "#gBook \"Cấp Sách KN\"",
             "w": 111,
             "h": 30,
             "x": 931,
-            "y": 217
+            "y": 190
           },
           {
             "el": "#gChar \"Lạc Hồng (5★ Hỏa) Thủy Nguyệt (5★ Thủy) \"",
             "w": 449,
             "h": 40,
             "x": 744,
-            "y": 280
+            "y": 253
           },
           {
             "el": "#gGive \"Cấp nhân vật\"",
             "w": 114,
             "h": 30,
             "x": 744,
-            "y": 330
+            "y": 303
           },
           {
             "el": "#gMax \"Nâng lên Lv 60\"",
             "w": 122,
             "h": 30,
             "x": 864,
-            "y": 330
+            "y": 303
           },
           {
             "el": "label.check \"Bất tử (không mất máu)\"",
             "w": 449,
             "h": 24,
             "x": 744,
-            "y": 370
+            "y": 343
           },
           {
             "el": "#gGod \"on\"",
             "w": 18,
             "h": 18,
             "x": 748,
-            "y": 373
+            "y": 346
           },
           {
             "el": "label.check \"Một đòn hạ gục\"",
             "w": 449,
             "h": 24,
             "x": 744,
-            "y": 404
+            "y": 377
           },
           {
             "el": "#gOne \"on\"",
             "w": 18,
             "h": 18,
             "x": 748,
-            "y": 407
+            "y": 380
           },
           {
             "el": "label.check \"Không hồi chiêu, nộ luôn đầy\"",
             "w": 449,
             "h": 24,
             "x": 744,
-            "y": 438
+            "y": 411
           },
           {
             "el": "#gNoCd \"on\"",
             "w": 18,
             "h": 18,
             "x": 748,
-            "y": 441
+            "y": 414
           },
           {
             "el": "#gDaily \"Làm mới ủy thác hôm nay\"",
             "w": 449,
             "h": 30,
             "x": 744,
-            "y": 472
+            "y": 445
           },
           {
             "el": "#gWipe \"Xóa dữ liệu, chơi lại từ đầu\"",
             "w": 449,
             "h": 30,
             "x": 744,
-            "y": 512
+            "y": 485
           }
         ],
         "low": [],
@@ -5755,7 +5803,7 @@
         }
       },
       "mau-thap": {
-        "note": "Máu thấp, 3 người đã gục",
+        "note": "Máu thấp, các thành viên khác đã gục",
         "vw": 1180,
         "vh": 820,
         "screen": null,
@@ -5850,6 +5898,22 @@
           {
             "el": "span.key \"1\"",
             "ratio": 2.28,
+            "need": 4.5,
+            "px": 11,
+            "canvas": false,
+            "grad": false
+          },
+          {
+            "el": "div.pmn \"Mai Linh\"",
+            "ratio": 3.06,
+            "need": 4.5,
+            "px": 12,
+            "canvas": false,
+            "grad": false
+          },
+          {
+            "el": "span.key \"2\"",
+            "ratio": 2.1,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6000,7 +6064,7 @@
         "low": [
           {
             "el": "div \"Lạc Hồng\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6008,7 +6072,7 @@
           },
           {
             "el": "div.muted \"Chưa có\"",
-            "ratio": 1.72,
+            "ratio": 1.68,
             "need": 4.5,
             "px": 10,
             "canvas": false,
@@ -6016,7 +6080,7 @@
           },
           {
             "el": "div \"Thủy Nguyệt\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6024,7 +6088,7 @@
           },
           {
             "el": "div \"Phong Vân\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6032,7 +6096,7 @@
           },
           {
             "el": "div \"Lôi Đình\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6040,7 +6104,7 @@
           },
           {
             "el": "div \"Thạch Sơn\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6048,7 +6112,7 @@
           },
           {
             "el": "div \"Tuyết Lan\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6056,7 +6120,7 @@
           },
           {
             "el": "div \"Minh Khải\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6064,7 +6128,7 @@
           },
           {
             "el": "div \"Ngọc Thạch\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6072,7 +6136,7 @@
           },
           {
             "el": "div \"Hạ Vy\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6118,7 +6182,7 @@
         "low": [
           {
             "el": "div \"Lạc Hồng\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6126,7 +6190,7 @@
           },
           {
             "el": "div.muted \"Chưa có\"",
-            "ratio": 1.72,
+            "ratio": 1.68,
             "need": 4.5,
             "px": 10,
             "canvas": false,
@@ -6134,7 +6198,7 @@
           },
           {
             "el": "div \"Thủy Nguyệt\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6142,7 +6206,7 @@
           },
           {
             "el": "div \"Phong Vân\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6150,7 +6214,7 @@
           },
           {
             "el": "div \"Lôi Đình\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6158,7 +6222,7 @@
           },
           {
             "el": "div \"Thạch Sơn\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6166,7 +6230,7 @@
           },
           {
             "el": "div \"Tuyết Lan\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6174,7 +6238,7 @@
           },
           {
             "el": "div \"Minh Khải\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6182,7 +6246,7 @@
           },
           {
             "el": "div \"Ngọc Thạch\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6190,7 +6254,7 @@
           },
           {
             "el": "div \"Hạ Vy\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6222,7 +6286,7 @@
         "low": [
           {
             "el": "div \"Lạc Hồng\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6230,7 +6294,7 @@
           },
           {
             "el": "div.muted \"Chưa có\"",
-            "ratio": 1.72,
+            "ratio": 1.68,
             "need": 4.5,
             "px": 10,
             "canvas": false,
@@ -6238,7 +6302,7 @@
           },
           {
             "el": "div \"Thủy Nguyệt\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6246,7 +6310,7 @@
           },
           {
             "el": "div \"Phong Vân\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6254,7 +6318,7 @@
           },
           {
             "el": "div \"Lôi Đình\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6262,7 +6326,7 @@
           },
           {
             "el": "div \"Thạch Sơn\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6270,7 +6334,7 @@
           },
           {
             "el": "div \"Tuyết Lan\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6278,7 +6342,7 @@
           },
           {
             "el": "div \"Minh Khải\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6286,7 +6350,7 @@
           },
           {
             "el": "div \"Ngọc Thạch\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6294,7 +6358,7 @@
           },
           {
             "el": "div \"Hạ Vy\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6340,7 +6404,7 @@
         "low": [
           {
             "el": "div \"Lạc Hồng\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6348,7 +6412,7 @@
           },
           {
             "el": "div.muted \"Chưa có\"",
-            "ratio": 1.72,
+            "ratio": 1.68,
             "need": 4.5,
             "px": 10,
             "canvas": false,
@@ -6356,7 +6420,7 @@
           },
           {
             "el": "div \"Thủy Nguyệt\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6364,7 +6428,7 @@
           },
           {
             "el": "div \"Phong Vân\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6372,7 +6436,7 @@
           },
           {
             "el": "div \"Lôi Đình\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6380,7 +6444,7 @@
           },
           {
             "el": "div \"Thạch Sơn\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6388,7 +6452,7 @@
           },
           {
             "el": "div \"Tuyết Lan\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6396,7 +6460,7 @@
           },
           {
             "el": "div \"Minh Khải\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6404,7 +6468,7 @@
           },
           {
             "el": "div \"Ngọc Thạch\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6412,7 +6476,7 @@
           },
           {
             "el": "div \"Hạ Vy\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6458,7 +6522,7 @@
         "low": [
           {
             "el": "div \"Lạc Hồng\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6466,7 +6530,7 @@
           },
           {
             "el": "div.muted \"Chưa có\"",
-            "ratio": 1.72,
+            "ratio": 1.68,
             "need": 4.5,
             "px": 10,
             "canvas": false,
@@ -6474,7 +6538,7 @@
           },
           {
             "el": "div \"Thủy Nguyệt\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6482,7 +6546,7 @@
           },
           {
             "el": "div \"Phong Vân\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6490,7 +6554,7 @@
           },
           {
             "el": "div \"Lôi Đình\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6498,7 +6562,7 @@
           },
           {
             "el": "div \"Thạch Sơn\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6506,7 +6570,7 @@
           },
           {
             "el": "div \"Tuyết Lan\"",
-            "ratio": 2.32,
+            "ratio": 2.28,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6514,7 +6578,7 @@
           },
           {
             "el": "div \"Minh Khải\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6522,7 +6586,7 @@
           },
           {
             "el": "div \"Ngọc Thạch\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6530,7 +6594,7 @@
           },
           {
             "el": "div \"Hạ Vy\"",
-            "ratio": 2.38,
+            "ratio": 2.32,
             "need": 4.5,
             "px": 11,
             "canvas": false,
@@ -6719,7 +6783,7 @@
         "low": [
           {
             "el": "#pull1 \"Ước 1 lần · 160\"",
-            "ratio": 3.57,
+            "ratio": 3.61,
             "need": 4.5,
             "px": 14,
             "canvas": false,
@@ -6727,7 +6791,7 @@
           },
           {
             "el": "#c1 \"160\"",
-            "ratio": 3.57,
+            "ratio": 3.61,
             "need": 4.5,
             "px": 14,
             "canvas": false,
@@ -6735,7 +6799,7 @@
           },
           {
             "el": "#pull10 \"Ước 10 lần · 1.600\"",
-            "ratio": 2.49,
+            "ratio": 3.1,
             "need": 4.5,
             "px": 14,
             "canvas": false,
@@ -6743,7 +6807,7 @@
           },
           {
             "el": "#c10 \"1.600\"",
-            "ratio": 2.49,
+            "ratio": 3.1,
             "need": 4.5,
             "px": 14,
             "canvas": false,
@@ -6783,7 +6847,7 @@
           },
           {
             "el": "b \"Tầng 2\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -6791,7 +6855,7 @@
           },
           {
             "el": "span.muted \"Quái Lv3\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -6799,7 +6863,7 @@
           },
           {
             "el": "b \"Tầng 3\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -6807,7 +6871,7 @@
           },
           {
             "el": "b \"Tầng 4\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -6815,7 +6879,7 @@
           },
           {
             "el": "span.muted \"Quái Lv4 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -6823,7 +6887,7 @@
           },
           {
             "el": "b \"Tầng 5\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -6831,7 +6895,7 @@
           },
           {
             "el": "span.muted \"Quái Lv5 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -6839,7 +6903,7 @@
           },
           {
             "el": "b \"Tầng 6\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -6847,7 +6911,7 @@
           },
           {
             "el": "span.muted \"Quái Lv6 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -6855,7 +6919,7 @@
           },
           {
             "el": "b \"Tầng 7\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -6863,7 +6927,7 @@
           },
           {
             "el": "b \"Tầng 8\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -6871,7 +6935,7 @@
           },
           {
             "el": "span.muted \"Quái Lv7 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -6879,7 +6943,7 @@
           },
           {
             "el": "b \"Tầng 9\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -6887,7 +6951,7 @@
           },
           {
             "el": "span.muted \"Quái Lv8 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -6895,7 +6959,7 @@
           },
           {
             "el": "b \"Tầng 10\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -6903,7 +6967,7 @@
           },
           {
             "el": "span.muted \"Quái Lv9 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -6911,7 +6975,7 @@
           },
           {
             "el": "b \"Tầng 11\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -6919,7 +6983,7 @@
           },
           {
             "el": "b \"Tầng 12\"",
-            "ratio": 3.25,
+            "ratio": 3.18,
             "need": 4.5,
             "px": 15,
             "canvas": false,
@@ -6927,7 +6991,7 @@
           },
           {
             "el": "span.muted \"Quái Lv10 · có Hộ Vệ Đá\"",
-            "ratio": 2.24,
+            "ratio": 2.18,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -7405,7 +7469,7 @@
         "low": [
           {
             "el": "button.btn.sm \"Chưa xong\"",
-            "ratio": 3.57,
+            "ratio": 3.56,
             "need": 4.5,
             "px": 13,
             "canvas": false,
@@ -7413,7 +7477,7 @@
           },
           {
             "el": "button.btn.sm \"Nhận\"",
-            "ratio": 3.57,
+            "ratio": 3.56,
             "need": 4.5,
             "px": 13,
             "canvas": false,
