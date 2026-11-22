@@ -5,7 +5,7 @@ Tài liệu cho mọi người viết chữ trong **Tinh Tú Ước Nguyện**: 
 ## 0. Cách dùng tài liệu
 
 - **Thứ tự ưu tiên khi mâu thuẫn:** quyết định của chủ dự án > [`docs/world/`](../world/README.md) > tài liệu này > thẻ giọng nói từng nhân vật.
-- **Ngoại lệ:** quy tắc xưng hô ở mục 2 là quyết định của chủ dự án (2026-11-22). Nó thay cho phần xưng hô theo họ hàng ở [`05-van-hoa-doi-thuong.md`](../world/05-van-hoa-doi-thuong.md) mục 4, kể cả các câu ví dụ ở đó.
+- **Ngoại lệ:** quy tắc xưng hô ở mục 2 là quyết định của chủ dự án (2026-11-22). [`05-van-hoa-doi-thuong.md`](../world/05-van-hoa-doi-thuong.md) mục 4 đã được sửa cho khớp; nếu còn chỗ nào lệch thì theo mục 2 ở đây.
 - **Ví dụ** được đánh số V01, V02... Mỗi ví dụ là một cặp **Sai** và **Đúng** kèm lý do. Câu "Đúng" là một cách viết đạt, không phải cách duy nhất.
 - Tên nhân vật trong ví dụ chỉ để minh họa giọng. Giọng chính thức của từng Hộ Tinh do S03–S05 chốt trong thẻ giọng nói (mục 6).
 
@@ -295,7 +295,7 @@ Mỗi khung thoại tối đa một biến. Đọc lại cả hai phiên bản �
 - Xen câu ngắn với câu vừa. Một khung tối đa 2 câu vừa hoặc 3 câu ngắn.
 - Tiểu từ cuối câu (nhé, nhỉ, à, đấy, chứ, mà, thôi) làm câu có hơi người, nhưng **tối đa một tiểu từ mỗi câu**, không câu nào cũng có.
 - Tránh lối văn viết trong lời nói: "việc", "sự", "dẫn đến", "tiến hành", "nhằm".
-- Giọng vùng theo [`05-van-hoa-doi-thuong.md`](../world/05-van-hoa-doi-thuong.md) mục 4 (nét giọng, không phần xưng hô). Không viết sai chính tả để giả giọng.
+- Giọng vùng theo [`05-van-hoa-doi-thuong.md`](../world/05-van-hoa-doi-thuong.md) mục 4. Không viết sai chính tả để giả giọng.
 
 | #   | Sai                                                                                | Đúng                                                | Vì sao                           |
 | --- | ---------------------------------------------------------------------------------- | --------------------------------------------------- | -------------------------------- |
