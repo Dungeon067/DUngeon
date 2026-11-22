@@ -179,7 +179,27 @@ export function openDialog(o: DialogOpts) {
     document.removeEventListener("keydown", onKey);
     prev?.focus();
   };
-  const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
+  /* Giữ focus trong hộp thoại: Tab và Shift+Tab quay vòng giữa các phần tử bấm được. */
+  const onKey = (e: KeyboardEvent) => {
+    if (e.key === "Escape") return close();
+    if (e.key !== "Tab") return;
+    const f = [
+      ...box.querySelectorAll<HTMLElement>(
+        "button:not(:disabled), input:not(:disabled), [href], [tabindex]:not([tabindex='-1'])",
+      ),
+    ];
+    if (!f.length) return e.preventDefault();
+    const first = f[0]!;
+    const last = f[f.length - 1]!;
+    const inBox = box.contains(document.activeElement);
+    if (e.shiftKey && (document.activeElement === first || !inBox)) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && (document.activeElement === last || !inBox)) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
   scrim.addEventListener("click", (e) => e.target === scrim && close());
   for (const b of o.actions ?? []) b.addEventListener("click", close);
   document.addEventListener("keydown", onKey);
