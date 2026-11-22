@@ -2,6 +2,7 @@ import { GS } from "../../../core/state";
 import { byId } from "../../../data/content";
 import { MENU } from "../../../data/menu-content";
 import { Server } from "../../../server/server";
+import { preloadSfx, sfx } from "../../../core/audio";
 import { openSettings } from "../../settings";
 import { badgeDot, button, h } from "../../ds";
 import { icon } from "../../icons/icons";
@@ -45,6 +46,7 @@ registerScreen("main", {
       party,
       resume,
       button("Hướng dẫn", { variant: "ghost", icon: "huong-dan", onClick: () => openMenu("help") }),
+      soundBtn(),
     ]);
     const groups = new Map<string, HTMLElement>();
     for (const it of MENU.main) {
@@ -70,3 +72,24 @@ registerScreen("main", {
     host.append(side, grid);
   },
 });
+
+/** Âm thanh tắt sẵn (trình duyệt chỉ cho phát sau khi người chơi bấm); nút này bật hoặc tắt. */
+function soundBtn() {
+  const label = () => "Âm thanh: " + (GS.soundOn ? "bật" : "tắt");
+  const b = button(label(), {
+    variant: "ghost",
+    icon: "am-thanh",
+    onClick: () => {
+      GS.soundOn = !GS.soundOn;
+      if (GS.soundOn) {
+        preloadSfx();
+        sfx("coin");
+      }
+      b.querySelector(".tt-btn-label")!.textContent = label();
+      b.setAttribute("aria-pressed", String(GS.soundOn));
+    },
+  });
+  b.id = "soundBtn";
+  b.setAttribute("aria-pressed", String(GS.soundOn));
+  return b;
+}
