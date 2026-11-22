@@ -30,7 +30,12 @@ registerScreen("main", {
       { class: "tt-main-party" },
       P.party.map((id: string) => h("span", { class: "tt-chip" }, [byId[id]?.name ?? id])),
     );
-    const resume = button("Tiếp tục khám phá", { variant: "primary", icon: "choi", size: "lg", onClick: () => closeMenu() });
+    const resume = button("Tiếp tục khám phá", {
+      variant: "primary",
+      icon: "choi",
+      size: "lg",
+      onClick: () => closeMenu(),
+    });
     resume.id = "menuResume";
     resume.autofocus = true;
     const side = h("aside", { class: "tt-main-side" }, [

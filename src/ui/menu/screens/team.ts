@@ -80,7 +80,10 @@ function render(host: HTMLElement, params: any) {
   host.classList.add("tt-menu-team");
 
   const tl = tabs(
-    P.teams.map((t: string[], i: number) => ({ id: String(i), label: `Đội ${i + 1}${i === P.team ? " · đang dùng" : ""}` })),
+    P.teams.map((t: string[], i: number) => ({
+      id: String(i),
+      label: `Đội ${i + 1}${i === P.team ? " · đang dùng" : ""}`,
+    })),
     String(idx),
     (id) => {
       if (Number(id) === idx) return;
@@ -89,7 +92,10 @@ function render(host: HTMLElement, params: any) {
     },
   );
   const warn = locked
-    ? h("div", { class: "tt-banner is-warn", role: "alert", id: "teamLock" }, [icon("canh-bao", { size: 20 }), MENU.combatLock.message])
+    ? h("div", { class: "tt-banner is-warn", role: "alert", id: "teamLock" }, [
+        icon("canh-bao", { size: 20 }),
+        MENU.combatLock.message,
+      ])
     : null;
 
   const slots = h("ol", { class: "tt-slots", "aria-label": "Bốn ô trong đội" });
@@ -100,7 +106,7 @@ function render(host: HTMLElement, params: any) {
       "button",
       {
         type: "button",
-        class: "tt-slot" + (s === slot ? " is-sel" : "") + (c ? "" : " is-empty"),
+        class: "tt-tslot" + (s === slot ? " is-sel" : "") + (c ? "" : " is-empty"),
         "aria-pressed": String(s === slot),
         "aria-label": c ? `Ô ${s + 1}: ${c.name}` : `Ô ${s + 1}: trống`,
         "data-slot": s,
@@ -113,7 +119,11 @@ function render(host: HTMLElement, params: any) {
             h("span", { class: "nm" }, [c.name]),
             h("small", {}, [elementBadge(c.el, { size: 14, name: EL[c.el]?.vi }), ` Cấp ${statsOf(c.id).lv}`]),
           ]
-        : [h("span", { class: "k" }, [String(s + 1)]), icon("them", { size: 28 }), h("span", { class: "nm" }, ["Trống"])],
+        : [
+            h("span", { class: "k" }, [String(s + 1)]),
+            icon("them", { size: 28 }),
+            h("span", { class: "nm" }, ["Trống"]),
+          ],
     );
     b.addEventListener("click", () => {
       slot = s;

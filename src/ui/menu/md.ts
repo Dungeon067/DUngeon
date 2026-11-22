@@ -32,7 +32,9 @@ function tableEl(head: string[], rows: string[][], onLine?: (s: string, t: strin
     const ul = h("ul", { class: "tt-lines" });
     for (const r of rows) {
       const situ = plain(r.length > 2 ? r[1]! : r[0]!);
-      const text = plain(r[r.length - 1]!).trim().replace(/^["“]|["”]$/g, "");
+      const text = plain(r[r.length - 1]!)
+        .trim()
+        .replace(/^["“]|["”]$/g, "");
       const b = h("button", { type: "button", class: "tt-line-btn" }, [
         icon("am-thanh", { size: 16 }),
         h("span", { class: "situ" }, [situ]),

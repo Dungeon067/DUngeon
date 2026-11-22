@@ -10,7 +10,11 @@ import { registerScreen, rerender } from "../shell";
 
 /* Bách khoa (S10): sinh vật, nhân vật, địa danh, vật phẩm đã khám phá và các bài viết về Vọng Tinh Giới
    (docs/world/). Mục chưa khám phá hiện bóng đen và "???". */
-const WORLD = import.meta.glob<string>("../../../../docs/world/0*.md", { query: "?raw", import: "default", eager: true });
+const WORLD = import.meta.glob<string>("../../../../docs/world/0*.md", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+});
 const ARTICLES: { id: string; doc: MdDoc }[] = Object.entries(WORLD)
   .filter(([p]) => !/10-cau-hoi-mo/.test(p))
   .sort(([a], [b]) => a.localeCompare(b))
@@ -59,7 +63,10 @@ export function codexEntries(cat: string, P: any = Server.P): Entry[] {
         return cv;
       },
       body: () => [
-        h("div", { class: "tt-row" }, [stars(c.r as 4 | 5, 14), elementBadge(c.el, { label: true, name: EL[c.el]?.vi })]),
+        h("div", { class: "tt-row" }, [
+          stars(c.r as 4 | 5, 14),
+          elementBadge(c.el, { label: true, name: EL[c.el]?.vi }),
+        ]),
         h("p", {}, [c.desc]),
         P.owned[c.id] ? h("p", { class: "tt-dim" }, ["Xem hồ sơ đầy đủ trong màn Nhân vật."]) : "",
       ],
@@ -69,7 +76,10 @@ export function codexEntries(cat: string, P: any = Server.P): Entry[] {
       id: p.id,
       name: p.name,
       found: has("dia:" + p.id),
-      body: () => [rich(p.lore), p.secret ? h("details", { class: "tt-prof" }, [h("summary", {}, ["Bí mật"]), rich(p.secret)]) : ""],
+      body: () => [
+        rich(p.lore),
+        p.secret ? h("details", { class: "tt-prof" }, [h("summary", {}, ["Bí mật"]), rich(p.secret)]) : "",
+      ],
     }));
   return ITEMS.map((it) => ({
     id: it.id,
@@ -111,16 +121,30 @@ function render(host: HTMLElement) {
   if (cat === "world") {
     const cur = ARTICLES.find((a) => a.id === sel.world) ?? ARTICLES[0];
     for (const a of ARTICLES) {
-      const b = h("button", { type: "button", class: "tt-codex-cell is-found" + (a === cur ? " is-sel" : ""), role: "listitem", "aria-pressed": String(a === cur) }, [
-        icon("huong-dan", { size: 26 }),
-        h("span", { class: "nm" }, [a.doc.title.replace(/^\d+\.\s*/, "")]),
-      ]);
+      const b = h(
+        "button",
+        {
+          type: "button",
+          class: "tt-codex-cell is-found" + (a === cur ? " is-sel" : ""),
+          role: "listitem",
+          "aria-pressed": String(a === cur),
+        },
+        [icon("huong-dan", { size: 26 }), h("span", { class: "nm" }, [a.doc.title.replace(/^\d+\.\s*/, "")])],
+      );
       b.addEventListener("click", () => ((sel.world = a.id), rerender()));
       grid.append(b);
     }
-    detail = h("article", { class: "tt-panel tt-codex-detail tt-md-doc", id: "codexDetail" }, cur
-      ? [h("h3", { class: "tt-h2" }, [cur.doc.title]), blocksEl(cur.doc.intro), sectionsEl(cur.doc.sections, () => true)]
-      : [h("p", { class: "tt-dim" }, ["Chưa có bài viết."])]);
+    detail = h(
+      "article",
+      { class: "tt-panel tt-codex-detail tt-md-doc", id: "codexDetail" },
+      cur
+        ? [
+            h("h3", { class: "tt-h2" }, [cur.doc.title]),
+            blocksEl(cur.doc.intro),
+            sectionsEl(cur.doc.sections, () => true),
+          ]
+        : [h("p", { class: "tt-dim" }, ["Chưa có bài viết."])],
+    );
   } else {
     const list = codexEntries(cat, P);
     const cur = list.find((e) => e.id === sel[cat]) ?? list.find((e) => e.found) ?? list[0];
@@ -135,7 +159,10 @@ function render(host: HTMLElement) {
           "aria-pressed": String(e === cur),
           "aria-label": e.found ? e.name : "Chưa khám phá",
         },
-        [e.art ? e.art() : icon(CATS.find((c) => c.id === cat)!.icon, { size: 26 }), h("span", { class: "nm" }, [e.found ? e.name : "???"])],
+        [
+          e.art ? e.art() : icon(CATS.find((c) => c.id === cat)!.icon, { size: 26 }),
+          h("span", { class: "nm" }, [e.found ? e.name : "???"]),
+        ],
       );
       b.addEventListener("click", () => ((sel[cat] = e.id), rerender()));
       grid.append(b);
@@ -146,12 +173,24 @@ function render(host: HTMLElement) {
       !cur
         ? [h("p", { class: "tt-dim" }, ["Chưa có mục nào."])]
         : cur.found
-          ? [h("h3", { class: "tt-h2" }, [cur.name]), cur.sub ? h("p", { class: "tt-dim" }, [cur.sub]) : "", ...cur.body()]
+          ? [
+              h("h3", { class: "tt-h2" }, [cur.name]),
+              cur.sub ? h("p", { class: "tt-dim" }, [cur.sub]) : "",
+              ...cur.body(),
+            ]
           : [
-              h("div", { class: "tt-codex-shadow" }, [cur.art ? cur.art() : icon(CATS.find((c) => c.id === cat)!.icon, { size: 64 })]),
+              h("div", { class: "tt-codex-shadow" }, [
+                cur.art ? cur.art() : icon(CATS.find((c) => c.id === cat)!.icon, { size: 64 }),
+              ]),
               h("h3", { class: "tt-h2" }, ["???"]),
               h("p", { class: "tt-dim" }, [
-                cat === "creatures" ? "Hạ được sinh vật này để mở mục." : cat === "places" ? "Đi tới nơi này để mở mục." : cat === "chars" ? "Gặp Hộ Tinh này qua Ước nguyện để mở mục." : "Tìm được vật phẩm này để mở mục.",
+                cat === "creatures"
+                  ? "Hạ được sinh vật này để mở mục."
+                  : cat === "places"
+                    ? "Đi tới nơi này để mở mục."
+                    : cat === "chars"
+                      ? "Gặp Hộ Tinh này qua Ước nguyện để mở mục."
+                      : "Tìm được vật phẩm này để mở mục.",
               ]),
             ],
     );

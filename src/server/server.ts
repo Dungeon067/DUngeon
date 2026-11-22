@@ -5,6 +5,8 @@ import { toast } from "../ui/toast";
 
 export const SAVE_KEY = "tinhtu-v3";
 export const OLD_SAVE_KEY = "tinhtu-v2";
+/** Nhật ký request dùng chung giữa game và trang Admin (cùng localStorage). */
+export const LOG_KEY = "tinhtu-log";
 /** Cỡ một khối sương bản đồ (ô). Bản đồ 110×110 ô thành 22×22 khối. */
 export const FOG = 5;
 export const FOG_N = 22;
@@ -66,6 +68,10 @@ export const Server = {
   P: null as unknown as Profile,
   log: [] as LogEntry[],
   load() {
+    try {
+      const l = JSON.parse(localStorage.getItem(LOG_KEY) ?? "[]");
+      if (Array.isArray(l)) this.log = l;
+    } catch (e) {}
     if (!this.P) {
       try {
         const s = localStorage.getItem(SAVE_KEY) ?? localStorage.getItem(OLD_SAVE_KEY);
@@ -74,6 +80,11 @@ export const Server = {
     }
     if (!this.P || this.P.v !== 3) this.P = migrate(this.P) ?? freshProfile();
     this.ensureDaily();
+  },
+  /** Đọc lại hồ sơ từ localStorage (khi trang khác, ví dụ Admin, vừa ghi). */
+  reload() {
+    this.P = null as unknown as Profile;
+    this.load();
   },
   save() {
     try {
@@ -97,8 +108,11 @@ export const Server = {
       }
     }
     if (action !== "progress") {
-      this.log.unshift({ a: action, p: payload, ok: res.ok, msg: res.ok ? "200 OK" : res.error });
+      this.log.unshift({ a: action, p: payload, ok: res.ok, msg: res.ok ? "200 OK" : res.error, t: Date.now() });
       if (this.log.length > 80) this.log.pop();
+      try {
+        localStorage.setItem(LOG_KEY, JSON.stringify(this.log));
+      } catch (e) {}
     }
     if (!res.ok) toast(res.error);
     return res;

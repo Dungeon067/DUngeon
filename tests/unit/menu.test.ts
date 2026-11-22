@@ -7,7 +7,20 @@ import { anchorXY, fogIdx, seen } from "../../src/ui/menu/anchor";
 import { place } from "../../src/ui/menu/screens/team";
 import { FOG, FOG_N } from "../../src/server/server";
 
-const SEED = ["lachong", "thuynguyet", "phongvan", "loidinh", "thachson", "tuyetlan", "mailinh", "suongmai", "bachvu", "minhkhai", "ngocthach", "havy"];
+const SEED = [
+  "lachong",
+  "thuynguyet",
+  "phongvan",
+  "loidinh",
+  "thachson",
+  "tuyetlan",
+  "mailinh",
+  "suongmai",
+  "bachvu",
+  "minhkhai",
+  "ngocthach",
+  "havy",
+];
 
 describe("Hồ sơ nhân vật (docs/characters)", () => {
   it("đủ hồ sơ cho 12 nhân vật Đảo Lạc, mỗi mục trong menu.yaml đều có file", async () => {

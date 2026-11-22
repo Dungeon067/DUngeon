@@ -50,18 +50,43 @@ function pois(): Poi[] {
     out: Poi[] = [];
   if (!M) return out;
   M.statues.forEach((s: any, i: number) => {
-    if (statueOpen(i)) out.push({ kind: "statue", x: s.x + 0.5, y: s.y + 0.5, name: `Bia Đá ${i + 1}`, info: "Hồi phục đội, lưu điểm hồi sinh.", i });
+    if (statueOpen(i))
+      out.push({
+        kind: "statue",
+        x: s.x + 0.5,
+        y: s.y + 0.5,
+        name: `Bia Đá ${i + 1}`,
+        info: "Hồi phục đội, lưu điểm hồi sinh.",
+        i,
+      });
   });
   M.chests.forEach((c: any, i: number) => {
-    if (!P.chests.includes(i) && seen(P.fog, c.x, c.y)) out.push({ kind: "chest", x: c.x + 0.5, y: c.y + 0.5, name: "Rương báu", info: "Đã thấy nhưng chưa mở.", i });
+    if (!P.chests.includes(i) && seen(P.fog, c.x, c.y))
+      out.push({ kind: "chest", x: c.x + 0.5, y: c.y + 0.5, name: "Rương báu", info: "Đã thấy nhưng chưa mở.", i });
   });
-  if (seen(P.fog, M.tower.x, M.tower.y)) out.push({ kind: "tower", x: M.tower.x + 0.5, y: M.tower.y + 0.5, name: "Cổng Tháp Tinh Tú", info: "Lối vào Tháp Tinh Tú." });
-  if (seen(P.fog, M.gate.x, M.gate.y)) out.push({ kind: "gate", x: M.gate.x + 0.5, y: M.gate.y + 0.5, name: "Hang Hắc Giao", info: "Nơi ác long đang ngủ." });
+  if (seen(P.fog, M.tower.x, M.tower.y))
+    out.push({
+      kind: "tower",
+      x: M.tower.x + 0.5,
+      y: M.tower.y + 0.5,
+      name: "Cổng Tháp Tinh Tú",
+      info: "Lối vào Tháp Tinh Tú.",
+    });
+  if (seen(P.fog, M.gate.x, M.gate.y))
+    out.push({
+      kind: "gate",
+      x: M.gate.x + 0.5,
+      y: M.gate.y + 0.5,
+      name: "Hang Hắc Giao",
+      info: "Nơi ác long đang ngủ.",
+    });
   for (const n of MENU.npcs) {
     const a = anchorXY(n.at, M);
     if (a && seen(P.fog, a[0], a[1])) out.push({ kind: "npc", x: a[0], y: a[1], name: n.name, info: n.role });
   }
-  P.marks.forEach((m: any, i: number) => out.push({ kind: "mark", x: m.x, y: m.y, name: m.label, info: "Điểm đánh dấu của bạn.", i }));
+  P.marks.forEach((m: any, i: number) =>
+    out.push({ kind: "mark", x: m.x, y: m.y, name: m.label, info: "Điểm đánh dấu của bạn.", i }),
+  );
   if (GS.G?.p) out.push({ kind: "you", x: GS.G.p.x / TS, y: GS.G.p.y / TS, name: "Vị trí của bạn" });
   return out;
 }
@@ -71,7 +96,14 @@ function targetXY(t: string): [number, number] | null {
   if (!M) return null;
   if (t === "tower" || t === "gate") return anchorXY(t, M);
   const p = GS.G?.p ? [GS.G.p.x / TS, GS.G.p.y / TS] : [M.cx, M.cy];
-  const list: any[] = t === "statue" ? M.statues : t === "chest" ? M.chests.filter((_: any, i: number) => !Server.P.chests.includes(i)) : t === "camp" ? M.camps : [];
+  const list: any[] =
+    t === "statue"
+      ? M.statues
+      : t === "chest"
+        ? M.chests.filter((_: any, i: number) => !Server.P.chests.includes(i))
+        : t === "camp"
+          ? M.camps
+          : [];
   let best: any = null,
     bd = Infinity;
   for (const s of list) {
@@ -113,7 +145,8 @@ function draw() {
   c.fillStyle = "rgba(6,9,24,.92)";
   for (let fy = 0; fy < FOG_N; fy++)
     for (let fx = 0; fx < FOG_N; fx++)
-      if (fog[fy * FOG_N + fx] !== "1") c.fillRect(Math.floor(X(fx * FOG)), Math.floor(Y(fy * FOG)), Math.ceil(FOG * s) + 1, Math.ceil(FOG * s) + 1);
+      if (fog[fy * FOG_N + fx] !== "1")
+        c.fillRect(Math.floor(X(fx * FOG)), Math.floor(Y(fy * FOG)), Math.ceil(FOG * s) + 1, Math.ceil(FOG * s) + 1);
   const t = trackedObjective()?.target ?? GS.G?.objTarget;
   const tg = t ? targetXY(t) : null;
   if (tg) {
@@ -170,7 +203,11 @@ function pick(tx: number, ty: number) {
     }
   }
   const M = GS.G?.map ?? GS.WORLD;
-  sel = best ?? (M && seen(Server.P.fog, tx, ty) ? { kind: "point", x: tx, y: ty, name: "Vùng đã khám phá" } : { kind: "point", x: tx, y: ty, name: "Vùng chưa khám phá" });
+  sel =
+    best ??
+    (M && seen(Server.P.fog, tx, ty)
+      ? { kind: "point", x: tx, y: ty, name: "Vùng đã khám phá" }
+      : { kind: "point", x: tx, y: ty, name: "Vùng chưa khám phá" });
   rerender();
 }
 
@@ -178,8 +215,8 @@ export function fastTravel(i: number) {
   const G = GS.G,
     s = G?.map?.statues[i];
   if (!G || G.mode !== "world" || !s) return false;
-  if (!statueOpen(i)) return toast("Bia Đá này chưa được mở", "warn"), false;
-  if (inCombat(G, MENU.combatLock.radius)) return toast("Không thể dịch chuyển khi đang chiến đấu", "warn"), false;
+  if (!statueOpen(i)) return (toast("Bia Đá này chưa được mở", "warn"), false);
+  if (inCombat(G, MENU.combatLock.radius)) return (toast("Không thể dịch chuyển khi đang chiến đấu", "warn"), false);
   G.p.x = (s.x + 0.5) * TS;
   G.p.y = (s.y + 2.5) * TS;
   G.p.vx = G.p.vy = 0;
@@ -218,7 +255,11 @@ function panel() {
       const b = button("Đánh dấu tại đây", {
         icon: "sao",
         onClick: () => {
-          const r = Server.req("addMark", { x: +p.x.toFixed(2), y: +p.y.toFixed(2), label: p.kind === "point" ? `Điểm ${Server.P.marks.length + 1}` : p.name });
+          const r = Server.req("addMark", {
+            x: +p.x.toFixed(2),
+            y: +p.y.toFixed(2),
+            label: p.kind === "point" ? `Điểm ${Server.P.marks.length + 1}` : p.name,
+          });
           if (r.ok) sel = { kind: "mark", x: p.x, y: p.y, name: r.data.at(-1).label, i: r.data.length - 1 };
           rerender();
         },
@@ -226,8 +267,17 @@ function panel() {
       b.id = "mapMark";
       acts.append(b);
     }
-    box.append(h("h3", { class: "tt-h3", id: "mapSel" }, [p.name]), p.info ? h("p", { class: "tt-dim" }, [p.info]) : "", acts);
-  } else box.append(h("p", { class: "tt-dim" }, ["Chọn một điểm trên bản đồ. Kéo để di chuyển, cuộn hoặc chụm hai ngón để thu phóng."]));
+    box.append(
+      h("h3", { class: "tt-h3", id: "mapSel" }, [p.name]),
+      p.info ? h("p", { class: "tt-dim" }, [p.info]) : "",
+      acts,
+    );
+  } else
+    box.append(
+      h("p", { class: "tt-dim" }, [
+        "Chọn một điểm trên bản đồ. Kéo để di chuyển, cuộn hoặc chụm hai ngón để thu phóng.",
+      ]),
+    );
   const explored = [...Server.P.fog].filter((x) => x === "1").length;
   box.append(
     h("p", { class: "tt-dim" }, [`Đã khám phá ${Math.round((explored / (FOG_N * FOG_N)) * 100)}% Đảo Lạc`]),
@@ -251,7 +301,11 @@ function render(host: HTMLElement, params: any) {
     host.append(h("p", { class: "tt-dim" }, ["Bản đồ chỉ có khi đang ở Đảo Lạc."]));
     return;
   }
-  cv = h("canvas", { id: "mapCv", tabindex: "0", "aria-label": "Bản đồ Đảo Lạc. Mũi tên để kéo, + và − để thu phóng, Enter để chọn điểm giữa." }) as HTMLCanvasElement;
+  cv = h("canvas", {
+    id: "mapCv",
+    tabindex: "0",
+    "aria-label": "Bản đồ Đảo Lạc. Mũi tên để kéo, + và − để thu phóng, Enter để chọn điểm giữa.",
+  }) as HTMLCanvasElement;
   const wrap = h("div", { class: "tt-map-wrap" }, [
     cv,
     h("div", { class: "tt-map-zoom" }, [
@@ -352,11 +406,16 @@ registerScreen("map", {
   render,
   onKey(e) {
     if (document.activeElement !== cv) {
-      if (e.key === "+" || e.key === "=" || e.key === "-") return zoom(e.key === "-" ? 0.8 : 1.25), true;
+      if (e.key === "+" || e.key === "=" || e.key === "-") return (zoom(e.key === "-" ? 0.8 : 1.25), true);
       return false;
     }
     const step = 6 / V.z;
-    const k: Record<string, [number, number]> = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] };
+    const k: Record<string, [number, number]> = {
+      ArrowLeft: [-step, 0],
+      ArrowRight: [step, 0],
+      ArrowUp: [0, -step],
+      ArrowDown: [0, step],
+    };
     if (k[e.key]) {
       V.x += k[e.key]![0];
       V.y += k[e.key]![1];
@@ -364,8 +423,8 @@ registerScreen("map", {
       draw();
       return true;
     }
-    if (e.key === "+" || e.key === "=" || e.key === "-") return zoom(e.key === "-" ? 0.8 : 1.25), true;
-    if (e.key === "Enter" || e.key === " ") return pick(V.x, V.y), true;
+    if (e.key === "+" || e.key === "=" || e.key === "-") return (zoom(e.key === "-" ? 0.8 : 1.25), true);
+    if (e.key === "Enter" || e.key === " ") return (pick(V.x, V.y), true);
     return false;
   },
   onClose() {

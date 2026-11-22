@@ -21,7 +21,9 @@ export function teamReactions(els: string[]): string[] {
 }
 export function reactionText(els: string[]) {
   const r = teamReactions(els);
-  return r.length ? `Đội này tạo được ${r.join(", ")}` : "Đội này chưa tạo được phản ứng nào. Thử ghép hai nguyên tố khác nhau.";
+  return r.length
+    ? `Đội này tạo được ${r.join(", ")}`
+    : "Đội này chưa tạo được phản ứng nào. Thử ghép hai nguyên tố khác nhau.";
 }
 
 /** Có quái đang giao chiến trong bán kính r quanh người chơi không (chặn đổi đội). */

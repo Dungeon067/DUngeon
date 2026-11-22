@@ -99,16 +99,29 @@ function render(host: HTMLElement) {
           h("span", { class: "r" }, ["★".repeat(x.r)]),
           h("span", { class: "n" }, [x.n]),
           h("time", {}, [
-            new Date(x.t).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" }),
+            new Date(x.t).toLocaleString("vi-VN", {
+              hour: "2-digit",
+              minute: "2-digit",
+              day: "2-digit",
+              month: "2-digit",
+            }),
           ]),
         ]),
       );
     panel.append(
       filt,
-      list.length ? ul : h("p", { class: "tt-dim" }, [P.history.length ? "Không có lần ước nào khớp bộ lọc." : "Chưa có lần ước nào."]),
+      list.length
+        ? ul
+        : h("p", { class: "tt-dim" }, [
+            P.history.length ? "Không có lần ước nào khớp bộ lọc." : "Chưa có lần ước nào.",
+          ]),
     );
   }
-  const b1 = button(`Ước 1 lần · ${fmt(cfg.cost)} Đá Sao`, { icon: "da-sao", disabled: P.gems < cfg.cost, onClick: () => pull(1) });
+  const b1 = button(`Ước 1 lần · ${fmt(cfg.cost)} Đá Sao`, {
+    icon: "da-sao",
+    disabled: P.gems < cfg.cost,
+    onClick: () => pull(1),
+  });
   b1.id = "wish1";
   const b10 = button(`Ước 10 lần · ${fmt(cfg.cost * 10)} Đá Sao`, {
     variant: "primary",

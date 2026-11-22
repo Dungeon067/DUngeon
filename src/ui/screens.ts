@@ -29,7 +29,11 @@ export function leaveWorld() {
 export function exitToMenu(screen?: string) {
   if (GS.G && GS.G.mode !== "world") {
     flushPending();
-    if (!GS.G._ended) Server.req("logQuit", { mode: GS.G.mode, at: GS.G.mode === "tower" ? `tầng ${GS.G.tower.floor}` : `cấp ${GS.G.opt?.lv}` });
+    if (!GS.G._ended)
+      Server.req("logQuit", {
+        mode: GS.G.mode,
+        at: GS.G.mode === "tower" ? `tầng ${GS.G.tower.floor}` : `cấp ${GS.G.opt?.lv}`,
+      });
   }
   closeModal();
   closeMenu();

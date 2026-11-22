@@ -67,4 +67,5 @@ export interface LogEntry {
   p: unknown;
   ok: boolean;
   msg: string;
+  t?: number;
 }

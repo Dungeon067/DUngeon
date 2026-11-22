@@ -40,7 +40,10 @@ registerScreen("daily", {
       ul.append(
         h("li", { class: "tt-task" + (t.claimed ? " is-done" : "") }, [
           icon("uy-thac", { size: 24 }),
-          h("div", { class: "tt" }, [h("b", {}, [t.t]), progress(t.prog / t.goal, { label: `${t.prog}/${t.goal}`, text: `${t.prog}/${t.goal}` })]),
+          h("div", { class: "tt" }, [
+            h("b", {}, [t.t]),
+            progress(t.prog / t.goal, { label: `${t.prog}/${t.goal}`, text: `${t.prog}/${t.goal}` }),
+          ]),
           b,
         ]),
       );
@@ -49,7 +52,10 @@ registerScreen("daily", {
     ul.append(
       h("li", { class: "tt-task is-bonus" }, [
         icon("sao", { size: 24 }),
-        h("div", { class: "tt" }, [h("b", {}, ["Thưởng hoàn thành ngày"]), h("small", { class: "tt-dim" }, ["60 Đá Sao, 5 Sách Kinh Nghiệm"])]),
+        h("div", { class: "tt" }, [
+          h("b", {}, ["Thưởng hoàn thành ngày"]),
+          h("small", { class: "tt-dim" }, ["60 Đá Sao, 5 Sách Kinh Nghiệm"]),
+        ]),
         button(d.bonus ? "Đã nhận" : "Nhận", {
           variant: all && !d.bonus ? "primary" : "ghost",
           disabled: !all || d.bonus,
@@ -64,7 +70,9 @@ registerScreen("daily", {
       ]),
     );
     host.append(
-      h("p", { class: "tt-dim" }, [`Ngày ${new Date().toLocaleDateString("vi-VN")} · Mỗi Ủy thác: 30 Đá Sao và 3.000 Xu · Làm mới lúc 0 giờ`]),
+      h("p", { class: "tt-dim" }, [
+        `Ngày ${new Date().toLocaleDateString("vi-VN")} · Mỗi Ủy thác: 30 Đá Sao và 3.000 Xu · Làm mới lúc 0 giờ`,
+      ]),
       ul,
     );
   },
@@ -80,16 +88,27 @@ registerScreen("tower", {
     for (let f = 1; f <= 12; f++) {
       const st = P.tower[f] || 0,
         open = f === 1 || (P.tower[f - 1] || 0) > 0;
-      const b = h("button", { type: "button", class: "tt-floor" + (st ? " is-done" : ""), disabled: !open, "data-floor": f }, [
-        h("b", {}, [`Tầng ${f}`]),
-        h("span", { class: "st", "aria-label": `${st}/3 sao` }, [1, 2, 3].map((i) => h("i", { class: i <= st ? "on" : "" }, ["★"]))),
-        h("small", {}, [`Quái cấp ${1 + Math.round(f * 0.75)}${f >= 4 ? " · có Hộ Vệ Đá" : ""}`]),
-        open ? "" : icon("khoa", { size: 16 }),
-      ]);
+      const b = h(
+        "button",
+        { type: "button", class: "tt-floor" + (st ? " is-done" : ""), disabled: !open, "data-floor": f },
+        [
+          h("b", {}, [`Tầng ${f}`]),
+          h(
+            "span",
+            { class: "st", "aria-label": `${st}/3 sao` },
+            [1, 2, 3].map((i) => h("i", { class: i <= st ? "on" : "" }, ["★"])),
+          ),
+          h("small", {}, [`Quái cấp ${1 + Math.round(f * 0.75)}${f >= 4 ? " · có Hộ Vệ Đá" : ""}`]),
+          open ? "" : icon("khoa", { size: 16 }),
+        ],
+      );
       b.addEventListener("click", () => leaveWorldThen(() => startTower(f)));
       grid.append(b);
     }
-    host.append(h("p", { class: "tt-dim" }, ["Hạ hết các đợt quái trước khi hết giờ. Còn càng nhiều thời gian, càng nhiều sao."]), grid);
+    host.append(
+      h("p", { class: "tt-dim" }, ["Hạ hết các đợt quái trước khi hết giờ. Còn càng nhiều thời gian, càng nhiều sao."]),
+      grid,
+    );
   },
 });
 
@@ -98,7 +117,12 @@ registerScreen("boss", {
   icon: "canh-bao",
   render(host) {
     host.classList.add("tt-menu-boss");
-    const art = h("canvas", { width: 520, height: 360, class: "tt-boss-art", "aria-hidden": "true" }) as HTMLCanvasElement;
+    const art = h("canvas", {
+      width: 520,
+      height: 360,
+      class: "tt-boss-art",
+      "aria-hidden": "true",
+    }) as HTMLCanvasElement;
     const c = art.getContext("2d")!;
     const g = c.createLinearGradient(0, 0, 0, 360);
     g.addColorStop(0, "#0b1a33");
@@ -115,12 +139,16 @@ registerScreen("boss", {
     for (let lv = 1; lv <= 5; lv++) {
       const done = Server.P.boss[lv],
         open = lv === 1 || Server.P.boss[lv - 1];
-      const b = h("button", { type: "button", class: "tt-floor" + (done ? " is-done" : ""), disabled: !open, "data-lv": lv }, [
-        h("b", {}, [`Cấp độ ${lv}`]),
-        h("small", {}, [`Máu ${fmt(14000 * (1 + 0.9 * (lv - 1)))}`]),
-        done ? tag("Đã hạ", "ok") : h("small", {}, [`Lần đầu: +${100 + lv * 40} Đá Sao`]),
-        open ? "" : icon("khoa", { size: 16 }),
-      ]);
+      const b = h(
+        "button",
+        { type: "button", class: "tt-floor" + (done ? " is-done" : ""), disabled: !open, "data-lv": lv },
+        [
+          h("b", {}, [`Cấp độ ${lv}`]),
+          h("small", {}, [`Máu ${fmt(14000 * (1 + 0.9 * (lv - 1)))}`]),
+          done ? tag("Đã hạ", "ok") : h("small", {}, [`Lần đầu: +${100 + lv * 40} Đá Sao`]),
+          open ? "" : icon("khoa", { size: 16 }),
+        ],
+      );
       b.addEventListener("click", () => leaveWorldThen(() => startBoss(lv)));
       list.append(b);
     }
@@ -128,7 +156,9 @@ registerScreen("boss", {
       h("div", { class: "tt-boss" }, [
         art,
         h("div", {}, [
-          h("p", { class: "tt-dim" }, ["Ác long ngủ dưới đáy hang phía bắc. Giai đoạn 2 nó lao tới tạo sóng xung kích: nhảy để né."]),
+          h("p", { class: "tt-dim" }, [
+            "Ác long ngủ dưới đáy hang phía bắc. Giai đoạn 2 nó lao tới tạo sóng xung kích: nhảy để né.",
+          ]),
           list,
         ]),
       ]),

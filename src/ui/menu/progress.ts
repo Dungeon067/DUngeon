@@ -31,7 +31,8 @@ export function exploreAround(tx: number, ty: number) {
 export function onKill(e: any) {
   const P = Server.P,
     key = "quai:" + (e.isBoss ? "hacgiao" : e.type);
-  if (CODEX.creatures.some((c) => "quai:" + c.id === key) && !P.codex.includes(key)) Server.req("discover", { ids: [key] });
+  if (CODEX.creatures.some((c) => "quai:" + c.id === key) && !P.codex.includes(key))
+    Server.req("discover", { ids: [key] });
   const act = GS.G?.party?.[GS.G.act]?.c?.id;
   if (act && MENU.affinity.perKill) Server.req("affinity", { id: act, n: MENU.affinity.perKill });
   rollDrop(e.isBoss ? "boss" : "enemy");
@@ -41,7 +42,8 @@ export function rollDrop(source: string) {
   for (const d of MC.items.drops[source] ?? []) {
     if (Math.random() >= d.chance) continue;
     const id = d.pool[Math.floor(Math.random() * d.pool.length)]!;
-    if (Server.req("addItems", { items: { [id]: 1 } }).ok) lootFeed("item:" + id, ITEM_BY_ID[id]?.name ?? id, 1, "tui-do", "#c9a6ff");
+    if (Server.req("addItems", { items: { [id]: 1 } }).ok)
+      lootFeed("item:" + id, ITEM_BY_ID[id]?.name ?? id, 1, "tui-do", "#c9a6ff");
   }
 }
 

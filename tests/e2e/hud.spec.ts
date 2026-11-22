@@ -21,8 +21,6 @@ function watchErrors(page: Page): string[] {
 async function enterWorld(page: Page) {
   await page.goto("./?e2e");
   await page.evaluate(() => localStorage.setItem("tinhtu-hints-v1", "1"));
-  await expect(page.locator("#sHub")).toBeVisible();
-  await page.locator('[data-go="world"]').click();
   await expect.poll(() => G(page, "scene")).toBe("play");
   await expect(page.locator("#bAtk")).toBeVisible();
 }
@@ -116,7 +114,6 @@ test.describe("cầm dọc", () => {
     await expect(page.getByRole("alertdialog", { name: "Xoay ngang để chơi" })).toBeVisible();
     await page.setViewportSize({ width: 844, height: 390 });
     await expect(page.locator("#rotateOverlay")).toBeHidden();
-    await page.locator('[data-go="world"]').click();
     await expect.poll(() => G(page, "scene")).toBe("play");
     expect(await G(page, "paused")).toBe(false);
     await page.setViewportSize({ width: 390, height: 844 });
@@ -172,7 +169,7 @@ for (const [w, h] of [
 
 test.describe("máy tính", () => {
   onlyDesktop("Bàn phím và chuột");
-  test("Space là Nhảy, bản đồ lớn mở từ bản đồ nhỏ, cài đặt mở từ hộp Tạm dừng", async ({ page }) => {
+  test("Space là Nhảy, bản đồ lớn mở từ bản đồ nhỏ, cài đặt mở từ menu chính", async ({ page }) => {
     const errors = watchErrors(page);
     await enterWorld(page);
     await page.mouse.move(640, 200);
@@ -181,15 +178,18 @@ test.describe("máy tính", () => {
     await expect.poll(() => G(page, "G.p.air"), { timeout: 3000 }).toBe(false);
     await expect(page.locator("#bJump .key")).toHaveText("Space");
 
+    // S10: bản đồ lớn là màn "map" của menu lớp phủ
     await page.locator("#miniBtn").click();
-    await expect(page.locator("#bigMap")).toBeVisible();
-    await expect(page.locator("#bigMapLegend li").first()).toBeVisible();
+    await expect(page.locator('#ttMenu[data-screen="map"]')).toBeVisible();
+    await expect(page.locator("#ttMenu .tt-legend li").first()).toBeVisible();
     expect(await G(page, "paused")).toBe(true);
     await page.keyboard.press("Escape");
-    await expect(page.locator("#bigMap")).toBeHidden();
+    await page.keyboard.press("Escape");
+    await expect(page.locator("#ttMenu")).toBeHidden();
 
     await page.keyboard.press("Escape");
-    await page.locator('#modal [data-act="settings"]').click();
+    await expect(page.locator("#ttMenu")).toBeVisible();
+    await page.locator('.tt-main-item[data-item="settings"]').click();
     await expect(page.getByRole("dialog", { name: "Cài đặt" })).toBeVisible();
     await page.getByRole("tab", { name: "Phím" }).click();
     await page.locator('.st-key[data-action="jump"][data-slot="0"]').click();

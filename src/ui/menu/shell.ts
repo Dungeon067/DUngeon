@@ -64,6 +64,7 @@ export function refreshWallets() {
 export function openMenu(id = "main", params: any = {}) {
   if (!REG[id]) throw new Error(`Không có màn menu "${id}"`);
   if (!menuOpen()) {
+    openT = performance.now();
     opener = document.activeElement as HTMLElement | null;
     stack.length = 0;
     if (id !== "main") stack.push({ id: "main", params: {} });
@@ -121,7 +122,7 @@ async function show(anim = true) {
   root.removeAttribute("data-ready");
   refreshWallets();
   const host = h("div", { class: "tt-menu-screen" + (anim ? " is-enter" : ""), "data-screen": top.id });
-  const keepScroll = anim ? 0 : (body.firstElementChild as HTMLElement | null)?.scrollTop ?? 0;
+  const keepScroll = anim ? 0 : ((body.firstElementChild as HTMLElement | null)?.scrollTop ?? 0);
   body.replaceChildren(host);
   try {
     const r = scr.render(host, top.params);
@@ -165,6 +166,7 @@ function focusFirst(host: HTMLElement) {
   el.focus({ preventScroll: true });
 }
 
+let openT = -1;
 const DIRS: Record<string, "up" | "down" | "left" | "right"> = {
   ArrowUp: "up",
   ArrowDown: "down",
@@ -177,6 +179,8 @@ function onKey(e: KeyboardEvent) {
     return;
   }
   if (!menuOpen()) return;
+  // chính phím vừa mở menu (Esc) không được đóng nó ngay
+  if (e.timeStamp <= openT) return e.stopImmediatePropagation();
   // hộp thoại DS (Cài đặt, xác nhận) nằm trên menu: để nó tự xử lý
   if ([...document.querySelectorAll<HTMLElement>(".tt-scrim")].some((s) => !s.hidden && s.offsetParent !== null))
     return;

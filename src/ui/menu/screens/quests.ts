@@ -29,19 +29,37 @@ function render(host: HTMLElement) {
       rerender();
     },
   );
-  if (!sel || !list.some((x) => x.q.id === sel)) sel = list.find((x) => x.q.id === P.quests.tracked)?.q.id ?? list[0]?.q.id ?? null;
+  if (!sel || !list.some((x) => x.q.id === sel))
+    sel = list.find((x) => x.q.id === P.quests.tracked)?.q.id ?? list[0]?.q.id ?? null;
   const ul = h("ul", { class: "tt-qlist", id: "questList" });
   for (const { q, st } of list) {
-    const b = h("button", { type: "button", class: "tt-qitem" + (q.id === sel ? " is-sel" : ""), "data-id": q.id, "aria-pressed": String(q.id === sel) }, [
-      h("span", { class: "nm" }, [q.name]),
-      h("small", {}, [TYPE[q.type] ?? q.type, P.quests.tracked === q.id ? " · Đang theo dõi" : "", st.done ? " · Đã xong" : ""]),
-    ]);
+    const b = h(
+      "button",
+      {
+        type: "button",
+        class: "tt-qitem" + (q.id === sel ? " is-sel" : ""),
+        "data-id": q.id,
+        "aria-pressed": String(q.id === sel),
+      },
+      [
+        h("span", { class: "nm" }, [q.name]),
+        h("small", {}, [
+          TYPE[q.type] ?? q.type,
+          P.quests.tracked === q.id ? " · Đang theo dõi" : "",
+          st.done ? " · Đã xong" : "",
+        ]),
+      ],
+    );
     b.addEventListener("click", () => ((sel = q.id), rerender()));
     ul.append(h("li", {}, [b]));
   }
   const cur = all.find((x) => x.q.id === sel);
   let detail: HTMLElement;
-  if (!cur) detail = h("aside", { class: "tt-panel tt-empty" }, [icon("nhiem-vu", { size: 40 }), h("p", {}, [tab === "done" ? "Chưa xong nhiệm vụ nào." : "Không còn nhiệm vụ đang làm."])]);
+  if (!cur)
+    detail = h("aside", { class: "tt-panel tt-empty" }, [
+      icon("nhiem-vu", { size: 40 }),
+      h("p", {}, [tab === "done" ? "Chưa xong nhiệm vụ nào." : "Không còn nhiệm vụ đang làm."]),
+    ]);
   else {
     const { q, st } = cur;
     const tracked = P.quests.tracked === q.id;
@@ -81,7 +99,10 @@ function render(host: HTMLElement) {
         ]);
     (actions.firstElementChild as HTMLElement | null)?.setAttribute("id", "questTrack");
     detail = h("article", { class: "tt-panel tt-qdetail", id: "questDetail" }, [
-      h("div", { class: "tt-row" }, [tag(TYPE[q.type] ?? q.type, q.type === "chinh" ? "ok" : undefined), tracked ? tag("Đang theo dõi", "ok") : ""]),
+      h("div", { class: "tt-row" }, [
+        tag(TYPE[q.type] ?? q.type, q.type === "chinh" ? "ok" : undefined),
+        tracked ? tag("Đang theo dõi", "ok") : "",
+      ]),
       h("h3", { class: "tt-h2" }, [q.name]),
       h("p", { class: "tt-dim" }, [`Người giao: ${q.giver}`]),
       h("p", { class: "tt-story" }, [q.desc]),

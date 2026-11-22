@@ -56,8 +56,19 @@ function render(host: HTMLElement) {
     const t = MC.items.types.find((x) => x.id === r.type);
     const b = h(
       "button",
-      { type: "button", class: "tt-bag-cell" + (r.id === sel ? " is-sel" : ""), "data-r": r.r, "data-id": r.id, role: "listitem", "aria-pressed": String(r.id === sel) },
-      [icon(t?.icon ?? "tui-do", { size: 34 }), h("span", { class: "q" }, [`×${r.qty}`]), h("span", { class: "nm" }, [r.name])],
+      {
+        type: "button",
+        class: "tt-bag-cell" + (r.id === sel ? " is-sel" : ""),
+        "data-r": r.r,
+        "data-id": r.id,
+        role: "listitem",
+        "aria-pressed": String(r.id === sel),
+      },
+      [
+        icon(t?.icon ?? "tui-do", { size: 34 }),
+        h("span", { class: "q" }, [`×${r.qty}`]),
+        h("span", { class: "nm" }, [r.name]),
+      ],
     );
     b.addEventListener("click", () => ((sel = r.id), rerender()));
     grid.append(b);
@@ -76,7 +87,10 @@ function render(host: HTMLElement) {
         h("p", { class: "tt-dim" }, [`Đang có: ${rows.find((r) => r.id === it.id)?.qty ?? 0}`]),
         h("p", { class: "tt-dim" }, ["Vật phẩm này để sưu tầm và đọc chuyện; cách dùng sẽ có ở bản sau."]),
       ])
-    : h("aside", { class: "tt-panel tt-empty" }, [icon("tui-do", { size: 40 }), h("p", {}, ["Túi đồ trống. Mở rương và hạ quái để tìm vật phẩm."])]);
+    : h("aside", { class: "tt-panel tt-empty" }, [
+        icon("tui-do", { size: 40 }),
+        h("p", {}, ["Túi đồ trống. Mở rương và hạ quái để tìm vật phẩm."]),
+      ]);
   host.append(tl, sorter, h("div", { class: "tt-bag" }, [rows.length ? grid : h("div"), detail]));
 }
 

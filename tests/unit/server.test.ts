@@ -56,8 +56,19 @@ describe("Lưu trữ", () => {
   });
 
   it("đọc được hồ sơ do bản cũ (v2) ghi và chuyển lên v3", () => {
-    const { teams: _t, team: _i, bag: _b, quests: _q, fog: _f, marks: _m, codex: _c, affinity: _a, econ: _e, quits: _x, ...base } =
-      freshProfile();
+    const {
+      teams: _t,
+      team: _i,
+      bag: _b,
+      quests: _q,
+      fog: _f,
+      marks: _m,
+      codex: _c,
+      affinity: _a,
+      econ: _e,
+      quits: _x,
+      ...base
+    } = freshProfile();
     const old = { ...base, v: 2, gems: 777, owned: { lachong: { lv: 40, cons: 2 } }, party: ["lachong"] };
     localStorage.removeItem("tinhtu-v3");
     localStorage.setItem("tinhtu-v2", JSON.stringify(old));

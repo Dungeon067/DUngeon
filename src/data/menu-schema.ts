@@ -14,10 +14,19 @@ export const MenuSchema = z.object({
     levels: z.array(z.number().positive()).length(9),
   }),
   profile: z.array(
-    z.object({ file: id, name: z.string(), level: z.number().int().min(1).max(10), perSection: z.number().int().min(0) }),
+    z.object({
+      file: id,
+      name: z.string(),
+      level: z.number().int().min(1).max(10),
+      perSection: z.number().int().min(0),
+    }),
   ),
   npcs: z.array(z.object({ id, name: z.string(), role: z.string(), at: anchor })),
-  map: z.object({ zoomMin: z.number().positive(), zoomMax: z.number().positive(), maxMarks: z.number().int().positive() }),
+  map: z.object({
+    zoomMin: z.number().positive(),
+    zoomMax: z.number().positive(),
+    maxMarks: z.number().int().positive(),
+  }),
 });
 
 export const ItemsSchema = z.object({
@@ -53,7 +62,17 @@ export const CodexSchema = z.object({
   places: z.array(z.object({ id, name: z.string(), lore: z.string(), secret: z.string().nullable(), at: anchor })),
 });
 
-export const STEP_KINDS = ["objective", "kills", "reacts", "chests", "tower", "boss", "pulls", "owned", "codex"] as const;
+export const STEP_KINDS = [
+  "objective",
+  "kills",
+  "reacts",
+  "chests",
+  "tower",
+  "boss",
+  "pulls",
+  "owned",
+  "codex",
+] as const;
 export const QuestsSchema = z.object({
   quests: z.array(
     z.object({
@@ -79,7 +98,12 @@ export const QuestsSchema = z.object({
 });
 
 export const CinematicSchema = z.object({
-  shots: z.object({ s1: z.number().positive(), s2: z.number().positive(), s3: z.number().positive(), s4: z.number().positive() }),
+  shots: z.object({
+    s1: z.number().positive(),
+    s2: z.number().positive(),
+    s3: z.number().positive(),
+    s4: z.number().positive(),
+  }),
   slowMo: z.number().positive().max(1),
   videos: z.record(z.string()),
   videoTimeoutMs: z.number().int().positive(),
@@ -134,7 +158,9 @@ export function validateMenuContent(raw: RawMenuContent) {
     const types = new Set(items.types.map((t) => t.id));
     items.items.forEach((i) => types.has(i.type) || errors.push(`items.yaml: ${i.id}: loại ${i.type} không có`));
     Object.entries(items.drops).forEach(([k, ds]) =>
-      ds.forEach((d) => d.pool.forEach((p) => ids.has(p) || errors.push(`items.yaml: drops.${k}: không có vật phẩm ${p}`))),
+      ds.forEach((d) =>
+        d.pool.forEach((p) => ids.has(p) || errors.push(`items.yaml: drops.${k}: không có vật phẩm ${p}`)),
+      ),
     );
   }
   if (quests) {
@@ -152,7 +178,9 @@ export function validateMenuContent(raw: RawMenuContent) {
   if (codex)
     codex.creatures
       .filter((c) => c.inGame)
-      .forEach((c) => raw.enemyIds.includes(c.id) || errors.push(`codex.yaml: quái ${c.id} không có trong content/enemies`));
+      .forEach(
+        (c) => raw.enemyIds.includes(c.id) || errors.push(`codex.yaml: quái ${c.id} không có trong content/enemies`),
+      );
   if (errors.length) throw new Error("Dữ liệu menu không hợp lệ:\n" + errors.join("\n"));
   return { menu, items, codex, quests: quests.quests, cinematic, admin };
 }

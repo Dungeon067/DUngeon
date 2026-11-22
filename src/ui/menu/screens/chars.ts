@@ -95,17 +95,30 @@ async function render(host: HTMLElement, params: any) {
   const head = h("div", { class: "tt-char-head" }, [
     h("div", { class: "splash", "data-r": c.r }, [art(c.id, 300, 400, "splash")]),
     h("div", { class: "who" }, [
-      h("div", { class: "eyebrow" }, [stars(c.r as 4 | 5, 14), elementBadge(c.el, { label: true, name: EL[c.el]?.vi }), " ", WEAP[c.w]?.vi ?? ""]),
+      h("div", { class: "eyebrow" }, [
+        stars(c.r as 4 | 5, 14),
+        elementBadge(c.el, { label: true, name: EL[c.el]?.vi }),
+        " ",
+        WEAP[c.w]?.vi ?? "",
+      ]),
       h("h3", { class: "tt-h2 name" }, [c.name]),
       h("p", { class: "tt-dim" }, [c.title]),
       own
         ? h("div", { class: "aff" }, [
             h("span", {}, [`Thân thiết cấp ${alv}`]),
-            progress(next === null ? 1 : (pts - (MENU.affinity.levels[alv - 2] ?? 0)) / ((MENU.affinity.levels[alv - 1] ?? 1) - (MENU.affinity.levels[alv - 2] ?? 0)), {
-              kind: "thin",
-              label: "Độ thân thiết",
-            }),
-            h("small", { class: "tt-dim" }, [next === null ? "Đã thân thiết tối đa" : `Còn ${Math.ceil(next)} điểm tới cấp sau`]),
+            progress(
+              next === null
+                ? 1
+                : (pts - (MENU.affinity.levels[alv - 2] ?? 0)) /
+                    ((MENU.affinity.levels[alv - 1] ?? 1) - (MENU.affinity.levels[alv - 2] ?? 0)),
+              {
+                kind: "thin",
+                label: "Độ thân thiết",
+              },
+            ),
+            h("small", { class: "tt-dim" }, [
+              next === null ? "Đã thân thiết tối đa" : `Còn ${Math.ceil(next)} điểm tới cấp sau`,
+            ]),
           ])
         : tag("Chưa có", "warn"),
       h("div", { class: "nav" }, [
@@ -153,7 +166,8 @@ async function render(host: HTMLElement, params: any) {
     } else panel.append(h("p", { class: "tt-dim" }, ["Chưa sở hữu. Ước nguyện để gặp nhân vật này."]));
     const doc = hasProfile(c.id) ? (await loadProfile(c.id))["ho-so"] : null;
     const basic = doc?.sections[0];
-    if (basic) panel.append(h("h4", { class: "tt-h4" }, [basic.title.replace(/^\d+\.\s*/, "")]), blocksEl(basic.blocks));
+    if (basic)
+      panel.append(h("h4", { class: "tt-h4" }, [basic.title.replace(/^\d+\.\s*/, "")]), blocksEl(basic.blocks));
   } else if (tab === "stats") {
     const rows: [string, string][] = [
       ["Cấp", `${st.lv}/60`],
@@ -185,12 +199,16 @@ async function render(host: HTMLElement, params: any) {
       const need = sectionLevel("ky-nang-truyen", 0);
       panel.append(h("h4", { class: "tt-h4" }, ["Chuyện kỹ năng"]));
       panel.append(
-        alv >= need && own ? sectionsEl(doc.sections, () => true) : h("p", { class: "tt-dim" }, [`Mở khi Thân thiết đạt cấp ${need}.`]),
+        alv >= need && own
+          ? sectionsEl(doc.sections, () => true)
+          : h("p", { class: "tt-dim" }, [`Mở khi Thân thiết đạt cấp ${need}.`]),
       );
     }
   } else if (tab === "cons") {
     const doc = hasProfile(c.id) ? (await loadProfile(c.id))["cung-menh"] : null;
-    const tbl = [...(doc?.intro ?? []), ...(doc?.sections.flatMap((s) => s.blocks) ?? [])].find((b) => b.t === "table") as any;
+    const tbl = [...(doc?.intro ?? []), ...(doc?.sections.flatMap((s) => s.blocks) ?? [])].find(
+      (b) => b.t === "table",
+    ) as any;
     if (doc?.intro[0]?.t === "p") panel.append(blocksEl([doc.intro[0]]));
     const list = h("ol", { class: "tt-cons" });
     for (let i = 1; i <= 6; i++) {
@@ -201,7 +219,9 @@ async function render(host: HTMLElement, params: any) {
           h("span", { class: "n" }, [`N${i}`]),
           h("div", {}, [
             blocksEl([{ t: "p", text: row ? `**${row[1]!.replace(/\*\*/g, "")}**` : `Nét Sao ${i}` }]),
-            row && on ? blocksEl([{ t: "p", text: row[2]! }]) : h("p", { class: "tt-dim" }, [on ? "" : "Nhận thêm bản nhân vật này qua Ước nguyện để thắp nét sao."]),
+            row && on
+              ? blocksEl([{ t: "p", text: row[2]! }])
+              : h("p", { class: "tt-dim" }, [on ? "" : "Nhận thêm bản nhân vật này qua Ước nguyện để thắp nét sao."]),
             h("small", { class: "tt-dim" }, ["+10% máu và tấn công"]),
           ]),
         ]),
