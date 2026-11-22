@@ -1,0 +1,27 @@
+id: golnar
+name: Golnar
+r: 5
+el: ice
+w: cat
+title: Người Giữ Nhà Băng
+desc: Người giữ nhà băng của Hội Đồng Giếng ở Golbaran. Giữ mùa đông qua cả mùa hè sa mạc, chữa cho cả đội bằng hơi lạnh.
+hp: 1160
+atk: 110
+skill:
+  name: Hoa Lựu Mát Lành
+  type: heal
+  cd: 9
+  m: 1.7
+burst:
+  name: Đêm Dài Nhất
+  type: blizzard
+  cost: 60
+  m: 0.85
+look:
+  hair: "#3a1f2b"
+  style: long
+  outfit: "#2aa198"
+  accent: "#d8f3ff"
+  skin: "#d9a77f"
+  eye: "#8fe3ff"
+  coat: true
