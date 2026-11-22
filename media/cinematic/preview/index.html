@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Thử cinematic ước nguyện (S20)</title>
+<style>
+  :root { --gold:#ffcf5a; --violet:#b98cff; --blue:#6fb6ff; --ink:#070b1c; --paper:#e9e4d4; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; background:var(--ink); color:var(--paper); font:15px/1.4 system-ui, sans-serif; overflow:hidden; }
+  #stage { position:fixed; inset:0; }
+  video, #overlay, #reveal, iframe { position:absolute; inset:0; width:100%; height:100%; }
+  video { object-fit:cover; background:#000; }
+  iframe { border:0; background:#000; }
+  #ui { position:fixed; inset:auto 0 0 0; display:flex; gap:10px; justify-content:center; align-items:center; flex-wrap:wrap;
+        padding:12px max(16px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+        background:linear-gradient(transparent, rgba(5,8,22,.85)); }
+  button, select { font:inherit; color:var(--paper); background:rgba(20,28,60,.8); border:1px solid rgba(255,207,90,.45);
+                   border-radius:10px; padding:9px 16px; min-height:44px; cursor:pointer; }
+  button.main { background:linear-gradient(180deg,#3a2c68,#1b1838); border-color:var(--gold); }
+  #top { position:fixed; top:max(10px, env(safe-area-inset-top)); right:max(12px, env(safe-area-inset-right)); display:flex; gap:8px; z-index:5; }
+  #top button { min-height:40px; padding:6px 14px; background:rgba(5,8,22,.55); }
+  #info { position:fixed; top:max(10px, env(safe-area-inset-top)); left:max(12px, env(safe-area-inset-left)); font-size:12px; opacity:.7; z-index:5; }
+  [hidden] { display:none !important; }
+  #rotate { position:fixed; inset:0; z-index:20; display:none; place-items:center; text-align:center; background:var(--ink); padding:24px; }
+  #rotate svg { width:96px; height:96px; animation:spin 2.4s ease-in-out infinite; }
+  @keyframes spin { 0%,30% { transform:rotate(0) } 60%,100% { transform:rotate(-90deg) } }
+  @media (orientation:portrait) and (max-width:900px) { #rotate { display:grid; } }
+</style>
+</head>
+<body>
+<div id="stage">
+  <video id="vid" playsinline muted preload="auto" disablepictureinpicture></video>
+  <canvas id="overlay"></canvas>
+  <canvas id="reveal" hidden></canvas>
+</div>
+<div id="info"></div>
+<div id="top">
+  <button id="ff" hidden>Tua nhanh</button>
+  <button id="skip" hidden>Bỏ qua</button>
+</div>
+<div id="ui">
+  <select id="variant" aria-label="Chọn bản video">
+    <option value="auto">Ngẫu nhiên theo tỉ lệ</option>
+    <option value="3">3★</option><option value="4">4★</option>
+    <option value="5a">5★ A</option><option value="5b">5★ B</option>
+    <option value="10x4">10 lần, cao nhất 4★</option><option value="10x5">10 lần, cao nhất 5★</option>
+  </select>
+  <button id="w1" class="main">Ước 1 lần</button>
+  <button id="w10" class="main">Ước 10 lần</button>
+  <button id="mode">Chế độ: tự động</button>
+</div>
+<div id="rotate">
+  <div>
+    <svg viewBox="0 0 64 64" fill="none" stroke="#ffcf5a" stroke-width="3"><rect x="20" y="6" width="24" height="44" rx="4"/><circle cx="32" cy="44" r="2"/></svg>
+    <p>Xoay ngang điện thoại để xem hoạt ảnh ước nguyện.</p>
+  </div>
+</div>
+<script src="preview.js"></script>
+</body>
+</html>

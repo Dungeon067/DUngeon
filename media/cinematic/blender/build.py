@@ -68,6 +68,10 @@ def main():
             scene.render.filepath = os.path.join(a.out, f"{f:04d}.png")
             bpy.ops.render.render(write_still=True)
             print(f"FRAME {f} {time.time() - t:.1f}s", flush=True)
+    if shot.meta is not None:
+        import json
+        with open(os.path.join(a.out, "meta.json"), "w") as fh:
+            json.dump(shot.meta, fh)
 
 
 main()

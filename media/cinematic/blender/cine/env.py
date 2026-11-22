@@ -1,6 +1,7 @@
 """Night environment: sky, moon, Ocean-modifier sea, noise mountains, Geometry-Nodes cliff and grass, fog."""
 import math
 import random
+import numpy as np
 import bpy
 from mathutils import Vector, noise
 from .common import col, srgb_to_linear, node_tree_material, link_obj, new_mesh_obj
@@ -307,7 +308,8 @@ def rock_material(name="Rock", base=(0.05, 0.05, 0.06), moss=True):
     L = nt.links
     tc = nt.nodes.new("ShaderNodeTexCoord")
     p = nt.nodes.new("ShaderNodeBsdfPrincipled")
-    p.inputs["Roughness"].default_value = 0.85
+    p.inputs["Roughness"].default_value = 0.95
+    p.inputs["Specular IOR Level"].default_value = 0.12
     nz = nt.nodes.new("ShaderNodeTexNoise")
     nz.noise_type = "RIDGED_MULTIFRACTAL"
     nz.inputs["Scale"].default_value = 0.35
@@ -328,10 +330,11 @@ def rock_material(name="Rock", base=(0.05, 0.05, 0.06), moss=True):
         L.new(sepn.outputs["Z"], mr.inputs["Value"])
         mx = nt.nodes.new("ShaderNodeMix")
         mx.data_type = "RGBA"
-        mx.inputs["B"].default_value = (*srgb_to_linear((0.03, 0.06, 0.035)), 1)
+        ca, cb = (i for i in mx.inputs if i.type == "RGBA")
+        cb.default_value = (*srgb_to_linear((0.1, 0.14, 0.22)), 1)
         L.new(mr.outputs["Result"], mx.inputs["Factor"])
-        L.new(color_out, mx.inputs["A"])
-        color_out = mx.outputs["Result"]
+        L.new(color_out, ca)
+        color_out = next(o for o in mx.outputs if o.type == "RGBA")
     L.new(color_out, p.inputs["Base Color"])
     bump = nt.nodes.new("ShaderNodeBump")
     bump.inputs["Strength"].default_value = 0.7
@@ -473,11 +476,12 @@ def grass_blade_mesh():
     ob = bpy.data.objects.new("Blade", me)
     m, nt, out = node_tree_material("Grass")
     p = nt.nodes.new("ShaderNodeBsdfPrincipled")
-    p.inputs["Base Color"].default_value = (*srgb_to_linear((0.035, 0.07, 0.04)), 1)
-    p.inputs["Roughness"].default_value = 0.6
+    p.inputs["Base Color"].default_value = (*srgb_to_linear((0.09, 0.14, 0.24)), 1)
+    p.inputs["Roughness"].default_value = 0.9
+    p.inputs["Specular IOR Level"].default_value = 0.15
     p.inputs["Subsurface Weight"].default_value = 0.0
     tr = nt.nodes.new("ShaderNodeBsdfTranslucent")
-    tr.inputs["Color"].default_value = (*srgb_to_linear((0.06, 0.12, 0.05)), 1)
+    tr.inputs["Color"].default_value = (*srgb_to_linear((0.1, 0.16, 0.3)), 1)
     mix = nt.nodes.new("ShaderNodeMixShader")
     mix.inputs[0].default_value = 0.3
     nt.links.new(p.outputs[0], mix.inputs[1])
@@ -488,7 +492,7 @@ def grass_blade_mesh():
 
 
 def build_cliff(size=(420, 300), res=1.0, center=(0, -60), grass_density=22.0,
-                grass_radius=55.0, wind_frames=None, clear_radius=3.2):
+                grass_radius=55.0, wind_frames=None, clear_radius=3.2, edge=22.0, patch=0.38):
     """Headland whose tip faces +Y (the sea). Top plateau at CLIFF_TOP, drum stands at the origin."""
     g = GN("CliffGN")
     grid = g.n("GeometryNodeMeshGrid")
@@ -507,7 +511,7 @@ def build_cliff(size=(420, 300), res=1.0, center=(0, -60), grass_density=22.0,
     nvec = g.vmath("SCALE", pos, scale=1.0)
     coast_n = g.noise(nvec, 0.012, detail=3)
     x2 = g.math("MULTIPLY", x, x)
-    yc = g.math("ADD", g.math("MULTIPLY", x2, -0.0035), 22.0)
+    yc = g.math("ADD", g.math("MULTIPLY", x2, -0.0035), edge)
     yc = g.math("ADD", yc, g.math("MULTIPLY", g.math("SUBTRACT", coast_n, 0.5), 22.0))
     s = g.math("SUBTRACT", y, yc)  # >0 means seaward
     # plateau / face / seabed
@@ -540,7 +544,11 @@ def build_cliff(size=(420, 300), res=1.0, center=(0, -60), grass_density=22.0,
     g.link(off, sp.inputs["Offset"])
     shade = g.n("GeometryNodeSetShadeSmooth")
     g.link(sp.outputs["Geometry"], shade.inputs["Geometry"])
-    mesh_out = shade.outputs["Geometry"]
+    rock = rock_material(base=(0.2, 0.21, 0.25))
+    setm = g.n("GeometryNodeSetMaterial")
+    setm.inputs["Material"].default_value = rock
+    g.link(shade.outputs["Geometry"], setm.inputs["Geometry"])
+    mesh_out = setm.outputs["Geometry"]
     # grass on gentle, high ground near the drum
     blade = grass_blade_mesh()
     dist = g.n("GeometryNodeDistributePointsOnFaces")
@@ -558,7 +566,7 @@ def build_cliff(size=(420, 300), res=1.0, center=(0, -60), grass_density=22.0,
     r = g.vmath("LENGTH", g.vmath("MULTIPLY", npos, (1.0, 1.0, 0.0)))
     near = g.math("LESS_THAN", r, grass_radius)
     clear = g.math("GREATER_THAN", r, clear_radius)
-    patch = g.math("GREATER_THAN", g.noise(npos, 0.15, detail=2), 0.38)
+    patch = g.math("GREATER_THAN", g.noise(npos, 0.15, detail=2), patch)
     sel = g.math("MULTIPLY", g.math("MULTIPLY", flat, high), g.math("MULTIPLY", g.math("MULTIPLY", near, clear), patch))
     g.link(sel, dist.inputs["Selection"])
     ob_info = g.n("GeometryNodeObjectInfo")
@@ -589,7 +597,7 @@ def build_cliff(size=(420, 300), res=1.0, center=(0, -60), grass_density=22.0,
     link_obj(ob)
     mod = ob.modifiers.new("Cliff", "NODES")
     mod.node_group = g.tree
-    ob.data.materials.append(rock_material())
+    ob.data.materials.append(rock)
     return ob
 
 
@@ -647,3 +655,40 @@ def build_fog(density=0.00045, extent=12000.0, mist=0.004, mist_box=(900, 900, 2
         mist_ob.data.materials.append(m2)
         mist_ob.visible_shadow = False
     return dom, mist_ob
+
+
+def scatter_rocks(n=60, radius=30.0, keep_out=((0.0, 0.0, 4.0),), seed=3, size=(0.25, 1.6), ground=None):
+    """Boulders on the plateau. ground(x, y) -> z (ray cast on the evaluated cliff)."""
+    rng = np.random.default_rng(seed)
+    mat = bpy.data.materials.get("Rock") or rock_material()
+    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=3, radius=1.0)
+    proto = bpy.context.active_object
+    base = np.array([v.co[:] for v in proto.data.vertices])
+    faces = [tuple(p.vertices) for p in proto.data.polygons]
+    bpy.data.objects.remove(proto)
+    obs = []
+    placed = 0
+    while placed < n:
+        r = radius * np.sqrt(rng.random())
+        a = rng.random() * 2 * math.pi
+        x, y = r * math.cos(a), r * math.sin(a)
+        if any((x - kx) ** 2 + (y - ky) ** 2 < kr * kr for kx, ky, kr in keep_out):
+            continue
+        z = ground(x, y) if ground else CLIFF_TOP
+        if z < CLIFF_TOP - 8:
+            continue
+        s = size[0] + (size[1] - size[0]) * rng.random() ** 2.2
+        k = rng.normal(0, 1, (3, 3)) * 0.35
+        d = base @ (np.eye(3) + k)
+        lumps = 1 + 0.22 * np.sin(base @ rng.normal(0, 3.0, 3) + rng.random() * 6) * np.cos(base @ rng.normal(0, 2.0, 3))
+        d = d * lumps[:, None] * np.array([1.0, 0.9, 0.55]) * s
+        d[:, 2] = np.maximum(d[:, 2], -0.35 * s)
+        ob = new_mesh_obj(f"Boulder{placed}", [tuple(v) for v in d], faces)
+        for pg in ob.data.polygons:
+            pg.use_smooth = True
+        ob.data.materials.append(mat)
+        ob.location = (x, y, z - 0.15 * s)
+        ob.rotation_euler = (0, 0, rng.random() * 6.283)
+        obs.append(ob)
+        placed += 1
+    return obs
