@@ -82,7 +82,7 @@ function topLayer(): HTMLElement {
   if (scrims.length) return scrims[scrims.length - 1]!;
   const modal = document.getElementById("modal");
   if (modal && !modal.hidden) return modal;
-  for (const id of ["layoutBar", "bigMap", "rotateOverlay"]) {
+  for (const id of ["layoutBar", "wishFx", "ttMenu", "rotateOverlay"]) {
     const el = document.getElementById(id);
     if (el && !el.hidden && visible(el)) return el;
   }
@@ -178,6 +178,9 @@ export function pollGamepad() {
     lastNav = dir;
     if (edge(0)) confirm();
     if (edge(1)) back();
+    // LB/RB đổi tab trong menu (như Q/E trên bàn phím)
+    if (edge(4) || edge(5))
+      document.dispatchEvent(new KeyboardEvent("keydown", { key: edge(4) ? "q" : "e", bubbles: true }));
     if (edge(9)) {
       if (GS.scene === "play") actionDown("pause");
       else back();

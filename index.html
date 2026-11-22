@@ -144,18 +144,6 @@
       <button type="button" class="tt-btn" data-variant="primary" id="lbDone" data-back>Lưu</button>
     </div>
   </div>
-  <div id="bigMap" class="tt-root hud-bigmap" role="dialog" aria-modal="true" aria-labelledby="bigMapT" hidden>
-    <div class="bm-box">
-      <header>
-        <h2 id="bigMapT">Bản đồ Đảo Lạc</h2>
-        <button type="button" class="tt-btn" data-variant="ghost" id="bigMapClose" data-back>Đóng</button>
-      </header>
-      <div class="bm-body">
-        <canvas id="bigMapCv" width="660" height="660"></canvas>
-        <ul id="bigMapLegend" class="bm-legend"></ul>
-      </div>
-    </div>
-  </div>
   <svg width="0" height="0" style="position: absolute" aria-hidden="true">
     <filter id="cb-protan">
       <feColorMatrix type="matrix" values="0.567 0.433 0 0 0  0.558 0.442 0 0 0  0 0.242 0.758 0 0  0 0 0 1 0" />
@@ -182,345 +170,133 @@
   </div>
 
   <!-- ================= HUB ================= -->
-  <div class="screen clear" id="sHub">
-    <div class="inner">
-      <div class="bar-top">
-        <div class="wallet" id="wHub"></div>
-        <button class="btn sm" id="sndBtn">Âm thanh: tắt</button>
-      </div>
-      <div class="hub-head">
-        <h1 class="title">Tinh Tú Ước Nguyện</h1>
-        <p>
-          Lục địa Lạc Việt chìm trong bóng tối từ khi Hắc Giao thức giấc. Tập hợp các Hộ Tinh, khám phá đảo, leo Tháp
-          Tinh Tú và thảo phạt ác long.
-        </p>
-      </div>
-      <div class="partyrow" id="hubParty"></div>
-      <div class="modes">
-        <button class="mode main" data-go="world">
-          <b>Khám phá Đảo Lạc</b><span>Thế giới mở: đánh quái, mở rương, tìm bia đá, cổng tháp và hang Hắc Giao.</span>
-        </button>
-        <button class="mode" data-go="wish">
-          <b>Ước nguyện</b><span>Banner giới hạn, Bảo Hộ Vận Sao 90 lần, hoạt ảnh sao băng.</span>
-        </button>
-        <button class="mode" data-go="chars">
-          <b>Nhân vật & Đội hình</b><span>Nâng cấp, xem chiêu thức, xếp đội 4 người.</span>
-        </button>
-        <button class="mode" data-go="tower">
-          <b>Tháp Tinh Tú</b><span>12 tầng, 2 đợt quái, chấm sao theo thời gian.</span>
-        </button>
-        <button class="mode" data-go="boss">
-          <b>Thảo phạt Hắc Giao</b><span>Boss 2 giai đoạn, 5 cấp độ khó.</span>
-        </button>
-        <button class="mode" data-go="daily" id="dailyBtn">
-          <b>Ủy thác hằng ngày</b><span>4 nhiệm vụ mỗi ngày, thưởng Đá Sao.</span>
-        </button>
-        <button class="mode" data-go="server">
-          <b>Server (Admin)</b><span>Chỉnh tỉ lệ, cấp tài nguyên, chế độ bất tử.</span>
-        </button>
-        <button class="mode" data-go="help">
-          <b>Hướng dẫn</b><span>Điều khiển, phản ứng nguyên tố, mẹo chơi.</span>
-        </button>
-      </div>
-    </div>
-  </div>
 
   <!-- ================= WISH ================= -->
-  <div class="screen" id="sWish" hidden>
-    <div class="inner">
-      <div class="bar-top">
-        <button class="btn sm back">← Sảnh</button>
-        <div class="wallet wl"></div>
-      </div>
-      <div class="banner">
-        <div class="txt">
-          <div class="eyebrow">Ước nguyện giới hạn · Tăng tỉ lệ</div>
-          <h3 id="featName"></h3>
-          <div class="muted" id="featTitle"></div>
-          <p class="muted" id="featDesc" style="margin: 0; max-width: 46ch"></p>
-          <div class="pityrow">
-            <span>Bảo Hộ Vận Sao 5★: <b id="p5"></b>/<b id="hp"></b></span
-            ><span>Bảo Hộ Vận Sao 4★: <b id="p4"></b>/10</span>
-          </div>
-          <div class="pityrow" id="guar"></div>
-          <div class="pulls">
-            <button class="btn" id="pull1">Ước 1 lần · <span id="c1"></span></button>
-            <button class="btn gold" id="pull10">Ước 10 lần · <span id="c10"></span></button>
-          </div>
-        </div>
-        <div class="art"><canvas id="featArt" width="600" height="600"></canvas></div>
-      </div>
-      <div class="grid2">
-        <div class="panel">
-          <b>Tỉ lệ</b>
-          <p class="muted" id="rateTxt" style="margin: 6px 0 0"></p>
-        </div>
-        <div class="panel">
-          <b>Lịch sử ước nguyện</b>
-          <div class="hist" id="hist" style="margin-top: 6px"></div>
-        </div>
-      </div>
-    </div>
+  <div id="wishFx" class="tt-root" hidden>
+    <canvas id="wishCv"></canvas><video id="wishVid" playsinline muted hidden></video>
+    <p id="wishHint" hidden></p>
+    <button class="tt-btn tt-btn--ghost" id="wishSkip">Bỏ qua</button>
   </div>
-  <div id="wishFx" hidden><canvas id="wishCv"></canvas><button class="btn sm" id="wishSkip">Bỏ qua</button></div>
 
   <!-- ================= CHARACTERS ================= -->
-  <div class="screen" id="sChars" hidden>
-    <div class="inner">
-      <div class="bar-top">
-        <button class="btn sm back">← Sảnh</button>
-        <div class="wallet wl"></div>
-      </div>
-      <div class="panel">
-        <div class="bar-top" style="margin-bottom: 10px">
-          <b>Đội hình</b><span class="muted">Chọn nhân vật rồi bấm "Vào đội". Bấm vào ô để bỏ khỏi đội.</span>
-        </div>
-        <div class="teamslots" id="teamSlots"></div>
-      </div>
-      <div class="cgrid">
-        <div class="clist" id="clist"></div>
-        <div class="panel" id="cdetail"></div>
-      </div>
-    </div>
-  </div>
 
   <!-- ================= TOWER ================= -->
-  <div class="screen" id="sTower" hidden>
-    <div class="inner">
-      <div class="bar-top">
-        <button class="btn sm back">← Sảnh</button>
-        <div class="wallet wl"></div>
-      </div>
-      <h2 class="title">Tháp Tinh Tú</h2>
-      <p class="muted" style="margin: -8px 0 0">
-        Mỗi tầng có 2 đợt quái và 150 giây. Còn ≥ 90 giây khi xong: 3★, ≥ 50 giây: 2★, kịp giờ: 1★. Mỗi sao mới thưởng
-        30 Đá Sao. Qua tầng mới mở tầng sau.
-      </p>
-      <div class="floors" id="floors"></div>
-    </div>
-  </div>
 
   <!-- ================= BOSS ================= -->
-  <div class="screen" id="sBoss" hidden>
-    <div class="inner">
-      <div class="bar-top">
-        <button class="btn sm back">← Sảnh</button>
-        <div class="wallet wl"></div>
-      </div>
-      <h2 class="title">Thảo phạt Hắc Giao</h2>
-      <div class="grid2">
-        <div class="panel">
-          <canvas
-            id="bossArt"
-            width="520"
-            height="360"
-            style="width: 100%; height: auto; border-radius: 10px; display: block"
-          ></canvas>
-        </div>
-        <div class="panel" style="display: flex; flex-direction: column; gap: 10px">
-          <p class="muted" style="margin: 0">
-            Ác long ngủ dưới hồ sâu. Giai đoạn 1 mang hệ Thủy: phun đạn nước hình quạt, lao thẳng và gọi mưa. Dưới 50%
-            máu chuyển sang hệ Lôi, nhanh hơn và gọi thêm quái con. Né đòn bằng Lướt (có thời gian bất tử).
-          </p>
-          <div class="floors" id="bossLv"></div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- ================= DAILY ================= -->
-  <div class="screen" id="sDaily" hidden>
-    <div class="inner">
-      <div class="bar-top">
-        <button class="btn sm back">← Sảnh</button>
-        <div class="wallet wl"></div>
-      </div>
-      <h2 class="title">Ủy thác hằng ngày</h2>
-      <p class="muted" style="margin: -8px 0 0" id="dailyDate"></p>
-      <div class="tasks" id="tasks"></div>
-    </div>
-  </div>
 
   <!-- ================= SERVER ================= -->
-  <div class="screen" id="sServer" hidden>
-    <div class="inner">
-      <div class="bar-top">
-        <button class="btn sm back">← Sảnh</button>
-        <div class="wallet wl"></div>
-      </div>
-      <h2 class="title">Server (Admin)</h2>
-      <p class="muted" style="margin: -8px 0 0">
-        Server riêng của bạn: mọi kết quả ước nguyện, phần thưởng và nâng cấp đều do server xử lý theo cấu hình dưới
-        đây.
-      </p>
-      <div class="grid2">
-        <div class="panel" style="display: flex; flex-direction: column; gap: 10px">
-          <b>Cấu hình ước nguyện</b>
-          <div class="field">
-            <label for="cR5">Tỉ lệ 5★ cơ bản (%)</label><input id="cR5" type="number" step="0.1" min="0" max="100" />
-          </div>
-          <div class="field">
-            <label for="cR4">Tỉ lệ 4★ cơ bản (%)</label><input id="cR4" type="number" step="0.1" min="0" max="100" />
-          </div>
-          <div class="field">
-            <label for="cSoft">Tỉ lệ 5★ bắt đầu tăng từ lần</label><input id="cSoft" type="number" min="1" max="300" />
-          </div>
-          <div class="field">
-            <label for="cHard">Chắc chắn 5★ ở lần</label><input id="cHard" type="number" min="1" max="300" />
-          </div>
-          <div class="field"><label for="cCost">Giá 1 lần ước</label><input id="cCost" type="number" min="0" /></div>
-          <div class="field">
-            <label for="cFeat">Nhân vật banner</label
-            ><select id="cFeat"></select>
-          </div>
-          <button class="btn gold" id="saveCfg">Lưu cấu hình</button>
-        </div>
-        <div class="panel" style="display: flex; flex-direction: column; gap: 10px">
-          <b>Lệnh admin</b>
-          <div class="field"><label for="gAmt">Số lượng</label><input id="gAmt" type="number" value="16000" /></div>
-          <div class="row" style="display: flex; gap: 6px; flex-wrap: wrap">
-            <button class="btn sm" id="gGem">Cấp Đá Sao</button><button class="btn sm" id="gCoin">Cấp Xu</button
-            ><button class="btn sm" id="gBook">Cấp Sách KN</button>
-          </div>
-          <div class="field">
-            <label for="gChar">Nhân vật</label
-            ><select id="gChar"></select>
-          </div>
-          <div style="display: flex; gap: 6px; flex-wrap: wrap">
-            <button class="btn sm" id="gGive">Cấp nhân vật</button
-            ><button class="btn sm" id="gMax">Nâng lên Lv 60</button>
-          </div>
-          <label class="check"><input type="checkbox" id="gGod" /> Bất tử (không mất máu)</label>
-          <label class="check"><input type="checkbox" id="gOne" /> Một đòn hạ gục</label>
-          <label class="check"><input type="checkbox" id="gNoCd" /> Không hồi chiêu, nộ luôn đầy</label>
-          <button class="btn sm" id="gDaily">Làm mới ủy thác hôm nay</button>
-          <button class="btn sm" id="gWipe">Xóa dữ liệu, chơi lại từ đầu</button>
-        </div>
-      </div>
-      <div class="panel">
-        <b>Nhật ký request</b>
-        <div
-          class="hist"
-          id="slog"
-          style="margin-top: 6px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px"
-        ></div>
-      </div>
-    </div>
-  </div>
 
   <!-- ================= HELP ================= -->
-  <div class="screen" id="sHelp" hidden>
-    <div class="inner">
-      <div class="bar-top"><button class="btn sm back">← Sảnh</button></div>
-      <h2 class="title">Hướng dẫn</h2>
-      <div class="panel help">
-        <h3>Điều khiển</h3>
-        <div class="tbl">
-          <table>
-            <tr>
-              <th>Hành động</th>
-              <th>Máy tính</th>
-              <th>Điện thoại</th>
-            </tr>
-            <tr>
-              <td>Di chuyển</td>
-              <td>WASD / phím mũi tên</td>
-              <td>Kéo cần điều khiển bên trái</td>
-            </tr>
-            <tr>
-              <td>Đánh thường (combo 3 đòn, đòn 3 mang nguyên tố)</td>
-              <td>J hoặc giữ chuột</td>
-              <td>Nút Đánh</td>
-            </tr>
-            <tr>
-              <td>Kỹ năng nguyên tố</td>
-              <td>E</td>
-              <td>Nút Kỹ</td>
-            </tr>
-            <tr>
-              <td>Kỹ năng nộ (cần đầy năng lượng)</td>
-              <td>Q</td>
-              <td>Nút Nộ</td>
-            </tr>
-            <tr>
-              <td>Lướt né (bất tử ngắn), giữ để chạy nhanh</td>
-              <td>Shift</td>
-              <td>Nút Lướt</td>
-            </tr>
-            <tr>
-              <td>Đổi nhân vật</td>
-              <td>1 2 3 4</td>
-              <td>Chạm chân dung bên phải</td>
-            </tr>
-            <tr>
-              <td>Tương tác (rương, bia đá, cổng)</td>
-              <td>F</td>
-              <td>Nút hiện giữa màn hình</td>
-            </tr>
-          </table>
-        </div>
-        <h3>Phản ứng nguyên tố</h3>
-        <p>
-          Đánh trúng một nguyên tố sẽ để lại dấu trên quái (biểu tượng màu trên đầu). Đánh tiếp nguyên tố khác để kích
-          hoạt phản ứng:
-        </p>
-        <div class="tbl">
-          <table>
-            <tr>
-              <th>Kết hợp</th>
-              <th>Phản ứng</th>
-              <th>Hiệu quả</th>
-            </tr>
-            <tr>
-              <td>Hỏa + Thủy</td>
-              <td>Bốc Hơi</td>
-              <td>Thủy đánh lên Hỏa ×2, Hỏa đánh lên Thủy ×1.5</td>
-            </tr>
-            <tr>
-              <td>Hỏa + Băng</td>
-              <td>Tan Chảy</td>
-              <td>Hỏa lên Băng ×2, Băng lên Hỏa ×1.5</td>
-            </tr>
-            <tr>
-              <td>Hỏa + Lôi</td>
-              <td>Quá Tải</td>
-              <td>Nổ diện rộng, đẩy lùi</td>
-            </tr>
-            <tr>
-              <td>Thủy + Lôi</td>
-              <td>Điện Cảm</td>
-              <td>Gây sát thương liên tục 4 lần</td>
-            </tr>
-            <tr>
-              <td>Thủy + Băng</td>
-              <td>Đóng Băng</td>
-              <td>Quái đứng yên 3 giây</td>
-            </tr>
-            <tr>
-              <td>Lôi + Băng</td>
-              <td>Siêu Dẫn</td>
-              <td>Nổ nhỏ, quái nhận thêm 25% sát thương trong 8 giây</td>
-            </tr>
-            <tr>
-              <td>Phong + (Hỏa/Thủy/Lôi/Băng)</td>
-              <td>Khuếch Tán</td>
-              <td>Lan nguyên tố và sát thương sang quái xung quanh</td>
-            </tr>
-            <tr>
-              <td>Thổ + (Hỏa/Thủy/Lôi/Băng)</td>
-              <td>Kết Tinh</td>
-              <td>Rơi mảnh tinh thể, nhặt để nhận khiên</td>
-            </tr>
-          </table>
-        </div>
-        <h3>Mẹo</h3>
-        <p>
-          Dùng kỹ năng của một người, đổi sang người khác rồi đánh tiếp để tạo phản ứng. Kỹ năng trúng quái sẽ nạp năng
-          lượng cho cả đội. Bia đá trên bản đồ hồi đầy máu và hồi sinh cả đội. Quái càng xa trung tâm đảo càng mạnh.
-        </p>
+  <template id="tplHelp">
+    <div class="tt-help">
+      <h3>Điều khiển</h3>
+      <div class="tbl">
+        <table>
+          <tr>
+            <th>Hành động</th>
+            <th>Máy tính</th>
+            <th>Điện thoại</th>
+          </tr>
+          <tr>
+            <td>Di chuyển</td>
+            <td>WASD / phím mũi tên</td>
+            <td>Kéo cần điều khiển bên trái</td>
+          </tr>
+          <tr>
+            <td>Đánh thường (combo 3 đòn, đòn 3 mang nguyên tố)</td>
+            <td>J hoặc giữ chuột</td>
+            <td>Nút Đánh</td>
+          </tr>
+          <tr>
+            <td>Kỹ năng nguyên tố</td>
+            <td>E</td>
+            <td>Nút Kỹ</td>
+          </tr>
+          <tr>
+            <td>Kỹ năng nộ (cần đầy năng lượng)</td>
+            <td>Q</td>
+            <td>Nút Nộ</td>
+          </tr>
+          <tr>
+            <td>Lướt né (bất tử ngắn), giữ để chạy nhanh</td>
+            <td>Shift</td>
+            <td>Nút Lướt</td>
+          </tr>
+          <tr>
+            <td>Đổi nhân vật</td>
+            <td>1 2 3 4</td>
+            <td>Chạm chân dung bên phải</td>
+          </tr>
+          <tr>
+            <td>Tương tác (rương, bia đá, cổng)</td>
+            <td>F</td>
+            <td>Nút hiện giữa màn hình</td>
+          </tr>
+        </table>
       </div>
+      <h3>Phản ứng nguyên tố</h3>
+      <p>
+        Đánh trúng một nguyên tố sẽ để lại dấu trên quái (biểu tượng màu trên đầu). Đánh tiếp nguyên tố khác để kích
+        hoạt phản ứng:
+      </p>
+      <div class="tbl">
+        <table>
+          <tr>
+            <th>Kết hợp</th>
+            <th>Phản ứng</th>
+            <th>Hiệu quả</th>
+          </tr>
+          <tr>
+            <td>Hỏa + Thủy</td>
+            <td>Bốc Hơi</td>
+            <td>Thủy đánh lên Hỏa ×2, Hỏa đánh lên Thủy ×1.5</td>
+          </tr>
+          <tr>
+            <td>Hỏa + Băng</td>
+            <td>Tan Chảy</td>
+            <td>Hỏa lên Băng ×2, Băng lên Hỏa ×1.5</td>
+          </tr>
+          <tr>
+            <td>Hỏa + Lôi</td>
+            <td>Quá Tải</td>
+            <td>Nổ diện rộng, đẩy lùi</td>
+          </tr>
+          <tr>
+            <td>Thủy + Lôi</td>
+            <td>Điện Cảm</td>
+            <td>Gây sát thương liên tục 4 lần</td>
+          </tr>
+          <tr>
+            <td>Thủy + Băng</td>
+            <td>Đóng Băng</td>
+            <td>Quái đứng yên 3 giây</td>
+          </tr>
+          <tr>
+            <td>Lôi + Băng</td>
+            <td>Siêu Dẫn</td>
+            <td>Nổ nhỏ, quái nhận thêm 25% sát thương trong 8 giây</td>
+          </tr>
+          <tr>
+            <td>Phong + (Hỏa/Thủy/Lôi/Băng)</td>
+            <td>Khuếch Tán</td>
+            <td>Lan nguyên tố và sát thương sang quái xung quanh</td>
+          </tr>
+          <tr>
+            <td>Thổ + (Hỏa/Thủy/Lôi/Băng)</td>
+            <td>Kết Tinh</td>
+            <td>Rơi mảnh tinh thể, nhặt để nhận khiên</td>
+          </tr>
+        </table>
+      </div>
+      <h3>Mẹo</h3>
+      <p>
+        Dùng kỹ năng của một người, đổi sang người khác rồi đánh tiếp để tạo phản ứng. Kỹ năng trúng quái sẽ nạp năng
+        lượng cho cả đội. Bia đá trên bản đồ hồi đầy máu và hồi sinh cả đội. Quái càng xa trung tâm đảo càng mạnh.
+      </p>
     </div>
-  </div>
+  </template>
 
   <div class="modal" id="modal" hidden><div class="box" id="modalBox"></div></div>
   <div class="toast" id="toast" hidden></div>

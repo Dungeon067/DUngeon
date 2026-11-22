@@ -58,7 +58,7 @@ export function actionDown(a: Action) {
     return;
   }
   if (a === "map") {
-    if (GS.scene === "play" && GS.G?.mode === "world" && (!GS.paused || GS.overlay === "map")) mapToggle();
+    if (GS.scene === "play" && GS.G?.mode === "world" && (!GS.paused || GS.overlay === "menu")) mapToggle();
     return;
   }
   held[a] = true;

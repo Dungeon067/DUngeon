@@ -1,0 +1,304 @@
+# Túi đồ (S10). Mô tả câu chuyện lấy từ docs/world/08-vat-pham-va-di-vat.md (S01).
+# type: một khóa trong types. rarity: 3–5. profileKey: số lượng đọc từ hồ sơ (ví dụ books) thay vì túi.
+# drops: rương và quái có thể rơi vật phẩm; chance là xác suất mỗi lần, pool là danh sách id.
+# Chưa có cơ chế dùng vật phẩm; vật phẩm chỉ để sưu tầm và đọc chuyện.
+types:
+  - id: vu-khi
+    name: Vũ khí huyền thoại
+    icon: danh
+  - id: di-vat
+    name: Di vật
+    icon: sao
+  - id: sach-co
+    name: Sách cổ
+    icon: huong-dan
+  - id: manh-sao
+    name: Mảnh sao vỡ
+    icon: da-sao
+  - id: nguyen-lieu
+    name: Nguyên liệu
+    icon: tui-do
+drops:
+  chest:
+    - chance: 0.6
+      pool:
+        - kiem-sat-cu
+        - cung-tre
+        - sach-phep-rach
+        - thuong-go
+        - ngoc-vo
+        - bua-giay
+        - dai-kiem-gi
+    - chance: 0.12
+      pool:
+        - muoi-dem-nuoc-den
+        - so-sao-thu-nhat
+        - bai-ru-ba-hien
+        - sach-da-cua-phuong
+        - hoa-van-tuyet-nam-phong-an
+        - so-gach-ngoi-sao
+        - luat-tram-duoc
+        - thu-cua-nguoi-ganh-nguyen
+    - chance: 0.04
+      pool:
+        - trong-cua-ong-duc-trong
+        - luoi-cua-ba-luoi
+        - den-nang-van-dang
+        - chuong-bac-den-trang
+        - loi-sao-bia-dong
+        - duc-cua-to-khuyet
+        - mat-na-go-troi
+  enemy:
+    - chance: 0.04
+      pool:
+        - kiem-sat-cu
+        - cung-tre
+        - sach-phep-rach
+        - thuong-go
+        - ngoc-vo
+        - bua-giay
+        - dai-kiem-gi
+  boss:
+    - chance: 1
+      pool:
+        - loi-sao-bia-dong
+items:
+  - id: sach-kinh-nghiem
+    name: Sách Kinh Nghiệm
+    type: nguyen-lieu
+    rarity: 3
+    region: Đảo Lạc
+    story: Sổ tay ghi chép của những Hộ Tinh đi trước, mép giấy còn vết đất và vết mực. Đọc xong một cuốn, bước chân thấy vững hơn một chút.
+    profileKey: books
+  - id: thuong-cua-kien
+    name: Thương Của Kiên
+    type: vu-khi
+    rarity: 5
+    weapon: Thương
+    region: Đảo Lạc
+    story: Cây thương gỗ lim bịt đồng của người lập Quân Trấn Thủ. Đã ba trăm năm treo ở Trại Bắc, mũi thương vẫn ấm như vừa rút khỏi giông. Lính mới phải chạm tay vào nó trước khi nhận việc.
+  - id: luoi-may-aianga
+    name: Lưỡi Mây Aianga
+    type: vu-khi
+    rarity: 5
+    weapon: Thương
+    region: Khokhtal
+    story: Ngọn thương Aianga trao cho người Đảo Lạc đầu tiên chạy kịp cơn giông của bà. Cán làm từ một ống đá sét dài, khi cầm thì nghe tiếng vó ngựa. Đây là thương của Lôi Đình.
+  - id: kiem-hong-dieu
+    name: Kiếm Hồng Điểu
+    type: vu-khi
+    rarity: 5
+    weapon: Kiếm đơn
+    region: Đảo Lạc
+    story: Thanh kiếm lưỡi cong nhẹ, chuôi khắc hình chim Lạc dang cánh. Dòng người giữ Đình truyền nó qua mười đời. Mỗi đời, cánh chim trên chuôi lại sáng thêm một chút.
+  - id: cung-dinh-may
+    name: Cung Đỉnh Mây
+    type: vu-khi
+    rarity: 5
+    weapon: Cung
+    region: Đảo Lạc
+    story: Cây cung làm từ một thân trúc mọc trên Đỉnh Vọng Vân, nơi gió thổi không ngừng. Người Đếm Sao dùng nó bắn tín hiệu giữa các đài. Dây cung rung khi có sao băng ở xa.
+  - id: bang-lan-nhat-thuc
+    name: Băng Lan Nhất Thức
+    type: vu-khi
+    rarity: 5
+    weapon: Kiếm đơn
+    region: Shizukane
+    story: Lưỡi kiếm rèn ở Xưởng Rèn Shimogane bằng thép trộn một mảnh sao rơi. Khi rút khỏi vỏ, hoa lan băng nở dọc sống kiếm rồi rụng xuống mà không tan. Kiếm này không phát ra tiếng khi chém.
+  - id: dai-kiem-da-bia
+    name: Đại Kiếm Đá Bia
+    type: vu-khi
+    rarity: 5
+    weapon: Đại kiếm
+    region: Đảo Lạc
+    story: Thanh đại kiếm đẽo từ một tấm bia vỡ trong Mùa Nước Đen. Trên lưỡi còn mờ mờ chín cái tên mà không ai đọc trọn. Thợ đá nói nó nặng bằng cả lời hứa của chín người.
+  - id: kiem-khong-ten-cua-lo-lon
+    name: Kiếm Không Tên Của Lò Lớn
+    type: vu-khi
+    rarity: 5
+    weapon: Kiếm đơn
+    region: Marevia
+    story: Thanh kiếm hoàn hảo Faber rèn thời Trăm Bến, nguyên nhân của một cuộc chiến giữa hai thành. Ông cắm nó ngược trên đe trong Lò Lớn. Chưa ai rút được nó ra, kể cả ông.
+  - id: but-gio
+    name: Bút Gió
+    type: vu-khi
+    rarity: 5
+    weapon: Pháp khí
+    region: Lũng Vân
+    story: Cây bút lông Thính Phong dùng chép sổ suốt nghìn năm. Ngòi bút làm từ lông đuôi của một con hạc đã sống ba trăm tuổi. Viết lời dối bằng bút này thì nét mực tự bay đi.
+  - id: cung-sung-bay-mua
+    name: Cung Sừng Bảy Mùa
+    type: vu-khi
+    rarity: 5
+    weapon: Cung
+    region: Khokhtal
+    story: Cung sừng ghép bảy lớp, mỗi lớp là sừng của một con dê núi ở một mùa cỏ khác nhau. Thợ làm mất bảy năm mới xong một cây. Người Cầm Cương đầu tiên dùng nó trong Hội Ba Môn.
+  - id: duoc-da-ostad
+    name: Đuốc Đá Ostad
+    type: vu-khi
+    rarity: 5
+    weapon: Pháp khí
+    region: Golbaran
+    story: Ngọn đuốc bằng đất nung có khảm men xanh, ánh sáng của nó làm vữa đông nhanh gấp mười. Ostad Khesht cho mượn khi ai đó cần dựng nhà gấp trước cơn bão cát. Người mượn phải trả bằng một viên gạch khắc tên mình.
+  - id: trong-cua-ong-duc-trong
+    name: Trống Của Ông Đúc Trống
+    type: di-vat
+    rarity: 5
+    region: Đảo Lạc
+    story: Chiếc trống đồng đầu tiên của Đảo Lạc, đặt giữa Đình Trống Đồng. Mặt trống có ngôi sao mười hai cánh và một vòng chim Lạc bay ngược chiều kim đồng hồ. Gõ một tiếng, cả đảo nghe.
+  - id: luoi-cua-ba-luoi
+    name: Lưới Của Bà Lưới
+    type: di-vat
+    rarity: 5
+    region: Đảo Lạc
+    story: Một mảnh lưới đánh cá đã mục, sợi nào cũng lấp lánh bụi sao. Người ta nói Bà Lưới đã đan nó trong mười đêm chờ con. Mắt lưới cuối cùng chưa được thắt.
+  - id: den-nang-van-dang
+    name: Đèn Nàng Vạn Đăng
+    type: di-vat
+    rarity: 5
+    region: Đảo Lạc
+    story: Chiếc đèn lồng đầu tiên của Nàng Vạn Đăng, treo ở một góc hẻm trong Phố Cũ và chưa từng tắt. Giấy đèn đã vàng như lá khô mà không rách. Không ai thấy ai châm dầu cho nó.
+  - id: chuong-bac-den-trang
+    name: Chuông Bạc Đền Trăng
+    type: di-vat
+    rarity: 5
+    region: Đảo Lạc
+    story: Chiếc chuông bạc nhỏ của Người Giữ Đền Trăng. Tiếng chuông làm nước dịu lại và vết thương khép miệng. Mỗi đời người giữ đền khắc thêm một vòng trăng vào quai chuông.
+  - id: loi-sao-bia-dong
+    name: Lõi Sao Bia Đông
+    type: di-vat
+    rarity: 5
+    region: Đảo Lạc
+    story: Viên đá to bằng nắm tay, trong suốt, có một đốm sáng chuyển động như cá bơi. Đây là một trong bốn lõi giữ phong ấn Hắc Giao. Năm NS 1347 nó bị lấy đi khỏi bia.
+  - id: duc-cua-to-khuyet
+    name: Đục Của Tô Khuyết
+    type: di-vat
+    rarity: 5
+    region: Đảo Lạc
+    story: Chiếc đục đồng mòn vẹt, cán quấn dây mây. Bốn Bia Đá cổ được khắc bằng chính chiếc đục này. Phường Đá Ngọc cất nó trong hộp khóa ba lớp mà không nói vì sao.
+  - id: mat-na-go-troi
+    name: Mặt Nạ Gỗ Trôi
+    type: di-vat
+    rarity: 5
+    region: Đảo Lạc
+    story: Mặt nạ gỗ trôi dạt của Lão Neo, mặt trong khắc nguệch ngoạc bốn chữ "Trả con tôi về". Áp tai vào gỗ nghe được tiếng sóng. Gỗ vẫn mặn dù đã phơi khô.
+  - id: chuong-khong-qua-lac
+    name: Chuông Không Quả Lắc
+    type: di-vat
+    rarity: 5
+    region: Shizukane
+    story: Chiếc chuông đồng không có quả lắc, lấy từ Cầu Kanehashi. Người Shizukane treo nó trước cửa để nhớ ba làng bị tuyết vùi. Có người nói nó đã kêu một lần, vào đêm Yukiyo thề im lặng.
+  - id: gach-ten-dau-tien
+    name: Gạch Tên Đầu Tiên
+    type: di-vat
+    rarity: 5
+    region: Golbaran
+    story: Viên gạch bùn khô đầu tiên Ostad Khesht nhận làm lễ, khắc tên một người chủ nhà đã bị cát xóa mờ. Ông mang nó theo người suốt nghìn năm. Ông nói đó là ngôi nhà ông thích nhất.
+  - id: hat-thong-dau-tien
+    name: Hạt Thông Đầu Tiên
+    type: di-vat
+    rarity: 5
+    region: Purunae
+    story: Một hạt thông to bằng ngón tay cái, nâu bóng, nằm trong hộp gỗ của Vương triều Rễ. Đây là hạt đầu tiên rụng từ Sonamu. Nó chưa bao giờ nảy mầm, và người ta tin nó đang chờ.
+  - id: vong-nguyet-que-dong
+    name: Vòng Nguyệt Quế Đồng
+    type: di-vat
+    rarity: 5
+    region: Marevia
+    story: Vòng nguyệt quế đúc bằng đồng, phần thưởng của Hội Tranh Tài Thợ năm Faber tự chấm mình hạng nhất. Ông chỉ đeo nó một ngày rồi tặng cho người thua. Người thua ấy là thợ Đảo Lạc.
+  - id: soi-cuong-giong
+    name: Sợi Cương Giông
+    type: di-vat
+    rarity: 5
+    region: Khokhtal
+    story: Một sợi dây cương bằng lông bờm ngựa giông, sờ vào tê tê như kiến bò. Người Cầm Cương được trao nó khi nhậm chức. Ai không bỏ cuộc giữa giông thì sợi dây không bao giờ đứt.
+  - id: muoi-dem-nuoc-den
+    name: Mười Đêm Nước Đen
+    type: sach-co
+    rarity: 4
+    region: Lũng Vân
+    story: Sách Ông Lái Gió viết về Mùa Nước Đen và trận phong ấn Hắc Giao. Có một trang bị xé, đúng chỗ lẽ ra ghi tên một trong Năm Người Giữ Đảo. Bản chép tay ở Các Nghe Gió còn nguyên trang ấy.
+  - id: so-sao-thu-nhat
+    name: Sổ Sao Thứ Nhất
+    type: sach-co
+    rarity: 4
+    region: Đảo Lạc
+    story: Cuốn sổ của Bà Đầu Sổ Thứ Nhất, chép tên sáu nghìn vì sao bằng mực pha bụi sao. Đọc dưới trăng thì những cái tên phát sáng. Mấy trang cuối ghi số sao mới mỗi năm, và con số giảm dần.
+  - id: bai-ru-ba-hien
+    name: Bài Ru Bà Hiên
+    type: sach-co
+    rarity: 4
+    region: Đảo Lạc
+    story: Tập bài hát ru Bà Khơi do Bà Cả đầu tiên của Hội Đền Trăng viết. Trẻ con trên đảo thuộc lòng bài đầu mà không biết nó dành cho ai. Bài cuối cùng chưa ai từng hát.
+  - id: sach-da-cua-phuong
+    name: Sách Đá Của Phường
+    type: sach-co
+    rarity: 4
+    region: Đảo Lạc
+    story: Không phải sách giấy mà là mười hai phiến đá mỏng xâu dây đồng, ghi cách khắc Bia Đá và cách giữ lõi sao. Phiến thứ mười hai bị đục xóa. Người xóa dùng đúng nét đục của người viết.
+  - id: hoa-van-tuyet-nam-phong-an
+    name: Hoa Văn Tuyết Năm Phong Ấn
+    type: sach-co
+    rarity: 4
+    region: Shizukane
+    story: Bản chép của Người Đọc Tuyết về những gì Yukiyo thấy năm NS 1052, vẽ bằng mực chàm trên giấy trắng. Nhìn lâu thì hoa văn như chuyển động. Ở góc cuối có một hoa văn chưa ai đọc được, giống chữ "xin lỗi".
+  - id: so-gach-ngoi-sao
+    name: Sổ Gạch Ngôi Sao
+    type: sach-co
+    rarity: 4
+    region: Golbaran
+    story: Bản sao sổ sao của Người Đếm Sao, khắc trên ba trăm viên gạch men xanh trong Thành Tháp Gió. Ostad Khesht cho chép vì "giấy thì cháy, gạch thì không". Viên gạch cuối ghi năm NS 900 và một con số bị gạch chéo.
+  - id: luat-tram-duoc
+    name: Luật Trăm Đuốc
+    type: sach-co
+    rarity: 4
+    region: Marevia
+    story: 'Bộ luật của cộng hòa Marevia, viết trên da và đọc to mỗi năm ở Quảng Trường Đuốc. Điều đầu tiên ghi: "Lửa là của người làm ra nó." Faber viết chú thích bên lề: "Ta đồng ý."'
+  - id: thu-cua-nguoi-ganh-nguyen
+    name: Thư Của Người Gánh Nguyện
+    type: sach-co
+    rarity: 4
+    region: Không rõ
+    story: Một bức thư không ký tên, mực đã nhạt, gửi "người sẽ đến sau". Trong thư chỉ có một lời ước được viết lại hàng nghìn lần bằng một nét chữ đều tăm tắp. Ở dòng cuối, nét chữ run lên.
+  - id: kiem-sat-cu
+    name: Kiếm Sắt Cũ
+    type: manh-sao
+    rarity: 3
+    region: Đảo Lạc
+    story: Thanh kiếm của một người lính vô danh thời Nước Đen. Sắt đã xỉn, nhưng lưỡi vẫn sắc.
+  - id: cung-tre
+    name: Cung Tre
+    type: manh-sao
+    rarity: 3
+    region: Đảo Lạc
+    story: Cung tre của một đứa trẻ làng chài, dây cung là sợi gai bện. Nó từng bắn trúng một con cò và khóc cả ngày.
+  - id: sach-phep-rach
+    name: Sách Phép Rách
+    type: manh-sao
+    rarity: 3
+    region: Đảo Lạc
+    story: Nửa cuốn sách học phép của một Hộ Tinh già. Nửa còn lại chắc đang nằm dưới một vì sao nào đó.
+  - id: thuong-go
+    name: Thương Gỗ
+    type: manh-sao
+    rarity: 3
+    region: Đảo Lạc
+    story: Cây thương tập của dân binh Đảo Lạc. Cán gỗ đầy vết tay của nhiều thế hệ.
+  - id: ngoc-vo
+    name: Ngọc Vỡ
+    type: manh-sao
+    rarity: 3
+    region: Đảo Lạc
+    story: Mảnh ngọc bích từ Mỏ Ngọc Lòng Chảo, vỡ khi rơi theo sao băng. Một mặt vẫn còn hoa văn khắc dở.
+  - id: bua-giay
+    name: Bùa Giấy
+    type: manh-sao
+    rarity: 3
+    region: Đảo Lạc
+    story: 'Lá bùa giấy dó viết một lời ước nhỏ: "mong mai trời nắng". Có vẻ hôm đó trời đã nắng.'
+  - id: dai-kiem-gi
+    name: Đại Kiếm Gỉ
+    type: manh-sao
+    rarity: 3
+    region: Đảo Lạc
+    story: Đại kiếm đã gỉ của một thợ đá kiêm lính canh. Ông dùng nó để chặt đá nhiều hơn là đánh nhau.

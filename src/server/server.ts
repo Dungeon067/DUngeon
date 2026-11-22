@@ -3,9 +3,18 @@ import { fmt, pick, todayKey } from "../core/util";
 import { CHARS, DAILY_POOL, DEFAULT_CFG, ITEMS3, START_PROFILE, byId } from "../data/content";
 import { toast } from "../ui/toast";
 
+export const SAVE_KEY = "tinhtu-v3";
+export const OLD_SAVE_KEY = "tinhtu-v2";
+/** Nhật ký request dùng chung giữa game và trang Admin (cùng localStorage). */
+export const LOG_KEY = "tinhtu-log";
+/** Cỡ một khối sương bản đồ (ô). Bản đồ 110×110 ô thành 22×22 khối. */
+export const FOG = 5;
+export const FOG_N = 22;
+
 export function freshProfile(): Profile {
+  const party = [...START_PROFILE.party];
   return {
-    v: 2,
+    v: 3,
     gems: START_PROFILE.gems,
     coin: START_PROFILE.coin,
     books: START_PROFILE.books,
@@ -22,7 +31,26 @@ export function freshProfile(): Profile {
     cfg: { ...DEFAULT_CFG },
     gm: { god: false, one: false, nocd: false },
     stats: { kills: 0, reacts: 0 },
+    teams: [party, [], [], []],
+    team: 0,
+    bag: {},
+    quests: { tracked: null, done: [] },
+    fog: "0".repeat(FOG_N * FOG_N),
+    marks: [],
+    codex: [],
+    affinity: {},
+    econ: {},
+    quits: [],
   };
+}
+/** Chuyển hồ sơ cũ (v2) lên v3, giữ toàn bộ dữ liệu đã có. */
+export function migrate(old: any): Profile | null {
+  if (!old || typeof old !== "object") return null;
+  if (old.v === 3) return { ...freshProfile(), ...old };
+  if (old.v !== 2) return null;
+  const base = freshProfile();
+  const party = Array.isArray(old.party) && old.party.length ? old.party : base.party;
+  return { ...base, ...old, v: 3, party, teams: [[...party], [], [], []], team: 0 };
 }
 export function genDaily(seedKey: string) {
   const pool = DAILY_POOL;
@@ -41,15 +69,26 @@ export const Server = {
   log: [] as LogEntry[],
   load() {
     try {
-      const s = localStorage.getItem("tinhtu-v2");
-      if (s) this.P = JSON.parse(s);
+      const l = JSON.parse(localStorage.getItem(LOG_KEY) ?? "[]");
+      if (Array.isArray(l)) this.log = l;
     } catch (e) {}
-    if (!this.P || this.P.v !== 2) this.P = freshProfile();
+    if (!this.P) {
+      try {
+        const s = localStorage.getItem(SAVE_KEY) ?? localStorage.getItem(OLD_SAVE_KEY);
+        if (s) this.P = migrate(JSON.parse(s)) as Profile;
+      } catch (e) {}
+    }
+    if (!this.P || this.P.v !== 3) this.P = migrate(this.P) ?? freshProfile();
     this.ensureDaily();
+  },
+  /** Đọc lại hồ sơ từ localStorage (khi trang khác, ví dụ Admin, vừa ghi). */
+  reload() {
+    this.P = null as unknown as Profile;
+    this.load();
   },
   save() {
     try {
-      localStorage.setItem("tinhtu-v2", JSON.stringify(this.P));
+      localStorage.setItem(SAVE_KEY, JSON.stringify(this.P));
     } catch (e) {}
   },
   ensureDaily() {
@@ -69,8 +108,11 @@ export const Server = {
       }
     }
     if (action !== "progress") {
-      this.log.unshift({ a: action, p: payload, ok: res.ok, msg: res.ok ? "200 OK" : res.error });
+      this.log.unshift({ a: action, p: payload, ok: res.ok, msg: res.ok ? "200 OK" : res.error, t: Date.now() });
       if (this.log.length > 80) this.log.pop();
+      try {
+        localStorage.setItem(LOG_KEY, JSON.stringify(this.log));
+      } catch (e) {}
     }
     if (!res.ok) toast(res.error);
     return res;
@@ -126,6 +168,11 @@ export const Server = {
     if (P.history.length > 100) P.history.pop();
     return out;
   },
+  /** Ghi Đá Sao vào/ra theo nguồn để trang Admin thống kê kinh tế. */
+  econ(key: string, n: number) {
+    if (!n) return;
+    this.P.econ[key] = (this.P.econ[key] ?? 0) + n;
+  },
   bumpDaily(id: string, n = 1) {
     const d = this.P.daily;
     if (!d) return;
@@ -138,6 +185,7 @@ export const Server = {
         cost = P.cfg.cost * n;
       if (P.gems < cost) throw new Error(`Không đủ Đá Sao: cần ${fmt(cost)}, đang có ${fmt(P.gems)}`);
       P.gems -= cost;
+      this.econ("ra:uoc", cost);
       const out = [];
       for (let i = 0; i < n; i++) out.push(this.rollOne());
       this.bumpDaily("wish", n);
@@ -148,7 +196,84 @@ export const Server = {
       if (party.some((id) => !this.P.owned[id])) throw new Error("Bạn chưa có nhân vật này");
       if (new Set(party).size !== party.length) throw new Error("Nhân vật bị trùng");
       this.P.party = party;
+      this.P.teams[this.P.team] = [...party];
       return party;
+    },
+    /** Lưu một trong 4 đội; nếu là đội đang dùng thì đổi luôn đội ra trận. */
+    setTeam(this: any, { idx, party }: any) {
+      const P = this.P;
+      if (!(idx >= 0 && idx < 4)) throw new Error("Không có đội này");
+      if (!Array.isArray(party) || party.length > 4) throw new Error("Đội có tối đa 4 người");
+      if (party.some((id: string) => !P.owned[id])) throw new Error("Bạn chưa có nhân vật này");
+      if (new Set(party).size !== party.length) throw new Error("Nhân vật bị trùng");
+      if (idx === P.team && !party.length) throw new Error("Đội đang dùng cần ít nhất 1 người");
+      P.teams[idx] = [...party];
+      if (idx === P.team) P.party = [...party];
+      return P.teams;
+    },
+    useTeam(this: any, { idx }: any) {
+      const P = this.P,
+        t = P.teams[idx];
+      if (!t) throw new Error("Không có đội này");
+      if (!t.length) throw new Error("Đội này chưa có ai");
+      P.team = idx;
+      P.party = [...t];
+      return P.party;
+    },
+    addItems(this: any, { items }: any) {
+      for (const [id, n] of Object.entries(items ?? {})) {
+        const k = Math.floor(Number(n));
+        if (!isFinite(k) || k <= 0) continue;
+        this.P.bag[id] = (this.P.bag[id] ?? 0) + k;
+        if (!this.P.codex.includes("vat:" + id)) this.P.codex.push("vat:" + id);
+      }
+      return this.P.bag;
+    },
+    trackQuest(this: any, { id }: any) {
+      this.P.quests.tracked = id || null;
+      return this.P.quests.tracked;
+    },
+    completeQuest(this: any, { id }: any) {
+      if (!this.P.quests.done.includes(id)) this.P.quests.done.push(id);
+      if (this.P.quests.tracked === id) this.P.quests.tracked = null;
+      return this.P.quests.done;
+    },
+    explore(this: any, { cells }: any) {
+      const f = this.P.fog.split("");
+      let n = 0;
+      for (const i of cells ?? [])
+        if (i >= 0 && i < f.length && f[i] !== "1") {
+          f[i] = "1";
+          n++;
+        }
+      this.P.fog = f.join("");
+      return n;
+    },
+    addMark(this: any, { x, y, label }: any) {
+      if (!isFinite(x) || !isFinite(y)) throw new Error("Vị trí không hợp lệ");
+      if (this.P.marks.length >= 30) throw new Error("Tối đa 30 điểm đánh dấu");
+      this.P.marks.push({ x: +x, y: +y, label: String(label || "Điểm đánh dấu").slice(0, 40) });
+      return this.P.marks;
+    },
+    delMark(this: any, { i }: any) {
+      if (!this.P.marks[i]) throw new Error("Không có điểm này");
+      this.P.marks.splice(i, 1);
+      return this.P.marks;
+    },
+    discover(this: any, { ids }: any) {
+      const add = [...new Set<string>(ids ?? [])].filter((id) => !this.P.codex.includes(id));
+      this.P.codex.push(...add);
+      return add;
+    },
+    affinity(this: any, { id, n }: any) {
+      if (!byId[id]) throw new Error("Không có nhân vật này");
+      this.P.affinity[id] = Math.max(0, (this.P.affinity[id] ?? 0) + (Number(n) || 0));
+      return this.P.affinity[id];
+    },
+    logQuit(this: any, { mode, at }: any) {
+      this.P.quits.unshift({ mode: String(mode), at: String(at ?? ""), t: Date.now() });
+      if (this.P.quits.length > 200) this.P.quits.pop();
+      return true;
     },
     levelUp(this: any, { id, times }: any) {
       const P = this.P,
@@ -170,6 +295,7 @@ export const Server = {
     reward(this: any, { gems = 0, coin = 0, books = 0 }) {
       const P = this.P;
       P.gems += Math.max(0, gems | 0);
+      this.econ("vao:thuong", Math.max(0, gems | 0));
       P.coin += Math.max(0, coin | 0);
       P.books += Math.max(0, books | 0);
       return true;
@@ -182,6 +308,7 @@ export const Server = {
         c = 1500 + Math.floor(Math.random() * 1500),
         b = 2 + Math.floor(Math.random() * 3);
       P.gems += g;
+      this.econ("vao:ruong", g);
       P.coin += c;
       P.books += b;
       this.bumpDaily("chest");
@@ -196,6 +323,7 @@ export const Server = {
         coin = 2000 + floor * 400,
         books = 2 + Math.floor(floor / 3);
       P.gems += gems;
+      this.econ("vao:thap", gems);
       P.coin += coin;
       P.books += books;
       this.bumpDaily("tower");
@@ -209,6 +337,7 @@ export const Server = {
         coin = 6000 + lv * 3000,
         books = 6 + lv * 3;
       P.gems += gems;
+      this.econ("vao:boss", gems);
       P.coin += coin;
       P.books += books;
       this.bumpDaily("boss");
@@ -228,6 +357,7 @@ export const Server = {
       if (t.prog < t.goal) throw new Error("Chưa hoàn thành");
       t.claimed = true;
       this.P.gems += 30;
+      this.econ("vao:uy-thac", 30);
       this.P.coin += 3000;
       return { gems: 30, coin: 3000 };
     },
@@ -237,6 +367,7 @@ export const Server = {
       if (!d.tasks.every((t: any) => t.claimed)) throw new Error("Nhận đủ 4 nhiệm vụ trước");
       d.bonus = true;
       this.P.gems += 60;
+      this.econ("vao:uy-thac", 60);
       this.P.books += 5;
       return { gems: 60, books: 5 };
     },
@@ -262,6 +393,7 @@ export const Server = {
       const k = ({ gem: "gems", coin: "coin", book: "books" } as Record<string, string>)[kind];
       if (!k) throw new Error("Loại không hợp lệ");
       this.P[k] = Math.max(0, this.P[k] + a);
+      if (k === "gems") this.econ("vao:admin", a);
       return this.P[k];
     },
     giveChar(this: any, { id }: any) {

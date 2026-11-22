@@ -5,14 +5,15 @@ import { $ } from "../core/util";
 import { startBoss } from "../modes/boss";
 import { startTower } from "../modes/tower";
 import { exitToMenu } from "../ui/screens";
+import { openMenu } from "./menu/shell";
 
 export function pause() {
   if (!GS.G || GS.G._ended) return;
-  GS.paused = true;
   flushPending();
-  const extra = GS.G.mode === "world" ? `<button class="btn" data-act="tochars">Đổi đội hình</button>` : "";
+  if (GS.G.mode === "world") return openMenu("main");
+  GS.paused = true;
   openModal(
-    `<h3>Tạm dừng</h3><p class="muted">${GS.G.mode === "world" ? "Tiến trình rương đã được lưu. Quái sẽ xuất hiện lại khi bạn quay lại đảo." : "Rời trận bây giờ sẽ không nhận được phần thưởng."}</p><div class="row"><button class="btn gold" data-act="resume">Tiếp tục</button>${extra}<button class="btn" data-act="settings">Cài đặt</button><button class="btn" data-act="menu">Về sảnh</button></div>`,
+    `<h3>Tạm dừng</h3><p class="muted">Rời trận bây giờ sẽ không nhận được phần thưởng.</p><div class="row"><button class="btn gold" data-act="resume">Tiếp tục</button><button class="btn" data-act="settings">Cài đặt</button><button class="btn" data-act="menu">Về đảo</button></div>`,
   );
 }
 export function resume() {
@@ -38,9 +39,6 @@ export function init(): void {
     else if (act === "menu") {
       closeModal();
       exitToMenu();
-    } else if (act === "tochars") {
-      closeModal();
-      exitToMenu("chars");
     } else if (act === "retry") {
       closeModal();
       const g = GS.G;

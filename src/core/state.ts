@@ -4,6 +4,7 @@ export const GS = {
   AC: null as AudioContext | null,
   soundOn: false,
   WORLD: null as any,
+  worldPos: null as null | { x: number; y: number; rx: number; ry: number },
   VW: 0,
   VH: 0,
   DPR: 1,

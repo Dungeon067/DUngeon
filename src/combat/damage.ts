@@ -1,4 +1,5 @@
 import { GS } from "../core/state";
+import { onKill } from "../ui/menu/progress";
 import { buzz } from "../core/haptics";
 import { settings } from "../core/settings";
 import { screenToWorld } from "../core/input";
@@ -149,6 +150,7 @@ export function killEnemy(e: any) {
   fxBurst(e.x, e.y - 14, e.el ? EL[e.el].c : "#ccc", 18, 200, 3.5);
   fxRing(e.x, e.y - 10, 40, "#ffffff", 0.3, 3);
   sfx("kill");
+  onKill(e);
   if (e.isBoss) {
     bossDefeated();
     return;

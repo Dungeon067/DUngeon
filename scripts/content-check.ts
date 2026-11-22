@@ -1,10 +1,13 @@
 import { validateContent } from "../src/data/schema";
-import { loadRawContent } from "./load-content";
+import { validateMenuContent } from "../src/data/menu-schema";
+import { loadRawContent, loadRawMenuContent } from "./load-content";
 
 try {
-  const c = validateContent(loadRawContent());
+  const raw = loadRawContent();
+  const c = validateContent(raw);
+  const m = validateMenuContent(loadRawMenuContent(raw));
   console.log(
-    `content/ hợp lệ: ${c.characters.length} nhân vật, ${Object.keys(c.enemies).length} loại quái, boss ${c.boss.name}.`,
+    `content/ hợp lệ: ${c.characters.length} nhân vật, ${Object.keys(c.enemies).length} loại quái, boss ${c.boss.name}; ${m.items.items.length} vật phẩm, ${m.quests.length} nhiệm vụ, ${m.codex.creatures.length + m.codex.places.length} mục Bách khoa.`,
   );
 } catch (e) {
   console.error((e as Error).message);

@@ -4,12 +4,16 @@ import { $, fmt } from "../core/util";
 import { EL, OBJECTIVES } from "../data/content";
 import { cur, switchTo } from "../entities/party";
 import { Server } from "../server/server";
-import { partySlot } from "./ds";
+import { badgeDot, partySlot } from "./ds";
 import { icon, iconSvg } from "./icons/icons";
 import { keyLabel, primaryKey, onSettings } from "../core/settings";
 import { padLabelFor, padState } from "../core/gamepad";
 import { onMapAction } from "../core/input";
-import { drawMini, toggleBigMap } from "./hud/map";
+import { drawMini } from "./hud/map";
+import { closeMenu, currentScreen, menuOpen, openMenu } from "./menu/shell";
+import { dailyReady } from "./menu/screens/main";
+import { MENU } from "../data/menu-content";
+import { trackedObjective } from "./menu/quests";
 import { applyLayout } from "./hud/layout";
 import { openSettings } from "./settings";
 import type { Action } from "../data/schema";
@@ -55,6 +59,33 @@ function refreshKeyHints(party = true) {
   if (party && GS.G) buildHudParty();
 }
 
+/** Menu nhanh góc trên phải (S10): lối tắt đọc từ content/menu.yaml, nút Menu mở menu chính. */
+function buildQuickMenu() {
+  const qm = $("quickMenu"),
+    first = $("qmMap");
+  for (const id of [...MENU.quick, "main"]) {
+    const it = MENU.main.find((m) => m.id === id);
+    const name = it?.name ?? "Menu";
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "hud-qb";
+    b.id = "qm-" + id;
+    b.setAttribute("aria-label", name);
+    b.title = name;
+    b.insertAdjacentHTML("afterbegin", iconSvg(it?.icon ?? "menu", { size: 22 }));
+    b.addEventListener("click", () => openMenu(id));
+    qm.insertBefore(b, id === "main" ? null : first);
+  }
+  refreshQuickDots();
+}
+export function refreshQuickDots() {
+  const b = document.getElementById("qm-daily");
+  if (!b || !Server.P) return;
+  const n = dailyReady();
+  if (n) badgeDot(b, n);
+  else b.querySelector(":scope > .tt-dot")?.remove();
+}
+
 let built = false;
 export function initHud() {
   if (built) return;
@@ -67,10 +98,12 @@ export function initHud() {
     b.insertAdjacentHTML("beforeend", `<span class="cd" aria-hidden="true"></span>`);
   }
   $("bInteract").insertAdjacentHTML("beforeend", `<span class="hud-int-l" aria-hidden="true"></span>`);
-  $("qmMap").addEventListener("click", () => toggleBigMap());
-  $("miniBtn").addEventListener("click", () => toggleBigMap());
+  const toggleMap = () => (menuOpen() && currentScreen() === "map" ? closeMenu() : openMenu("map"));
+  $("qmMap").addEventListener("click", toggleMap);
+  $("miniBtn").addEventListener("click", toggleMap);
   $("qmSettings").addEventListener("click", () => openSettings());
-  onMapAction(() => toggleBigMap());
+  onMapAction(toggleMap);
+  buildQuickMenu();
   const edge = document.createElement("div");
   edge.id = "edgeArrows";
   edge.className = "hud-edge";
@@ -127,6 +160,8 @@ export function currentObjective(): { text: string; target: string | null } {
   const G = GS.G;
   if (G.mode === "tower") return { text: OBJECTIVES.tower.replace("{floor}", String(G.tower.floor)), target: null };
   if (G.mode === "boss") return { text: OBJECTIVES.boss, target: null };
+  const tq = trackedObjective();
+  if (tq) return tq;
   const P = Server.P;
   for (const o of OBJECTIVES.world) {
     let n = 0,

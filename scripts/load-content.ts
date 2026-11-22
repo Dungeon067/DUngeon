@@ -2,6 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parse } from "yaml";
 import type { RawContent } from "../src/data/schema";
+import type { RawMenuContent } from "../src/data/menu-schema";
 
 const ROOT = process.cwd();
 const readDir = (dir: string) =>
@@ -21,5 +22,20 @@ export function loadRawContent(): RawContent {
     controls: parse(readFileSync(join(ROOT, "content/controls.yaml"), "utf8")),
     terrain: parse(readFileSync(join(ROOT, "content/terrain.yaml"), "utf8")),
     objectives: parse(readFileSync(join(ROOT, "content/objectives.yaml"), "utf8")),
+  };
+}
+
+const read = (f: string) => parse(readFileSync(join(ROOT, f), "utf8"));
+export function loadRawMenuContent(raw: RawContent): RawMenuContent {
+  const objectives = raw.objectives as { world: { id: string }[] };
+  return {
+    menu: read("content/menu.yaml"),
+    items: read("content/items.yaml"),
+    codex: read("content/codex.yaml"),
+    quests: read("content/quests.yaml"),
+    cinematic: read("content/cinematic.yaml"),
+    admin: read("content/admin.yaml"),
+    objectiveIds: objectives.world.map((o) => o.id),
+    enemyIds: Object.keys(raw.enemies).map((f) => f.replace(/^.*\//, "").replace(/\.yaml$/, "")),
   };
 }

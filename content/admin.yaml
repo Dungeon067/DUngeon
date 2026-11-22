@@ -1,0 +1,11 @@
+# Trang Admin /admin/ (S10). CHỈ LÀ CHẶN TẠM ở bản thử nghiệm: mọi thứ chạy trên trình duyệt,
+# ai đọc mã nguồn cũng vượt được. Khi có server thật, xác thực phải chuyển lên server.
+# Mật khẩu mặc định: tinhtu-admin. Đổi bằng: pnpm admin:hash "mật-khẩu-mới"
+# (lệnh in ra salt và hash mới, dán đè vào hai dòng dưới). Không ghi mật khẩu gốc vào repo.
+login:
+  algo: PBKDF2-SHA256
+  iterations: 120000
+  salt: tinhtu-s10-mac-dinh
+  hash: fb7b5bb46412950a1e8abfaeb4e82b457dbebfa162580e91da46d334f34496ad
+# Phiên đăng nhập lưu trong sessionStorage, hết hạn sau số phút này.
+sessionMinutes: 120
