@@ -3,6 +3,7 @@ import { dealRaw, hitEnemy } from "../combat/damage";
 import { sfx } from "../core/audio";
 import { dist, rand } from "../core/util";
 import { EL } from "../data/content";
+import { shake } from "../combat/feel";
 import { fxBurst, fxRing, fxText, later } from "../entities/fx";
 
 export function applyElement(e: any, el: string, m: any) {
@@ -50,7 +51,7 @@ export function applyElement(e: any, el: string, m: any) {
     later(0, () => {
       fxRing(e.x, e.y - 10, 90, EL.fire.c, 0.4, 8);
       fxBurst(e.x, e.y - 10, EL.fire.c, 16, 220);
-      GS.G.shake = Math.max(GS.G.shake, 6);
+      shake("react");
       for (const o of GS.G.enemies) {
         if (o.dead) continue;
         const d = dist(e.x, e.y, o.x, o.y);

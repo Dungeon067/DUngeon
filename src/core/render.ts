@@ -1,7 +1,8 @@
 import { GS } from "../core/state";
 import { drawChibi } from "../art/chibi";
 import { drawBoss, drawEnemy } from "../art/enemy";
-import { drawBossTele, drawEnemyUi, drawTele, drawTurret } from "../art/props";
+import { drawBossTele, drawBossWorldUi, drawEnemyUi, drawTele, drawTurret } from "../art/props";
+import { drawParticle, drawSlash } from "../art/fx";
 import { ctx } from "../core/canvas";
 import { TAU, hash2, rand, rgba } from "../core/util";
 import { EL } from "../data/content";
@@ -153,7 +154,7 @@ export function render() {
   for (const e of GS.G.enemies) {
     if (e.dead) continue;
     if (e.isBoss) {
-      dr.push({ y: e.y, f: () => drawBoss(ctx, e, tm) });
+      dr.push({ y: e.y, f: () => (drawBoss(ctx, e, tm), drawBossWorldUi(e)) });
       continue;
     }
     if (GS.G.map && (Math.abs(e.x - GS.G.cam.x) > hw + 60 || Math.abs(e.y - GS.G.cam.y) > hh + 80)) continue;
@@ -252,15 +253,9 @@ export function render() {
       ctx.ellipse(f.x, f.y, f.r * (1 - k * 0.7), f.r * (1 - k * 0.7) * 0.62, 0, 0, TAU);
       ctx.stroke();
     } else if (f.k === "slash") {
-      ctx.globalAlpha = k;
-      ctx.strokeStyle = f.col;
-      ctx.lineCap = "round";
-      ctx.lineWidth = f.w * k + 1;
-      ctx.shadowColor = f.col;
-      ctx.shadowBlur = 10;
-      ctx.beginPath();
-      ctx.arc(f.x, f.y, f.r * 0.8, f.ang - f.arc * (1 - k * 0.3), f.ang + f.arc * (1 - k * 0.3));
-      ctx.stroke();
+      drawSlash(f, k);
+    } else if (f.k === "pt") {
+      drawParticle(f, k);
     } else if (f.k === "bolt") {
       ctx.globalAlpha = k;
       ctx.strokeStyle = f.col;

@@ -1,6 +1,6 @@
 import { GS } from "../core/state";
 import { portrait } from "../art/chibi";
-import { sfx } from "../core/audio";
+import { preloadSfx, sfx } from "../core/audio";
 import { joy, keys } from "../core/input";
 import { flushPending } from "../core/loop";
 import { $, esc, fmt } from "../core/util";
@@ -106,6 +106,9 @@ export function init(): void {
   $("sndBtn").addEventListener("click", () => {
     GS.soundOn = !GS.soundOn;
     $("sndBtn").textContent = "Âm thanh: " + (GS.soundOn ? "bật" : "tắt");
-    if (GS.soundOn) sfx("coin");
+    if (GS.soundOn) {
+      preloadSfx();
+      sfx("coin");
+    }
   });
 }

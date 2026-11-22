@@ -4,8 +4,9 @@ import { sfx } from "../core/audio";
 import { dist, fmt, rand } from "../core/util";
 import { EL } from "../data/content";
 import { bossDefeated } from "../entities/boss";
-import { fxBurst, fxRing, fxText } from "../entities/fx";
+import { fxBurst, fxParticles, fxRing, fxText } from "../entities/fx";
 import { cur } from "../entities/party";
+import { FEEL, charFx, enemyFeel, hitstop, shake } from "../combat/feel";
 import { partyWipe, showBanner } from "../modes/session";
 import { Server } from "../server/server";
 import { buildHudParty } from "../ui/hud";
@@ -40,7 +41,7 @@ export function dealRaw(e: any, dmg: number, col: string) {
   if (Server.P.gm.one) dmg = e.hp + 1;
   dmg *= e.vuln > 0 ? 1.25 : 1;
   e.hp -= dmg;
-  e.flash = 0.08;
+  e.flash = Math.max(e.flash, FEEL.hit.flash * 0.7);
   fxText(e.x, e.y - (e.isBoss ? 70 : 34), fmt(dmg), col, 14);
   if (e.hp <= 0) killEnemy(e);
 }
@@ -49,10 +50,17 @@ export function hitEnemy(e: any, m: any, mult: number, el: string, o: any = {}) 
   const crit = Math.random() < m.st.crit;
   let dmg = m.st.atk * mult * (crit ? 1 + m.st.cdmg : 1) * rand(0.95, 1.05);
   const r = applyElement(e, el, m);
-  dmg *= r.mult * (e.vuln > 0 ? 1.25 : 1);
+  dmg *= r.mult * (e.vuln > 0 ? 1.25 : 1) * (e.stun > 0 ? FEEL.poise.stunVuln : 1);
   if (Server.P.gm.one) dmg = Math.max(dmg, e.hp + 1);
   e.hp -= dmg;
-  e.flash = 0.1;
+  e.flash = FEEL.hit.flash;
+  e.hitT = FEEL.hit.squash;
+  damagePoise(e, (FEEL.poise.weapon[m.c.w as keyof typeof FEEL.poise.weapon] ?? 8) * mult);
+  if (crit) hitstop("crit");
+  if (r.mult > 1) {
+    hitstop("react");
+    shake("react", 0.6);
+  }
   const col = el ? EL[el].c2 : "#ffffff";
   fxText(
     e.x,
@@ -62,10 +70,14 @@ export function hitEnemy(e: any, m: any, mult: number, el: string, o: any = {}) 
     r.mult > 1 ? 20 : 16,
     crit,
   );
-  fxBurst(e.x, e.y - 14, el ? EL[el].c : "#ffffff", 5, 120, 2.5);
-  if (!o.noKb && !e.isBoss && e.type !== "golem") {
+  const F = charFx(m.c.id);
+  fxBurst(e.x, e.y - 14, "#ffffff", 3, 120, 2);
+  fxParticles(e.x, e.y - 14, F, el ? 6 : 3);
+  const mass = enemyFeel(e).mass;
+  if (!o.noKb && mass > 0) {
+    // Giật lùi chia cho cân nặng: slime văng xa, golem chỉ nhích.
     const an = o.ang !== undefined ? o.ang : Math.atan2(e.y - GS.G.p.y, e.x - GS.G.p.x);
-    const k = o.kb || 80;
+    const k = (o.kb || 80) / mass;
     e.kx += Math.cos(an) * k;
     e.ky += Math.sin(an) * k;
   }
@@ -79,10 +91,32 @@ export function hitEnemy(e: any, m: any, mult: number, el: string, o: any = {}) 
       m.energy = Math.min(m.c.burst.cost, m.energy + 1.2);
     }
   }
-  sfx("hit");
+  sfx("hit_" + m.c.w);
+  if (crit || o.heavy) sfx("crit");
   if (e.hp <= 0) killEnemy(e);
   if (e.state === "idle" && !e.isBoss) e.state = "chase";
   return dmg;
+}
+/** Trừ thanh chịu đòn; vỡ thanh thì quái choáng, ngắt đòn đang chuẩn bị. */
+export function damagePoise(e: any, n: number) {
+  const ef = enemyFeel(e);
+  if (e.maxPoise === undefined) e.poise = e.maxPoise = ef.poise;
+  e.poiseT = 0;
+  if (e.stun > 0 || e.dead) return;
+  e.poise -= n;
+  if (e.poise > 0) return;
+  e.poise = 0;
+  e.stun = ef.stun ?? FEEL.poise.stun;
+  e.tele = null;
+  if (e.isBoss) {
+    e.state = "idle";
+    e.t = Math.max(e.t, 0.6);
+  }
+  fxText(e.x, e.y - (e.isBoss ? 96 : 56), "Choáng", "#ffe27a", 16, true);
+  fxRing(e.x, e.y - 12, e.isBoss ? 120 : 50, "#ffe27a", 0.4, 6);
+  hitstop("break");
+  shake("break");
+  sfx("break");
 }
 export function gainEnergy(n: number, x: number, y: number, m: any) {
   for (const pm of GS.G.party) {
@@ -108,6 +142,7 @@ export function killEnemy(e: any) {
   e.hp = 0;
   fxBurst(e.x, e.y - 14, e.el ? EL[e.el].c : "#ccc", 18, 200, 3.5);
   fxRing(e.x, e.y - 10, 40, "#ffffff", 0.3, 3);
+  sfx("kill");
   if (e.isBoss) {
     bossDefeated();
     return;
@@ -143,7 +178,7 @@ export function hurtPlayer(dmg: number, col = "#ff7070") {
   m.hp -= dmg;
   p.hurt = 0.25;
   p.iframes = 0.45;
-  GS.G.shake = Math.max(GS.G.shake, 5);
+  shake("hurt");
   fxText(p.x, p.y - 48, "-" + fmt(dmg), col, 16);
   sfx("hurt");
   if (m.hp <= 0) {

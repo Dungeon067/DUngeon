@@ -12,7 +12,8 @@ export function resize() {
   GS.VH = window.innerHeight;
   cv.width = Math.round(GS.VW * GS.DPR);
   cv.height = Math.round(GS.VH * GS.DPR);
-  GS.ZOOM = clamp(Math.min(GS.VW, GS.VH) / 620, 0.72, 1.35);
+  GS.BASE_ZOOM = clamp(Math.min(GS.VW, GS.VH) / 620, 0.72, 1.35);
+  GS.ZOOM = GS.BASE_ZOOM * GS.camZoom;
 }
 
 export function init(): void {

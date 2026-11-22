@@ -8,6 +8,8 @@ export const GS = {
   VH: 0,
   DPR: 1,
   ZOOM: 1,
+  BASE_ZOOM: 1,
+  camZoom: 1,
   G: null as any,
   scene: "menu",
   paused: false,
