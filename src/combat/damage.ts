@@ -39,7 +39,7 @@ export function aim() {
 export function dealRaw(e: any, dmg: number, col: string) {
   if (e.dead) return;
   if (Server.P.gm.one) dmg = e.hp + 1;
-  dmg *= e.vuln > 0 ? 1.25 : 1;
+  dmg *= (e.vuln > 0 ? 1.25 : 1) * (e.stun > 0 ? FEEL.poise.stunVuln : 1);
   e.hp -= dmg;
   e.flash = Math.max(e.flash, FEEL.hit.flash * 0.7);
   fxText(e.x, e.y - (e.isBoss ? 70 : 34), fmt(dmg), col, 14);
