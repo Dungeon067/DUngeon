@@ -12,6 +12,7 @@ skill:
   type: dash
   cd: 7
   m: 2.1
+  icon: kn-suongmai
 burst:
   name: Sóng Bạc
   type: tide

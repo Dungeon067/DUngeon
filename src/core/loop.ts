@@ -5,7 +5,9 @@ import { cameraTarget, updateZoom } from "../core/camera";
 import { updateMusic } from "../core/music";
 import { hitEnemy, hurtPlayer, nearestEnemy } from "../combat/damage";
 import { sfx } from "../core/audio";
-import { joy, keys } from "../core/input";
+import { held, moveAxis } from "../core/input";
+import { pollGamepad } from "../core/gamepad";
+import { updateAir, updateGround, updateWaves } from "../combat/jump";
 import { render } from "../core/render";
 import { clamp, dist, lerpAng, rand } from "../core/util";
 import { EL } from "../data/content";
@@ -17,6 +19,7 @@ import { towerLogic } from "../modes/tower";
 import { worldLogic } from "../modes/world";
 import { Server } from "../server/server";
 import { updateHud } from "../ui/hud";
+import { lootFeed } from "../ui/hud/feed";
 import { moveC, solidTile } from "../world/collision";
 import { MH, MW, TL, TS } from "../world/map";
 
@@ -38,15 +41,20 @@ export function update(dt: number) {
   const p = GS.G.p,
     m = cur();
   // movement input
-  let mx = (keys["d"] || keys["arrowright"] ? 1 : 0) - (keys["a"] || keys["arrowleft"] ? 1 : 0) + joy.x;
-  let my = (keys["s"] || keys["arrowdown"] ? 1 : 0) - (keys["w"] || keys["arrowup"] ? 1 : 0) + joy.y;
+  let [mx, my] = moveAxis();
   const ml = Math.hypot(mx, my);
   if (ml > 1) {
     mx /= ml;
     my /= ml;
   }
   p.moving = ml > 0.15 && !GS.G.over;
-  if (p.dashT > 0) {
+  if (p.moving) {
+    p.dirX = mx;
+    p.dirY = my;
+  }
+  if (p.air) {
+    updateAir(p, dt, GS.G.over ? 0 : mx, GS.G.over ? 0 : my);
+  } else if (p.dashT > 0) {
     p.dashT -= dt;
     moveC(p, p.dvx * dt, p.dvy * dt, 9);
     if (p.dashHit) {
@@ -81,6 +89,8 @@ export function update(dt: number) {
     if (Math.abs(mx) > 0.2) p.fx = mx > 0 ? 1 : -1;
     p.back = my < -0.5 && Math.abs(mx) < 0.6;
   }
+  if (!p.air) updateGround(p);
+  p.land = Math.max(0, p.land - dt);
   if (GS.holdDash) p.dashHeld += dt;
   if (!(GS.holdDash && p.moving)) p.stamina = Math.min(100, p.stamina + 28 * dt);
   p.atkCd -= dt;
@@ -101,7 +111,8 @@ export function update(dt: number) {
     }
   }
   updateBuffer(dt);
-  if (GS.holdAtk || keys["j"]) tryAttack();
+  updateWaves(dt);
+  if (GS.holdAtk || held.attack) tryAttack();
   // later
   for (let i = GS.G.later.length - 1; i >= 0; i--) {
     const l = GS.G.later[i];
@@ -291,17 +302,20 @@ export function update(dt: number) {
       if (k.k === "coin") {
         GS.G.loot.coin += k.v;
         fxText(p.x, p.y - 50, "+" + k.v + " Xu", "#f0c060", 12);
+        lootFeed("coin", "Xu", k.v, "xu", "#f0c060");
         sfx("coin");
       }
       if (k.k === "book") {
         GS.G.loot.books += k.v;
         fxText(p.x, p.y - 50, "+" + k.v + " Sách KN", "#c9a6ff", 13);
+        lootFeed("book", "Sách kinh nghiệm", k.v, "nang-cap", "#c9a6ff");
       }
       if (k.k === "shard") {
         p.shield = Math.max(p.shield, cur().maxHp * 0.25);
         p.shieldMax = p.shield;
         p.shieldT = 12;
         fxText(p.x, p.y - 50, "Khiên tinh thể", EL[k.el].c, 13);
+        lootFeed("shard", "Khiên tinh thể", 0, "khien", EL[k.el].c);
       }
     }
   }
@@ -369,6 +383,7 @@ export function frame(now: number) {
   const dt = Math.min(0.05, (now - GS.lastT) / 1000);
   GS.lastT = now;
   try {
+    pollGamepad();
     if (GS.scene === "play" && GS.G && !GS.paused) {
       update(gameDt(dt));
       updateZoom(dt);

@@ -1,33 +1,27 @@
 import { GS } from "../core/state";
 import { FEEL_DEFAULT } from "../data/content";
+import { saveSettings, settings } from "../core/settings";
 import type { CharFx, Feel } from "../data/schema";
 
 /** Thông số đang dùng. Bảng chỉnh nhanh sửa trực tiếp đối tượng này. */
 export const FEEL: Feel = JSON.parse(JSON.stringify(FEEL_DEFAULT));
 
-const SETTINGS_KEY = "tinhtu.feel.v1";
-/** Cài đặt người chơi, lưu trong localStorage. */
-export const feelSettings = { shake: true };
-try {
-  const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
-  if (typeof s.shake === "boolean") feelSettings.shake = s.shake;
-} catch {
-  /* bỏ qua dữ liệu hỏng */
-}
+/** Cài đặt rung màn hình, đọc và lưu qua core/settings (khóa tinhtu-settings-v1). */
+export const feelSettings = {
+  get shake() {
+    return settings.shake;
+  },
+};
 export function setShakeEnabled(on: boolean) {
-  feelSettings.shake = on;
+  settings.shake = on;
   if (!on && GS.G) GS.G.shake = 0;
-  try {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(feelSettings));
-  } catch {
-    /* trình duyệt chặn lưu trữ */
-  }
+  saveSettings();
 }
 
 /** Trạng thái thời gian và camera của trận hiện tại. */
 export const feelState = { stop: 0, slow: 0, slowDur: 0, slowScale: 1, burstT: 0, leadX: 0, leadY: 0 };
 /** Lệnh đang chờ trong bộ đệm: số giây còn hiệu lực. */
-export const inputBuffer = { atk: 0, skill: 0, burst: 0, dash: 0 };
+export const inputBuffer = { atk: 0, skill: 0, burst: 0, dash: 0, jump: 0 };
 export function resetFeel() {
   for (const k in inputBuffer) inputBuffer[k as keyof typeof inputBuffer] = 0;
   Object.assign(feelState, { stop: 0, slow: 0, slowDur: 0, slowScale: 1, burstT: 0, leadX: 0, leadY: 0 });

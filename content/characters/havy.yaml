@@ -12,6 +12,7 @@ skill:
   type: nova
   cd: 8
   m: 2
+  icon: kn-havy
 burst:
   name: Gió Lạnh Đầu Mùa
   type: blizzard

@@ -9,7 +9,8 @@ export default defineConfig({
   use: { baseURL: `http://localhost:${PORT}`, trace: "retain-on-failure", screenshot: "only-on-failure" },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 720 } } },
-    { name: "mobile", use: { ...devices["Pixel 7"] } },
+    // Game chỉ chơi màn ngang (A.3); màn dọc kiểm tra riêng trong hud.spec.ts.
+    { name: "mobile", use: { ...devices["Pixel 7 landscape"] } },
   ],
   webServer: {
     command: `STYLEGUIDE=1 pnpm build && pnpm exec vite preview --port ${PORT} --strictPort`,

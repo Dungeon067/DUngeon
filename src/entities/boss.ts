@@ -1,4 +1,5 @@
 import { GS } from "../core/state";
+import { spawnWave } from "../combat/jump";
 import { FEEL, shake, slowmo } from "../combat/feel";
 import { tickPoise } from "./enemy";
 import { teleWarn } from "./telegraph";
@@ -166,6 +167,8 @@ export function updateBoss(b: any, dt: number) {
         b.state = "idle";
         b.t = rand(1, 1.6) / sp;
         shake("boss");
+        // Hắc Giao đâm đầu xuống đất sau cú lao: sóng xung kích sát đất, nhảy để né.
+        spawnWave(b.x, b.y, 30, 340, b.atk * 0.7, b.el, 300);
       }
     }
   }

@@ -1,12 +1,15 @@
 import config from "../../content/config.yaml";
 import feel from "../../content/combat-feel.yaml";
+import controls from "../../content/controls.yaml";
+import terrain from "../../content/terrain.yaml";
+import objectives from "../../content/objectives.yaml";
 import { validateContent } from "./schema";
 import type { Character, Config, EnemyDef } from "./schema";
 
 const characters = import.meta.glob<unknown>("../../content/characters/*.yaml", { eager: true, import: "default" });
 const enemies = import.meta.glob<unknown>("../../content/enemies/*.yaml", { eager: true, import: "default" });
 
-export const CONTENT = validateContent({ config, characters, enemies, feel });
+export const CONTENT = validateContent({ config, characters, enemies, feel, controls, terrain, objectives });
 const C = CONTENT.config;
 
 const fillPct = (t: string) => (m: number) => t.replace("{pct}", String(Math.round(m * 100)));
@@ -29,3 +32,6 @@ export const ENEMY: Record<string, EnemyDef> = Object.fromEntries(C.enemyOrder.m
 export const BOSS = CONTENT.boss;
 export const ELS = Object.keys(EL);
 export const FEEL_DEFAULT = CONTENT.feel;
+export const CONTROLS = CONTENT.controls;
+export const TERRAIN = CONTENT.terrain;
+export const OBJECTIVES = CONTENT.objectives;

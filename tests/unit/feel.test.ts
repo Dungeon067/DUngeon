@@ -71,7 +71,7 @@ describe("dừng hình, chậm hình, rung", () => {
     expect(GS.G.shake).toBe(0);
     shake("burst");
     expect(GS.G.shake).toBe(0);
-    expect(JSON.parse(localStorage.getItem("tinhtu.feel.v1")!).shake).toBe(false);
+    expect(JSON.parse(localStorage.getItem("tinhtu-settings-v1")!).shake).toBe(false);
     expect(feelSettings.shake).toBe(false);
   });
 });

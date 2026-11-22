@@ -1,4 +1,5 @@
 import { GS } from "../core/state";
+import { beginLifted, drawShadow, drawWaves } from "./render-z";
 import { drawChibi } from "../art/chibi";
 import { drawBoss, drawEnemy } from "../art/enemy";
 import { drawBossTele, drawBossWorldUi, drawEnemyUi, drawTele, drawTurret } from "../art/props";
@@ -96,6 +97,7 @@ export function render() {
     }
     ctx.restore();
   }
+  drawWaves(ctx);
   // telegraphs
   for (const e of GS.G.enemies) {
     if (e.dead) continue;
@@ -173,6 +175,8 @@ export function render() {
     dr.push({
       y: p.y,
       f: () => {
+        drawShadow(ctx, p);
+        beginLifted(ctx, p);
         if (p.iframes > 0 && p.hurt > 0 && Math.floor(tm * 20) % 2) ctx.globalAlpha = 0.5;
         drawChibi(ctx, m.c, p.x, p.y, 1.12, {
           fx: p.fx,
@@ -181,6 +185,7 @@ export function render() {
           moving: p.moving,
           atk: p.atkAnim,
           t: tm,
+          noShadow: true,
         });
         ctx.globalAlpha = 1;
         if (p.shield > 0) {
@@ -198,6 +203,7 @@ export function render() {
         ctx.beginPath();
         ctx.ellipse(p.x, p.y, 15, 5, 0, 0, TAU);
         ctx.stroke();
+        ctx.restore();
       },
     });
   dr.sort((a, b) => a.y - b.y);

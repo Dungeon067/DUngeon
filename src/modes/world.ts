@@ -7,6 +7,7 @@ import { newSession } from "../entities/party";
 import { enterPlay, showBanner } from "../modes/session";
 import { Server } from "../server/server";
 import { buildHudParty } from "../ui/hud";
+import { lootFeed } from "../ui/hud/feed";
 import { exitToMenu, updateWallets } from "../ui/screens";
 import { toast } from "../ui/toast";
 import { blockedAt } from "../world/collision";
@@ -66,8 +67,10 @@ export function worldLogic(dt: number) {
   check((W.gate.x + 0.5) * TS, (W.gate.y + 0.8) * TS, "gate", 0, "Vào hang Hắc Giao");
   GS.G.interact = best;
   // passive statue heal
+  GS.G.healAura = false;
   for (const s of W.statues) {
     if (dist(p.x, p.y, (s.x + 0.5) * TS, (s.y + 0.9) * TS) < 90) {
+      GS.G.healAura = true;
       for (const m of GS.G.party) if (m.alive) m.hp = Math.min(m.maxHp, m.hp + m.maxHp * 0.25 * dt);
     }
   }
@@ -93,6 +96,9 @@ export function doInteract() {
       fxRing(it.x, it.y - 10, 60, "#f0c060", 0.5, 6);
       fxText(it.x, it.y - 44, `+${r.data.gems} Đá Sao`, "#7fc8ff", 18);
       fxText(it.x, it.y - 26, `+${fmt(r.data.coin)} Xu · +${r.data.books} Sách`, "#f0c060", 13);
+      lootFeed("gems", "Đá Sao", r.data.gems, "da-sao", "#7fc8ff");
+      lootFeed("coin", "Xu", r.data.coin, "xu", "#f0c060");
+      lootFeed("book", "Sách kinh nghiệm", r.data.books, "nang-cap", "#c9a6ff");
       updateWallets();
     }
   } else if (it.kind === "tower") {

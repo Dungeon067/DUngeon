@@ -7,14 +7,16 @@ import { fxBolt, fxBurst, fxParticles, fxRing, fxSlash, fxText, later } from "..
 import { cur } from "../entities/party";
 import { FEEL, charFx, feelState, hitstop, inputBuffer, shake } from "../combat/feel";
 import { Server } from "../server/server";
+import { canAirDash, tryJump, tryPlunge } from "./jump";
 
 /* ---------- đệm lệnh: bấm sớm trong FEEL.input.buffer giây vẫn được nhận ---------- */
-export type BufferedAct = "atk" | "skill" | "burst" | "dash";
+export type BufferedAct = "atk" | "skill" | "burst" | "dash" | "jump";
 const ACTS: Record<BufferedAct, () => boolean> = {
   atk: () => tryAttack(),
   skill: () => castSkill(),
   burst: () => castBurst(),
   dash: () => doDash(),
+  jump: () => tryJump(),
 };
 export function press(a: BufferedAct) {
   if (ACTS[a]()) inputBuffer[a] = 0;
@@ -32,7 +34,9 @@ export function updateBuffer(dt: number) {
 export function tryAttack(): boolean {
   const p = GS.G.p,
     m = cur();
-  if (!m || !m.alive || p.atkCd > 0 || p.dashT > 0 || GS.G.over || GS.G.cine) return false;
+  if (!m || !m.alive || GS.G.over || GS.G.cine) return false;
+  if (p.air) return tryPlunge();
+  if (p.atkCd > 0 || p.dashT > 0) return false;
   const W = WEAP[m.c.w];
   if (p.comboT <= 0) p.combo = 0;
   const step = p.combo;
@@ -92,8 +96,15 @@ export function tryAttack(): boolean {
 }
 export function doDash(): boolean {
   const p = GS.G.p;
-  if (p.dashT > 0 || p.stamina < 20 || GS.G.over || GS.G.cine) return false;
-  p.stamina -= 20;
+  if (p.dashT > 0 || GS.G.over || GS.G.cine) return false;
+  if (p.air) {
+    if (!canAirDash(p)) return false;
+    p.airDash = true;
+    p.stamina -= FEEL.jump.airDashStamina;
+  } else {
+    if (p.stamina < 20) return false;
+    p.stamina -= 20;
+  }
   if (FEEL.input.dashCancel) {
     // Lướt né hủy hoạt ảnh và thời gian chờ của đòn đánh; combo vẫn giữ để nối tiếp.
     p.atkAnim = 0;

@@ -12,6 +12,7 @@ skill:
   type: dash
   cd: 6
   m: 2.3
+  icon: kn-loidinh
 burst:
   name: Thiên Lôi Giáng Thế
   type: storm
