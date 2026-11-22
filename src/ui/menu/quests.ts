@@ -62,7 +62,7 @@ export const stepText = (s: Step & { n: number; max: number }) =>
 /** Nhiệm vụ đang theo dõi (cho HUD): chữ của bước hiện tại và điểm chỉ đường. */
 export function trackedObjective(): { text: string; target: string | null } | null {
   const id = Server.P.quests?.tracked;
-  const q = id && QUESTS.quests.find((x) => x.id === id);
+  const q = id && QUESTS.find((x) => x.id === id);
   if (!q) return null;
   const st = questState(q);
   if (st.done) return null;
@@ -73,7 +73,7 @@ export function trackedObjective(): { text: string; target: string | null } | nu
 /** Ghi nhận nhiệm vụ đã xong vào hồ sơ (gọi khi mở menu và sau mỗi lượt chơi). */
 export function syncQuests() {
   const P = Server.P;
-  for (const q of QUESTS.quests)
+  for (const q of QUESTS)
     if (!P.quests.done.includes(q.id) && questState(q).cur < 0) Server.req("completeQuest", { id: q.id });
 }
 

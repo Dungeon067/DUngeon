@@ -37,7 +37,7 @@ export interface Profile {
   pity4: number;
   guaranteed: boolean;
   history: { n: string; r: number; t: number }[];
-  chests: string[];
+  chests: number[];
   tower: Record<number, number>;
   boss: Record<number, number | boolean>;
   daily: Daily | null;

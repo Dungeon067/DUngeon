@@ -14,7 +14,7 @@ function render(host: HTMLElement) {
   syncQuests();
   host.classList.add("tt-menu-quests");
   const P = Server.P;
-  const all = QUESTS.quests.map((q) => ({ q, st: questState(q) }));
+  const all = QUESTS.map((q) => ({ q, st: questState(q) }));
   const list = all.filter((x) => (tab === "done" ? x.st.done : !x.st.done));
   const tl = tabs(
     [

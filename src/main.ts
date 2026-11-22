@@ -1,16 +1,14 @@
 import { GS } from "./core/state";
 import { portraitCache } from "./art/chibi";
 import { frame } from "./core/loop";
-import { $ } from "./core/util";
 import { Server } from "./server/server";
 import { init as initCanvas } from "./core/canvas";
 import { init as initInput } from "./core/input";
 import { init as initModal } from "./ui/modal";
-import { go, init as initScreens, renderHub } from "./ui/screens";
-import { init as initWish } from "./ui/wish";
-import { init as initAdmin } from "./ui/admin";
+import { exitToMenu } from "./ui/screens";
 import { initHud } from "./ui/hud";
-import { initBigMap } from "./ui/hud/map";
+import { initMenuShell } from "./ui/menu/shell";
+import "./ui/menu/screens";
 import { initLayoutEditor } from "./ui/hud/layout";
 import { initRotate } from "./ui/hud/rotate";
 import { initHints } from "./ui/hud/hints";
@@ -22,15 +20,12 @@ import { applyDocumentSettings } from "./core/settings";
 function start(data: any) {
   Server.load();
   if (data && data.P) Server.P = data.P;
-  go("hub");
+  // Không còn sảnh (S10): vào thẳng Đảo Lạc, mọi màn quản lý là lớp phủ menu.
+  exitToMenu();
   requestAnimationFrame(frame);
   if (document.fonts)
     document.fonts.ready.then(() => {
       for (const k in portraitCache) delete portraitCache[k];
-      if (GS.scene === "menu") {
-        const vis = [...document.querySelectorAll(".screen")].find((s: any) => !s.hidden);
-        if (vis === $("sHub")) renderHub();
-      }
     });
 }
 
@@ -39,14 +34,11 @@ applyDocumentSettings();
 initCanvas();
 initHud();
 initInput();
-initBigMap();
 initLayoutEditor();
 initRotate();
 initHints();
 initModal();
-initScreens();
-initWish();
-initAdmin();
+initMenuShell();
 if (import.meta.env.DEV || new URLSearchParams(location.search).has("dev"))
   void import("./dev/tuning").then((m) => m.initTuning());
 window.claude?.hot?.snapshot?.(() => ({ P: Server.P }));

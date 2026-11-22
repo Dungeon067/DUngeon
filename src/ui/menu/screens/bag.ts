@@ -43,7 +43,7 @@ function render(host: HTMLElement) {
   const sorter = h("div", { class: "tt-row", role: "group", "aria-label": "Sắp xếp" }, [
     h("span", { class: "tt-dim" }, ["Sắp xếp:"]),
     ...SORTS.map(([k, l]) => {
-      const b = button(l, { variant: sort === k ? "primary" : "ghost", size: "sm" });
+      const b = button(l, { variant: sort === k ? "primary" : "ghost" });
       b.setAttribute("aria-pressed", String(sort === k));
       b.addEventListener("click", () => ((sort = k), rerender()));
       return b;

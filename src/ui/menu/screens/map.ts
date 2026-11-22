@@ -4,7 +4,6 @@ import { MENU } from "../../../data/menu-content";
 import { FOG, FOG_N, Server } from "../../../server/server";
 import { MH, MW, TS } from "../../../world/map";
 import { button, h, toast } from "../../ds";
-import { icon } from "../../icons/icons";
 import { anchorXY, seen } from "../anchor";
 import { inCombat } from "../logic";
 import { trackedObjective } from "../quests";
@@ -77,7 +76,10 @@ function targetXY(t: string): [number, number] | null {
     bd = Infinity;
   for (const s of list) {
     const d = Math.hypot(s.x - p[0]!, s.y - p[1]!);
-    if (d < bd) ((bd = d), (best = s));
+    if (d < bd) {
+      bd = d;
+      best = s;
+    }
   }
   return best ? [best.x + 0.5, best.y + 0.5] : null;
 }
@@ -162,7 +164,10 @@ function pick(tx: number, ty: number) {
     bd = R;
   for (const p of pois()) {
     const d = Math.hypot(p.x - tx, p.y - ty);
-    if (d < bd) ((bd = d), (best = p));
+    if (d < bd) {
+      bd = d;
+      best = p;
+    }
   }
   const M = GS.G?.map ?? GS.WORLD;
   sel = best ?? (M && seen(Server.P.fog, tx, ty) ? { kind: "point", x: tx, y: ty, name: "Vùng đã khám phá" } : { kind: "point", x: tx, y: ty, name: "Vùng chưa khám phá" });
@@ -179,7 +184,10 @@ export function fastTravel(i: number) {
   G.p.y = (s.y + 2.5) * TS;
   G.p.vx = G.p.vy = 0;
   G.respawn = { x: G.p.x, y: G.p.y };
-  G.cam && ((G.cam.x = G.p.x), (G.cam.y = G.p.y));
+  if (G.cam) {
+    G.cam.x = G.p.x;
+    G.cam.y = G.p.y;
+  }
   closeMenu();
   toast(`Đã dịch chuyển tới Bia Đá ${i + 1}`, "ok");
   return true;

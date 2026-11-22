@@ -81,7 +81,7 @@ export function codexEntries(cat: string, P: any = Server.P): Entry[] {
 }
 
 let cat = "creatures";
-let sel: Record<string, string> = {};
+const sel: Record<string, string> = {};
 const CATS = [
   { id: "creatures", label: "Sinh vật", icon: "danh" },
   { id: "chars", label: "Nhân vật", icon: "nhan-vat" },

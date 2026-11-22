@@ -17,6 +17,7 @@ import { fxText } from "../entities/fx";
 import { cur } from "../entities/party";
 import { towerLogic } from "../modes/tower";
 import { worldLogic } from "../modes/world";
+import { affinityTick } from "../ui/menu/progress";
 import { Server } from "../server/server";
 import { updateHud } from "../ui/hud";
 import { lootFeed } from "../ui/hud/feed";
@@ -324,7 +325,10 @@ export function update(dt: number) {
   GS.G.texts = GS.G.texts.filter((t: any) => t.life > 0);
   if (GS.G.banner.t > 0) GS.G.banner.t -= dt;
   // mode logic
-  if (GS.G.mode === "world") worldLogic(dt);
+  if (GS.G.mode === "world") {
+    worldLogic(dt);
+    affinityTick(dt);
+  }
   if (GS.G.mode === "tower") towerLogic(dt);
   // camera
   const ct = cameraTarget(dt),
