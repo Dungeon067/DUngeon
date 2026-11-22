@@ -75,6 +75,6 @@ describe("Ước nguyện", () => {
     expect(res.data).toHaveLength(10);
     expect(Server.P.gems).toBe(0);
     expect(Server.P.history).toHaveLength(10);
-    expect(CHARS.length).toBe(12);
+    expect(CHARS.length).toBe(18);
   });
 });

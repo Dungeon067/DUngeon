@@ -1,0 +1,28 @@
+id: takane
+name: Takane
+r: 5
+el: wind
+w: spear
+title: Người Canh Tuyết Lở
+desc: Người canh tuyết của Họ Chuông ở Shizukane. Dùng gió đẩy tuyết đổ xuống trước khi tuyết kịp sạt vào làng.
+hp: 1020
+atk: 130
+skill:
+  name: Gió Lở Núi
+  type: dash
+  cd: 7
+  m: 2.5
+burst:
+  name: Oroshi Đổ Đèo
+  type: blizzard
+  cost: 60
+  m: 0.9
+look:
+  hair: "#c9d3dc"
+  style: long
+  outfit: "#2e3a59"
+  accent: "#5fe0c0"
+  skin: "#f1dccb"
+  eye: "#3fc9a6"
+  coat: true
+  pants: "#4a5568"

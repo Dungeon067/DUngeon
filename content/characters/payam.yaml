@@ -1,0 +1,28 @@
+id: payam
+name: Payam
+r: 4
+el: earth
+w: great
+title: Người Đào Mạch Nước
+desc: Thợ đào kênh ngầm ở Golbaran, nghe được tiếng nước qua ba mươi bước đất. Lao xuyên lòng đất như mạch nước tìm đường.
+hp: 980
+atk: 90
+skill:
+  name: Mạch Ngầm Xuyên
+  type: dash
+  cd: 7
+  m: 2.1
+burst:
+  name: Giếng Sâu Sập Đất
+  type: meteor
+  cost: 50
+  m: 5
+look:
+  hair: "#231a14"
+  style: short
+  outfit: "#a64b2a"
+  accent: "#d9a441"
+  skin: "#c48a5f"
+  eye: "#c98a2b"
+  coat: false
+  pants: "#4a3a2c"

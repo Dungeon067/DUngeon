@@ -1,0 +1,28 @@
+id: kumi
+name: Kumi
+r: 4
+el: water
+w: sword
+title: Người Gánh Nước Rạng Đông
+desc: Người gánh nước suối cho nhà trà của Họ Trà ở Shizukane. Lưỡi kiếm giấu trong đòn gánh, nước suối theo từng nhát chém.
+hp: 880
+atk: 88
+skill:
+  name: Gợn Suối Tròn
+  type: nova
+  cd: 8
+  m: 2.0
+burst:
+  name: Suối Sớm Tràn Bờ
+  type: tide
+  cost: 50
+  m: 3.2
+look:
+  hair: "#5b3a29"
+  style: bob
+  outfit: "#3f7fa8"
+  accent: "#e6c6d6"
+  skin: "#f7e0cf"
+  eye: "#4aa3d8"
+  coat: false
+  pants: "#2e3a59"

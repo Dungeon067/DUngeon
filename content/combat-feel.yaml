@@ -104,6 +104,12 @@ characters:
   minhkhai: { c: "#c58bff", c2: "#fff4b8", particle: spark, trail: arc }
   ngocthach: { c: "#7fd38a", c2: "#f4ffd8", particle: shard, trail: thrust }
   havy: { c: "#b5ecff", c2: "#ffffff", particle: snow, trail: arc }
+  nghienthu: { c: "#4fb6e8", c2: "#f3e2b0", particle: drop, trail: crescent }
+  khoiyen: { c: "#ff6b2e", c2: "#ffd98a", particle: ember, trail: arc }
+  takane: { c: "#5fe0c0", c2: "#f2fbff", particle: snow, trail: thrust }
+  kumi: { c: "#4aa8e0", c2: "#e8f6ff", particle: drop, trail: arc }
+  golnar: { c: "#9fe8ff", c2: "#ffe0e6", particle: snow, trail: crescent }
+  payam: { c: "#d9a441", c2: "#fff0c8", particle: shard, trail: heavy }
 
 # Nhảy và độ cao (S09). Một "bậc" là độ cao của một bệ đá, vẽ cao levelPx điểm ảnh.
 jump:
