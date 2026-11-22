@@ -1,5 +1,6 @@
 import { GS } from "../core/state";
 import { FEEL } from "../combat/feel";
+import { settings } from "./settings";
 
 /* =========================================================
    ÂM THANH: bộ trộn gồm kênh hiệu ứng và kênh nhạc, qua bộ nén chung.
@@ -37,8 +38,8 @@ export function audioCtx(): AudioContext | null {
 }
 export function applyVolumes() {
   if (!GS.AC) return;
-  mixer.sfx!.gain.value = FEEL.audio.sfx;
-  mixer.music!.gain.value = FEEL.audio.music;
+  mixer.sfx!.gain.value = FEEL.audio.sfx * settings.master * settings.sfx;
+  mixer.music!.gain.value = FEEL.audio.music * settings.master * settings.music;
 }
 
 /* ---------- mẫu âm thanh ---------- */

@@ -1,0 +1,29 @@
+# Mục tiêu hiện trên HUD, ngay dưới bản đồ nhỏ (S09).
+# Trên đảo: hiện mục đầu tiên chưa xong theo thứ tự. {n} và {max} thay bằng tiến độ.
+# done.kind: statue (chạm Bia Đá trong lượt chơi này), chests (số rương đã mở),
+#            tower (số tầng Tháp đã vượt), boss (đã thắng Hắc Giao ít nhất một lần).
+# done.count: số cần đạt; "all" nghĩa là toàn bộ (chỉ dùng cho chests).
+# target: điểm được đánh dấu trên bản đồ nhỏ: statue | chest | tower | gate.
+world:
+  - id: bia-da
+    text: Chạm Bia Đá gần nơi xuất phát để hồi phục và lưu điểm hồi sinh
+    done: { kind: statue, count: 1 }
+    target: statue
+  - id: ruong-dau
+    text: "Tìm và mở rương báu trên đảo ({n}/{max})"
+    done: { kind: chests, count: 3 }
+    target: chest
+  - id: thap
+    text: Vào cổng Tháp Tinh Tú và vượt tầng 1
+    done: { kind: tower, count: 1 }
+    target: tower
+  - id: hac-giao
+    text: Tìm hang Hắc Giao và đánh bại ác long
+    done: { kind: boss, count: 1 }
+    target: gate
+  - id: kham-pha
+    text: "Khám phá khắp Đảo Lạc ({n}/{max} rương)"
+    done: { kind: chests, count: all }
+    target: chest
+tower: "Tháp Tinh Tú · Tầng {floor}: hạ hết các đợt quái trước khi hết giờ"
+boss: Đánh bại Hắc Giao. Nhảy để né sóng xung kích khi nó lao tới

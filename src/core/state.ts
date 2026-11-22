@@ -17,6 +17,9 @@ export const GS = {
   holdDash: false,
   lastSync: 0,
   hudCache: {} as Record<string, any>,
+  mouse: { sx: 0, sy: 0, wx: 0, wy: 0, inside: false },
+  /** Lớp giao diện đang mở trên game (bản đồ lớn, cài đặt, chỉnh bố cục); game tạm dừng. */
+  overlay: null as null | string,
   isTouch: matchMedia("(pointer: coarse)").matches,
   lastT: performance.now(),
   selChar: null as string | null,

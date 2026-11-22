@@ -9,6 +9,12 @@ import { init as initModal } from "./ui/modal";
 import { go, init as initScreens, renderHub } from "./ui/screens";
 import { init as initWish } from "./ui/wish";
 import { init as initAdmin } from "./ui/admin";
+import { initHud } from "./ui/hud";
+import { initBigMap } from "./ui/hud/map";
+import { initLayoutEditor } from "./ui/hud/layout";
+import { initRotate } from "./ui/hud/rotate";
+import { initHints } from "./ui/hud/hints";
+import { applyDocumentSettings } from "./core/settings";
 
 /* =========================================================
    BOOT
@@ -29,8 +35,14 @@ function start(data: any) {
 }
 
 // Thứ tự khởi tạo giữ đúng thứ tự chạy trong bản một file.
+applyDocumentSettings();
 initCanvas();
+initHud();
 initInput();
+initBigMap();
+initLayoutEditor();
+initRotate();
+initHints();
 initModal();
 initScreens();
 initWish();

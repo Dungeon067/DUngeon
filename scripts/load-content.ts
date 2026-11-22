@@ -18,5 +18,8 @@ export function loadRawContent(): RawContent {
     characters: readDir("content/characters"),
     enemies: readDir("content/enemies"),
     feel: parse(readFileSync(join(ROOT, "content/combat-feel.yaml"), "utf8")),
+    controls: parse(readFileSync(join(ROOT, "content/controls.yaml"), "utf8")),
+    terrain: parse(readFileSync(join(ROOT, "content/terrain.yaml"), "utf8")),
+    objectives: parse(readFileSync(join(ROOT, "content/objectives.yaml"), "utf8")),
   };
 }

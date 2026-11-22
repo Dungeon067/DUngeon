@@ -104,3 +104,23 @@ characters:
   minhkhai: { c: "#c58bff", c2: "#fff4b8", particle: spark, trail: arc }
   ngocthach: { c: "#7fd38a", c2: "#f4ffd8", particle: shard, trail: thrust }
   havy: { c: "#b5ecff", c2: "#ffffff", particle: snow, trail: arc }
+
+# Nhảy và độ cao (S09). Một "bậc" là độ cao của một bệ đá, vẽ cao levelPx điểm ảnh.
+jump:
+  dur: 0.55 # giây trên không khi nhảy tại chỗ trên mặt phẳng
+  height: 1.25 # đỉnh nhảy, đơn vị bậc: đủ lên gờ một bậc
+  levelPx: 22
+  stamina: 0 # nhảy không tốn thể lực
+  airControl: 0.35 # 0 = không đổi hướng được trên không, 1 = như dưới đất
+  longJump: 1.8 # nhảy khi đang lướt: quãng bay gấp ngần này nhảy thường
+  airDashStamina: 20 # lướt trên không một lần mỗi lần nhảy
+  dodgeHeight: 0.35 # cao hơn mức này (bậc) thì né được đòn sát đất
+  plunge:
+    base: 1.2 # đòn lao xuống: 120% sát thương đánh thường
+    perLevel: 0.4 # cộng 40% cho mỗi bậc độ cao
+    radius: 78
+    speed: 9 # bậc mỗi giây khi lao xuống
+  fall:
+    safeLevels: 1 # rơi tối đa 1 bậc không mất máu; từ 2 bậc trở lên mới mất
+    dmgPerLevel: 0.08 # phần máu tối đa mất cho mỗi bậc vượt
+    landAnim: 0.22

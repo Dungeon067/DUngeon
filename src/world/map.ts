@@ -1,4 +1,11 @@
 import { fbm, hash2 } from "../core/util";
+import { TERRAIN } from "../data/content";
+
+const terrainIndex = (id: string) =>
+  Math.max(
+    0,
+    TERRAIN.terrains.findIndex((t) => t.id === id),
+  );
 
 /* =========================================================
    WORLD GENERATION
@@ -6,8 +13,59 @@ import { fbm, hash2 } from "../core/util";
 export const TS = 40,
   MW = 110,
   MH = 110;
-export const TL = { GRASS: 0, WATER: 1, TREE: 2, ROCK: 3, PATH: 4, SAND: 5, FLOWER: 6, DEEP: 7, BRIDGE: 8 };
-export const SOLID = [false, true, true, true, false, false, false, true, false];
+export const TL = { GRASS: 0, WATER: 1, TREE: 2, ROCK: 3, PATH: 4, SAND: 5, FLOWER: 6, DEEP: 7, BRIDGE: 8, LEDGE: 9 };
+/** Chặn đi bộ ở mặt đất (độ cao 0). Đá và bệ đá chặn vì cao hơn mặt đất; nhảy thì vượt được. */
+export const SOLID = [false, true, true, true, false, false, false, true, false, true];
+/** Ô nhảy qua được khi đang trên không nhưng không đứng được (nước). */
+export const GAP = [false, true, false, false, false, false, false, true, false, false];
+/** Độ cao mặc định của từng loại ô, đơn vị bậc. Cây cao 4 bậc nên không nhảy qua. */
+export const TILE_H = [0, 0, 4, 1, 0, 0, 0, 0, 0, 1];
+/** Loại địa hình mặc định của từng loại ô, theo id trong content/terrain.yaml. */
+export const TILE_TERRAIN = ["co", "nuoc-sau", "co", "da", "dat", "cat", "co", "nuoc-sau", "dat", "da"];
+
+export interface Ledge {
+  /** Ô cao hơn. */
+  x: number;
+  y: number;
+  /** Mép nào của ô cao: n, s, e, w. */
+  side: "n" | "s" | "e" | "w";
+  /** Chênh lệch độ cao, bậc. */
+  drop: number;
+}
+/** Liệt kê mọi gờ (mép ô cao hơn ô bên cạnh) từ lớp độ cao. */
+export function computeLedges(h: Uint8Array, m: Uint8Array): Ledge[] {
+  const out: Ledge[] = [];
+  const dirs = [
+    ["n", 0, -1],
+    ["s", 0, 1],
+    ["e", 1, 0],
+    ["w", -1, 0],
+  ] as const;
+  for (let y = 1; y < MH - 1; y++)
+    for (let x = 1; x < MW - 1; x++) {
+      const i = y * MW + x;
+      if (!h[i] || m[i] === TL.TREE) continue;
+      for (const [side, dx, dy] of dirs) {
+        const j = (y + dy) * MW + x + dx;
+        if (m[j] === TL.TREE) continue;
+        const drop = h[i]! - h[j]!;
+        if (drop > 0) out.push({ x, y, side, drop });
+      }
+    }
+  return out;
+}
+
+/**
+ * Bệ đá và gờ quanh điểm xuất phát để luyện nhảy (S09). Vị trí cố định, không dùng chung
+ * bộ số ngẫu nhiên với phần sinh đảo nên trại quái, rương, đường đi giữ nguyên.
+ */
+export const START_LEDGES: { dx: number; dy: number; w: number; hgt: number; h: number }[] = [
+  { dx: -6, dy: -4, w: 4, hgt: 3, h: 1 },
+  { dx: -6, dy: -6, w: 2, hgt: 2, h: 2 },
+  { dx: -4, dy: 2, w: 1, hgt: 1, h: 1 },
+  { dx: -2, dy: 3, w: 1, hgt: 1, h: 1 },
+];
+export const START_GAP = { dx: -2, dy: 4, len: 3 };
 export function genWorld() {
   const m = new Uint8Array(MW * MH),
     cx = MW / 2,
@@ -126,6 +184,30 @@ export function genWorld() {
     if (!far(p, chests, 7) || !far(p, allPoi, 3)) continue;
     chests.push(p);
   }
+  // độ cao, địa hình, vùng (S09; định dạng ở docs/world/dinh-dang-ban-do.md)
+  const keep = (t: number) => t !== TL.PATH && t !== TL.BRIDGE;
+  for (const L of START_LEDGES)
+    for (let y = 0; y < L.hgt; y++)
+      for (let x = 0; x < L.w; x++) {
+        const i = (cy + L.dy + y) * MW + cx + L.dx + x;
+        if (keep(m[i]!)) m[i] = L.w * L.hgt === 1 ? TL.ROCK : TL.LEDGE;
+      }
+  for (let k = 0; k < START_GAP.len; k++) {
+    const i = (cy + START_GAP.dy + k) * MW + cx + START_GAP.dx;
+    if (keep(m[i]!)) m[i] = TL.WATER;
+  }
+  const h = new Uint8Array(MW * MH),
+    terrain = new Uint8Array(MW * MH),
+    region = new Uint8Array(MW * MH);
+  for (let i = 0; i < MW * MH; i++) h[i] = TILE_H[m[i]!]!;
+  for (const L of START_LEDGES)
+    for (let y = 0; y < L.hgt; y++)
+      for (let x = 0; x < L.w; x++) {
+        const i = (cy + L.dy + y) * MW + cx + L.dx + x;
+        if (m[i] === TL.LEDGE || m[i] === TL.ROCK) h[i] = L.h;
+      }
+  for (let i = 0; i < MW * MH; i++) terrain[i] = terrainIndex(TILE_TERRAIN[m[i]!]!);
+  const ledges = computeLedges(h, m);
   // minimap
   const mini = document.createElement("canvas");
   mini.width = MW;
@@ -142,6 +224,7 @@ export function genWorld() {
     6: [80, 140, 90],
     7: [30, 80, 140],
     8: [150, 110, 70],
+    9: [150, 146, 134],
   };
   for (let i = 0; i < MW * MH; i++) {
     const c = MC[m[i]];
@@ -151,5 +234,5 @@ export function genWorld() {
     id.data[i * 4 + 3] = 255;
   }
   mc.putImageData(id, 0, 0);
-  return { m, statues, tower, gate, camps, chests, mini, cx, cy };
+  return { m, h, terrain, region, ledges, statues, tower, gate, camps, chests, mini, cx, cy };
 }

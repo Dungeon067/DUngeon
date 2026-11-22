@@ -1,10 +1,10 @@
+import { openSettings } from "./settings";
 import { GS } from "../core/state";
 import { flushPending } from "../core/loop";
 import { $ } from "../core/util";
 import { startBoss } from "../modes/boss";
 import { startTower } from "../modes/tower";
 import { exitToMenu } from "../ui/screens";
-import { feelSettings, setShakeEnabled } from "../combat/feel";
 
 export function pause() {
   if (!GS.G || GS.G._ended) return;
@@ -12,7 +12,7 @@ export function pause() {
   flushPending();
   const extra = GS.G.mode === "world" ? `<button class="btn" data-act="tochars">Đổi đội hình</button>` : "";
   openModal(
-    `<h3>Tạm dừng</h3><p class="muted">${GS.G.mode === "world" ? "Tiến trình rương đã được lưu. Quái sẽ xuất hiện lại khi bạn quay lại đảo." : "Rời trận bây giờ sẽ không nhận được phần thưởng."}</p><div class="row"><button class="btn gold" data-act="resume">Tiếp tục</button>${extra}<button class="btn" data-act="menu">Về sảnh</button></div><p class="muted"><label><input type="checkbox" data-act="shake"${feelSettings.shake ? " checked" : ""}> Rung màn hình khi đánh</label></p>`,
+    `<h3>Tạm dừng</h3><p class="muted">${GS.G.mode === "world" ? "Tiến trình rương đã được lưu. Quái sẽ xuất hiện lại khi bạn quay lại đảo." : "Rời trận bây giờ sẽ không nhận được phần thưởng."}</p><div class="row"><button class="btn gold" data-act="resume">Tiếp tục</button>${extra}<button class="btn" data-act="settings">Cài đặt</button><button class="btn" data-act="menu">Về sảnh</button></div>`,
   );
 }
 export function resume() {
@@ -33,7 +33,7 @@ export function init(): void {
     const a = e.target.closest("[data-act]");
     if (!a) return;
     const act = a.dataset.act;
-    if (act === "shake") setShakeEnabled(a.checked);
+    if (act === "settings") openSettings();
     else if (act === "resume") resume();
     else if (act === "menu") {
       closeModal();
