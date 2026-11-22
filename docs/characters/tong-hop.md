@@ -95,3 +95,7 @@ Mỗi vùng mới có 2 nhân vật mới (tính cả nhân vật cũ thì mỗi
 | Hồi máu          | Thủy Nguyệt, Golnar                                                               | 2    |
 | Bảo hộ           | Thạch Sơn, Duri                                                                   | 2    |
 | Gom quái         | Bạch Vũ, Nghiên Thu, Pruina                                                       | 3    |
+
+## 3. Câu hỏi mở
+
+- **Hệ Mộc cho Purunae (chờ chủ dự án trả lời):** Purunae là vùng Mộc theo thiết lập thế giới, nhưng game chưa có Mộc nên Jang Duri dùng Thổ và Na Urae dùng Lôi. Khi game thêm Mộc, có đổi nguyên tố của hai nhân vật này không, hay giữ nguyên rồi thêm nhân vật Mộc mới (dự kiến một 5★)?
