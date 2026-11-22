@@ -4,27 +4,71 @@
 "use strict";
 const OUT = "../out/";
 const $ = (id) => document.getElementById(id);
-const vid = $("vid"), ov = $("overlay"), rv = $("reveal"), info = $("info");
-const ctx = ov.getContext("2d"), rctx = rv.getContext("2d");
+const vid = $("vid"),
+  ov = $("overlay"),
+  rv = $("reveal"),
+  info = $("info");
+const ctx = ov.getContext("2d"),
+  rctx = rv.getContext("2d");
 const params = new URLSearchParams(location.search);
 
 // Example banner constellation: "Cánh Lạc" (a Lạc bird in flight). Points are in units of the overlay scale.
 const CONSTELLATION = {
-  stars: [[-1.0, 0.1], [-0.62, -0.18], [-0.25, -0.3], [0.0, -0.05], [0.28, -0.32], [0.66, -0.2], [1.0, 0.08],
-          [0.0, 0.32], [-0.12, 0.62], [0.14, 0.62]],
-  lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [3, 7], [7, 8], [7, 9]],
+  stars: [
+    [-1.0, 0.1],
+    [-0.62, -0.18],
+    [-0.25, -0.3],
+    [0.0, -0.05],
+    [0.28, -0.32],
+    [0.66, -0.2],
+    [1.0, 0.08],
+    [0.0, 0.32],
+    [-0.12, 0.62],
+    [0.14, 0.62],
+  ],
+  lines: [
+    [0, 1],
+    [1, 2],
+    [2, 3],
+    [3, 4],
+    [4, 5],
+    [5, 6],
+    [3, 7],
+    [7, 8],
+    [7, 9],
+  ],
   color: "#ffe6a8",
 };
 const HEROES = {
-  5: [["Lạc Hồng", "Hỏa"], ["Thủy Nguyệt", "Thủy"], ["Phong Vân", "Phong"]],
-  4: [["Mai Linh", "Hỏa"], ["Sương Mai", "Thủy"], ["Minh Khải", "Lôi"]],
-  3: [["Kiếm Sắt", ""], ["Cung Gỗ", ""]],
+  5: [
+    ["Lạc Hồng", "Hỏa"],
+    ["Thủy Nguyệt", "Thủy"],
+    ["Phong Vân", "Phong"],
+  ],
+  4: [
+    ["Mai Linh", "Hỏa"],
+    ["Sương Mai", "Thủy"],
+    ["Minh Khải", "Lôi"],
+  ],
+  3: [
+    ["Kiếm Sắt", ""],
+    ["Cung Gỗ", ""],
+  ],
 };
 const RC = { 3: "#6fb6ff", 4: "#b98cff", 5: "#ffcf5a" };
 
 const state = {
-  tl: null, mode: params.get("mode") || "auto", wishes: 0, playing: false, variant: null,
-  audio: null, fps: [], fallbackReason: null, fastForward: false, revealT: 0, result: null,
+  tl: null,
+  mode: params.get("mode") || "auto",
+  wishes: 0,
+  playing: false,
+  variant: null,
+  audio: null,
+  fps: [],
+  fallbackReason: null,
+  fastForward: false,
+  revealT: 0,
+  result: null,
 };
 window.__cine = state;
 
@@ -36,23 +80,31 @@ function pickHeight() {
 
 function weakDevice() {
   if (params.get("fallback") === "1") return "đã yêu cầu bằng ?fallback=1";
-  const mem = navigator.deviceMemory, cores = navigator.hardwareConcurrency;
+  const mem = navigator.deviceMemory,
+    cores = navigator.hardwareConcurrency;
   if (mem && mem < 2) return "máy ít bộ nhớ";
   if (cores && cores < 2) return "máy ít nhân";
-  if (!vid.canPlayType('video/webm; codecs="vp9"') && !vid.canPlayType('video/mp4; codecs="avc1.640028"')) return "không phát được video";
+  if (!vid.canPlayType('video/webm; codecs="vp9"') && !vid.canPlayType('video/mp4; codecs="avc1.640028"'))
+    return "không phát được video";
   return null;
 }
 
 function resize() {
   const d = Math.min(2, devicePixelRatio || 1);
-  for (const c of [ov, rv]) { c.width = Math.round(innerWidth * d); c.height = Math.round(innerHeight * d); }
+  for (const c of [ov, rv]) {
+    c.width = Math.round(innerWidth * d);
+    c.height = Math.round(innerHeight * d);
+  }
 }
 addEventListener("resize", resize);
 
 // video frame (0..1) -> overlay pixels, matching object-fit: cover
 function toScreen(x, y) {
-  const W = ov.width, H = ov.height, s = Math.max(W / 16, H / 9);
-  const vw = 16 * s, vh = 9 * s;
+  const W = ov.width,
+    H = ov.height,
+    s = Math.max(W / 16, H / 9);
+  const vw = 16 * s,
+    vh = 9 * s;
   return [(W - vw) / 2 + x * vw, (H - vh) / 2 + y * vh, vh];
 }
 
@@ -102,7 +154,9 @@ function drawConstellation(t) {
     g.addColorStop(1, "rgba(255,200,90,0)");
     ctx.globalAlpha = on * fade;
     ctx.fillStyle = g;
-    ctx.beginPath(); ctx.arc(x, y, r * 4, 0, 7); ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x, y, r * 4, 0, 7);
+    ctx.fill();
   });
   ctx.restore();
 }
@@ -114,7 +168,8 @@ function loadVariant(name) {
   const types = { webm: 'video/webm; codecs="vp9"', mp4: 'video/mp4; codecs="avc1.640028"' };
   for (const src of v.video[h]) {
     const s = document.createElement("source");
-    s.src = OUT + src; s.type = types[src.split(".").pop()];
+    s.src = OUT + src;
+    s.type = types[src.split(".").pop()];
     vid.appendChild(s);
   }
   vid.load();
@@ -150,7 +205,11 @@ function variantFor(multi) {
 function waitReady(timeoutMs) {
   return new Promise((res) => {
     if (vid.readyState >= 3) return res(true);
-    const done = (ok) => { clearTimeout(tm); vid.oncanplay = vid.onerror = null; res(ok); };
+    const done = (ok) => {
+      clearTimeout(tm);
+      vid.oncanplay = vid.onerror = null;
+      res(ok);
+    };
     const tm = setTimeout(() => done(false), timeoutMs);
     vid.oncanplay = () => done(true);
     vid.onerror = () => done(false);
@@ -162,6 +221,7 @@ function waitReady(timeoutMs) {
 async function wish(multi) {
   if (state.playing) return;
   state.wishes++;
+  if (!state.tl) return playFallback(multi, multi ? 4 : 3, "không đọc được timeline.json");
   const name = variantFor(multi);
   state.variant = name;
   const rarity = state.tl.variants[name].rarity;
@@ -178,10 +238,16 @@ async function wish(multi) {
   vid.currentTime = 0;
   vid.playbackRate = 1;
   state.audio.currentTime = 0;
-  try { await vid.play(); } catch (e) { return playFallback(multi, rarity, "trình duyệt chặn phát video"); }
+  try {
+    await vid.play();
+  } catch (e) {
+    return playFallback(multi, rarity, "trình duyệt chặn phát video");
+  }
   state.audio.play().catch(() => {});
   vid.onended = () => startReveal();
-  vid.onerror = () => { if (state.playing) playFallback(multi, rarity, "video lỗi khi phát"); };
+  vid.onerror = () => {
+    if (state.playing) playFallback(multi, rarity, "video lỗi khi phát");
+  };
   requestAnimationFrame(tick);
 }
 
@@ -194,7 +260,10 @@ function tick(now) {
   const t = vid.currentTime;
   const ffu = state.tl.fastForward.until;
   const rate = state.fastForward && t < ffu ? state.tl.fastForward.rate : 1;
-  if (vid.playbackRate !== rate) { vid.playbackRate = rate; state.audio.playbackRate = rate; }
+  if (vid.playbackRate !== rate) {
+    vid.playbackRate = rate;
+    state.audio.playbackRate = rate;
+  }
   const a = state.audio;
   if (a && !a.paused && Math.abs(a.currentTime - t) > 0.12) a.currentTime = t;
   drawConstellation(t);
@@ -204,7 +273,8 @@ function tick(now) {
 }
 
 function stopVideo() {
-  vid.pause(); vid.onended = null;
+  vid.pause();
+  vid.onended = null;
   ctx.clearRect(0, 0, ov.width, ov.height);
 }
 
@@ -222,29 +292,44 @@ function startReveal() {
   stopVideo();
   state.playing = false;
   state.revealing = true;
-  $("skip").hidden = true; $("ff").hidden = true;
+  $("skip").hidden = true;
+  $("ff").hidden = true;
   rv.hidden = false;
   const t0 = performance.now();
   const col = RC[state.result.rarity];
   const draw = (now) => {
     const t = (now - t0) / 1000;
-    const W = rv.width, H = rv.height;
-    rctx.fillStyle = "#070b1c"; rctx.fillRect(0, 0, W, H);
+    const W = rv.width,
+      H = rv.height;
+    rctx.fillStyle = "#070b1c";
+    rctx.fillRect(0, 0, W, H);
     const g = rctx.createRadialGradient(W * 0.38, H * 0.55, 0, W * 0.38, H * 0.55, H * 0.8);
-    g.addColorStop(0, col + "55"); g.addColorStop(1, "#070b1c00");
-    rctx.fillStyle = g; rctx.fillRect(0, 0, W, H);
-    const cx = W * 0.38, base = H * 0.95, h = H * 0.78;
+    g.addColorStop(0, col + "55");
+    g.addColorStop(1, "#070b1c00");
+    rctx.fillStyle = g;
+    rctx.fillRect(0, 0, W, H);
+    const cx = W * 0.38,
+      base = H * 0.95,
+      h = H * 0.78;
     const rise = Math.min(1, Math.max(0, (t - 0.5) / 1.0));
     rctx.save();
     silhouettePath(rctx, cx, base, h);
     rctx.clip();
-    rctx.fillStyle = "#05060c"; rctx.fillRect(0, 0, W, H);
+    rctx.fillStyle = "#05060c";
+    rctx.fillRect(0, 0, W, H);
     const lg = rctx.createLinearGradient(0, base, 0, base - h);
-    lg.addColorStop(0, col); lg.addColorStop(Math.max(0.001, rise), col + "cc"); lg.addColorStop(Math.min(1, rise + 0.08), "#05060c");
-    rctx.fillStyle = lg; rctx.fillRect(0, 0, W, H);
+    lg.addColorStop(0, col);
+    lg.addColorStop(Math.max(0.001, rise), col + "cc");
+    lg.addColorStop(Math.min(1, rise + 0.08), "#05060c");
+    rctx.fillStyle = lg;
+    rctx.fillRect(0, 0, W, H);
     rctx.restore();
     silhouettePath(rctx, cx, base, h);
-    rctx.strokeStyle = col; rctx.lineWidth = Math.max(2, H / 300); rctx.shadowColor = col; rctx.shadowBlur = H / 40; rctx.stroke();
+    rctx.strokeStyle = col;
+    rctx.lineWidth = Math.max(2, H / 300);
+    rctx.shadowColor = col;
+    rctx.shadowBlur = H / 40;
+    rctx.stroke();
     rctx.shadowBlur = 0;
     if (t > 1.2) {
       const a = Math.min(1, (t - 1.2) / 0.5);
@@ -257,7 +342,8 @@ function startReveal() {
       rctx.fillText("★".repeat(state.result.rarity), W * 0.6, H * 0.6);
       rctx.globalAlpha = 1;
     }
-    if (t < 3.2 && state.revealing) requestAnimationFrame(draw); else endReveal();
+    if (t < 3.2 && state.revealing) requestAnimationFrame(draw);
+    else endReveal();
   };
   requestAnimationFrame(draw);
 }
@@ -311,17 +397,27 @@ function playFallback(multi, rarity, reason) {
 
 function addCloseFallback() {
   const b = document.createElement("button");
-  b.id = "closeFallback"; b.textContent = "Đóng bản dự phòng";
-  b.onclick = () => { document.querySelector("iframe").hidden = true; b.hidden = true; setUI(false); };
+  b.id = "closeFallback";
+  b.textContent = "Đóng bản dự phòng";
+  b.onclick = () => {
+    document.querySelector("iframe").hidden = true;
+    b.hidden = true;
+    setUI(false);
+  };
   $("top").appendChild(b);
   const fr = document.querySelector("iframe");
-  new MutationObserver(() => { b.hidden = fr.hidden; }).observe(fr, { attributes: true });
+  new MutationObserver(() => {
+    b.hidden = fr.hidden;
+  }).observe(fr, { attributes: true });
 }
 
 $("w1").onclick = () => wish(false);
 $("w10").onclick = () => wish(true);
 $("skip").onclick = skip;
-$("ff").onclick = () => { state.fastForward = !state.fastForward; $("ff").textContent = state.fastForward ? "Tốc độ thường" : "Tua nhanh"; };
+$("ff").onclick = () => {
+  state.fastForward = !state.fastForward;
+  $("ff").textContent = state.fastForward ? "Tốc độ thường" : "Tua nhanh";
+};
 $("mode").onclick = () => {
   state.mode = state.mode === "auto" ? "fallback" : "auto";
   $("mode").textContent = state.mode === "auto" ? "Chế độ: tự động" : "Chế độ: dự phòng";
@@ -330,10 +426,17 @@ if (state.mode === "fallback") $("mode").textContent = "Chế độ: dự phòng
 if (params.get("variant")) $("variant").value = params.get("variant");
 
 resize();
-fetch(OUT + "timeline.json").then((r) => r.json()).then((tl) => {
-  state.tl = tl;
-  state.ready = true;
-  // warm the cache for the most common result so the first wish starts instantly
-  if (!weakDevice()) loadVariant("4");
-  info.textContent = `sẵn sàng · ${pickHeight()}p`;
-}).catch(() => { state.ready = true; state.tl = null; info.textContent = "không đọc được timeline.json"; });
+fetch(OUT + "timeline.json")
+  .then((r) => r.json())
+  .then((tl) => {
+    state.tl = tl;
+    state.ready = true;
+    // warm the cache for the most common result so the first wish starts instantly
+    if (!weakDevice()) loadVariant("4");
+    info.textContent = `sẵn sàng · ${pickHeight()}p`;
+  })
+  .catch(() => {
+    state.ready = true;
+    state.tl = null;
+    info.textContent = "không đọc được timeline.json";
+  });

@@ -82,7 +82,7 @@ def main():
         },
     }
     with open(a.out, "w") as fh:
-        json.dump(tl, fh, ensure_ascii=False, indent=1)
+        json.dump(tl, fh, ensure_ascii=False, indent=2)
     print(a.out, tl["duration"], "s")
 
 

@@ -28,6 +28,7 @@ render() {  # shot variant dir
 render s1 5a "$FRAMES/common/s1"
 render s2 5a "$FRAMES/common/s2"
 python3 "$HERE/tools/timeline.py" --anchor "$FRAMES/common/s2/meta.json" --out "$OUT/timeline.json"
+(cd "$HERE/../.." && npx --no-install prettier --write media/cinematic/out/timeline.json >/dev/null 2>&1) || true
 python3 "$HERE/tools/audio.py" --timeline "$OUT/timeline.json" --out "$OUT/audio"
 for v in "${VARIANTS[@]}"; do
   render s3 "$v" "$FRAMES/$v/s3"
