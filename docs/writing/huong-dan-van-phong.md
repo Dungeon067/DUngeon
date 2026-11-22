@@ -5,7 +5,7 @@ Tài liệu cho mọi người viết chữ trong **Tinh Tú Ước Nguyện**: 
 ## 0. Cách dùng tài liệu
 
 - **Thứ tự ưu tiên khi mâu thuẫn:** quyết định của chủ dự án > [`docs/world/`](../world/README.md) > tài liệu này > thẻ giọng nói từng nhân vật.
-- **Ngoại lệ:** quy tắc xưng hô ở mục 2 là quyết định của chủ dự án (2026-11-22). Nó thay cho phần xưng hô theo họ hàng ở [`05-van-hoa-doi-thuong.md`](../world/05-van-hoa-doi-thuong.md) mục 4, kể cả các câu ví dụ ở đó.
+- **Ngoại lệ:** quy tắc xưng hô ở mục 2 là quyết định của chủ dự án (2026-11-22). [`05-van-hoa-doi-thuong.md`](../world/05-van-hoa-doi-thuong.md) mục 4 đã được sửa cho khớp; nếu còn chỗ nào lệch thì theo mục 2 ở đây.
 - **Ví dụ** được đánh số V01, V02... Mỗi ví dụ là một cặp **Sai** và **Đúng** kèm lý do. Câu "Đúng" là một cách viết đạt, không phải cách duy nhất.
 - Tên nhân vật trong ví dụ chỉ để minh họa giọng. Giọng chính thức của từng Hộ Tinh do S03–S05 chốt trong thẻ giọng nói (mục 6).
 
@@ -13,29 +13,30 @@ Tài liệu cho mọi người viết chữ trong **Tinh Tú Ước Nguyện**: 
 
 Viết đúng chữ và đúng chữ hoa như bảng. Không dùng tên khác cho cùng một khái niệm trong lời thoại.
 
-| Khái niệm                     | Viết là                                                                                                        |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| Thế giới                      | Vọng Tinh Giới                                                                                                 |
-| Thần hộ mệnh mỗi vùng         | Trấn Tinh                                                                                                      |
-| Dấu ấn sức mạnh trên người    | Tinh Văn                                                                                                       |
-| Nơi các vì sao ngự            | Tinh Hải                                                                                                       |
-| Người mang sức mạnh nguyên tố | Hộ Tinh                                                                                                        |
-| Nhân vật chính                | Người Ước Nguyện (dân Đảo Lạc gọi "người từ Bãi Sao Rơi")                                                      |
-| Tiền tệ                       | Đá Sao, Xu                                                                                                     |
-| Lần quay                      | Ước nguyện, lần ước                                                                                            |
-| Cung mệnh                     | Nét Sao (N0–N6)                                                                                                |
-| Trang bị phụ, bộ trang bị     | Bảo Ấn, Bộ Ấn                                                                                                  |
-| Đột phá giới hạn cấp          | Khai Tinh                                                                                                      |
-| Điểm dịch chuyển, hồi phục    | Bia Đá                                                                                                         |
-| Tháp thử thách                | Tháp Tinh Tú                                                                                                   |
-| Nhiệm vụ hằng ngày            | Ủy thác                                                                                                        |
-| Bí cảnh nguyên liệu           | Lòng Sao                                                                                                       |
-| Cấp danh vọng                 | Đom Đóm, Đèn Lồng, Ngọn Đuốc, Vầng Trăng, Sao Mai                                                              |
-| Phản diện                     | Hắc Giao; Hội Bất Nguyện (lời thoại thường gọi Hội Mặt Nạ)                                                     |
-| Nguyên tố                     | Hỏa, Thủy, Phong, Lôi, Thổ, Băng, Mộc                                                                          |
-| Phản ứng                      | Bốc Hơi, Tan Chảy, Quá Tải, Điện Cảm, Đóng Băng, Siêu Dẫn, Khuếch Tán, Kết Tinh                                |
-| Quái `slime`                  | Giọt Nhầy                                                                                                      |
-| Tên riêng khác                | Tra [`09-tu-dien.md`](../world/09-tu-dien.md); quy tắc đặt tên mới ở [`11-dat-ten.md`](../world/11-dat-ten.md) |
+| Khái niệm                        | Viết là                                                                                                        |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Thế giới                         | Vọng Tinh Giới                                                                                                 |
+| Thần hộ mệnh mỗi vùng            | Trấn Tinh                                                                                                      |
+| Dấu ấn sức mạnh trên người       | Tinh Văn                                                                                                       |
+| Nơi các vì sao ngự               | Tinh Hải                                                                                                       |
+| Người mang sức mạnh nguyên tố    | Hộ Tinh                                                                                                        |
+| Nhân vật chính                   | Người Ước Nguyện (dân Đảo Lạc gọi "người từ Bãi Sao Rơi")                                                      |
+| Tiền tệ                          | Đá Sao, Xu                                                                                                     |
+| Cơ chế bảo đảm sau 90 lần (pity) | Bảo Hộ Vận Sao, ví dụ "Bảo Hộ Vận Sao 5★: 37/90"                                                               |
+| Lần quay                         | Ước nguyện, lần ước                                                                                            |
+| Cung mệnh                        | Nét Sao (N0–N6)                                                                                                |
+| Trang bị phụ, bộ trang bị        | Bảo Ấn, Bộ Ấn                                                                                                  |
+| Đột phá giới hạn cấp             | Khai Tinh                                                                                                      |
+| Điểm dịch chuyển, hồi phục       | Bia Đá                                                                                                         |
+| Tháp thử thách                   | Tháp Tinh Tú                                                                                                   |
+| Nhiệm vụ hằng ngày               | Ủy thác                                                                                                        |
+| Bí cảnh nguyên liệu              | Lòng Sao                                                                                                       |
+| Cấp danh vọng                    | Đom Đóm, Đèn Lồng, Ngọn Đuốc, Vầng Trăng, Sao Mai                                                              |
+| Phản diện                        | Hắc Giao; Hội Bất Nguyện (lời thoại thường gọi Hội Mặt Nạ)                                                     |
+| Nguyên tố                        | Hỏa, Thủy, Phong, Lôi, Thổ, Băng, Mộc                                                                          |
+| Phản ứng                         | Bốc Hơi, Tan Chảy, Quá Tải, Điện Cảm, Đóng Băng, Siêu Dẫn, Khuếch Tán, Kết Tinh                                |
+| Quái `slime`                     | Giọt Nhầy                                                                                                      |
+| Tên riêng khác                   | Tra [`09-tu-dien.md`](../world/09-tu-dien.md); quy tắc đặt tên mới ở [`11-dat-ten.md`](../world/11-dat-ten.md) |
 
 ## 1. Giọng văn chung
 
@@ -173,19 +174,27 @@ Vì sao chọn "tôi – cậu":
 
 Mỗi nhân vật chọn **một** cặp chính trong thẻ giọng nói. Biến thể dựa vào tính cách và độ thân thiết, không bao giờ dựa vào tuổi.
 
-| Cặp                | Dùng cho                                                                              | Lưu ý                                                                         |
-| ------------------ | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| tôi – cậu          | Mặc định                                                                              |                                                                               |
-| mình – cậu         | Nhân vật cởi mở, vui vẻ; hoặc nhân vật mặc định "tôi" chuyển sang khi đã thân         | Mốc chuyển ghi trong thẻ giọng nói                                            |
-| tớ – cậu           | Trẻ con, nhân vật rất hồn nhiên                                                       | Hiếm, chỉ khi thẻ giọng nói cho phép                                          |
-| tôi – ngài         | Phép lịch sự trang trọng: người Shizukane, nghi lễ, lần đầu gặp người có chức vị      | Thể hiện lễ độ, không thể hiện tuổi. Người kia không đáp lại bằng "con", "em" |
-| ta – cậu           | Trấn Tinh, người đứng đầu một hội (Đầu Sổ Kỳ Lam): uy nghi, xa cách nhưng không khinh |                                                                               |
-| ta – ngươi         | Nhân vật kiêu kỳ hoặc thù địch: Ngũ Diện, thành viên Hội Mặt Nạ                       | Phản diện quay về phe ta thì đổi sang "tôi – cậu" để đánh dấu                 |
-| bọn ta – các ngươi | Nhóm phản diện                                                                        |                                                                               |
+**Cách xưng hô riêng.** Một nhân vật được có cách xưng hô riêng, kể cả lạ, nếu hợp concept và tạo điểm nhấn. Ví dụ: người theo phong thái hầu cận gọi Người Ước Nguyện là "ngài", thân hơn mới chuyển sang "cậu"; người kiêu kỳ xưng "ta". Điều kiện:
 
-**Không dùng:** anh – em, chị – em, chú – cháu, cô – cháu (giữa người không già), huynh – đệ, tỷ – muội, tại hạ – các hạ, bổn cô nương, bản tướng, lão phu, mày – tao.
+- Thẻ giọng nói ghi rõ **lý do** (vì sao concept cần cách xưng này) và **mốc thay đổi** (nếu có).
+- Lý do là tính cách, nghề, thói quen hoặc câu chuyện, không phải tuổi.
+- Giữ đúng cách xưng đó trong mọi cảnh cho tới mốc thay đổi. Đổi giữa chừng mà không có mốc là lỗi.
+- Không dùng từ trong danh sách "Không dùng" bên dưới (trừ quan hệ gia đình, mục 2.4).
 
-### 2.4. Ngoại lệ: người già
+| Cặp                    | Dùng cho                                                                              | Lưu ý                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| tôi – cậu              | Mặc định                                                                              |                                                                               |
+| mình – cậu             | Nhân vật cởi mở, vui vẻ; hoặc nhân vật mặc định "tôi" chuyển sang khi đã thân         | Mốc chuyển ghi trong thẻ giọng nói                                            |
+| tớ – cậu               | Trẻ con, nhân vật rất hồn nhiên                                                       | Hiếm, chỉ khi thẻ giọng nói cho phép                                          |
+| tôi – ngài             | Phép lịch sự trang trọng: người Shizukane, nghi lễ, lần đầu gặp người có chức vị      | Thể hiện lễ độ, không thể hiện tuổi. Người kia không đáp lại bằng "con", "em" |
+| tôi – ngài → tôi – cậu | Cách xưng hô riêng kiểu hầu cận, người phục vụ tận tụy                                | Mốc chuyển sang "cậu" ghi trong thẻ giọng nói                                 |
+| ta – cậu               | Trấn Tinh, người đứng đầu một hội (Đầu Sổ Kỳ Lam): uy nghi, xa cách nhưng không khinh |                                                                               |
+| ta – ngươi             | Nhân vật kiêu kỳ hoặc thù địch: Ngũ Diện, thành viên Hội Mặt Nạ                       | Phản diện quay về phe ta thì đổi sang "tôi – cậu" để đánh dấu                 |
+| bọn ta – các ngươi     | Nhóm phản diện                                                                        |                                                                               |
+
+**Không dùng:** anh – em, chị – em, chú – cháu, cô – cháu (giữa người không già), huynh – đệ, tỷ – muội, tại hạ – các hạ, bổn cô nương, bản tướng, lão phu, mày – tao. Ngoại lệ: người trong gia đình gọi nhau theo quan hệ (mục 2.4).
+
+### 2.4. Ngoại lệ: người già và người thân trong gia đình
 
 NPC được thiết kế là **người già** (cụ ông, cụ bà; hồ sơ ghi rõ) được xưng hô theo lối kính trọng:
 
@@ -194,7 +203,7 @@ NPC được thiết kế là **người già** (cụ ông, cụ bà; hồ sơ g
 - Người Ước Nguyện nói với người già: xưng "tôi", gọi "ông", "bà".
 - Ngoại lệ này **không** áp dụng cho Hộ Tinh chơi được, kể cả khi hồ sơ ghi lớn tuổi. Ví dụ Thạch Sơn (58 tuổi) vẫn "tôi – cậu"; người khác tỏ lòng quý bằng chức danh "Thợ Cả".
 - Chữ "Bà" trong tên kiểu **Bà Trùm Kha**, **Bà Bảy Sóng** là danh xưng của chức vị, không biến họ thành người già. Họ vẫn "tôi – cậu".
-- **Quan hệ gia đình ruột thịt** (mẹ, cha, ông bà nội ngoại) gọi theo quan hệ đó khi người trong nhà nói với nhau ("Mẹ ơi"). Người ngoài vẫn theo mục 2.2.
+- **Người thân trong gia đình** được gọi theo quan hệ gia đình: cha, mẹ, ông bà, anh chị em ruột, cô, chú, dì, cậu ruột ("Mẹ ơi", "Anh ơi, về ăn cơm"). Áp dụng cả cho Hộ Tinh khi nói với người thân của mình. Quan hệ gia đình của từng nhân vật do S03–S05 chốt trong hồ sơ. Người ngoài gia đình vẫn theo mục 2.2.
 
 ### 2.5. Tên, chức danh và từ đệm lịch sự
 
@@ -208,6 +217,7 @@ NPC được thiết kế là **người già** (cụ ông, cụ bà; hồ sơ g
 - **Thân hơn:** "tôi" chuyển sang "mình". Đây là phần thưởng cảm xúc, nên đặt ở mốc rõ ràng (sau nhiệm vụ nhân vật, ở một Nét Sao nhất định). Ghi mốc trong thẻ giọng nói.
 - **Giận:** giữ nguyên cặp, lạnh hơn bằng cách gọi tên đầy đủ, câu cụt, bỏ tiểu từ cuối câu. Không chuyển sang "mày – tao".
 - **Phản diện hối cải:** từ "ta – ngươi" sang "tôi – cậu".
+- **Cách xưng hô riêng:** đổi đúng ở mốc ghi trong thẻ giọng nói, và nên để người nghe nhận ra sự thay đổi (một câu ngập ngừng, một lời trêu nhẹ).
 
 ### 2.7. Biến giới tính của Người Ước Nguyện
 
@@ -221,21 +231,23 @@ Mỗi khung thoại tối đa một biến. Đọc lại cả hai phiên bản �
 
 ### 2.8. Ví dụ xưng hô
 
-| #   | Sai                                                    | Đúng                                                           | Vì sao                                                                        |
-| --- | ------------------------------------------------------ | -------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| V22 | (Mai Linh) "Anh ơi, em đi cùng anh nhé!"               | (Mai Linh) "Cậu ơi, mình đi cùng cậu nhé!"                     | Không dùng anh – em; người chơi có thể là nữ                                  |
-| V23 | (Ngọc Thạch) "Chú Sơn ơi, cháu khắc xong rồi."         | (Ngọc Thạch) "Thợ Cả ơi, mình khắc xong bia rồi!"              | Thạch Sơn là Hộ Tinh, không theo ngoại lệ người già                           |
-| V24 | (Lôi Đình) "Các em theo anh!"                          | (Lôi Đình) "Đội Giông, theo tôi!"                              | Chỉ huy bằng tên đội, không bằng thứ bậc tuổi                                 |
-| V25 | (trẻ con) "Anh chị sao rơi ơi, chơi với tụi em đi!"    | (trẻ con) "Người Sao Rơi ơi, chơi Ô Sao với tụi tớ không?"     | Trung tính, dùng trò chơi trong thế giới game                                 |
-| V26 | "Cậu Đoan Khang nói đúng."                             | "Ông Đoan Khang nói đúng ạ."                                   | Cụ Trưởng Đình 81 tuổi, thuộc ngoại lệ người già                              |
-| V27 | (Bà Cả Thu Vọng) "Tôi xin phép chỉ cho ngài điều này." | (Bà Cả Thu Vọng) "Cháu lại đây, bà chỉ cho cái này."           | Người già được gọi người trẻ là "cháu"                                        |
-| V28 | (Thạch Sơn) "Ta khắc xong rồi, ngươi xem đi."          | (Thạch Sơn) "Tôi khắc xong rồi. Cậu xem có sai nét nào không." | "Ta – ngươi" chỉ dành cho tính cách kiêu kỳ hoặc thù địch                     |
-| V29 | "{anh\|chị} đến đúng lúc lắm."                         | "Cậu đến đúng lúc lắm."                                        | Có đại từ trung tính thì không cần biến                                       |
-| V30 | "Anh ấy là Người Ước Nguyện mà tôi kể."                | "Đây là người từ Bãi Sao Rơi mà tôi kể."                       | Không đoán giới tính người chơi                                               |
-| V31 | (giận) "Mày im đi!"                                    | (giận) "Lạc Hồng. Im lặng một chút."                           | Giận lạnh bằng gọi tên và câu cụt                                             |
-| V32 | (Sương Mai nói với Phong Vân) "Dạ, tôi biết rồi ạ."    | (Sương Mai nói với Phong Vân) "Ừ, tôi biết rồi."               | "Dạ", "ạ" chỉ dành cho người già                                              |
-| V33 | (Bạch Vũ) "Tại hạ là Bạch Vũ, người Lũng Vân."         | (Bạch Vũ) "Mình là Bạch Vũ, dân Lũng Vân chính gốc đây!"       | Không giọng truyện chưởng ([`05`](../world/05-van-hoa-doi-thuong.md) mục 4.2) |
-| V34 | (người Purunae) "Anh lớn đã ăn cơm chưa?"              | (người Purunae) "Cậu ăn cơm chưa? Đi đường xa chắc đói rồi."   | Giữ nét hỏi han của vùng, bỏ phân trên dưới                                   |
+| #   | Sai                                                                      | Đúng                                                                                | Vì sao                                                                        |
+| --- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| V22 | (Mai Linh) "Anh ơi, em đi cùng anh nhé!"                                 | (Mai Linh) "Cậu ơi, mình đi cùng cậu nhé!"                                          | Không dùng anh – em; người chơi có thể là nữ                                  |
+| V23 | (Ngọc Thạch) "Chú Sơn ơi, cháu khắc xong rồi."                           | (Ngọc Thạch) "Thợ Cả ơi, mình khắc xong bia rồi!"                                   | Thạch Sơn là Hộ Tinh, không theo ngoại lệ người già                           |
+| V24 | (Lôi Đình) "Các em theo anh!"                                            | (Lôi Đình) "Đội Giông, theo tôi!"                                                   | Chỉ huy bằng tên đội, không bằng thứ bậc tuổi                                 |
+| V25 | (trẻ con) "Anh chị sao rơi ơi, chơi với tụi em đi!"                      | (trẻ con) "Người Sao Rơi ơi, chơi Ô Sao với tụi tớ không?"                          | Trung tính, dùng trò chơi trong thế giới game                                 |
+| V26 | "Cậu Đoan Khang nói đúng."                                               | "Ông Đoan Khang nói đúng ạ."                                                        | Cụ Trưởng Đình 81 tuổi, thuộc ngoại lệ người già                              |
+| V27 | (Bà Cả Thu Vọng) "Tôi xin phép chỉ cho ngài điều này."                   | (Bà Cả Thu Vọng) "Cháu lại đây, bà chỉ cho cái này."                                | Người già được gọi người trẻ là "cháu"                                        |
+| V28 | (Thạch Sơn) "Ta khắc xong rồi, ngươi xem đi."                            | (Thạch Sơn) "Tôi khắc xong rồi. Cậu xem có sai nét nào không."                      | "Ta – ngươi" chỉ dành cho tính cách kiêu kỳ hoặc thù địch                     |
+| V29 | "{anh\|chị} đến đúng lúc lắm."                                           | "Cậu đến đúng lúc lắm."                                                             | Có đại từ trung tính thì không cần biến                                       |
+| V30 | "Anh ấy là Người Ước Nguyện mà tôi kể."                                  | "Đây là người từ Bãi Sao Rơi mà tôi kể."                                            | Không đoán giới tính người chơi                                               |
+| V31 | (giận) "Mày im đi!"                                                      | (giận) "Lạc Hồng. Im lặng một chút."                                                | Giận lạnh bằng gọi tên và câu cụt                                             |
+| V32 | (Sương Mai nói với Phong Vân) "Dạ, tôi biết rồi ạ."                      | (Sương Mai nói với Phong Vân) "Ừ, tôi biết rồi."                                    | "Dạ", "ạ" chỉ dành cho người già                                              |
+| V33 | (Bạch Vũ) "Tại hạ là Bạch Vũ, người Lũng Vân."                           | (Bạch Vũ) "Mình là Bạch Vũ, dân Lũng Vân chính gốc đây!"                            | Không giọng truyện chưởng ([`05`](../world/05-van-hoa-doi-thuong.md) mục 4.2) |
+| V34 | (người Purunae) "Anh lớn đã ăn cơm chưa?"                                | (người Purunae) "Cậu ăn cơm chưa? Đi đường xa chắc đói rồi."                        | Giữ nét hỏi han của vùng, bỏ phân trên dưới                                   |
+| V67 | (nhân vật có xưng hô riêng "ngài", chưa tới mốc) "Cậu đợi tôi một chút." | (chưa tới mốc) "Ngài đợi tôi một chút." (tới mốc) "...Cậu. Tôi gọi vậy được không?" | Giữ cách xưng riêng tới mốc; đổi ở mốc thì cho người nghe thấy                |
+| V68 | (Hộ Tinh nói với mẹ ruột) "Cậu nghỉ đi, để tôi làm."                     | (Hộ Tinh nói với mẹ ruột) "Mẹ nghỉ đi, để con làm."                                 | Người thân trong gia đình gọi theo quan hệ                                    |
 
 ### 2.9. Bảng xưng hô mẫu
 
@@ -295,7 +307,7 @@ Mỗi khung thoại tối đa một biến. Đọc lại cả hai phiên bản �
 - Xen câu ngắn với câu vừa. Một khung tối đa 2 câu vừa hoặc 3 câu ngắn.
 - Tiểu từ cuối câu (nhé, nhỉ, à, đấy, chứ, mà, thôi) làm câu có hơi người, nhưng **tối đa một tiểu từ mỗi câu**, không câu nào cũng có.
 - Tránh lối văn viết trong lời nói: "việc", "sự", "dẫn đến", "tiến hành", "nhằm".
-- Giọng vùng theo [`05-van-hoa-doi-thuong.md`](../world/05-van-hoa-doi-thuong.md) mục 4 (nét giọng, không phần xưng hô). Không viết sai chính tả để giả giọng.
+- Giọng vùng theo [`05-van-hoa-doi-thuong.md`](../world/05-van-hoa-doi-thuong.md) mục 4. Không viết sai chính tả để giả giọng.
 
 | #   | Sai                                                                                | Đúng                                                | Vì sao                           |
 | --- | ---------------------------------------------------------------------------------- | --------------------------------------------------- | -------------------------------- |
@@ -459,42 +471,42 @@ Theo [`11-dat-ten.md`](../world/11-dat-ten.md) mục 1 và 2: mỗi chữ có l�
 
 ### 5.1. Từ tiếng Anh và chữ viết tắt
 
-| Không dùng               | Dùng                                                         |
-| ------------------------ | ------------------------------------------------------------ |
-| skill                    | kỹ năng                                                      |
-| ult, burst               | nộ                                                           |
-| buff, debuff             | tăng sức, làm yếu (hoặc gọi đúng hiệu ứng)                   |
-| dmg, damage              | sát thương                                                   |
-| HP                       | Máu                                                          |
-| ATK                      | Tấn công                                                     |
-| crit                     | chí mạng                                                     |
-| CD, cooldown             | hồi chiêu                                                    |
-| stamina                  | thể lực                                                      |
-| dash                     | lướt                                                         |
-| shield                   | khiên                                                        |
-| combo                    | chuỗi đòn                                                    |
-| AoE                      | diện rộng                                                    |
-| level, Lv                | cấp                                                          |
-| EXP                      | kinh nghiệm                                                  |
-| boss                     | gọi đúng tên (Hắc Giao); nhãn chung: quái đầu đàn            |
-| elite                    | tinh anh                                                     |
-| gacha, roll, pull, quay  | ước nguyện, lần ước                                          |
-| banner                   | Sao Mùa                                                      |
-| pity                     | Luật Chín Mươi Lời (trong truyện), bảo hiểm (trên giao diện) |
-| C0–C6, constellation     | Nét Sao N0–N6                                                |
-| artifact, set            | Bảo Ấn, Bộ Ấn                                                |
-| ascension                | Khai Tinh                                                    |
-| waypoint, teleport       | Bia Đá, dịch chuyển                                          |
-| daily, daily quest       | Ủy thác                                                      |
-| domain, dungeon          | Lòng Sao                                                     |
-| quest, event, item, drop | nhiệm vụ, sự kiện, vật phẩm, rơi ra                          |
-| farm                     | đi săn nguyên liệu                                           |
-| team, party              | đội                                                          |
-| slime                    | Giọt Nhầy                                                    |
-| admin, server            | quản trị, máy chủ                                            |
-| OK, cancel               | Được, Đồng ý; Thôi, Quay lại                                 |
-| loading, save, reset     | Đang tải, Lưu, Làm mới                                       |
-| noob, pro                | người mới, giỏi                                              |
+| Không dùng               | Dùng                                                    |
+| ------------------------ | ------------------------------------------------------- |
+| skill                    | kỹ năng                                                 |
+| ult, burst               | nộ                                                      |
+| buff, debuff             | tăng sức, làm yếu (hoặc gọi đúng hiệu ứng)              |
+| dmg, damage              | sát thương                                              |
+| HP                       | Máu                                                     |
+| ATK                      | Tấn công                                                |
+| crit                     | chí mạng                                                |
+| CD, cooldown             | hồi chiêu                                               |
+| stamina                  | thể lực                                                 |
+| dash                     | lướt                                                    |
+| shield                   | khiên                                                   |
+| combo                    | chuỗi đòn                                               |
+| AoE                      | diện rộng                                               |
+| level, Lv                | cấp                                                     |
+| EXP                      | kinh nghiệm                                             |
+| boss                     | gọi đúng tên (Hắc Giao); nhãn chung: quái đầu đàn       |
+| elite                    | tinh anh                                                |
+| gacha, roll, pull, quay  | ước nguyện, lần ước                                     |
+| banner                   | Sao Mùa                                                 |
+| pity, bảo hiểm           | Bảo Hộ Vận Sao (lý do trong truyện: Luật Chín Mươi Lời) |
+| C0–C6, constellation     | Nét Sao N0–N6                                           |
+| artifact, set            | Bảo Ấn, Bộ Ấn                                           |
+| ascension                | Khai Tinh                                               |
+| waypoint, teleport       | Bia Đá, dịch chuyển                                     |
+| daily, daily quest       | Ủy thác                                                 |
+| domain, dungeon          | Lòng Sao                                                |
+| quest, event, item, drop | nhiệm vụ, sự kiện, vật phẩm, rơi ra                     |
+| farm                     | đi săn nguyên liệu                                      |
+| team, party              | đội                                                     |
+| slime                    | Giọt Nhầy                                               |
+| admin, server            | quản trị, máy chủ                                       |
+| OK, cancel               | Được, Đồng ý; Thôi, Quay lại                            |
+| loading, save, reset     | Đang tải, Lưu, Làm mới                                  |
+| noob, pro                | người mới, giỏi                                         |
 
 ### 5.2. Từ lóng mạng
 
@@ -560,6 +572,11 @@ Ví dụ: thẳng tính, cả nghĩ, hay quên.
 - Khi đã thân (mốc chuyển): {…}
   Ví dụ: chuyển "tôi" sang "mình" sau nhiệm vụ nhân vật thứ nhất.
 - Với Hộ Tinh khác: {tên trần, chức danh, biệt danh}
+- Cách xưng hô riêng (nếu có): {…}
+  Lý do: {…}
+  Mốc thay đổi: {…}
+  Ví dụ: gọi Người Ước Nguyện là "ngài" vì quen phong thái hầu cận; chuyển sang "cậu" sau nhiệm vụ nhân vật thứ hai.
+- Người thân trong gia đình và cách gọi: {…}
 - Gọi riêng ai bằng gì: {…}
   Ví dụ: gọi Thạch Sơn là "Thợ Cả".
 
@@ -612,7 +629,7 @@ Ví dụ: thẳng tính, cả nghĩ, hay quên.
 ## 7. Bảng tự kiểm trước khi nộp
 
 - [ ] Thuật ngữ đúng bảng 0.1, đúng chữ hoa.
-- [ ] Xưng hô theo mục 2: không anh – em, chú – cháu; chỉ người già mới được "ông", "bà", "ạ".
+- [ ] Xưng hô theo mục 2: không anh – em, chú – cháu (trừ người trong gia đình); chỉ người già mới được "ông", "bà", "ạ"; cách xưng hô riêng đúng thẻ giọng nói và đúng mốc.
 - [ ] Không đoán giới tính Người Ước Nguyện; biến `{…|…}` chỉ dùng khi bắt buộc, cả hai bản đều đúng.
 - [ ] Mỗi khung thoại tối đa 2 dòng, khoảng 90 ký tự; độ dài các loại chữ khác theo bảng 4.6.
 - [ ] Không chỉ dẫn diễn xuất, biểu tượng cảm xúc, "!!!", chữ hoa toàn bộ, gạch ngang chen ý.

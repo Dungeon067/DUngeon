@@ -37,7 +37,7 @@ YAML trong `content/` được plugin `yaml-to-json` trong `vite.config.ts` chuy
 
 ## Kiểm thử
 
-- `tests/unit/`: phản ứng nguyên tố, ước nguyện (bảo hiểm 90, 4★ mỗi 10 lần, 50/50 và đảm bảo), nâng cấp, lưu trữ, kiểm tra dữ liệu. `tests/unit/setup.ts` dựng DOM từ `index.html` và thay canvas bằng đối tượng rỗng.
+- `tests/unit/`: phản ứng nguyên tố, ước nguyện (Bảo Hộ Vận Sao 90, 4★ mỗi 10 lần, 50/50 và đảm bảo), nâng cấp, lưu trữ, kiểm tra dữ liệu. `tests/unit/setup.ts` dựng DOM từ `index.html` và thay canvas bằng đối tượng rỗng.
 - `tests/e2e/flow.spec.ts`: mở game → Đảo Lạc → đánh quái → ước 10 lần → Tháp → Boss, không có lỗi console. Chạy cả cấu hình máy tính và điện thoại.
 - `tests/perf/fps.ts`: so FPS bản gốc và bản mới trong cùng kịch bản.
 

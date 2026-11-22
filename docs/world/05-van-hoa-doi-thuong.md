@@ -62,26 +62,38 @@ Bảng gộp lễ hội lớn của bảy vùng. Lễ của Đảo Lạc in đ�
 | Lũng Vân  | Chắp tay, tay trái ôm nắm tay phải, cúi người                                | "Gió mang lời tốt tới."                                                      |
 | Shizukane | Cúi người sâu, không nói hoặc nói rất khẽ                                    | "Tuyết yên." (nghĩa là "mọi sự bình an")                                     |
 | Purunae   | Cúi người, hai tay đưa đồ cho người lớn                                      | "Đã ăn cơm chưa?" (lời hỏi thăm, không phải mời)                             |
-| Golbaran  | Đặt tay phải lên ngực, hơi cúi đầu                                           | "Mong nhà anh có mái che."                                                   |
+| Golbaran  | Đặt tay phải lên ngực, hơi cúi đầu                                           | "Mong nhà cậu có mái che."                                                   |
 | Marevia   | Bắt tay, nắm cẳng tay nhau                                                   | "Lửa bếp ấm!"                                                                |
-| Khokhtal  | Chạm vai nhau, hỏi về đàn ngựa                                               | "Đàn ngựa nhà anh béo khỏe chứ?"                                             |
+| Khokhtal  | Chạm vai nhau, hỏi về đàn ngựa                                               | "Đàn ngựa nhà cậu béo khỏe chứ?"                                             |
 
 Quy tắc: lời chào hiển thị bằng tiếng Việt. Có thể ghi âm gốc ở phần ghi chú hoặc bách khoa, không đưa vào lời thoại chính.
 
 ## 4. Xưng hô
 
+### 4.0. Nguyên tắc chung (chủ dự án quyết, 2026-11-22)
+
+Xưng hô trong game **trung tính**, giống "I – you" của tiếng Anh: không thể hiện tuổi tác hay thứ bậc giữa các Hộ Tinh với nhau và giữa mọi nhân vật với Người Ước Nguyện. Quy tắc chi tiết, bảng mẫu và ví dụ nằm ở [`docs/writing/huong-dan-van-phong.md`](../writing/huong-dan-van-phong.md) mục 2.
+
+- **Mặc định:** "tôi – cậu". "Cậu" dùng cho mọi giới, không ngầm nói ai lớn tuổi hơn.
+- **Biến thể theo tính cách, không theo tuổi:** "mình – cậu" (cởi mở, hoặc khi đã thân), "tôi – ngài" (lễ độ trang trọng), "ta – cậu" (Trấn Tinh, người đứng đầu), "ta – ngươi" (kiêu kỳ hoặc thù địch).
+- **Ngoại lệ người già:** NPC được thiết kế là cụ ông, cụ bà thì người khác gọi "ông", "bà", "cụ", có thể kèm "ạ"; người già được gọi người trẻ là "cháu". Ngoại lệ này không áp dụng cho Hộ Tinh chơi được.
+- **Cách xưng hô riêng:** nhân vật được có cách xưng riêng nếu hợp concept (ví dụ gọi "ngài" rồi thân hơn mới gọi "cậu"), ghi lý do và mốc thay đổi trong thẻ giọng nói.
+- **Người thân trong gia đình** gọi nhau theo quan hệ gia đình ("Mẹ ơi", "Anh ơi").
+- **Tuổi** vẫn ghi trong hồ sơ nhân vật, nhưng không quyết định cách xưng hô.
+- **Người Ước Nguyện** do người chơi chọn giới tính: viết trung tính, chỉ dùng biến `{anh|chị}` khi bắt buộc.
+
 ### 4.1. Đảo Lạc
 
-- **Chung:** dùng hệ xưng hô họ hàng của tiếng Việt (ông, bà, bác, chú, cô, anh, chị, em, cháu). Người lạ cũng được gọi như người trong nhà.
-- **Với Hộ Tinh:** gọi bình thường theo tuổi. Khi nói trang trọng thì thêm "Hộ Tinh" trước tên, ví dụ "Hộ Tinh Lôi Đình".
-- **Với Người Ước Nguyện:** dân làng gọi "người từ Bãi Sao Rơi" hoặc theo tuổi. Trẻ con gọi "anh/chị sao rơi".
+- **Chung:** theo mục 4.0. Người Đảo Lạc thân thiện với người lạ bằng lời hỏi han và lời mời ăn uống, không bằng xưng hô họ hàng.
+- **Với Hộ Tinh:** gọi tên. Khi nói trang trọng thì thêm "Hộ Tinh" hoặc chức danh trước tên, ví dụ "Hộ Tinh Lôi Đình", "Thợ Cả Thạch Sơn".
+- **Với Người Ước Nguyện:** dân làng gọi "cậu" hoặc "người từ Bãi Sao Rơi". Trẻ con gọi "Người Sao Rơi".
 - **Phương ngữ nhẹ theo khu:**
 
 | Khu                          | Nét giọng (dùng có chừng mực)                                           | Ví dụ                                     |
 | ---------------------------- | ----------------------------------------------------------------------- | ----------------------------------------- |
 | Làng Vạn Lưới (làng chài)    | Thân mật, cuối câu hay có "nhé", "nghe", "à nha". Hay dùng từ nghề biển | "Biển hôm nay êm, ra khơi được rồi nghe." |
-| Phố Vạn Đăng                 | Giọng phố chuẩn, lịch sự, nhiều từ buôn bán                             | "Mời cô xem đèn, cháu bán rẻ thôi ạ."     |
-| Vùng núi phía bắc (mỏ, trại) | Ngắn gọn, thẳng, ít từ đệm                                              | "Đá nứt. Đi gọi bác Sơn."                 |
+| Phố Vạn Đăng                 | Giọng phố chuẩn, lịch sự, nhiều từ buôn bán                             | "Mời cậu xem đèn, tôi bán rẻ thôi."       |
+| Vùng núi phía bắc (mỏ, trại) | Ngắn gọn, thẳng, ít từ đệm                                              | "Đá nứt. Đi gọi Thợ Cả."                  |
 | Đền Trăng                    | Chậm, nhẹ, nhiều từ cổ vừa phải                                         | "Đêm nay trăng tỏ, Bà ngủ yên."           |
 
 Không viết sai chính tả để giả giọng địa phương. Không dùng giọng vùng miền thật để chỉ người xấu hay người kém hiểu biết.
@@ -92,10 +104,10 @@ Không viết sai chính tả để giả giọng địa phương. Không dùng 
 | --------- | ------------------------------------------------------------------------------------------------------------- |
 | Lũng Vân  | Hơi trang trọng, thích dùng thành ngữ và câu đối xứng. Không lạm dụng "tại hạ", "cô nương" kiểu truyện chưởng |
 | Shizukane | Câu ngắn, lịch sự, hay xin lỗi, hay im lặng (ghi bằng dấu "..."). Gọi người khác bằng "ngài" khi trang trọng  |
-| Purunae   | Ấm, hay hỏi han, phân rõ trên dưới theo tuổi. Gọi người lớn là "anh lớn", "chị lớn"                           |
+| Purunae   | Ấm, hay hỏi han chuyện ăn uống, sức khỏe. Lễ độ thể hiện bằng lời hỏi han, không bằng thứ bậc tuổi            |
 | Golbaran  | Trau chuốt, nhiều hình ảnh thơ, khen khách trước khi vào việc                                                 |
 | Marevia   | Thẳng, to, hay dùng từ nghề thợ, gọi nhau là "đồng nghiệp", "bạn thợ"                                         |
-| Khokhtal  | Ngắn, mộc, so sánh bằng ngựa, gió, cỏ. Gọi bạn thân là "anh em cùng yên ngựa"                                 |
+| Khokhtal  | Ngắn, mộc, so sánh bằng ngựa, gió, cỏ. Gọi bạn thân là "bạn cùng yên ngựa"                                    |
 
 ## 5. Tín ngưỡng dân gian trong thế giới game
 
