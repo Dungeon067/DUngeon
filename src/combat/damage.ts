@@ -1,6 +1,7 @@
 import { GS } from "../core/state";
 import { buzz } from "../core/haptics";
 import { settings } from "../core/settings";
+import { screenToWorld } from "../core/input";
 import { applyElement } from "../combat/elements";
 import { sfx } from "../core/audio";
 import { dist, fmt, rand } from "../core/util";
@@ -33,7 +34,8 @@ export function aim() {
   const p = GS.G.p,
     e = nearestEnemy(p.x, p.y, 300);
   if (settings.mouseAim && GS.mouse?.inside && !GS.isTouch) {
-    p.ang = Math.atan2(GS.mouse.wy - (p.y - 14), GS.mouse.wx - p.x);
+    const w = screenToWorld(GS.mouse.sx, GS.mouse.sy);
+    p.ang = Math.atan2(w.y - (p.y - 14), w.x - p.x);
   } else if (e) {
     p.ang = Math.atan2(e.y - (e.isBoss ? 20 : 10) - (p.y - 14), e.x - p.x);
   } else p.ang = Math.atan2(p.dirY, p.dirX);
