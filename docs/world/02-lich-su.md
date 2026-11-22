@@ -2,7 +2,7 @@
 
 ## 0. Cách tính năm
 
-- Lịch chung của Thiên Tinh Giới là **Niên Sao**, viết tắt **NS**. Năm NS 1 là năm người đầu tiên được sao chọn làm Hộ Tinh (xem Thời kỳ 3).
+- Lịch chung của Vọng Tinh Giới là **Niên Sao**, viết tắt **NS**. Năm NS 1 là năm người đầu tiên được sao chọn làm Hộ Tinh (xem Thời kỳ 3).
 - **Hiện tại là NS 1350.** Bản thử nghiệm bắt đầu vào tháng Trống (tháng đầu năm) NS 1350.
 - Trước NS 1 không có năm, chỉ có truyền thuyết. Các vùng có lịch riêng (xem `05-van-hoa-doi-thuong.md`) nhưng giấy tờ giữa các vùng đều ghi NS.
 

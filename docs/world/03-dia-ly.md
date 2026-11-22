@@ -2,7 +2,7 @@
 
 ## 1. Bản đồ tổng thể
 
-Thiên Tinh Giới là một vòng đất bao quanh một biển trong lớn tên **Biển Trăm Bến**. Đảo Lạc nằm ở giữa biển, mọi luồng gió mùa và hải lưu đều đi qua đảo. Vì vậy đảo là nơi khởi đầu tự nhiên của mọi chuyến đi.
+Vọng Tinh Giới là một vòng đất bao quanh một biển trong lớn tên **Biển Trăm Bến**. Đảo Lạc nằm ở giữa biển, mọi luồng gió mùa và hải lưu đều đi qua đảo. Vì vậy đảo là nơi khởi đầu tự nhiên của mọi chuyến đi.
 
 ```
                          Bắc
@@ -121,7 +121,7 @@ Ghi chú cho thiết kế bản đồ: bản thử nghiệm sinh bản đồ the
 
 | Quái                                                 | Vì sao sống ở đây                                                           |
 | ---------------------------------------------------- | --------------------------------------------------------------------------- |
-| Giọt Nhầy (hiện tên trong game là "Slime")           | Hạt nguyện rơi xuống đất ẩm rồi đông lại. Nhiều nhất quanh ruộng và bờ sông |
+| Giọt Nhầy                                            | Hạt nguyện rơi xuống đất ẩm rồi đông lại. Nhiều nhất quanh ruộng và bờ sông |
 | Yêu Rừng, Yêu Rừng Cung Thủ                          | Dân rừng trúc, nay hung dữ vì Hội Mặt Nạ đốt bãi trúc của chúng             |
 | Pháp Sư Mặt Nạ                                       | Thành viên cấp thấp của Hội Mặt Nạ, lén lút quanh các Bia Đá                |
 | Hộ Vệ Đá Cổ                                          | Tượng đá do Tô Khuyết khắc để canh hang, nay không phân biệt bạn thù        |
@@ -317,16 +317,16 @@ Ghi chú cho thiết kế bản đồ: bản thử nghiệm sinh bản đồ the
 
 ### 5.4. Địa danh
 
-| #   | Tên                       | Mô tả                                                                                                                               | Bí mật nhỏ                                                                                      |
-| --- | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| 1   | **Solgol** (Thung Thông)  | Thủ đô trong thung lũng, nhà mái ngói cong nhẹ, sân đất nện, tường đá thấp. Cung điện là một dãy nhà gỗ đơn sơ quanh đồi Ông Thông. | Mỗi nhà có một cây con được ươm từ hạt của Sonamu. Khi ông mất, những cây đó sẽ là ông.         |
-| 2   | **Đồi Ông Thông**         | Ngọn đồi giữa Solgol, nơi Sonamu đứng. Quanh gốc có ghế đá cho người đọc sách.                                                      | Rễ ông chạy dưới cả bán đảo. Ở một số giếng, áp tai sát vào nước nghe được tiếng ông ngáy.      |
-| 3   | **Chợ Thảo Dược Yakjang** | Chợ thuốc lớn nhất Thiên Tinh Giới, họp mỗi năm hai lần, mùi sâm và gừng thơm cả dặm.                                               | Có một sạp chỉ bán cho Hộ Tinh, thuốc giúp Tinh Văn bớt đau khi thêm nét.                       |
-| 4   | **Làng Gốm Men Ngọc**     | Làng gốm bên suối, lò nung trên sườn đồi. Gốm men xanh ngọc như nước hồ trong.                                                      | Men ngọc được pha bằng tro lá thông của chính Sonamu. Mỗi mẻ gốm là một chút đời ông.           |
-| 5   | **Rừng Ngàn Thông**       | Rừng thông bạt ngàn phía bắc, mùa thu thành biển vàng đỏ. Nơi hổ núi sống.                                                          | Có một cây thông trong rừng mọc ngược, ngọn chĩa xuống đất. Bên dưới là lối vào một Động Thiên. |
-| 6   | **Thác Bảy Tầng**         | Thác nước chảy qua bảy bậc đá, mỗi bậc một hồ nhỏ.                                                                                  | Tắm ở hồ thứ bảy thì quên được một nỗi buồn, nhưng cũng quên luôn người gắn với nỗi buồn đó.    |
-| 7   | **Đảo Người Lặn**         | Đảo đá núi lửa nhỏ phía nam, nơi những người phụ nữ lặn biển hái bào ngư.                                                           | Họ biết một hang dưới nước dẫn thẳng tới gần Biển Lặng.                                         |
-| 8   | **Đèo Hổ Ngủ**            | Con đèo hẹp nối Purunae với bờ biển phía bắc, có tảng đá hình con hổ nằm.                                                           | Hổ đá là Hộ Tinh cổ đã hóa đá theo lời ước của chính mình.                                      |
+| #   | Tên                       | Mô tả                                                                                                                               | Bí mật nhỏ                                                                                    |
+| --- | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| 1   | **Solgol** (Thung Thông)  | Thủ đô trong thung lũng, nhà mái ngói cong nhẹ, sân đất nện, tường đá thấp. Cung điện là một dãy nhà gỗ đơn sơ quanh đồi Ông Thông. | Mỗi nhà có một cây con được ươm từ hạt của Sonamu. Khi ông mất, những cây đó sẽ là ông.       |
+| 2   | **Đồi Ông Thông**         | Ngọn đồi giữa Solgol, nơi Sonamu đứng. Quanh gốc có ghế đá cho người đọc sách.                                                      | Rễ ông chạy dưới cả bán đảo. Ở một số giếng, áp tai sát vào nước nghe được tiếng ông ngáy.    |
+| 3   | **Chợ Thảo Dược Yakjang** | Chợ thuốc lớn nhất Vọng Tinh Giới, họp mỗi năm hai lần, mùi sâm và gừng thơm cả dặm.                                                | Có một sạp chỉ bán cho Hộ Tinh, thuốc giúp Tinh Văn bớt đau khi thêm nét.                     |
+| 4   | **Làng Gốm Men Ngọc**     | Làng gốm bên suối, lò nung trên sườn đồi. Gốm men xanh ngọc như nước hồ trong.                                                      | Men ngọc được pha bằng tro lá thông của chính Sonamu. Mỗi mẻ gốm là một chút đời ông.         |
+| 5   | **Rừng Ngàn Thông**       | Rừng thông bạt ngàn phía bắc, mùa thu thành biển vàng đỏ. Nơi hổ núi sống.                                                          | Có một cây thông trong rừng mọc ngược, ngọn chĩa xuống đất. Bên dưới là lối vào một Lòng Sao. |
+| 6   | **Thác Bảy Tầng**         | Thác nước chảy qua bảy bậc đá, mỗi bậc một hồ nhỏ.                                                                                  | Tắm ở hồ thứ bảy thì quên được một nỗi buồn, nhưng cũng quên luôn người gắn với nỗi buồn đó.  |
+| 7   | **Đảo Người Lặn**         | Đảo đá núi lửa nhỏ phía nam, nơi những người phụ nữ lặn biển hái bào ngư.                                                           | Họ biết một hang dưới nước dẫn thẳng tới gần Biển Lặng.                                       |
+| 8   | **Đèo Hổ Ngủ**            | Con đèo hẹp nối Purunae với bờ biển phía bắc, có tảng đá hình con hổ nằm.                                                           | Hổ đá là Hộ Tinh cổ đã hóa đá theo lời ước của chính mình.                                    |
 
 ### 5.5. Văn hóa
 

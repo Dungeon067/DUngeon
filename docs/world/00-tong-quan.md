@@ -4,15 +4,15 @@ Tài liệu nội bộ cho nhóm sáng tác. Đây là file đầu tiên của b
 
 Quy ước trong bộ tài liệu:
 
-- Thuật ngữ dùng đúng bảng A.5 của chủ dự án (Hộ Tinh, Đá Sao, Bảo Ấn, Bia Đá...). Tên thế giới vẫn là **Thiên Tinh Giới** (tên tạm).
-- Khái niệm mới chưa có trong A.5 (danh hiệu thần hộ mệnh, dấu ấn sức mạnh, nơi sao ngự...) dùng **phương án khuyến nghị** trong [`11-dat-ten.md`](11-dat-ten.md). Nếu chủ dự án chọn phương án khác thì chỉ cần thay tên đồng loạt.
+- Thuật ngữ dùng đúng bảng A.5, cộng các tên chủ dự án đã duyệt đổi: **Vọng Tinh Giới** (tên thế giới), **Nét Sao** N0–N6 (thay Cung mệnh C0–C6), **Lòng Sao** (thay Động Thiên), **Giọt Nhầy** (thay Slime). Xem [`11-dat-ten.md`](11-dat-ten.md) mục 0.
+- Tên các khái niệm mới (Trấn Tinh, Tinh Văn, Tinh Hải, Hội Bất Nguyện, cấp danh vọng...) đã được chủ dự án duyệt theo phương án ★ trong `11-dat-ten.md`.
 - Nhãn bí mật: **[Công khai]** là người chơi biết ngay. **[Hé lộ Ch.N]** là hé lộ ở chương N. **[Bí mật cuối]** chỉ hé lộ ở chương kết.
 
 ## 1. Thông điệp cốt lõi
 
 > **Một lời ước chỉ thật sự thành khi có người cùng gánh.**
 
-Ở Thiên Tinh Giới, lời ước có thật. Lời ước bay lên trời, kết thành sao, và sao chọn người để giúp. Nhưng lời ước nào cũng có giá, và những lời ước không ai nghe sẽ chìm xuống đáy biển thành thứ bùn đen. Game kể chuyện một người có thể nói chuyện với các vì sao, đi qua nhiều vùng đất, và nhận ra rằng sức mạnh thật không nằm ở việc được chọn. Nó nằm ở việc cùng nhau mang những điều chưa được nghe.
+Ở Vọng Tinh Giới, lời ước có thật. Lời ước bay lên trời, kết thành sao, và sao chọn người để giúp. Nhưng lời ước nào cũng có giá, và những lời ước không ai nghe sẽ chìm xuống đáy biển thành thứ bùn đen. Game kể chuyện một người có thể nói chuyện với các vì sao, đi qua nhiều vùng đất, và nhận ra rằng sức mạnh thật không nằm ở việc được chọn. Nó nằm ở việc cùng nhau mang những điều chưa được nghe.
 
 ## 2. Ba chủ đề chính
 
@@ -84,7 +84,7 @@ Nguyên tắc nhịp: sau mỗi cảnh buồn phải có một cảnh đời th�
 
 ## 7. Những điểm khác biệt với các game cùng thể loại
 
-Thể loại nhập vai thế giới mở có gacha thường có mô-típ "mỗi vùng một nguyên tố, một vị thần". Thiên Tinh Giới giữ mô-típ đó, nhưng khác ở chi tiết, cấu trúc và ý nghĩa.
+Thể loại nhập vai thế giới mở có gacha thường có mô-típ "mỗi vùng một nguyên tố, một vị thần". Vọng Tinh Giới giữ mô-típ đó, nhưng khác ở chi tiết, cấu trúc và ý nghĩa.
 
 ### 7.1. Bảng ghép vùng, nguyên tố và thần hộ mệnh
 
@@ -102,11 +102,11 @@ Lý do theo câu chuyện của từng cặp ghép nằm ở [`01-vu-tru-va-sao.
 
 ### 7.2. Khác biệt về cấu trúc thế giới
 
-| Khía cạnh                | Thiên Tinh Giới                                                                                                                                                                                                                                                                          |
+| Khía cạnh                | Vọng Tinh Giới                                                                                                                                                                                                                                                                           |
 | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Thần hộ mệnh             | Gọi là **Trấn Tinh**: những vì sao rơi xuống đất và tự nguyện ở lại giữ một vùng. Họ **không cai trị**. Mỗi vùng có chính quyền của người. Thần chỉ là người láng giềng quyền năng, mỗi vị một mối quan hệ khác (người ngủ, ông thầy, người im lặng, ông nội, đồng nghiệp, đối thủ đua). |
 | Nơi thần và sao ngự      | **Tinh Hải** là biển sao trên trời, nơi các lời ước kết thành sao. Đây không phải một tòa thành, không có ai cai quản, không có cổng. Các Trấn Tinh đã rời Tinh Hải và sống dưới đất.                                                                                                    |
-| Nguồn sức mạnh nguyên tố | Không phải vật phẩm mang theo. Khi một vì sao chọn ai, trên da người đó hiện lên **Tinh Văn**, một hoa văn sáng như chòm sao nhỏ. Mỗi lần gặp lại cùng vì sao đó, Tinh Văn thêm một nét. Đây chính là Cung mệnh.                                                                         |
+| Nguồn sức mạnh nguyên tố | Không phải vật phẩm mang theo. Khi một vì sao chọn ai, trên da người đó hiện lên **Tinh Văn**, một hoa văn sáng như chòm sao nhỏ. Mỗi lần gặp lại cùng vì sao đó, Tinh Văn thêm một nét. Đây chính là Nét Sao.                                                                           |
 | Nhân vật chính           | Người Ước Nguyện không tìm người thân thất lạc. Họ tỉnh dậy ở Bãi Sao Rơi, có khả năng hiếm là nói được với sao. Bí ẩn của họ gắn với phản diện, không gắn với anh chị em.                                                                                                               |
 | Gacha                    | Có lý do trong truyện: Đá Sao là ánh sao đã nguội. Người Ước Nguyện "đốt" nó để gửi lời ước lên Tinh Hải, và một vì sao trả lời bằng cách dẫn một Hộ Tinh tới.                                                                                                                           |
 | Phản diện                | Hắc Giao không phải sinh vật cổ đại tự có. Nó sinh ra từ **Nguyện Cặn**, tức bùn của những lời ước không ai nghe. Hội Mặt Nạ không thờ một vị thần nào. Họ là những người chưa bao giờ được sao chọn.                                                                                    |
@@ -114,13 +114,13 @@ Lý do theo câu chuyện của từng cặp ghép nằm ở [`01-vu-tru-va-sao.
 
 ### 7.3. Rủi ro cần để ý khi thiết kế tiếp
 
-Một số nhân vật hạt giống ở A.6 có tổ hợp (nguyên tố, vũ khí, vai trò) gần với nhân vật nổi tiếng ở game khác. Bộ tài liệu không đổi tên, nguyên tố, vũ khí hay độ hiếm. Nó chỉ ghi hướng tạo khác biệt; chi tiết nằm ở mục "Câu hỏi" của báo cáo S01.
+Một số nhân vật hạt giống ở A.6 có tổ hợp (nguyên tố, vũ khí, vai trò) gần với nhân vật nổi tiếng ở game khác. Bộ tài liệu không đổi tên, nguyên tố, vũ khí hay độ hiếm. Nó chỉ ghi hướng tạo khác biệt; quyết định của chủ dự án ghi ở `11-dat-ten.md` mục 0.
 
-| Nhân vật    | Điểm dễ bị so sánh                                        | Hướng tạo khác biệt trong bộ tài liệu                                                                                                                                |
-| ----------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Lôi Đình    | Danh hiệu "Tướng Quân Giông Tố" (Lôi, thương, tướng quân) | Là đội trưởng trẻ của Quân Trấn Thủ, không phải người cai trị. Ngọn thương do Aianga của thảo nguyên trao trong một trận đua giông. Đề xuất đổi danh hiệu, chờ duyệt |
-| Tuyết Lan   | Nữ kiếm sĩ Băng đến từ vùng cảm hứng Nhật                 | Không thuộc dòng quý tộc. Là người đưa thư leo núi tuyết, biểu tượng hoa lan, kiếm pháp gắn với sự im lặng của Yukiyo                                                |
-| Thủy Nguyệt | Nữ người giữ đền, Thủy, pháp khí, chữa trị                | Biểu tượng chuông bạc và trăng, gắn với hồ nước ngọt, không dùng hình ảnh biển, sứa hay san hô                                                                       |
-| Bạch Vũ     | Kiếm khách Phong lang thang                               | Là người hộ tống đoàn thuyền buôn, vui vẻ, nói nhiều, không làm thơ hay thổi sáo                                                                                     |
+| Nhân vật    | Điểm dễ bị so sánh                                                      | Hướng tạo khác biệt trong bộ tài liệu                                                                                                                                            |
+| ----------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lôi Đình    | Tổ hợp Lôi, thương, người cầm quân (danh hiệu cũ "Tướng Quân Giông Tố") | Là đội trưởng trẻ của Quân Trấn Thủ, không phải người cai trị. Ngọn thương do Aianga của thảo nguyên trao trong một trận đua giông. Danh hiệu đã đổi thành "Ngọn Thương Gọi Sấm" |
+| Tuyết Lan   | Nữ kiếm sĩ Băng đến từ vùng cảm hứng Nhật                               | Không thuộc dòng quý tộc. Là người đưa thư leo núi tuyết, biểu tượng hoa lan, kiếm pháp gắn với sự im lặng của Yukiyo                                                            |
+| Thủy Nguyệt | Nữ người giữ đền, Thủy, pháp khí, chữa trị                              | Biểu tượng chuông bạc và trăng, gắn với hồ nước ngọt, không dùng hình ảnh biển, sứa hay san hô                                                                                   |
+| Bạch Vũ     | Kiếm khách Phong lang thang                                             | Là người hộ tống đoàn thuyền buôn, vui vẻ, nói nhiều, không làm thơ hay thổi sáo                                                                                                 |
 
-Ngoài ra, một số tên phản ứng và hệ thống trong A.5 có thể trùng bản Việt hóa của game khác. Phần rà soát nằm ở `11-dat-ten.md` mục 5.
+Kết quả rà thuật ngữ A.5 và các tên đã đổi nằm ở `11-dat-ten.md` mục 0 và mục 5.

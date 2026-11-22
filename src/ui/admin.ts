@@ -63,7 +63,7 @@ export function init(): void {
   $("gGive").onclick = () => {
     const r = Server.req("giveChar", { id: $<HTMLInputElement>("gChar").value });
     if (r.ok) {
-      toast(r.data.dup ? `Tăng cung mệnh: C${r.data.cons}` : "Đã cấp nhân vật mới");
+      toast(r.data.dup ? `Tăng Nét Sao: N${r.data.cons}` : "Đã cấp nhân vật mới");
       renderServer();
     }
   };

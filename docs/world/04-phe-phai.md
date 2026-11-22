@@ -59,7 +59,7 @@ Bảy phe chính, gồm sáu phe trên Đảo Lạc và Hội Mặt Nạ hoạt 
 - **Biểu tượng:** cây thương dựng đứng trước sóng biển. Trại chính treo cây thương thật của Kiên.
 - **Cách làm việc:** chia thành các đội. **Đội Giông** là đội Hộ Tinh. **Đội Săn Đêm** làm trinh sát và đặt bẫy.
 - **Thành viên nổi bật:**
-  - **Lôi Đình** (Lôi, thương, 5★): **Đội trưởng Đội Giông**, 22 tuổi, đội trưởng trẻ nhất từ trước tới nay. Năm 17 tuổi anh hộ tống đoàn buôn tới Khokhtal, chạy kịp cơn giông của Aianga trên Đường Đua Giông và được bà trao ngọn thương. Dân gọi anh là "Tướng Quân Giông Tố" như một biệt danh. Thực ra anh không phải tướng và không cai quản ai ngoài đội của mình.
+  - **Lôi Đình** (Lôi, thương, 5★): **Đội trưởng Đội Giông**, 22 tuổi, đội trưởng trẻ nhất từ trước tới nay. Năm 17 tuổi anh hộ tống đoàn buôn tới Khokhtal, chạy kịp cơn giông của Aianga trên Đường Đua Giông và được bà trao ngọn thương. Danh hiệu của anh là "Ngọn Thương Gọi Sấm": mỗi lần anh giơ ngọn thương của Aianga lên, sấm kéo về. Anh không phải tướng và không cai quản ai ngoài đội của mình.
   - **Minh Khải** (Lôi, cung, 4★): thợ săn của Đội Săn Đêm. Đi đêm với ngọn đèn sét, đặt bẫy quanh Rừng Trúc Mây. Anh là người đầu tiên thấy Pháp Sư Mặt Nạ lảng vảng quanh Bia Tây.
 
 ## 6. Người Đếm Sao

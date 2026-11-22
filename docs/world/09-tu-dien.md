@@ -2,9 +2,9 @@
 
 Toàn bộ tên riêng và thuật ngữ trong `docs/world/`, sắp theo thứ tự chữ cái tiếng Việt (a, ă, â, b, c, d, đ, e, ê...). Dấu thanh không ảnh hưởng thứ tự chữ cái. Tên nước ngoài xếp theo chữ Latin.
 
-Loại: Thuật ngữ, Vùng, Địa danh, Trấn Tinh, Nhân vật (gồm cả NPC), Huyền thoại (nhân vật trong lịch sử thế giới), Phe, Chức vị, Phản diện, Quái, Nguyên tố, Phản ứng, Vật phẩm, Lễ hội, Thời kỳ, Sự kiện, Biệt danh.
+Loại: Thuật ngữ, Danh hiệu, Vùng, Địa danh, Trấn Tinh, Nhân vật (gồm cả NPC), Huyền thoại (nhân vật trong lịch sử thế giới), Phe, Chức vị, Phản diện, Quái, Nguyên tố, Phản ứng, Vật phẩm, Lễ hội, Thời kỳ, Sự kiện, Biệt danh.
 
-Tên trong bảng là tên đang dùng. Tên đề xuất đổi (chưa duyệt) có ghi chú ở định nghĩa. Các vật phẩm có tên riêng xem đầy đủ ở `08-vat-pham-va-di-vat.md`, chỉ những món được nhắc ở file khác mới có ở đây. Địa danh ngoài Đảo Lạc chỉ ghi thủ đô và nơi quan trọng, danh sách đầy đủ ở `03-dia-ly.md`.
+Tên trong bảng là tên đang dùng. Tên cũ đã đổi có ghi chú ở định nghĩa. Các vật phẩm có tên riêng xem đầy đủ ở `08-vat-pham-va-di-vat.md`, chỉ những món được nhắc ở file khác mới có ở đây. Địa danh ngoài Đảo Lạc chỉ ghi thủ đô và nơi quan trọng, danh sách đầy đủ ở `03-dia-ly.md`.
 
 ## A
 
@@ -40,22 +40,21 @@ Tên trong bảng là tên đang dùng. Tên đề xuất đổi (chưa duyệt)
 | **Bọ Hung Men**                         | Quái        | Bọ hung lưng ốp gạch men ở Golbaran. Thổ.                                                |
 | **Bóng Cặn**                            | Quái        | Mảnh Nguyện Cặn hình người, lặp lại một lời ước không thành. Thủy.                       |
 | **Bộ Ấn**                               | Thuật ngữ   | Nhóm Bảo Ấn cùng xưởng, cùng câu chuyện, cộng thêm sức mạnh khi đi cùng nhau.            |
-| **Bốc Hơi**                             | Phản ứng    | Hỏa gặp Thủy: lửa đốt ký ức của nước thành hơi. Đề xuất đổi tên thành Hóa Mây.           |
+| **Bốc Hơi**                             | Phản ứng    | Hỏa gặp Thủy: lửa đốt ký ức của nước thành hơi.                                          |
 | **Bùa Giấy**                            | Vật phẩm    | Vật phẩm 3★, lá bùa ghi lời ước nhỏ "mong mai trời nắng".                                |
 
 ## C
 
-| Tên                           | Loại        | Định nghĩa                                                                            |
-| ----------------------------- | ----------- | ------------------------------------------------------------------------------------- |
-| **Các Nghe Gió**              | Địa danh    | Tháp giấy chín tầng ở Lũng Vân, nơi Thính Phong ở và chép sổ.                         |
-| **Cao Lũy**                   | Nhân vật    | Quan Trấn Thủ, lãnh đạo Quân Trấn Thủ.                                                |
-| **Chỉ Diên**                  | Nhân vật    | Mặt Nạ Giấy, học sĩ Lũng Vân, Người Tắt Sao, người viết lý tưởng của Hội Mặt Nạ.      |
-| **Chưởng Bút**                | Chức vị     | Người đứng đầu Hội Đồng Bút của Lũng Vân.                                             |
-| **Cô Gieo**                   | Huyền thoại | Người đầu tiên gieo lúa nước ở Đảo Lạc, được Bà Khơi dạy dẫn nước.                    |
-| **Cụ Trưởng Đình Đoan Khang** | Nhân vật    | Đứng đầu Hội Đồng Đình Trống, 81 tuổi.                                                |
-| **Cú Tuyết Lặng**             | Quái        | Cú trắng săn đêm ở Shizukane, tấn công thứ gây ồn. Băng.                              |
-| **Cua Mai Đồng**              | Quái        | Cua đá mai dính mảnh trống đồng, sống ở bờ biển Đảo Lạc. Thủy.                        |
-| **Cung mệnh**                 | Thuật ngữ   | C0 đến C6: số nét Tinh Văn đã thêm khi vì sao trả lời lại. Đề xuất đổi thành Nét Sao. |
+| Tên                           | Loại        | Định nghĩa                                                                       |
+| ----------------------------- | ----------- | -------------------------------------------------------------------------------- |
+| **Các Nghe Gió**              | Địa danh    | Tháp giấy chín tầng ở Lũng Vân, nơi Thính Phong ở và chép sổ.                    |
+| **Cao Lũy**                   | Nhân vật    | Quan Trấn Thủ, lãnh đạo Quân Trấn Thủ.                                           |
+| **Chỉ Diên**                  | Nhân vật    | Mặt Nạ Giấy, học sĩ Lũng Vân, Người Tắt Sao, người viết lý tưởng của Hội Mặt Nạ. |
+| **Chưởng Bút**                | Chức vị     | Người đứng đầu Hội Đồng Bút của Lũng Vân.                                        |
+| **Cô Gieo**                   | Huyền thoại | Người đầu tiên gieo lúa nước ở Đảo Lạc, được Bà Khơi dạy dẫn nước.               |
+| **Cụ Trưởng Đình Đoan Khang** | Nhân vật    | Đứng đầu Hội Đồng Đình Trống, 81 tuổi.                                           |
+| **Cú Tuyết Lặng**             | Quái        | Cú trắng săn đêm ở Shizukane, tấn công thứ gây ồn. Băng.                         |
+| **Cua Mai Đồng**              | Quái        | Cua đá mai dính mảnh trống đồng, sống ở bờ biển Đảo Lạc. Thủy.                   |
 
 ## D
 
@@ -77,17 +76,16 @@ Tên trong bảng là tên đang dùng. Tên đề xuất đổi (chưa duyệt)
 | **Đêm Không Sao**                                     | Thuật ngữ | Kế hoạch của Hội Mặt Nạ: tắt mọi vì sao để lời ước chìm trở về người ước.               |
 | **Đêm Ru Bà**                                         | Lễ hội    | Mỗi rằm, dân Đảo Lạc hát ru Bà Khơi bên Hồ Gương.                                       |
 | **Đền Trăng**                                         | Địa danh  | Đền mái cong bên Hồ Gương, trụ sở Hội Đền Trăng.                                        |
-| **Điện Cảm**                                          | Phản ứng  | Thủy gặp Lôi: nước dẫn sấm đi khắp nơi. Đề xuất đổi tên thành Dẫn Lôi.                  |
+| **Điện Cảm**                                          | Phản ứng  | Thủy gặp Lôi: nước dẫn sấm đi khắp nơi.                                                 |
 | **Đình Trống Đồng**                                   | Địa danh  | Ngôi đình cổ nhất Đảo Lạc ở Phố Vạn Đăng, trụ sở Hội Đồng Đình Trống.                   |
 | **Đỉnh Vọng Vân**                                     | Địa danh  | Đỉnh núi cao nhất Đảo Lạc, nơi Phong Vân lớn lên.                                       |
 | **Đoàn Thuyền Buôn Gió Nồm**                          | Phe       | Đoàn thương thuyền lâu đời nhất Biển Trăm Bến, lập khoảng NS 520.                       |
-| **Đom Đóm, Đèn Lồng, Ngọn Đuốc, Vầng Trăng, Sao Mai** | Thuật ngữ | Năm cấp danh vọng đề xuất của Hộ Tinh, từ thấp tới cao.                                 |
+| **Đom Đóm, Đèn Lồng, Ngọn Đuốc, Vầng Trăng, Sao Mai** | Thuật ngữ | Năm cấp danh vọng của Hộ Tinh, từ thấp tới cao.                                         |
 | **Đom Đóm Lạc Lối**                                   | Quái      | Bầy đom đóm bị lời ước "mong được về nhà" bám vào. Lôi.                                 |
-| **Đóng Băng**                                         | Phản ứng  | Thủy gặp Băng: nước dừng lại để lắng nghe. Đề xuất đổi tên thành Lặng Nước.             |
+| **Đóng Băng**                                         | Phản ứng  | Thủy gặp Băng: nước dừng lại để lắng nghe.                                              |
 | **Đội Giông**                                         | Phe       | Đội Hộ Tinh của Quân Trấn Thủ, đội trưởng Lôi Đình.                                     |
 | **Đồi Ông Thông**                                     | Địa danh  | Đồi giữa Solgol nơi Sonamu đứng.                                                        |
 | **Đội Săn Đêm**                                       | Phe       | Đội trinh sát và đặt bẫy của Quân Trấn Thủ, có Minh Khải.                               |
-| **Động Thiên**                                        | Thuật ngữ | Khoảng đất bị sao rơi cuốn vào lòng mình. Đề xuất đổi tên thành Lòng Sao.               |
 | **Đường Cát**                                         | Địa danh  | Đường buôn trên bộ nối Lũng Vân và Golbaran.                                            |
 | **Đường Đua Giông**                                   | Địa danh  | Đồng cỏ ở Khokhtal nơi người ta đua với Aianga.                                         |
 
@@ -102,7 +100,7 @@ Tên trong bảng là tên đang dùng. Tên đề xuất đổi (chưa duyệt)
 | Tên                  | Loại | Định nghĩa                                                                    |
 | -------------------- | ---- | ----------------------------------------------------------------------------- |
 | **Giáp Băng Vô Chủ** | Quái | Tinh anh hệ Băng ở Shizukane, áo giáp người chết trong Tuyết Lở Lớn.          |
-| **Giọt Nhầy**        | Quái | Tên đề xuất thay cho "Slime": hạt nguyện đông lại trên đất ẩm.                |
+| **Giọt Nhầy**        | Quái | Quái `slime` (trước đây hiển thị "Slime"): hạt nguyện đông lại trên đất ẩm.   |
 | **Golbaran**         | Vùng | Vùng cảm hứng Ba Tư và Trung Đông, hệ Thổ, Trấn Tinh Ostad Khesht. "Mưa hoa". |
 
 ## H
@@ -122,7 +120,7 @@ Tên trong bảng là tên đang dùng. Tên đề xuất đổi (chưa duyệt)
 | **Hổ Rêu**                  | Quái        | Tinh anh hệ Mộc ở Purunae, hổ già giữ rừng, không ác.                         |
 | **Hộ Tinh**                 | Thuật ngữ   | Người được một vì sao chọn và bảo hộ, mang Tinh Văn và sức mạnh nguyên tố.    |
 | **Hộ Vệ Đá Cổ**             | Quái        | Tinh anh hệ Thổ, tượng đá Tô Khuyết khắc để canh Hang Hắc Giao.               |
-| **Hội Bất Nguyện**          | Phe         | Tên chính thức đề xuất của Hội Mặt Nạ.                                        |
+| **Hội Bất Nguyện**          | Phe         | Tên chính thức của Hội Mặt Nạ.                                                |
 | **Hội Đền Trăng**           | Phe         | Hội trông giữ giấc ngủ Bà Khơi, lập năm NS 1057.                              |
 | **Hội Đồng Bốn Mùa**        | Phe         | Chính quyền Shizukane: bốn họ nghề luân phiên cầm quyền theo mùa.             |
 | **Hội Đồng Bút**            | Phe         | Chính quyền Lũng Vân: chín học sĩ đỗ đầu kỳ thi Phong Khảo.                   |
@@ -136,35 +134,35 @@ Tên trong bảng là tên đang dùng. Tên đề xuất đổi (chưa duyệt)
 
 ## K
 
-| Tên                | Loại        | Định nghĩa                                                                                         |
-| ------------------ | ----------- | -------------------------------------------------------------------------------------------------- |
-| **Kẻ Gánh Nguyện** | Chức vị     | Thủ lĩnh Hội Mặt Nạ. Tên thật là Tô Khuyết.                                                        |
-| **Kênh Ngầm Dài**  | Địa danh    | Hệ thống kênh ngầm của Golbaran. Một nhánh bị Mặt Nạ Đất Nung đào lệch.                            |
-| **Kết Tinh**       | Phản ứng    | Thổ gặp nguyên tố khác: đất bọc tính khí thành tinh thể làm khiên. Đề xuất đổi tên thành Kết Ngọc. |
-| **Khai Tinh**      | Thuật ngữ   | Đột phá giới hạn cấp: mở thêm một lớp sáng bị khóa trong Tinh Văn.                                 |
-| **Khokhtal**       | Vùng        | Vùng cảm hứng thảo nguyên, hệ Lôi, Trấn Tinh Aianga. "Thảo nguyên xanh".                           |
-| **Khuếch Tán**     | Phản ứng    | Phong gặp nguyên tố khác: gió mang tính khí kia đi xa. Đề xuất đổi tên thành Gió Cuốn.             |
-| **Kiên**           | Huyền thoại | Một trong Năm Người Giữ Đảo, hệ Lôi, người lập Quân Trấn Thủ.                                      |
-| **Kỳ Đà Lửa**      | Quái        | Thằn lằn ăn tro lò rèn ở Marevia. Hỏa.                                                             |
+| Tên                | Loại        | Định nghĩa                                                               |
+| ------------------ | ----------- | ------------------------------------------------------------------------ |
+| **Kẻ Gánh Nguyện** | Chức vị     | Thủ lĩnh Hội Mặt Nạ. Tên thật là Tô Khuyết.                              |
+| **Kênh Ngầm Dài**  | Địa danh    | Hệ thống kênh ngầm của Golbaran. Một nhánh bị Mặt Nạ Đất Nung đào lệch.  |
+| **Kết Tinh**       | Phản ứng    | Thổ gặp nguyên tố khác: đất bọc tính khí thành tinh thể làm khiên.       |
+| **Khai Tinh**      | Thuật ngữ   | Đột phá giới hạn cấp: mở thêm một lớp sáng bị khóa trong Tinh Văn.       |
+| **Khokhtal**       | Vùng        | Vùng cảm hứng thảo nguyên, hệ Lôi, Trấn Tinh Aianga. "Thảo nguyên xanh". |
+| **Khuếch Tán**     | Phản ứng    | Phong gặp nguyên tố khác: gió mang tính khí kia đi xa.                   |
+| **Kiên**           | Huyền thoại | Một trong Năm Người Giữ Đảo, hệ Lôi, người lập Quân Trấn Thủ.            |
+| **Kỳ Đà Lửa**      | Quái        | Thằn lằn ăn tro lò rèn ở Marevia. Hỏa.                                   |
 
 ## L
 
-| Tên                    | Loại      | Định nghĩa                                                                                 |
-| ---------------------- | --------- | ------------------------------------------------------------------------------------------ |
-| **Lạc Hồng**           | Nhân vật  | Hộ Tinh hệ Hỏa 5★, kiếm sĩ giữ Đình của Hội Đồng Đình Trống.                               |
-| **Làng Chìm**          | Địa danh  | Ba làng chìm ở Vịnh Khơi trong Mùa Nước Đen năm NS 1046.                                   |
-| **Làng Vạn Lưới**      | Địa danh  | Làng chài lớn nhất Đảo Lạc, bên cửa Sông Sương.                                            |
-| **Lão Neo**            | Nhân vật  | Mặt Nạ Gỗ, ngư dân Làng Vạn Lưới, chỉ huy Hội Mặt Nạ ở Đảo Lạc.                            |
-| **Lễ Nhớ Ba Làng**     | Lễ hội    | Rằm tháng Lưới, thả hoa ở Vịnh Khơi tưởng nhớ ba làng chìm.                                |
-| **Lính Mặt Nạ Trắng**  | Quái      | Thành viên mới của Hội Mặt Nạ, đánh gần.                                                   |
-| **Lò Lớn**             | Địa danh  | Xưởng rèn của Faber trong lòng Mons Fornax.                                                |
-| **Lõi sao**            | Thuật ngữ | Viên đá giữ ánh sao trong Bia Đá. Bia Đông và Bia Tây mất lõi năm NS 1347.                 |
-| **Lõi sao giả**        | Thuật ngữ | Lõi do Mặt Nạ Sáp rèn, hút ánh sao khỏi mạch sao. Công cụ của Đêm Không Sao.               |
-| **Lòng Sao**           | Thuật ngữ | Tên đề xuất thay cho Động Thiên.                                                           |
-| **Lôi**                | Nguyên tố | Tính khí khoảnh khắc quyết định. Gắn Khokhtal và Aianga.                                   |
-| **Lôi Đình**           | Nhân vật  | Hộ Tinh hệ Lôi 5★, Đội trưởng Đội Giông của Quân Trấn Thủ.                                 |
-| **Luật Chín Mươi Lời** | Thuật ngữ | Câu dân gian: chín mươi lời cùng một ý thì sao cổ phải trả lời. Lý do của bảo hiểm 90 lần. |
-| **Lũng Vân**           | Vùng      | Vùng cảm hứng Trung Hoa cổ, hệ Phong, Trấn Tinh Thính Phong. "Thung lũng mây".             |
+| Tên                    | Loại      | Định nghĩa                                                                                      |
+| ---------------------- | --------- | ----------------------------------------------------------------------------------------------- |
+| **Lạc Hồng**           | Nhân vật  | Hộ Tinh hệ Hỏa 5★, kiếm sĩ giữ Đình của Hội Đồng Đình Trống.                                    |
+| **Làng Chìm**          | Địa danh  | Ba làng chìm ở Vịnh Khơi trong Mùa Nước Đen năm NS 1046.                                        |
+| **Làng Vạn Lưới**      | Địa danh  | Làng chài lớn nhất Đảo Lạc, bên cửa Sông Sương.                                                 |
+| **Lão Neo**            | Nhân vật  | Mặt Nạ Gỗ, ngư dân Làng Vạn Lưới, chỉ huy Hội Mặt Nạ ở Đảo Lạc.                                 |
+| **Lễ Nhớ Ba Làng**     | Lễ hội    | Rằm tháng Lưới, thả hoa ở Vịnh Khơi tưởng nhớ ba làng chìm.                                     |
+| **Lính Mặt Nạ Trắng**  | Quái      | Thành viên mới của Hội Mặt Nạ, đánh gần.                                                        |
+| **Lò Lớn**             | Địa danh  | Xưởng rèn của Faber trong lòng Mons Fornax.                                                     |
+| **Lõi sao**            | Thuật ngữ | Viên đá giữ ánh sao trong Bia Đá. Bia Đông và Bia Tây mất lõi năm NS 1347.                      |
+| **Lõi sao giả**        | Thuật ngữ | Lõi do Mặt Nạ Sáp rèn, hút ánh sao khỏi mạch sao. Công cụ của Đêm Không Sao.                    |
+| **Lòng Sao**           | Thuật ngữ | Bí cảnh lấy nguyên liệu: khoảng đất bị sao rơi cuốn vào lòng mình. Trước đây gọi là Động Thiên. |
+| **Lôi**                | Nguyên tố | Tính khí khoảnh khắc quyết định. Gắn Khokhtal và Aianga.                                        |
+| **Lôi Đình**           | Nhân vật  | Hộ Tinh hệ Lôi 5★, Đội trưởng Đội Giông của Quân Trấn Thủ, danh hiệu "Ngọn Thương Gọi Sấm".     |
+| **Luật Chín Mươi Lời** | Thuật ngữ | Câu dân gian: chín mươi lời cùng một ý thì sao cổ phải trả lời. Lý do của bảo hiểm 90 lần.      |
+| **Lũng Vân**           | Vùng      | Vùng cảm hứng Trung Hoa cổ, hệ Phong, Trấn Tinh Thính Phong. "Thung lũng mây".                  |
 
 ## M
 
@@ -185,24 +183,25 @@ Tên trong bảng là tên đang dùng. Tên đề xuất đổi (chưa duyệt)
 
 ## N
 
-| Tên                   | Loại        | Định nghĩa                                                                                                     |
-| --------------------- | ----------- | -------------------------------------------------------------------------------------------------------------- |
-| **Nàng Vạn Đăng**     | Huyền thoại | Một trong Năm Người Giữ Đảo, hệ Hỏa, dẫn dân chạy lũ bằng đèn.                                                 |
-| **Năm Người Giữ Đảo** | Huyền thoại | Năm Hộ Tinh cùng Bà Khơi phong ấn Hắc Giao năm NS 1052: Tô Khuyết, Nàng Vạn Đăng, Ông Lái Gió, Hà Thanh, Kiên. |
-| **Nấm Đèn**           | Quái        | Nấm phát sáng mọc trên rễ Sonamu. Mộc.                                                                         |
-| **Nét Sao**           | Thuật ngữ   | Tên đề xuất thay cho Cung mệnh (N0 đến N6).                                                                    |
-| **Ngọc Thạch**        | Nhân vật    | Hộ Tinh hệ Thổ 4★, con gái thợ mỏ, học việc ở Phường Đá Ngọc.                                                  |
-| **Ngũ Diện**          | Chức vị     | Năm thành viên cấp cao của Hội Mặt Nạ: Mặt Nạ Gỗ, Giấy, Sứ, Đất Nung, Sáp.                                     |
-| **Nguyện Cặn**        | Thuật ngữ   | Bùn đen của những lời ước không ai nghe, lắng dưới Biển Lặng.                                                  |
-| **Người Cầm Cương**   | Chức vị     | Lãnh đạo toàn Khokhtal, do Hội Lửa Trại Lớn bầu.                                                               |
-| **Người Đếm Sao**     | Phe         | Hội trung lập ghi chép sao, có mặt ở mọi vùng, lập khoảng NS 610.                                              |
-| **Người Đọc Tuyết**   | Chức vị     | Nghề ở Shizukane, đọc và chép lời Yukiyo trong hoa văn tuyết.                                                  |
-| **Người Gọi Sao**     | Biệt danh   | Biệt danh đề xuất của Người Ước Nguyện.                                                                        |
-| **Người Tắt Sao**     | Thuật ngữ   | Hộ Tinh bị vì sao bỏ đi, Tinh Văn đã tắt.                                                                      |
-| **Người Ước Nguyện**  | Thuật ngữ   | Nhân vật chính, người có lời ước được Tinh Hải nghe ngay.                                                      |
-| **Nhà Chưa Xong**     | Địa danh    | Cung điện Ostad Khesht xây mãi ở Minashahr, mỗi ngày thêm một phòng cho người không nhà.                       |
-| **Niên Sao (NS)**     | Thuật ngữ   | Lịch chung, tính từ năm Bà Lưới được chọn. Hiện tại NS 1350.                                                   |
-| **Nüüdel Ordu**       | Địa danh    | Thủ đô di động của Khokhtal, "Đại Trại Di Động".                                                               |
+| Tên                     | Loại        | Định nghĩa                                                                                                     |
+| ----------------------- | ----------- | -------------------------------------------------------------------------------------------------------------- |
+| **Nàng Vạn Đăng**       | Huyền thoại | Một trong Năm Người Giữ Đảo, hệ Hỏa, dẫn dân chạy lũ bằng đèn.                                                 |
+| **Năm Người Giữ Đảo**   | Huyền thoại | Năm Hộ Tinh cùng Bà Khơi phong ấn Hắc Giao năm NS 1052: Tô Khuyết, Nàng Vạn Đăng, Ông Lái Gió, Hà Thanh, Kiên. |
+| **Nấm Đèn**             | Quái        | Nấm phát sáng mọc trên rễ Sonamu. Mộc.                                                                         |
+| **Nét Sao**             | Thuật ngữ   | N0 đến N6: số nét Tinh Văn đã thêm khi vì sao trả lời lại. Trước đây gọi là Cung mệnh (C0–C6).                 |
+| **Ngọc Thạch**          | Nhân vật    | Hộ Tinh hệ Thổ 4★, con gái thợ mỏ, học việc ở Phường Đá Ngọc.                                                  |
+| **Ngọn Thương Gọi Sấm** | Danh hiệu   | Danh hiệu của Lôi Đình (trước đây là "Tướng Quân Giông Tố").                                                   |
+| **Ngũ Diện**            | Chức vị     | Năm thành viên cấp cao của Hội Mặt Nạ: Mặt Nạ Gỗ, Giấy, Sứ, Đất Nung, Sáp.                                     |
+| **Nguyện Cặn**          | Thuật ngữ   | Bùn đen của những lời ước không ai nghe, lắng dưới Biển Lặng.                                                  |
+| **Người Cầm Cương**     | Chức vị     | Lãnh đạo toàn Khokhtal, do Hội Lửa Trại Lớn bầu.                                                               |
+| **Người Đếm Sao**       | Phe         | Hội trung lập ghi chép sao, có mặt ở mọi vùng, lập khoảng NS 610.                                              |
+| **Người Đọc Tuyết**     | Chức vị     | Nghề ở Shizukane, đọc và chép lời Yukiyo trong hoa văn tuyết.                                                  |
+| **Người Gọi Sao**       | Biệt danh   | Biệt danh của Người Ước Nguyện trong lời thoại.                                                                |
+| **Người Tắt Sao**       | Thuật ngữ   | Hộ Tinh bị vì sao bỏ đi, Tinh Văn đã tắt.                                                                      |
+| **Người Ước Nguyện**    | Thuật ngữ   | Nhân vật chính, người có lời ước được Tinh Hải nghe ngay.                                                      |
+| **Nhà Chưa Xong**       | Địa danh    | Cung điện Ostad Khesht xây mãi ở Minashahr, mỗi ngày thêm một phòng cho người không nhà.                       |
+| **Niên Sao (NS)**       | Thuật ngữ   | Lịch chung, tính từ năm Bà Lưới được chọn. Hiện tại NS 1350.                                                   |
+| **Nüüdel Ordu**         | Địa danh    | Thủ đô di động của Khokhtal, "Đại Trại Di Động".                                                               |
 
 ## O
 
@@ -234,10 +233,10 @@ Tên trong bảng là tên đang dùng. Tên đề xuất đổi (chưa duyệt)
 
 ## Q
 
-| Tên               | Loại     | Định nghĩa                                                                      |
-| ----------------- | -------- | ------------------------------------------------------------------------------- |
-| **Quá Tải**       | Phản ứng | Hỏa gặp Lôi: hai tính khí nóng vội cùng bùng nổ. Đề xuất đổi tên thành Sấm Lửa. |
-| **Quân Trấn Thủ** | Phe      | Lực lượng giữ Đảo Lạc, có Đội Giông và Đội Săn Đêm.                             |
+| Tên               | Loại     | Định nghĩa                                          |
+| ----------------- | -------- | --------------------------------------------------- |
+| **Quá Tải**       | Phản ứng | Hỏa gặp Lôi: hai tính khí nóng vội cùng bùng nổ.    |
+| **Quân Trấn Thủ** | Phe      | Lực lượng giữ Đảo Lạc, có Đội Giông và Đội Săn Đêm. |
 
 ## R
 
@@ -253,7 +252,7 @@ Tên trong bảng là tên đang dùng. Tên đề xuất đổi (chưa duyệt)
 | **Sao Cả**          | Huyền thoại | Ngôi sao đầu tiên, tự rơi xuống Biển Lặng và tạo ra đất liền. Lõi nằm dưới Hồ Gương. |
 | **Sao Mùa**         | Thuật ngữ   | Sao cổ sáng nhất bầu trời trong một mùa: Hộ Tinh nổi bật. Lý do của 50/50.           |
 | **Shizukane**       | Vùng        | Vùng cảm hứng Nhật Bản, hệ Băng, Trấn Tinh Yukiyo. "Chuông lặng".                    |
-| **Siêu Dẫn**        | Phản ứng    | Lôi gặp Băng: vật bị đánh mất lớp phòng thủ. Đề xuất đổi tên thành Giòn Giáp.        |
+| **Siêu Dẫn**        | Phản ứng    | Lôi gặp Băng: vật bị đánh mất lớp phòng thủ.                                         |
 | **Sói Sấm**         | Quái        | Sói tích điện sống theo đàn ở Khokhtal. Lôi.                                         |
 | **Solgol**          | Địa danh    | Thủ đô Purunae, "Thung Thông".                                                       |
 | **Sonamu**          | Trấn Tinh   | Trấn Tinh hệ Mộc của Purunae, cây thông già, vị thần duy nhất đang già đi.           |
@@ -264,13 +263,13 @@ Tên trong bảng là tên đang dùng. Tên đề xuất đổi (chưa duyệt)
 
 | Tên                    | Loại      | Định nghĩa                                                                                   |
 | ---------------------- | --------- | -------------------------------------------------------------------------------------------- |
-| **Tan Chảy**           | Phản ứng  | Hỏa gặp Băng: băng nhường trước và vỡ ra. Đề xuất đổi tên thành Rã Băng.                     |
+| **Tan Chảy**           | Phản ứng  | Hỏa gặp Băng: băng nhường trước và vỡ ra.                                                    |
 | **Tết Sao Rơi**        | Lễ hội    | Lễ đầu năm của Đảo Lạc, cả làng gõ trống đồng ước chung một lời.                             |
 | **Thạch Sơn**          | Nhân vật  | Hộ Tinh hệ Thổ 5★, Thợ Cả Phường Đá Ngọc, người khắc trăm bia đường.                         |
 | **Thành Không Tên**    | Địa danh  | Phế tích ở Lũng Vân bị Thính Phong xóa sổ, nơi Hội Mặt Nạ cất giấy ước.                      |
 | **Tháp Tinh Tú**       | Thuật ngữ | Tháp mười hai tầng dựng năm NS 1110, hứng ánh sao nuôi bốn Bia Đá.                           |
 | **Thiên Diên Thành**   | Địa danh  | Thủ đô Lũng Vân, "thành diều trời".                                                          |
-| **Thiên Tinh Giới**    | Thuật ngữ | Tên tạm của thế giới. Đề xuất đổi thành Vọng Tinh Giới.                                      |
+| **Thiên Tinh Giới**    | Thuật ngữ | Tên tạm cũ của thế giới, nay là Vọng Tinh Giới.                                              |
 | **Thính Phong**        | Trấn Tinh | Trấn Tinh hệ Phong của Lũng Vân, ông già chép mọi lời gió mang.                              |
 | **Thổ**                | Nguyên tố | Tính khí che chở và bền bỉ. Gắn Golbaran và Ostad Khesht.                                    |
 | **Thời Bảy Sao Xuống** | Thời kỳ   | Thời kỳ 2: bảy sao lớn rơi xuống thành bảy Trấn Tinh.                                        |
@@ -295,10 +294,10 @@ Tên trong bảng là tên đang dùng. Tên đề xuất đổi (chưa duyệt)
 
 ## U
 
-| Tên         | Loại      | Định nghĩa                                                                                         |
-| ----------- | --------- | -------------------------------------------------------------------------------------------------- |
-| **Utsuro**  | Nhân vật  | Biệt danh trong hội của Hisame Rei, nghĩa là "trống rỗng".                                         |
-| **Ủy thác** | Thuật ngữ | Nhiệm vụ hằng ngày: việc nhờ của dân nhận ở bảng trước Đình Trống. Đề xuất đổi tên thành Việc Nhờ. |
+| Tên         | Loại      | Định nghĩa                                                         |
+| ----------- | --------- | ------------------------------------------------------------------ |
+| **Utsuro**  | Nhân vật  | Biệt danh trong hội của Hisame Rei, nghĩa là "trống rỗng".         |
+| **Ủy thác** | Thuật ngữ | Nhiệm vụ hằng ngày: việc nhờ của dân nhận ở bảng trước Đình Trống. |
 
 ## Ư
 
@@ -311,15 +310,14 @@ Tên trong bảng là tên đang dùng. Tên đề xuất đổi (chưa duyệt)
 
 | Tên                | Loại      | Định nghĩa                                                          |
 | ------------------ | --------- | ------------------------------------------------------------------- |
-| **Việc Nhờ**       | Thuật ngữ | Tên đề xuất thay cho Ủy thác.                                       |
 | **Vịnh Khơi**      | Địa danh  | Vịnh phía đông Đảo Lạc, nơi Bà Khơi rơi xuống và Hắc Giao trồi lên. |
-| **Vọng Tinh Giới** | Thuật ngữ | Tên thế giới đề xuất thay cho Thiên Tinh Giới.                      |
+| **Vọng Tinh Giới** | Thuật ngữ | Tên thế giới: cõi của những người ngước nhìn sao mà ước.            |
 
 ## X
 
-| Tên    | Loại      | Định nghĩa                                             |
-| ------ | --------- | ------------------------------------------------------ |
-| **Xu** | Thuật ngữ | Tiền chung của Thiên Tinh Giới, đồng thau lỗ hình sao. |
+| Tên    | Loại      | Định nghĩa                                            |
+| ------ | --------- | ----------------------------------------------------- |
+| **Xu** | Thuật ngữ | Tiền chung của Vọng Tinh Giới, đồng thau lỗ hình sao. |
 
 ## Y
 

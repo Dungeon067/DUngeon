@@ -10,31 +10,31 @@
 
 ## 1. Tổng quan
 
-| #   | Tên                                     | Vùng               | Nguyên tố                    | Nguy hiểm | Loại         | Trạng thái                |
-| --- | --------------------------------------- | ------------------ | ---------------------------- | --------- | ------------ | ------------------------- |
-| 1   | Giọt Nhầy (trong game đang tên "Slime") | Đảo Lạc, mọi vùng  | Theo nơi sống                | 1         | Thường       | Có trong game (`slime`)   |
-| 2   | Yêu Rừng                                | Đảo Lạc            | Không                        | 2         | Thường       | Có trong game (`goblin`)  |
-| 3   | Yêu Rừng Cung Thủ                       | Đảo Lạc            | Không                        | 2         | Thường       | Có trong game (`archer`)  |
-| 4   | Pháp Sư Mặt Nạ                          | Mọi vùng           | Theo mặt nạ                  | 3         | Thường       | Có trong game (`shaman`)  |
-| 5   | Hộ Vệ Đá Cổ                             | Đảo Lạc            | Thổ                          | 4         | Tinh anh     | Có trong game (`golem`)   |
-| 6   | Hắc Giao                                | Đảo Lạc            | Thủy, sang Lôi ở giai đoạn 2 | 5         | Boss         | Có trong game (`hacgiao`) |
-| 7   | Cua Mai Đồng                            | Đảo Lạc            | Thủy                         | 2         | Thường       | Mới                       |
-| 8   | Đom Đóm Lạc Lối                         | Đảo Lạc            | Lôi                          | 1         | Thường (bầy) | Mới                       |
-| 9   | Bóng Cặn                                | Đảo Lạc, Biển Lặng | Thủy                         | 3         | Thường       | Mới                       |
-| 10  | Trâu Đá Ngủ                             | Đảo Lạc            | Thổ                          | 4         | Tinh anh     | Mới                       |
-| 11  | Lính Mặt Nạ Trắng                       | Mọi vùng           | Không                        | 2         | Thường       | Mới                       |
-| 12  | Diều Hoang                              | Lũng Vân           | Phong                        | 2         | Thường       | Mới                       |
-| 13  | Hạc Mực                                 | Lũng Vân           | Phong                        | 3         | Thường       | Mới                       |
-| 14  | Cú Tuyết Lặng                           | Shizukane          | Băng                         | 2         | Thường       | Mới                       |
-| 15  | Giáp Băng Vô Chủ                        | Shizukane          | Băng                         | 4         | Tinh anh     | Mới                       |
-| 16  | Nấm Đèn                                 | Purunae            | Mộc                          | 1         | Thường (bầy) | Mới                       |
-| 17  | Hổ Rêu                                  | Purunae            | Mộc                          | 4         | Tinh anh     | Mới                       |
-| 18  | Bọ Hung Men                             | Golbaran           | Thổ                          | 2         | Thường       | Mới                       |
-| 19  | Rắn Cát Kính                            | Golbaran           | Thổ                          | 3         | Thường       | Mới                       |
-| 20  | Kỳ Đà Lửa                               | Marevia            | Hỏa                          | 2         | Thường       | Mới                       |
-| 21  | Tượng Đồng Đấu Sĩ                       | Marevia            | Hỏa                          | 4         | Tinh anh     | Mới                       |
-| 22  | Sói Sấm                                 | Khokhtal           | Lôi                          | 3         | Thường (bầy) | Mới                       |
-| 23  | Đại Bàng Mây Dông                       | Khokhtal           | Lôi                          | 4         | Tinh anh     | Mới                       |
+| #   | Tên               | Vùng               | Nguyên tố                    | Nguy hiểm | Loại         | Trạng thái                |
+| --- | ----------------- | ------------------ | ---------------------------- | --------- | ------------ | ------------------------- |
+| 1   | Giọt Nhầy         | Đảo Lạc, mọi vùng  | Theo nơi sống                | 1         | Thường       | Có trong game (`slime`)   |
+| 2   | Yêu Rừng          | Đảo Lạc            | Không                        | 2         | Thường       | Có trong game (`goblin`)  |
+| 3   | Yêu Rừng Cung Thủ | Đảo Lạc            | Không                        | 2         | Thường       | Có trong game (`archer`)  |
+| 4   | Pháp Sư Mặt Nạ    | Mọi vùng           | Theo mặt nạ                  | 3         | Thường       | Có trong game (`shaman`)  |
+| 5   | Hộ Vệ Đá Cổ       | Đảo Lạc            | Thổ                          | 4         | Tinh anh     | Có trong game (`golem`)   |
+| 6   | Hắc Giao          | Đảo Lạc            | Thủy, sang Lôi ở giai đoạn 2 | 5         | Boss         | Có trong game (`hacgiao`) |
+| 7   | Cua Mai Đồng      | Đảo Lạc            | Thủy                         | 2         | Thường       | Mới                       |
+| 8   | Đom Đóm Lạc Lối   | Đảo Lạc            | Lôi                          | 1         | Thường (bầy) | Mới                       |
+| 9   | Bóng Cặn          | Đảo Lạc, Biển Lặng | Thủy                         | 3         | Thường       | Mới                       |
+| 10  | Trâu Đá Ngủ       | Đảo Lạc            | Thổ                          | 4         | Tinh anh     | Mới                       |
+| 11  | Lính Mặt Nạ Trắng | Mọi vùng           | Không                        | 2         | Thường       | Mới                       |
+| 12  | Diều Hoang        | Lũng Vân           | Phong                        | 2         | Thường       | Mới                       |
+| 13  | Hạc Mực           | Lũng Vân           | Phong                        | 3         | Thường       | Mới                       |
+| 14  | Cú Tuyết Lặng     | Shizukane          | Băng                         | 2         | Thường       | Mới                       |
+| 15  | Giáp Băng Vô Chủ  | Shizukane          | Băng                         | 4         | Tinh anh     | Mới                       |
+| 16  | Nấm Đèn           | Purunae            | Mộc                          | 1         | Thường (bầy) | Mới                       |
+| 17  | Hổ Rêu            | Purunae            | Mộc                          | 4         | Tinh anh     | Mới                       |
+| 18  | Bọ Hung Men       | Golbaran           | Thổ                          | 2         | Thường       | Mới                       |
+| 19  | Rắn Cát Kính      | Golbaran           | Thổ                          | 3         | Thường       | Mới                       |
+| 20  | Kỳ Đà Lửa         | Marevia            | Hỏa                          | 2         | Thường       | Mới                       |
+| 21  | Tượng Đồng Đấu Sĩ | Marevia            | Hỏa                          | 4         | Tinh anh     | Mới                       |
+| 22  | Sói Sấm           | Khokhtal           | Lôi                          | 3         | Thường (bầy) | Mới                       |
+| 23  | Đại Bàng Mây Dông | Khokhtal           | Lôi                          | 4         | Tinh anh     | Mới                       |
 
 Tổng: 6 loại hiện có (5 quái và Hắc Giao) và 17 loại mới.
 
@@ -52,7 +52,7 @@ Tổng: 6 loại hiện có (5 quái và Hắc Giao) và 17 loại mới.
 - **Lời đồn dân gian:** "Giọt nhầy nào vỡ ra mà có tiếng cười là lời ước của trẻ con."
 - **Gợi ý hình ảnh:** khối tròn mọng, trong suốt, bên trong có một đốm sáng nhỏ nhấp nháy như hạt nguyện. Mắt là hai chấm.
 - **Gợi ý cơ chế:** nhảy bổ vào người. Khi bị đánh bại nhả ra một hạt sáng hồi chút năng lượng.
-- **Ghi chú tên:** "Slime" là tiếng Anh, trái với A.3 mục 3. Đề xuất đổi tên hiển thị thành **Giọt Nhầy**, xem `11-dat-ten.md` mục 5.
+- **Ghi chú tên:** tên hiển thị là Giọt Nhầy (trước đây là "Slime"). ID dữ liệu vẫn là `slime`.
 
 ### 2.2. Yêu Rừng (`goblin`)
 
@@ -142,7 +142,7 @@ Hồ sơ đầy đủ ở `07-hac-giao-va-hoi-mat-na.md`. Phần dưới chỉ g
 
 ### 3.3. Bóng Cặn
 
-- **Vùng sống:** Vịnh Khơi lúc nước đen, Hang Hắc Giao, Động Thiên bị nhiễm bùn.
+- **Vùng sống:** Vịnh Khơi lúc nước đen, Hang Hắc Giao, Lòng Sao bị nhiễm bùn.
 - **Tập tính:** những mảnh Nguyện Cặn nhỏ tách khỏi Hắc Giao, mang hình người mờ đen. Mỗi Bóng Cặn lặp đi lặp lại một lời ước không thành, ví dụ "giá mà ta đã ở lại".
 - **Nguy hiểm:** 3.
 - **Nguyên tố:** Thủy.

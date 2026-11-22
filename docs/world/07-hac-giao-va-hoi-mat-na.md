@@ -51,7 +51,7 @@ Hắc Giao không muốn phá hủy. **Nó muốn được nghe.**
 ### 2.1. Tên gọi
 
 - **Dân gian:** **Hội Mặt Nạ** (thuật ngữ A.5, dùng trong game).
-- **Họ tự gọi mình:** "những người chưa được nghe". Tên chính thức đề xuất là **Hội Bất Nguyện**, xem `11-dat-ten.md` mục 3.6.
+- **Họ tự gọi mình:** "những người chưa được nghe". Tên chính thức là **Hội Bất Nguyện**, xem `11-dat-ten.md` mục 3.6.
 
 ### 2.2. Lý tưởng
 

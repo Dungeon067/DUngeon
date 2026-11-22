@@ -5,7 +5,7 @@
 ### 1.1. Năm, tháng, mùa
 
 - Năm tính theo **Niên Sao (NS)**, hiện tại NS 1350 (xem `02-lich-su.md`).
-- Một năm có **12 tháng âm lịch**, mỗi tháng 30 ngày, đặt tên theo **12 chòm sao** của Thiên Tinh Giới. Chòm sao của tháng là chòm sáng nhất trên đầu lúc nửa đêm ngày rằm.
+- Một năm có **12 tháng âm lịch**, mỗi tháng 30 ngày, đặt tên theo **12 chòm sao** của Vọng Tinh Giới. Chòm sao của tháng là chòm sáng nhất trên đầu lúc nửa đêm ngày rằm.
 - Mười hai chòm sao này cũng là **mười hai tầng của Tháp Tinh Tú**.
 - Đầu năm cách nhau theo vùng: Đảo Lạc, Lũng Vân, Purunae, Khokhtal bắt đầu năm từ tháng Trống. Shizukane bắt đầu năm từ đêm tuyết đầu mùa. Golbaran và Marevia bắt đầu từ tháng Lúa (xuân phân).
 
@@ -153,7 +153,7 @@ Tất cả đều là sáng tác. Không lấy giáo lý, thần linh hay nghi l
 
 ### 7.1. Xu
 
-- **Xu** là tiền chung của cả Thiên Tinh Giới, do Đoàn Thuyền Buôn Gió Nồm đề xuất từ Thời Trăm Bến để các vùng buôn bán dễ.
+- **Xu** là tiền chung của cả Vọng Tinh Giới, do Đoàn Thuyền Buôn Gió Nồm đề xuất từ Thời Trăm Bến để các vùng buôn bán dễ.
 - Xu là đồng tròn bằng đồng thau, **lỗ giữa hình ngôi sao năm cánh**. Mặt trước in biểu tượng vùng đúc, mặt sau in chòm sao của năm đúc.
 - Mỗi vùng tự đúc Xu, nhưng cân nặng và độ đồng phải giống nhau. Người Đếm Sao kiểm định mẫu Xu mỗi năm.
 - Trong game chỉ có một đơn vị là Xu. Dân gian có cách nói "một xâu" (100 Xu xâu dây qua lỗ sao) và "một hòm" (10.000 Xu).

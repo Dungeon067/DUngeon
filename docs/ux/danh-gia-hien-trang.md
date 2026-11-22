@@ -294,7 +294,7 @@ Nguyên tắc: Đảo Lạc là "nhà", sảnh chỉ là màn khởi đầu. M�
 | HUD dưới             | Trái: cần điều khiển. Giữa: máu, thể lực. Phải: cụm Đánh, Kỹ, Nộ, Lướt, Tương tác                                                            | Điều khiển                 |
 | Hộp Tạm dừng         | Tiếp tục, Cài đặt (âm thanh, rung, cỡ nút), Điều khiển (rút gọn từ Hướng dẫn), Về sảnh                                                       | Hệ thống                   |
 | Sảnh (một màn ngang) | Nút Vào Đảo Lạc to; bên cạnh: Thử thách (Tháp, Boss), Nhân vật, Ước nguyện, Ủy thác; thanh tiền tệ trên cùng; bánh răng (Cài đặt, Hướng dẫn) | Khởi đầu và quản lý        |
-| Nhóm "Thử thách"     | Tháp Tinh Tú, Thảo phạt Hắc Giao (sau này: Động Thiên)                                                                                       | Chế độ có phần thưởng      |
+| Nhóm "Thử thách"     | Tháp Tinh Tú, Thảo phạt Hắc Giao (sau này: Lòng Sao)                                                                                         | Chế độ có phần thưởng      |
 | Nhóm "Hồ sơ"         | Nhân vật & Đội hình, Bảo Ấn (sau này)                                                                                                        | Phát triển nhân vật        |
 | Ẩn                   | Server (Admin): trang riêng `/admin/` có đăng nhập, không có lối vào từ game (đã quyết, S10)                                                 | Công cụ thử nghiệm         |
 

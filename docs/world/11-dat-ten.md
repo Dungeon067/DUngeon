@@ -2,21 +2,45 @@
 
 File này có ba phần: tiêu chí và quy tắc đặt tên (mục 1, 2), phương án tên cho các khái niệm chính (mục 3), và rà lại thuật ngữ hiện có (mục 5).
 
-**Trạng thái:** tất cả là **đề xuất**, chờ chủ dự án duyệt. Các file `00` đến `10` dùng phương án khuyến nghị (đánh dấu ★) cho khái niệm mới, và dùng đúng thuật ngữ A.5 cho khái niệm đã có. Khi chủ dự án chọn phương án khác, thay tên đồng loạt trong `docs/world/`.
+**Trạng thái:** **Đã quyết.** Chủ dự án duyệt ngày 2026-11-22, kết quả ở mục 0. Các mục 3 đến 5 giữ lại phương án và lý do để tham khảo.
+
+## 0. Kết quả duyệt (Đã quyết)
+
+| Khái niệm                     | Quyết định                                                                                                     | Áp dụng vào game                                                    |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Tên thế giới                  | **Vọng Tinh Giới**                                                                                             | Chưa hiển thị trong game                                            |
+| Danh hiệu thần hộ mệnh        | **Trấn Tinh**                                                                                                  | Chỉ trong tài liệu                                                  |
+| Dấu ấn sức mạnh               | **Tinh Văn**                                                                                                   | Chỉ trong tài liệu                                                  |
+| Nơi sao ngự                   | **Tinh Hải**                                                                                                   | Chỉ trong tài liệu                                                  |
+| Tên riêng 7 Trấn Tinh         | Theo phương án ★ (mục 3.2)                                                                                     | Chỉ trong tài liệu                                                  |
+| Tên chính thức Hội Mặt Nạ     | **Hội Bất Nguyện**. Trong lời thoại vẫn gọi "Hội Mặt Nạ" khi hợp                                               | Chỉ trong tài liệu                                                  |
+| Chức vị trong hội             | Mặt Nạ Trắng, Mặt Nạ Khắc, Ngũ Diện, Kẻ Gánh Nguyện                                                            | Chỉ trong tài liệu                                                  |
+| Danh hiệu nhân vật chính      | Giữ **Người Ước Nguyện**                                                                                       | Không đổi                                                           |
+| Cấp danh vọng                 | **Đom Đóm → Đèn Lồng → Ngọn Đuốc → Vầng Trăng → Sao Mai**                                                      | Chưa có trong game                                                  |
+| Tên vùng và thủ đô            | Theo phương án ★ (mục 4.1)                                                                                     | Chỉ trong tài liệu                                                  |
+| Cung mệnh (C0–C6)             | Đổi thành **Nét Sao (N0–N6)**                                                                                  | Đã đổi chữ hiển thị (thẻ nhân vật, ước nguyện, admin)               |
+| Động Thiên                    | Đổi thành **Lòng Sao**                                                                                         | Chưa có trong game                                                  |
+| Slime                         | Đổi thành **Giọt Nhầy**                                                                                        | Đã đổi `name` trong `content/enemies/slime.yaml`, ID vẫn là `slime` |
+| Danh hiệu Lôi Đình            | Đổi thành **Ngọn Thương Gọi Sấm**                                                                              | Đã đổi `title` trong `content/characters/loidinh.yaml`              |
+| 8 tên phản ứng                | **Giữ nguyên**                                                                                                 | Không đổi                                                           |
+| Ủy thác                       | **Giữ nguyên**                                                                                                 | Không đổi                                                           |
+| Tên nộ "Tuyết Phủ Trường Sơn" | **Giữ nguyên**                                                                                                 | Không đổi                                                           |
+| Tuyết Lan                     | Giữ vùng Shizukane, giữ các điểm khác biệt đã tạo                                                              | Không đổi                                                           |
+| Địa danh có thật              | **Được phép** nhắc tới trong tên kỹ năng, thơ, mô tả. Vẫn không dùng làm nơi diễn ra sự kiện hay phe phản diện | Quy tắc viết                                                        |
 
 ## 1. Tiêu chí của một cái tên tốt
 
 Một tên đạt khi qua được cả bảy câu hỏi:
 
-| #   | Tiêu chí                       | Câu hỏi kiểm tra                                                           | Ví dụ đạt                      | Ví dụ không đạt                    |
-| --- | ------------------------------ | -------------------------------------------------------------------------- | ------------------------------ | ---------------------------------- |
-| 1   | Dễ đọc với người Việt          | Học sinh lớp 6 đọc to có vấp không?                                        | Golbaran                       | Gholbārān (dấu phụ khó đọc)        |
-| 2   | Ngầu và đáng nhớ               | Nghe một lần có nhắc lại được không?                                       | Hắc Giao                       | Con Rồng Đen Lớn                   |
-| 3   | Nghĩa gốc rõ                   | Giải thích nghĩa từng chữ trong một câu được không?                        | Hộ Tinh: người được sao bảo hộ | Tinh Long Vũ Đế (ghép chữ cho kêu) |
-| 4   | Đúng chức năng hoặc câu chuyện | Nghe tên có đoán được nó làm gì không?                                     | Kẻ Gánh Nguyện                 | Chúa Tể Bóng Đêm                   |
-| 5   | Không trùng tác phẩm nổi tiếng | Có trùng tên, khái niệm của game, phim, truyện nổi tiếng không?            | Tinh Văn                       | Vision, Archon, Celestia           |
-| 6   | Ngắn                           | Khái niệm hay dùng có tối đa 4 âm tiết không?                              | Trấn Tinh (2)                  | Đại Thần Hộ Mệnh Bảy Phương (6)    |
-| 7   | Tôn trọng văn hóa gốc          | Có lấy tên nhân vật lịch sử, thần linh tôn giáo thật, địa danh thật không? | Thính Phong                    | Tên một vị thần đang được thờ      |
+| #   | Tiêu chí                       | Câu hỏi kiểm tra                                                                                                                                                                                   | Ví dụ đạt                      | Ví dụ không đạt                    |
+| --- | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ | ---------------------------------- |
+| 1   | Dễ đọc với người Việt          | Học sinh lớp 6 đọc to có vấp không?                                                                                                                                                                | Golbaran                       | Gholbārān (dấu phụ khó đọc)        |
+| 2   | Ngầu và đáng nhớ               | Nghe một lần có nhắc lại được không?                                                                                                                                                               | Hắc Giao                       | Con Rồng Đen Lớn                   |
+| 3   | Nghĩa gốc rõ                   | Giải thích nghĩa từng chữ trong một câu được không?                                                                                                                                                | Hộ Tinh: người được sao bảo hộ | Tinh Long Vũ Đế (ghép chữ cho kêu) |
+| 4   | Đúng chức năng hoặc câu chuyện | Nghe tên có đoán được nó làm gì không?                                                                                                                                                             | Kẻ Gánh Nguyện                 | Chúa Tể Bóng Đêm                   |
+| 5   | Không trùng tác phẩm nổi tiếng | Có trùng tên, khái niệm của game, phim, truyện nổi tiếng không?                                                                                                                                    | Tinh Văn                       | Vision, Archon, Celestia           |
+| 6   | Ngắn                           | Khái niệm hay dùng có tối đa 4 âm tiết không?                                                                                                                                                      | Trấn Tinh (2)                  | Đại Thần Hộ Mệnh Bảy Phương (6)    |
+| 7   | Tôn trọng văn hóa gốc          | Có lấy tên nhân vật lịch sử, thần linh tôn giáo thật không? Có đặt địa danh thật làm tên vùng, nơi diễn ra sự kiện hay phe phản diện không? (Tên kỹ năng, thơ, mô tả được nhắc tới địa danh thật.) | Thính Phong                    | Tên một vị thần đang được thờ      |
 
 Quy tắc phụ:
 
@@ -90,7 +114,7 @@ Lưu ý: "Tinh Văn" (văn: hoa văn) khác "tinh vân" (vân: mây, tức nebul
 | ★ B | **Vọng Tinh Giới**        | _vọng_: trông ngóng, hy vọng. _tinh_: sao. _giới_: cõi | Cõi của những người ngước nhìn sao mà ước. Gắn trực tiếp với ước nguyện và tên game | Có cảm xúc, riêng biệt |
 | C   | Hạ Tinh Giới              | cõi dưới các vì sao                                    | Đúng vũ trụ quan ba tầng. Nhưng "hạ" dễ hiểu là "mùa hè" hoặc "thấp kém"            | Lạ, dễ hiểu sai        |
 
-Bộ tài liệu vẫn dùng **Thiên Tinh Giới** cho tới khi chủ dự án duyệt.
+**Đã quyết:** Vọng Tinh Giới.
 
 ### 3.6. Tên Hội Mặt Nạ và chức vị trong hội
 
@@ -133,16 +157,16 @@ Lý do chọn A: bậc 1 và 2 mô tả đúng mặt nạ (trơn hay đã khắc
 
 ## 4. Bảng tên chính đã dùng (tóm tắt)
 
-| Khái niệm                 | Tên dùng trong bộ tài liệu | Trạng thái                                        |
-| ------------------------- | -------------------------- | ------------------------------------------------- |
-| Thế giới                  | Thiên Tinh Giới            | Tên tạm A.5, đề xuất Vọng Tinh Giới               |
-| Danh hiệu thần hộ mệnh    | Trấn Tinh                  | Đề xuất ★                                         |
-| Dấu ấn sức mạnh           | Tinh Văn                   | Đề xuất ★                                         |
-| Nơi sao ngự               | Tinh Hải                   | Đề xuất ★                                         |
-| Tầng dưới đáy biển        | Biển Lặng                  | Đề xuất (không bắt buộc, không có phương án khác) |
-| Bùn lời ước               | Nguyện Cặn                 | Đề xuất (không bắt buộc)                          |
-| Tên chính thức Hội Mặt Nạ | Hội Bất Nguyện             | Đề xuất ★                                         |
-| Cấp danh vọng             | Đom Đóm → Sao Mai          | Đề xuất ★                                         |
+| Khái niệm                 | Tên dùng trong bộ tài liệu | Trạng thái |
+| ------------------------- | -------------------------- | ---------- |
+| Thế giới                  | Vọng Tinh Giới             | Đã quyết   |
+| Danh hiệu thần hộ mệnh    | Trấn Tinh                  | Đã quyết   |
+| Dấu ấn sức mạnh           | Tinh Văn                   | Đã quyết   |
+| Nơi sao ngự               | Tinh Hải                   | Đã quyết   |
+| Tầng dưới đáy biển        | Biển Lặng                  | Đã quyết   |
+| Bùn lời ước               | Nguyện Cặn                 | Đã quyết   |
+| Tên chính thức Hội Mặt Nạ | Hội Bất Nguyện             | Đã quyết   |
+| Cấp danh vọng             | Đom Đóm → Sao Mai          | Đã quyết   |
 
 ### 4.1. Tên vùng và thủ đô
 
@@ -165,31 +189,31 @@ Lý do chọn A: bậc 1 và 2 mô tả đúng mặt nạ (trơn hay đã khắc
 
 ## 5. Rà lại thuật ngữ hiện có (A.5)
 
-Đánh giá: **Giữ** (tên đã tốt), **Đề xuất đổi** (có lý do), **Cần kiểm** (có thể trùng game khác, cần chủ dự án xác nhận).
+Đánh giá ban đầu: **Giữ**, **Đề xuất đổi**, **Cần kiểm**. Những dòng có **Đã quyết** là quyết định của chủ dự án.
 
 Về nhận định "có thể trùng": Devin đối chiếu theo hiểu biết của mình về các bản Việt hóa phổ biến, **chưa kiểm được trên bản chính thức**. Chủ dự án nên kiểm lại trước khi quyết.
 
-| Thuật ngữ                             | Đánh giá        | Đề xuất                           | Lý do                                                                                                                                                                                                                                                                        |
-| ------------------------------------- | --------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Thiên Tinh Giới                       | Đề xuất đổi     | Vọng Tinh Giới                    | Xem mục 3.5                                                                                                                                                                                                                                                                  |
-| Đảo Lạc                               | Giữ             |                                   | Ngắn, gợi chim Lạc và sự trôi dạt                                                                                                                                                                                                                                            |
-| Hộ Tinh                               | Giữ             |                                   | Nghĩa rõ, đúng vai trò, riêng biệt                                                                                                                                                                                                                                           |
-| Người Ước Nguyện                      | Giữ             | Biệt danh: Người Gọi Sao          | Gắn tên game                                                                                                                                                                                                                                                                 |
-| Đá Sao                                | Giữ             |                                   | Rõ nghĩa, có lý do trong truyện (ánh sao nguội). Lưu ý: có game khác dùng tiền tệ tên tương tự "ngọc sao", nhưng "Đá Sao" đủ khác                                                                                                                                            |
-| Xu                                    | Giữ             |                                   | Đơn giản, đúng                                                                                                                                                                                                                                                               |
-| Ước nguyện (lần quay)                 | Giữ             |                                   | Gắn tên game. Khác với tên lần quay của các game phổ biến                                                                                                                                                                                                                    |
-| Cung mệnh (C0–C6)                     | **Cần kiểm**    | **Nét Sao** (N0–N6)               | Theo hiểu biết của Devin, "Cung Mệnh" là bản Việt hóa của một hệ thống cùng chức năng trong game nổi tiếng cùng thể loại, và cách ghi C0–C6 cũng là cách cộng đồng game đó dùng. "Nét Sao" gắn trực tiếp với Tinh Văn (mỗi lần gặp lại thêm một nét)                         |
-| Bảo Ấn, Bộ Ấn                         | Giữ             |                                   | Riêng biệt, gợi con ấn khắc của văn hóa Á Đông                                                                                                                                                                                                                               |
-| Khai Tinh                             | Giữ             |                                   | Nghĩa "mở sao" hợp lore (mở lớp sáng của Tinh Văn)                                                                                                                                                                                                                           |
-| Bia Đá                                | Giữ             |                                   | Mộc mạc nhưng có câu chuyện mạnh (bia khắc tên người giữ đất, neo phong ấn)                                                                                                                                                                                                  |
-| Tháp Tinh Tú                          | Giữ             |                                   | Gắn mười hai chòm sao của lịch                                                                                                                                                                                                                                               |
-| Ủy thác                               | **Cần kiểm**    | **Việc Nhờ** (Việc Nhờ hằng ngày) | Theo hiểu biết của Devin, "Ủy Thác" trùng bản Việt hóa của nhiệm vụ hằng ngày trong game nổi tiếng cùng thể loại. "Việc Nhờ" thuần Việt, khớp lore (bảng việc nhờ trước Đình Trống)                                                                                          |
-| Động Thiên                            | **Đề xuất đổi** | **Lòng Sao**                      | Hai lý do: (1) "động thiên" là khái niệm của Đạo giáo (động thiên phúc địa), một tôn giáo đang được thờ phụng. (2) Theo hiểu biết của Devin, một game cùng thể loại dùng "Động Thiên" trong tên một hệ thống. "Lòng Sao" khớp lore: khoảng đất bị sao rơi cuốn vào lòng mình |
-| Hắc Giao                              | Giữ             |                                   | Rõ nghĩa (giao đen), mạnh                                                                                                                                                                                                                                                    |
-| Hội Mặt Nạ                            | Giữ             | Tên chính thức: Hội Bất Nguyện    | Dân gian gọi theo cái nhìn thấy, rất tự nhiên                                                                                                                                                                                                                                |
-| Hỏa, Thủy, Phong, Lôi, Thổ, Băng, Mộc | Giữ             |                                   | Từ Hán Việt thông dụng, không thuộc riêng game nào                                                                                                                                                                                                                           |
-| Tên 8 phản ứng                        | **Cần kiểm**    | Xem bảng 5.1                      | Theo hiểu biết của Devin, cả tám tên trùng bản Việt hóa của tám phản ứng trong game nổi tiếng cùng thể loại, theo đúng cặp nguyên tố. Đây là rủi ro lớn nhất về tên trong A.5                                                                                                |
-| Slime (tên quái `slime`)              | **Đề xuất đổi** | **Giọt Nhầy**                     | Là tiếng Anh, trái A.3 mục 3                                                                                                                                                                                                                                                 |
+| Thuật ngữ                             | Đánh giá                                | Đề xuất                           | Lý do                                                                                                                                                                                                                                                                        |
+| ------------------------------------- | --------------------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Thiên Tinh Giới                       | **Đã quyết: đổi thành Vọng Tinh Giới**  | Vọng Tinh Giới                    | Xem mục 3.5                                                                                                                                                                                                                                                                  |
+| Đảo Lạc                               | Giữ                                     |                                   | Ngắn, gợi chim Lạc và sự trôi dạt                                                                                                                                                                                                                                            |
+| Hộ Tinh                               | Giữ                                     |                                   | Nghĩa rõ, đúng vai trò, riêng biệt                                                                                                                                                                                                                                           |
+| Người Ước Nguyện                      | Giữ                                     | Biệt danh: Người Gọi Sao          | Gắn tên game                                                                                                                                                                                                                                                                 |
+| Đá Sao                                | Giữ                                     |                                   | Rõ nghĩa, có lý do trong truyện (ánh sao nguội). Lưu ý: có game khác dùng tiền tệ tên tương tự "ngọc sao", nhưng "Đá Sao" đủ khác                                                                                                                                            |
+| Xu                                    | Giữ                                     |                                   | Đơn giản, đúng                                                                                                                                                                                                                                                               |
+| Ước nguyện (lần quay)                 | Giữ                                     |                                   | Gắn tên game. Khác với tên lần quay của các game phổ biến                                                                                                                                                                                                                    |
+| Cung mệnh (C0–C6)                     | **Đã quyết: đổi thành Nét Sao (N0–N6)** | **Nét Sao** (N0–N6)               | Theo hiểu biết của Devin, "Cung Mệnh" là bản Việt hóa của một hệ thống cùng chức năng trong game nổi tiếng cùng thể loại, và cách ghi C0–C6 cũng là cách cộng đồng game đó dùng. "Nét Sao" gắn trực tiếp với Tinh Văn (mỗi lần gặp lại thêm một nét)                         |
+| Bảo Ấn, Bộ Ấn                         | Giữ                                     |                                   | Riêng biệt, gợi con ấn khắc của văn hóa Á Đông                                                                                                                                                                                                                               |
+| Khai Tinh                             | Giữ                                     |                                   | Nghĩa "mở sao" hợp lore (mở lớp sáng của Tinh Văn)                                                                                                                                                                                                                           |
+| Bia Đá                                | Giữ                                     |                                   | Mộc mạc nhưng có câu chuyện mạnh (bia khắc tên người giữ đất, neo phong ấn)                                                                                                                                                                                                  |
+| Tháp Tinh Tú                          | Giữ                                     |                                   | Gắn mười hai chòm sao của lịch                                                                                                                                                                                                                                               |
+| Ủy thác                               | **Đã quyết: giữ**                       | **Việc Nhờ** (Việc Nhờ hằng ngày) | Theo hiểu biết của Devin, "Ủy Thác" trùng bản Việt hóa của nhiệm vụ hằng ngày trong game nổi tiếng cùng thể loại. "Việc Nhờ" thuần Việt, khớp lore (bảng việc nhờ trước Đình Trống)                                                                                          |
+| Động Thiên                            | **Đã quyết: đổi thành Lòng Sao**        | **Lòng Sao**                      | Hai lý do: (1) "động thiên" là khái niệm của Đạo giáo (động thiên phúc địa), một tôn giáo đang được thờ phụng. (2) Theo hiểu biết của Devin, một game cùng thể loại dùng "Động Thiên" trong tên một hệ thống. "Lòng Sao" khớp lore: khoảng đất bị sao rơi cuốn vào lòng mình |
+| Hắc Giao                              | Giữ                                     |                                   | Rõ nghĩa (giao đen), mạnh                                                                                                                                                                                                                                                    |
+| Hội Mặt Nạ                            | Giữ                                     | Tên chính thức: Hội Bất Nguyện    | Dân gian gọi theo cái nhìn thấy, rất tự nhiên                                                                                                                                                                                                                                |
+| Hỏa, Thủy, Phong, Lôi, Thổ, Băng, Mộc | Giữ                                     |                                   | Từ Hán Việt thông dụng, không thuộc riêng game nào                                                                                                                                                                                                                           |
+| Tên 8 phản ứng                        | **Đã quyết: giữ**                       | Xem bảng 5.1                      | Theo hiểu biết của Devin, cả tám tên trùng bản Việt hóa của tám phản ứng trong game nổi tiếng cùng thể loại, theo đúng cặp nguyên tố. Đây là rủi ro lớn nhất về tên trong A.5                                                                                                |
+| Slime (tên quái `slime`)              | **Đã quyết: đổi thành Giọt Nhầy**       | **Giọt Nhầy**                     | Là tiếng Anh, trái A.3 mục 3                                                                                                                                                                                                                                                 |
 
 ### 5.1. Đề xuất tên phản ứng mới
 
@@ -206,13 +230,13 @@ Tên mới dựa trên giải thích trong `01-vu-tru-va-sao.md` mục 6. Cơ ch
 | Phong + khác | Khuếch Tán   | **Gió Cuốn**  | Truyền Gió     | Gió mang tính khí kia đi xa                           |
 | Thổ + khác   | Kết Tinh     | **Kết Ngọc**  | Bọc Đá         | Đất bọc tính khí thành viên ngọc, gợi Mỏ Ngọc Đảo Lạc |
 
-Nếu chủ dự án giữ tên cũ: bộ tài liệu không cần sửa, vì `01-vu-tru-va-sao.md` đang dùng tên A.5.
+**Đã quyết: giữ tên cũ.** Bảng trên chỉ để tham khảo.
 
 ### 5.2. Tên kỹ năng hiện có cần xem lại
 
-| Nhân vật  | Tên hiện tại              | Vấn đề                                                                                                                    | Đề xuất                |
-| --------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
-| Tuyết Lan | Tuyết Phủ Trường Sơn (nộ) | "Trường Sơn" là tên dãy núi có thật ở Việt Nam (A.3 mục 2: không dùng địa danh có thật). Tuyết Lan nay là người Shizukane | **Tuyết Phủ Ngàn Non** |
+| Nhân vật  | Tên hiện tại              | Vấn đề                                                                                                                    | Đề xuất                                                                                              |
+| --------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Tuyết Lan | Tuyết Phủ Trường Sơn (nộ) | "Trường Sơn" là tên dãy núi có thật ở Việt Nam (A.3 mục 2: không dùng địa danh có thật). Tuyết Lan nay là người Shizukane | **Đã quyết: giữ nguyên.** Chủ dự án cho phép nhắc tới địa danh có thật trong tên kỹ năng, thơ, mô tả |
 
 Các tên kỹ năng còn lại đạt tiêu chí ở mục 1.
 

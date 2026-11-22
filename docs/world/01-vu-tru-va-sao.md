@@ -2,11 +2,11 @@
 
 ## 1. Ba tầng của thế giới
 
-| Tầng | Tên                     | Mô tả                                                                                                                                                  | Người chơi đến được?                                                          |
-| ---- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
-| Trên | **Tinh Hải** (biển sao) | Bầu trời đêm của Thiên Tinh Giới. Không phải nơi ở của ai, không có cung điện, không có cổng. Đó là một "biển" ánh sáng nơi các lời ước kết thành sao. | Không. Chỉ nhìn thấy, và ở chương kết thì "chạm" được trong một cảnh đặc biệt |
-| Giữa | **Mặt Đất**             | Các vùng đất, biển, đảo nơi con người sống                                                                                                             | Có                                                                            |
-| Dưới | **Biển Lặng**           | Đáy sâu dưới mọi đại dương, tối và không có tiếng động. Nơi những lời ước không được trả lời chìm xuống và lắng thành **Nguyện Cặn**                   | Một phần, qua Hang Hắc Giao và các Động Thiên bị nhiễm bùn                    |
+| Tầng | Tên                     | Mô tả                                                                                                                                                 | Người chơi đến được?                                                          |
+| ---- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Trên | **Tinh Hải** (biển sao) | Bầu trời đêm của Vọng Tinh Giới. Không phải nơi ở của ai, không có cung điện, không có cổng. Đó là một "biển" ánh sáng nơi các lời ước kết thành sao. | Không. Chỉ nhìn thấy, và ở chương kết thì "chạm" được trong một cảnh đặc biệt |
+| Giữa | **Mặt Đất**             | Các vùng đất, biển, đảo nơi con người sống                                                                                                            | Có                                                                            |
+| Dưới | **Biển Lặng**           | Đáy sâu dưới mọi đại dương, tối và không có tiếng động. Nơi những lời ước không được trả lời chìm xuống và lắng thành **Nguyện Cặn**                  | Một phần, qua Hang Hắc Giao và các Lòng Sao bị nhiễm bùn                      |
 
 Ba tầng nối với nhau bằng một vòng tuần hoàn: **ước, bay lên, thành sao, rơi xuống, giúp người**. Lời ước nào không đủ nhẹ để bay lên (vì quá đắng, quá ích kỷ, hoặc vì không ai cùng ước) sẽ chìm xuống Biển Lặng.
 
@@ -14,7 +14,7 @@ Ba tầng nối với nhau bằng một vòng tuần hoàn: **ước, bay lên, 
 
 Thuở đầu chỉ có Tinh Hải và Biển Lặng, không có đất. Ngôi sao đầu tiên, dân gian gọi là **Sao Cả**, cô đơn quá lâu nên ước "có một chỗ để rơi xuống". Nó tự rơi. Chỗ nó chạm vào Biển Lặng nổi lên thành đất liền đầu tiên. Bụi của nó vương khắp nơi, về sau thành con người, cây cỏ và muông thú.
 
-Vì vậy người Thiên Tinh Giới tin rằng **mỗi người đều có một chút bụi sao trong mình**. Đó là lý do ai cũng ước được, và sao nghe được tiếng người.
+Vì vậy người Vọng Tinh Giới tin rằng **mỗi người đều có một chút bụi sao trong mình**. Đó là lý do ai cũng ước được, và sao nghe được tiếng người.
 
 > Bí mật [Hé lộ Ch.7]: Sao Cả không chết. Phần lõi của nó vẫn nằm dưới Đảo Lạc, và Đảo Lạc chính là mảnh đất đầu tiên. Đây là lý do Hắc Giao, sao băng và Người Ước Nguyện đều tìm về đảo này.
 
@@ -62,11 +62,11 @@ Nếu Hộ Tinh phản bội chính việc mà vì sao đã thấy ở họ, Tin
 - **Luật Chín Mươi Lời** [Công khai, dân gian]: người xưa nói "chín mươi lời cùng một ý thì sao cổ phải quay đầu". Lời ước của Người Ước Nguyện dồn lại. Khi đủ nặng, một sao cổ bắt buộc phải trả lời. Đây là lý do trong truyện của bảo hiểm 90 lần.
 - **Sao Mùa**: mỗi mùa có một sao cổ sáng nhất bầu trời. Trong game, đó là Hộ Tinh nổi bật. Khi sao cổ trả lời, có lúc sao mùa trả lời, có lúc là một sao cổ khác đang ở gần hơn. Nếu lần trước sao mùa bị "chen lời", lần sau nó chắc chắn đáp. Đây là lý do trong truyện của 50/50.
 
-### 4.4. Gặp lại cùng một Hộ Tinh: Cung mệnh
+### 4.4. Gặp lại cùng một Hộ Tinh: Nét Sao
 
 - Một vì sao chỉ chọn một người. Khi sao đó trả lời Người Ước Nguyện **lần nữa**, nó không dẫn tới người thứ hai. Nó **rót thêm ánh sáng** vào Hộ Tinh đã đi cùng.
-- Mỗi lần như vậy, Tinh Văn của Hộ Tinh **thêm một nét**. Có sáu nét có thể thêm, ứng với **Cung mệnh C1 đến C6**. Ở C6, Tinh Văn thành một chòm sao hoàn chỉnh, và vì sao đó coi như đã trao hết những gì nó có.
-- Trong truyện, mỗi nét mới thường đi kèm một ký ức mà Hộ Tinh nhớ lại (một lời ước cũ của chính họ). Đây là chỗ để viết câu chuyện Cung mệnh của từng nhân vật.
+- Mỗi lần như vậy, Tinh Văn của Hộ Tinh **thêm một nét**. Có sáu nét có thể thêm, ứng với **Nét Sao N1 đến N6**. Ở N6, Tinh Văn thành một chòm sao hoàn chỉnh, và vì sao đó coi như đã trao hết những gì nó có.
+- Trong truyện, mỗi nét mới thường đi kèm một ký ức mà Hộ Tinh nhớ lại (một lời ước cũ của chính họ). Đây là chỗ để viết câu chuyện Nét Sao của từng nhân vật.
 
 ### 4.5. Các thuật ngữ khác có lý do trong truyện
 
@@ -76,7 +76,7 @@ Nếu Hộ Tinh phản bội chính việc mà vì sao đã thấy ở họ, Tin
 | **Bảo Ấn**, **Bộ Ấn** | Những con ấn khắc bằng đá, đồng, ngọc mà người xưa đã giữ mảnh sao nhỏ trong đó. Ấn cùng một xưởng, cùng một câu chuyện thì cộng hưởng với nhau, nên gọi là một Bộ Ấn                                                |
 | **Bia Đá**            | Bia khắc tên người đã giữ đất. Một chút ánh sao trú trong chữ khắc. Khi Hộ Tinh chạm vào, bia nhận ra Tinh Văn và trả sức. Các bia nối với nhau bằng **mạch sao** ngầm dưới đất, nên đi được từ bia này sang bia kia |
 | **Tháp Tinh Tú**      | Tháp do Người Đếm Sao dựng để hứng ánh sao xuống giữ phong ấn Hắc Giao. Mười hai tầng ứng với mười hai chòm sao của lịch                                                                                             |
-| **Động Thiên**        | Những khoảng đất bị sao rơi cuốn vào lòng mình, tách khỏi thế giới thành một không gian riêng. Nhiều nguyên liệu quý chỉ còn sống trong đó                                                                           |
+| **Lòng Sao**          | Những khoảng đất bị sao rơi cuốn vào lòng mình, tách khỏi thế giới thành một không gian riêng. Nhiều nguyên liệu quý chỉ còn sống trong đó                                                                           |
 | **Ủy thác**           | Việc nhờ của dân làng, nhận ở bảng gỗ trước Đình Trống. Hộ Tinh có lệ làm việc nhờ hằng ngày như một lời cảm ơn vì sao đã chọn mình                                                                                  |
 
 ## 5. Bảy nguyên tố
@@ -107,7 +107,7 @@ Màu Thủy, Phong, Băng, Thổ, Hỏa, Lôi lấy đúng từ `content/config.
 
 ## 6. Vì sao các nguyên tố phản ứng với nhau
 
-Theo cách hiểu của người Thiên Tinh Giới, mỗi đòn nguyên tố để lại một **dấu tính khí** trên vật bị đánh. Khi hai tính khí khác nhau cùng ở một chỗ, chúng không thể cùng tồn tại yên ổn. Chúng **giằng co** rồi bùng ra thành một hiện tượng mới. Người xưa ví như hai người tính trái ngược ở chung một nhà: hoặc cãi nhau to, hoặc ghép lại thành một việc mà một mình không ai làm được.
+Theo cách hiểu của người Vọng Tinh Giới, mỗi đòn nguyên tố để lại một **dấu tính khí** trên vật bị đánh. Khi hai tính khí khác nhau cùng ở một chỗ, chúng không thể cùng tồn tại yên ổn. Chúng **giằng co** rồi bùng ra thành một hiện tượng mới. Người xưa ví như hai người tính trái ngược ở chung một nhà: hoặc cãi nhau to, hoặc ghép lại thành một việc mà một mình không ai làm được.
 
 Phong và Thổ là hai tính khí "trung gian": Phong không tranh mà **mang tính khí kia đi xa**, Thổ không tranh mà **đóng khung tính khí kia thành vật rắn**.
 
@@ -123,8 +123,6 @@ Phong và Thổ là hai tính khí "trung gian": Phong không tranh mà **mang t
 | **Kết Tinh**   | Thổ + một trong Hỏa, Thủy, Lôi, Băng   | Đất che chở. Đất bọc tính khí kia lại thành một viên tinh thể, Hộ Tinh nhặt lên làm khiên                                                                                          |
 
 Mộc chưa có phản ứng. Gợi ý cho session thêm Mộc nằm ở [`10-cau-hoi-mo.md`](10-cau-hoi-mo.md).
-
-> Lưu ý: tên các phản ứng có thể trùng bản Việt hóa của một game khác. Xem đề xuất ở `11-dat-ten.md` mục 5.
 
 ## 7. Người thường và Hộ Tinh
 
