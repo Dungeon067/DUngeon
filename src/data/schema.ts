@@ -152,7 +152,82 @@ export const ConfigSchema = z
   })
   .strict();
 
+const pos = z.number().positive();
+const nonneg = z.number().nonnegative();
+export const PARTICLE_KINDS = [
+  "ember",
+  "drop",
+  "leaf",
+  "spark",
+  "shard",
+  "petal",
+  "lantern",
+  "feather",
+  "snow",
+  "mist",
+] as const;
+export const TRAIL_KINDS = ["arc", "wing", "crescent", "thrust", "heavy", "twin", "zigzag"] as const;
+export const CharFxSchema = z
+  .object({ c: hex, c2: hex, particle: z.enum(PARTICLE_KINDS), trail: z.enum(TRAIL_KINDS) })
+  .strict();
+const weaponNums = z
+  .object(Object.fromEntries(WEAPON_IDS.map((k) => [k, nonneg])) as Record<(typeof WEAPON_IDS)[number], typeof nonneg>)
+  .strict();
+
+/** content/combat-feel.yaml: thông số cảm giác đánh (S14). */
+export const FeelSchema = z
+  .object({
+    hitstop: z
+      .object({
+        heavy: nonneg,
+        crit: nonneg,
+        react: nonneg,
+        skill: nonneg,
+        burst: nonneg,
+        break: nonneg,
+        max: z.number().min(0).max(0.2),
+      })
+      .strict(),
+    slowmo: z.object({ bossKill: z.object({ scale: z.number().gt(0).max(1), dur: nonneg }).strict() }).strict(),
+    shake: z.record(z.string(), nonneg).refine((o) => "scale" in o && "decay" in o, "cần scale và decay"),
+    camera: z
+      .object({
+        follow: pos,
+        lead: nonneg,
+        leadSpeed: pos,
+        bossZoom: pos,
+        burstZoom: pos,
+        burstHold: nonneg,
+        zoomSpeed: pos,
+      })
+      .strict(),
+    input: z.object({ buffer: z.number().min(0).max(0.5), dashCancel: z.boolean() }).strict(),
+    hit: z.object({ flash: nonneg, squash: nonneg }).strict(),
+    poise: z
+      .object({ stun: pos, stunVuln: z.number().min(1), regenDelay: nonneg, regen: nonneg, weapon: weaponNums })
+      .strict(),
+    enemies: z.record(z.string(), z.object({ mass: nonneg, poise: pos, stun: pos.optional() }).strict()),
+    telegraph: z
+      .object({ line: pos, touchScale: pos, flashAt: z.number().gt(0).lt(1), warnRange: pos, sound: z.boolean() })
+      .strict(),
+    audio: z
+      .object({
+        sfx: z.number().min(0).max(1),
+        music: z.number().min(0).max(1),
+        crossfade: nonneg,
+        combatRange: pos,
+        combatLinger: nonneg,
+      })
+      .strict(),
+    characters: z.record(z.string(), CharFxSchema),
+  })
+  .strict();
+
 export type Character = z.infer<typeof CharacterSchema>;
+export type Feel = z.infer<typeof FeelSchema>;
+export type CharFx = z.infer<typeof CharFxSchema>;
+export type ParticleKind = (typeof PARTICLE_KINDS)[number];
+export type TrailKind = (typeof TRAIL_KINDS)[number];
 export type EnemyDef = z.infer<typeof EnemySchema>;
 export type BossDef = z.infer<typeof BossSchema>;
 export type Config = z.infer<typeof ConfigSchema>;
@@ -161,6 +236,7 @@ export interface RawContent {
   config: unknown;
   characters: Record<string, unknown>;
   enemies: Record<string, unknown>;
+  feel: unknown;
 }
 
 export interface Content {
@@ -168,6 +244,7 @@ export interface Content {
   characters: Character[];
   enemies: Record<string, EnemyDef>;
   boss: BossDef;
+  feel: Feel;
 }
 
 /** Kiểm tra và ghép dữ liệu. Ném lỗi kèm danh sách mọi vấn đề tìm thấy. */
@@ -207,6 +284,17 @@ export function validateContent(raw: RawContent): Content {
     enemies[r.data.id] = r.data;
   }
   if (!boss) errors.push("enemies/hacgiao.yaml: thiếu hoặc sai cấu hình boss");
+  const feelRes = FeelSchema.safeParse(raw.feel);
+  if (!feelRes.success) fmtErr("combat-feel.yaml", feelRes.error);
+  else {
+    const f = feelRes.data;
+    for (const id of Object.keys(chars))
+      if (!f.characters[id]) errors.push(`combat-feel.yaml: characters thiếu hiệu ứng cho "${id}"`);
+    for (const id of Object.keys(f.characters))
+      if (!chars[id]) errors.push(`combat-feel.yaml: characters có "${id}" nhưng không có file nhân vật`);
+    for (const id of [...Object.keys(enemies), "hacgiao"])
+      if (!f.enemies[id]) errors.push(`combat-feel.yaml: enemies thiếu cân nặng và chịu đòn cho "${id}"`);
+  }
   const characters: Character[] = [];
   if (cfgRes.success) {
     const cfg = cfgRes.data;
@@ -234,5 +322,5 @@ export function validateContent(raw: RawContent): Content {
       errors.push("Cần ít nhất một nhân vật 5★ ngoài nhân vật nổi bật");
   }
   if (errors.length) throw new Error("Dữ liệu content/ không hợp lệ:\n- " + errors.join("\n- "));
-  return { config: cfgRes.data!, characters, enemies, boss: boss! };
+  return { config: cfgRes.data!, characters, enemies, boss: boss!, feel: feelRes.data! };
 }

@@ -31,6 +31,10 @@ Không đổi tên, nguyên tố, vũ khí, độ hiếm của 12 nhân vật hi
 
 `hacgiao.yaml` là boss: `hp`, `atk` và hệ số tăng theo cấp `hpPerLv`, `atkPerLv` (giá trị × (1 + hệ số × (cấp − 1))), `phase2.at` (tỷ lệ máu bắt đầu giai đoạn 2) cùng nguyên tố và tốc độ giai đoạn 2.
 
+## Cảm giác chiến đấu: `content/combat-feel.yaml`
+
+Dừng hình, rung, camera, đệm lệnh, chịu đòn và cân nặng của quái, báo trước đòn, âm lượng, hiệu ứng riêng từng nhân vật. Mọi nhân vật trong `characters/` và mọi quái (kể cả `hacgiao`) phải có mục tương ứng. Giải thích từng thông số ở [combat-feel.md](combat-feel.md).
+
 ## Cấu hình: `content/config.yaml`
 
 | Mục                      | Ý nghĩa                                                                                                                                                     |

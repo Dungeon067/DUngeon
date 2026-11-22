@@ -154,7 +154,7 @@ page.append(
     "Chữ",
     "Cormorant Garamond cho tiêu đề, Be Vietnam Pro cho nội dung và số. Dòng cao tối thiểu 1,25 để dấu chồng như ặ, ẫ, ỡ không chạm dòng trên.",
     h("div", { class: "sg-panel sg-type" }, [
-      h("p", { class: "tt-h1" }, ["Thiên Tinh Giới · Đảo Lạc"]),
+      h("p", { class: "tt-h1" }, ["Vọng Tinh Giới · Đảo Lạc"]),
       h("p", { class: "tt-h2" }, ["Người Ước Nguyện thức dậy"]),
       h("p", { class: "tt-h3" }, ["Lòng Sao Rừng Trúc · Nét Sao N6"]),
       h("p", { style: "font-size:var(--tt-fs-lg)" }, ["Cỡ lớn: Hộ Tinh gánh lời ước cùng dân làng."]),

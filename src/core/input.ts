@@ -1,5 +1,5 @@
 import { GS } from "../core/state";
-import { castBurst, castSkill, doDash, tryAttack } from "../combat/actions";
+import { press } from "../combat/actions";
 import { cv } from "../core/canvas";
 import { $ } from "../core/util";
 import { switchTo } from "../entities/party";
@@ -36,12 +36,12 @@ export function init(): void {
     if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
     if (GS.scene === "play" && !GS.paused) {
       if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault();
-      if (k === "e" && !e.repeat) castSkill();
-      if (k === "q" && !e.repeat) castBurst();
+      if (k === "e" && !e.repeat) press("skill");
+      if (k === "q" && !e.repeat) press("burst");
       if (k === "shift" && !e.repeat) {
         GS.holdDash = true;
         GS.G.p.dashHeld = 0;
-        doDash();
+        press("dash");
       }
       if (k === "f" && !e.repeat) doInteract();
       if (["1", "2", "3", "4"].includes(k)) switchTo(+k - 1);
@@ -108,18 +108,18 @@ export function init(): void {
     $("bAtk"),
     () => {
       GS.holdAtk = true;
-      tryAttack();
+      press("atk");
     },
     () => (GS.holdAtk = false),
   );
-  holdBtn($("bSkill"), () => castSkill());
-  holdBtn($("bBurst"), () => castBurst());
+  holdBtn($("bSkill"), () => press("skill"));
+  holdBtn($("bBurst"), () => press("burst"));
   holdBtn(
     $("bDash"),
     () => {
       GS.holdDash = true;
       GS.G.p.dashHeld = 0;
-      doDash();
+      press("dash");
     },
     () => (GS.holdDash = false),
   );

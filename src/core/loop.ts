@@ -1,5 +1,8 @@
 import { GS } from "../core/state";
-import { tryAttack } from "../combat/actions";
+import { tryAttack, updateBuffer } from "../combat/actions";
+import { FEEL, charFx, gameDt } from "../combat/feel";
+import { cameraTarget, updateZoom } from "../core/camera";
+import { updateMusic } from "../core/music";
 import { hitEnemy, hurtPlayer, nearestEnemy } from "../combat/damage";
 import { sfx } from "../core/audio";
 import { joy, keys } from "../core/input";
@@ -97,6 +100,7 @@ export function update(dt: number) {
       pm.energy = pm.c.burst.cost;
     }
   }
+  updateBuffer(dt);
   if (GS.holdAtk || keys["j"]) tryAttack();
   // later
   for (let i = GS.G.later.length - 1; i >= 0; i--) {
@@ -153,6 +157,21 @@ export function update(dt: number) {
     }
     pr.x += pr.vx * dt;
     pr.y += pr.vy * dt;
+    if (pr.own === "p" && pr.m && GS.G.fx.length < 240 && Math.random() < dt * 30) {
+      const F = charFx(pr.m.c.id);
+      GS.G.fx.push({
+        k: "dot",
+        x: pr.x,
+        y: pr.y,
+        vx: -pr.vx * 0.05,
+        vy: -pr.vy * 0.05,
+        g: 0,
+        col: pr.el ? F.c : F.c2,
+        life: 0.25,
+        max: 0.25,
+        size: pr.r * 0.5,
+      });
+    }
     if (GS.G.map && solidTile(pr.x, pr.y + 14, GS.G.map) && pr.kind !== "bossorb") {
       const t = GS.G.map.m[Math.floor((pr.y + 14) / TS) * MW + Math.floor(pr.x / TS)];
       if (t === TL.TREE || t === TL.ROCK) pr.life = 0;
@@ -293,7 +312,8 @@ export function update(dt: number) {
     if (f.vx !== undefined) {
       f.x += f.vx * dt;
       f.y += f.vy * dt;
-      f.vy += 200 * dt;
+      f.vy += (f.g ?? 200) * dt;
+      if (f.vr) f.rot += f.vr * dt;
     }
   }
   GS.G.fx = GS.G.fx.filter((f: any) => f.life > 0);
@@ -304,15 +324,14 @@ export function update(dt: number) {
   }
   GS.G.texts = GS.G.texts.filter((t: any) => t.life > 0);
   if (GS.G.banner.t > 0) GS.G.banner.t -= dt;
-  GS.G.shake = Math.max(0, GS.G.shake - dt * 30);
   // mode logic
   if (GS.G.mode === "world") worldLogic(dt);
   if (GS.G.mode === "tower") towerLogic(dt);
   // camera
-  const tx = p.x,
-    ty = p.y - 20;
-  GS.G.cam.x += (tx - GS.G.cam.x) * Math.min(1, dt * 8);
-  GS.G.cam.y += (ty - GS.G.cam.y) * Math.min(1, dt * 8);
+  const ct = cameraTarget(dt),
+    cf = Math.min(1, dt * FEEL.camera.follow);
+  GS.G.cam.x += (ct.x - GS.G.cam.x) * cf;
+  GS.G.cam.y += (ct.y - GS.G.cam.y) * cf;
   clampCam();
   // sync counters with server ~ every 2s
   GS.lastSync += dt;
@@ -350,7 +369,11 @@ export function frame(now: number) {
   const dt = Math.min(0.05, (now - GS.lastT) / 1000);
   GS.lastT = now;
   try {
-    if (GS.scene === "play" && GS.G && !GS.paused) update(dt);
+    if (GS.scene === "play" && GS.G && !GS.paused) {
+      update(gameDt(dt));
+      updateZoom(dt);
+    }
+    updateMusic(dt);
     render();
     if (GS.scene === "play" && GS.G) updateHud();
   } catch (err) {

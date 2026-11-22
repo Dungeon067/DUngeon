@@ -35,6 +35,8 @@ initModal();
 initScreens();
 initWish();
 initAdmin();
+if (import.meta.env.DEV || new URLSearchParams(location.search).has("dev"))
+  void import("./dev/tuning").then((m) => m.initTuning());
 window.claude?.hot?.snapshot?.(() => ({ P: Server.P }));
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});

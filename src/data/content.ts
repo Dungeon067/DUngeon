@@ -1,11 +1,12 @@
 import config from "../../content/config.yaml";
+import feel from "../../content/combat-feel.yaml";
 import { validateContent } from "./schema";
 import type { Character, Config, EnemyDef } from "./schema";
 
 const characters = import.meta.glob<unknown>("../../content/characters/*.yaml", { eager: true, import: "default" });
 const enemies = import.meta.glob<unknown>("../../content/enemies/*.yaml", { eager: true, import: "default" });
 
-export const CONTENT = validateContent({ config, characters, enemies });
+export const CONTENT = validateContent({ config, characters, enemies, feel });
 const C = CONTENT.config;
 
 const fillPct = (t: string) => (m: number) => t.replace("{pct}", String(Math.round(m * 100)));
@@ -27,3 +28,4 @@ export const DAILY_POOL = C.dailyPool;
 export const ENEMY: Record<string, EnemyDef> = Object.fromEntries(C.enemyOrder.map((id) => [id, CONTENT.enemies[id]!]));
 export const BOSS = CONTENT.boss;
 export const ELS = Object.keys(EL);
+export const FEEL_DEFAULT = CONTENT.feel;

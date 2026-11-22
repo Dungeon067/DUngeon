@@ -1,4 +1,8 @@
 import { GS } from "../core/state";
+import { FEEL, shake, slowmo } from "../combat/feel";
+import { tickPoise } from "./enemy";
+import { teleWarn } from "./telegraph";
+import { sfx } from "../core/audio";
 import { dealRaw, hurtPlayer } from "../combat/damage";
 import { clamp, dist, lerpAng, pick, rand } from "../core/util";
 import { BOSS, EL } from "../data/content";
@@ -15,6 +19,8 @@ export function updateBoss(b: any, dt: number) {
     if (b.auraT <= 0) b.aura = null;
   }
   if (b.vuln > 0) b.vuln -= dt;
+  if (b.hitT > 0) b.hitT -= dt;
+  tickPoise(b, dt);
   if (b.ec) {
     b.ec.t -= dt;
     if (b.ec.t <= 0) {
@@ -31,13 +37,14 @@ export function updateBoss(b: any, dt: number) {
     b.el = BOSS.phase2.el;
     b.spd = BOSS.phase2.spd;
     showBanner("Hắc Giao nổi giận!");
-    GS.G.shake = 12;
+    shake("bossPhase");
+    sfx("roar");
     fxRing(b.x, b.y, 260, EL.bolt.c, 0.8, 14);
     b.state = "idle";
     b.t = 1.2;
     b.tele = null;
   }
-  const fr = b.frozen > 0;
+  const fr = b.frozen > 0 || b.stun > 0;
   if (fr) {
     b.frozen -= dt;
   }
@@ -85,6 +92,7 @@ export function updateBoss(b: any, dt: number) {
       }
     } else if (b.state === "wind") {
       b.t += dt;
+      teleWarn(b, b.tele, b.t / b.tele.dur);
       if (b.tele.kind === "line" || b.tele.kind === "fan") b.ang = lerpAng(b.ang, b.tele.ang, dt * 8);
       if (b.t >= b.tele.dur) {
         const k = b.tele.kind,
@@ -121,7 +129,7 @@ export function updateBoss(b: any, dt: number) {
             if (el === "bolt") fxBolt(r.x, r.y, col);
             if (dist(p.x, p.y, r.x, r.y) < 70) hurtPlayer(b.atk, col);
           }
-          GS.G.shake = 6;
+          shake("boss");
           b.state = "idle";
           b.t = rand(1.3, 2) / sp;
         } else if (k === "summon") {
@@ -157,7 +165,7 @@ export function updateBoss(b: any, dt: number) {
         b.y = clamp(b.y, 120, GS.G.bounds.h - 60);
         b.state = "idle";
         b.t = rand(1, 1.6) / sp;
-        GS.G.shake = 6;
+        shake("boss");
       }
     }
   }
@@ -172,12 +180,14 @@ export function updateBoss(b: any, dt: number) {
   b.segs[0].x = b.x;
   b.segs[0].y = b.y;
   // contact damage
-  if (dist(b.x, b.y, p.x, p.y) < 46 && b.state !== "charge") hurtPlayer(b.atk * 0.5, EL[b.el].c);
+  if (dist(b.x, b.y, p.x, p.y) < 46 && b.state !== "charge" && !(b.stun > 0)) hurtPlayer(b.atk * 0.5, EL[b.el].c);
 }
 export function bossDefeated() {
   const b = GS.G.boss;
   b.dead = true;
-  GS.G.shake = 16;
+  shake("bossKill");
+  slowmo(FEEL.slowmo.bossKill.scale, FEEL.slowmo.bossKill.dur);
+  sfx("bossKill");
   fxRing(b.x, b.y, 300, EL[b.el].c, 1, 18);
   for (let i = 0; i < 4; i++) fxBurst(b.x + rand(-60, 60), b.y + rand(-40, 40), EL[b.el].c, 30, 380, 5);
   showBanner("Hắc Giao đã bị đánh bại!");
