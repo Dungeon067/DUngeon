@@ -278,7 +278,7 @@ flowchart TD
   W --> P[Tạm dừng: Tiếp tục, Cài đặt, Điều khiển, Về sảnh]
   QG --> QGE{Đủ Đá Sao?}
   QGE -- Không --> QD
-  H -.-> AD[Admin: chỉ hiện với ?admin]
+  AD[Admin: trang /admin/ riêng, có đăng nhập, không có lối vào từ game]
 ```
 
 ## 7. Kiến trúc thông tin đề xuất
@@ -296,7 +296,7 @@ Nguyên tắc: Đảo Lạc là "nhà", sảnh chỉ là màn khởi đầu. M�
 | Sảnh (một màn ngang) | Nút Vào Đảo Lạc to; bên cạnh: Thử thách (Tháp, Boss), Nhân vật, Ước nguyện, Ủy thác; thanh tiền tệ trên cùng; bánh răng (Cài đặt, Hướng dẫn) | Khởi đầu và quản lý        |
 | Nhóm "Thử thách"     | Tháp Tinh Tú, Thảo phạt Hắc Giao (sau này: Động Thiên)                                                                                       | Chế độ có phần thưởng      |
 | Nhóm "Hồ sơ"         | Nhân vật & Đội hình, Bảo Ấn (sau này)                                                                                                        | Phát triển nhân vật        |
-| Ẩn                   | Server (Admin): chỉ khi URL có `?admin`                                                                                                      | Công cụ thử nghiệm         |
+| Ẩn                   | Server (Admin): trang riêng `/admin/` có đăng nhập, không có lối vào từ game (đã quyết, S10)                                                 | Công cụ thử nghiệm         |
 
 ## 8. 10 việc nên sửa đầu tiên
 
@@ -355,11 +355,13 @@ Xếp theo tác động chia công sức. Công sức: S (dưới nửa ngày), 
 - Script import trực tiếp module của game qua máy chủ Vite để điều khiển trạng thái, không thêm móc mới vào code game.
 - Mức "Chặn chơi" chỉ dùng cho lỗi vi phạm yêu cầu bắt buộc của A.3 (thiếu lớp phủ xoay ngang), vì không có lỗi nào làm game không chơi được ở màn ngang.
 
-### Câu hỏi cần chủ dự án trả lời
+### Đã quyết
 
-- Game có định thêm nhảy không? A.3 nhắc nút nhảy gần nút đánh nhưng bản hiện tại chưa có cơ chế nhảy.
-- Trang Server (Admin) có cần giữ trong sảnh cho người chơi thử không, hay ẩn sau `?admin`?
-- Có muốn Đội hình đổi được ngay trên đảo (lớp phủ) thay vì rời đảo về sảnh như hiện nay?
+Chủ dự án đã trả lời ba câu hỏi của S07:
+
+- **Nhảy:** có. Nhảy dùng như các game nhập vai hành động thế giới mở và kết hợp được với lướt (nhảy xa, lướt trên không, đòn lao xuống). Giao cho S09.
+- **Admin:** tách thành trang web riêng `/admin/` có đăng nhập, không có lối vào từ game. Giao cho S10.
+- **Đổi đội hình trên đảo:** có, đổi được ngay trên đảo, không phải về sảnh. Giao cho S10.
 
 ### Đề xuất (ngoài phạm vi)
 
