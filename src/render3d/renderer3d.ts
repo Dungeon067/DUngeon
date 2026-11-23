@@ -544,6 +544,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         }),
       );
       heroFallback.obj.position.copy(pos);
+      heroFallback.obj.rotation.y = Math.atan2(camera.position.x - pos.x, camera.position.z - pos.z);
     }
     blob.position.set(pos.x, pg + 0.02, pos.z);
     blob.scale.setScalar(L.shadow);
@@ -616,6 +617,8 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       if (e.auto) e.auto.paint((c) => def.draw2d(c, r.obj, t));
       else def.update3d?.(e.o, r.obj, t);
       e.o.position.copy(toV(r.obj.x, r.obj.y, (r.obj.zh ?? 0) * 22));
+      // Tấm phẳng tự sinh luôn quay về camera khi camera xoay.
+      if (e.auto) e.o.rotation.y = Math.atan2(camera.position.x - e.o.position.x, camera.position.z - e.o.position.z);
     }
     for (const [o, e] of renderables)
       if (!live.has(o)) {
