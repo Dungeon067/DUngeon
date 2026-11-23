@@ -28,6 +28,8 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--fps", type=int, default=30)
     ap.add_argument("--heights", type=int, nargs="+", default=[1080, 720])
+    ap.add_argument("--reuse", help="already encoded clip whose first --reuse-frames frames (shots 1-2) open the video")
+    ap.add_argument("--reuse-frames", type=int, default=135)
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     with tempfile.TemporaryDirectory() as tmp:
@@ -40,11 +42,17 @@ def main():
         for h in a.heights:
             crf264, crf9, grain = TARGETS[h]
             vf = f"scale=-2:{h}:flags=lanczos," + GRADE.format(grain=grain) + ",format=yuv420p"
+            inp, filt = src, ["-vf", vf]
+            if a.reuse:  # the reused clip is already graded; only the new frames get grade and grain
+                inp = ["-i", a.reuse, *src]
+                filt = ["-filter_complex",
+                        f"[0:v]trim=end_frame={a.reuse_frames},setpts=PTS-STARTPTS,scale=-2:{h}:flags=lanczos,"
+                        f"format=yuv420p,setsar=1[a];[1:v]{vf},setsar=1[b];[a][b]concat=n=2:v=1:a=0"]
             base = os.path.join(a.out, f"{a.name}-{h}")
-            run(["ffmpeg", "-y", "-loglevel", "error", *src, "-vf", vf, "-r", str(a.fps), "-an",
+            run(["ffmpeg", "-y", "-loglevel", "error", *inp, *filt, "-r", str(a.fps), "-an",
                  "-c:v", "libx264", "-preset", "slow", "-crf", str(crf264), "-profile:v", "high",
                  "-movflags", "+faststart", base + ".mp4"])
-            run(["ffmpeg", "-y", "-loglevel", "error", *src, "-vf", vf, "-r", str(a.fps), "-an",
+            run(["ffmpeg", "-y", "-loglevel", "error", *inp, *filt, "-r", str(a.fps), "-an",
                  "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", str(crf9), "-row-mt", "1", "-deadline", "good",
                  "-cpu-used", "2", base + ".webm"])
             for ext in ("mp4", "webm"):
