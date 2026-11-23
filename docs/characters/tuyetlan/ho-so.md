@@ -1,5 +1,7 @@
 # Tuyết Lan: Hồ sơ
 
+> **Loại 5★:** `thuong-tru` (5★ thường trú, có trong pool cố định, ra khi thua 50/50). Đề xuất S06, chờ chủ dự án duyệt; cơ chế pool và banner do S19 làm.
+
 > Hộ Tinh hệ Băng, kiếm đơn, 5★. Danh hiệu trong game: **Hoa Lan Trên Tuyết**.
 > Nguồn đối chiếu: `docs/world/03-dia-ly.md` mục 4 (Shizukane), `docs/world/04-phe-phai.md` mục 6 và 8, `docs/world/10-cau-hoi-mo.md` câu 5.4, `docs/writing/huong-dan-van-phong.md` mục 2.9.
 

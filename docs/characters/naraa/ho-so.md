@@ -1,5 +1,7 @@
 # Naraa: Hồ sơ
 
+> **Loại 5★:** `gioi-han` (5★ giới hạn, chỉ ra ở banner theo kỳ, có thể quay lại ở kỳ sau). Đề xuất S06, chờ chủ dự án duyệt; truyện chính không tặng nhân vật này, chỉ cho xuất hiện như NPC hoặc khách mời, không vào đội.
+
 > Hộ Tinh hệ Lôi, cung, 5★. Danh hiệu trong game: **Mũi Tên Đuổi Giông**.
 > Nguồn đối chiếu: `docs/world/03-dia-ly.md` mục 8 (Khokhtal, Đường Đua Giông, Nüüdel Ordu, Hội Ba Môn), `docs/world/04-phe-phai.md` (Đội Cưỡi Giông, Lôi Đình), `docs/world/11-dat-ten.md` mục 2.
 

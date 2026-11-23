@@ -1,5 +1,7 @@
 # Phong Vân: Hồ sơ
 
+> **Loại 5★:** `thuong-tru` (5★ thường trú, có trong pool cố định, ra khi thua 50/50). Đề xuất S06, chờ chủ dự án duyệt; cơ chế pool và banner do S19 làm.
+
 > Hồ sơ nhân vật `phongvan`. Nguồn khớp: `docs/world/04-phe-phai.md` mục 6, `docs/world/03-dia-ly.md` mục 2.4, `content/characters/phongvan.yaml`.
 
 ## 1. Thông tin cơ bản
