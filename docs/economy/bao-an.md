@@ -1,6 +1,12 @@
 # Bảo Ấn (S31)
 
-Bảo Ấn là hệ trang bị thứ hai của nhân vật, bên cạnh vũ khí. Mỗi nhân vật mang **5 Bảo Ấn ở 5 ô**. Mỗi món có một chỉ số chính, 3–4 dòng chỉ số phụ ngẫu nhiên và thuộc một trong 8 **Bộ Ấn**. Mang đủ 2 hoặc 4 món cùng bộ thì mở hiệu ứng bộ.
+Bảo Ấn là hệ trang bị thứ hai của nhân vật, bên cạnh vũ khí. **Concept: Mảnh Sao.** Mỗi Bộ Ấn là một **vì sao** đã rơi xuống Đảo Lạc và vỡ thành 5 mảnh; mỗi món Bảo Ấn là một **Mảnh Sao**, người trong thế giới đem gắn vào một món trang sức (hoa, lông, bình cát, chén, vành). Mỗi nhân vật mang **5 Mảnh Sao ở 5 ô**. Mỗi món có một chỉ số chính, 3–4 dòng chỉ số phụ ngẫu nhiên và thuộc một trong 8 vì sao (Bộ Ấn).
+
+- 2 mảnh cùng vì sao: **Sao nhóm**, mở hiệu ứng 2 món.
+- 4 mảnh: **Sao rạng**, mở hiệu ứng 4 món.
+- Đủ 5 mảnh: **Sao sáng trọn**, không thêm chỉ số, chỉ có hiệu ứng hình ảnh: 5 ô ở màn Nhân vật ghép thành chòm sao năm cánh phát sáng (mục 9).
+
+Cách gọi thống nhất: hệ là **Bảo Ấn**; ô là **Mảnh Sao** (UI ghi “Mảnh Sao · Hoa”, gọn là “Mảnh Hoa”); bộ là **vì sao** (UI ghi tên bộ kèm tên sao, ví dụ “Đêm Hội Vạn Đăng · Sao Vạn Đăng”).
 
 Nguồn số liệu duy nhất: [`content/bao-an.yaml`](../../content/bao-an.yaml), kiểm tra bằng `src/data/bao-an-schema.ts` (`pnpm content:check`). Mọi bảng dưới đây lấy từ file đó; đổi số thì sửa YAML, không sửa tài liệu trước.
 
@@ -8,23 +14,23 @@ Nguồn số liệu duy nhất: [`content/bao-an.yaml`](../../content/bao-an.yam
 
 ## 1. Năm ô
 
-| Ô             | Chỉ số chính                                                                                        | Ghi chú                                                      |
-| ------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| **Hoa Sao**   | Máu (cố định)                                                                                       | Hoa cài áo. Người Đảo Lạc cài hoa khi đi xa để nhớ đường về. |
-| **Lông Vũ**   | Tấn công (cố định)                                                                                  | Lông chim buộc dây, cài tóc hoặc cán binh khí.               |
-| **Đèn Canh**  | %Tấn công, %Máu, %Phòng thủ, Tinh thông, Hồi năng lượng                                             | Đèn đếm canh giờ. Thay cho “đồng hồ cát” trong gợi ý.        |
-| **Chén Ngọc** | Như Đèn Canh (trừ Hồi năng lượng), thêm % sát thương 7 nguyên tố, % sát thương vật lý               | Chén ngọc của Mỏ Ngọc Lòng Chảo.                             |
-| **Vành Miện** | Như Chén Ngọc (không có sát thương nguyên tố), thêm Tỉ lệ chí mạng, Sát thương chí mạng, % Trị liệu | Vành đội đầu.                                                |
+| Ô             | Chỉ số chính                                                                                        | Ghi chú                                                       |
+| ------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| **Mảnh Hoa**  | Máu (cố định)                                                                                       | Hoa cài áo. Người Đảo Lạc cài hoa khi đi xa để nhớ đường về.  |
+| **Mảnh Lông** | Tấn công (cố định)                                                                                  | Lông chim buộc dây, cài tóc hoặc cán binh khí.                |
+| **Mảnh Canh** | %Tấn công, %Máu, %Phòng thủ, Tinh thông, Hồi năng lượng                                             | Vật đo canh giờ: bình cát, đèn canh, đồng hồ nước tùy vì sao. |
+| **Mảnh Chén** | Như Mảnh Canh (trừ Hồi năng lượng), thêm % sát thương 7 nguyên tố, % sát thương vật lý              | Chén ngọc của Mỏ Ngọc Lòng Chảo.                              |
+| **Mảnh Miện** | Như Mảnh Chén (không có sát thương nguyên tố), thêm Tỉ lệ chí mạng, Sát thương chí mạng, % Trị liệu | Vành đội đầu.                                                 |
 
 Tỉ lệ ra chỉ số chính ở ô ngẫu nhiên (trọng số `o[].chinh`):
 
 | Ô         | Tỉ lệ                                                                                                             |
 | --------- | ----------------------------------------------------------------------------------------------------------------- |
-| Đèn Canh  | %Tấn công 26%, %Máu 26%, %Phòng thủ 26%, Tinh thông 11%, Hồi năng lượng 11%                                       |
-| Chén Ngọc | %Tấn công 19%, %Máu 19%, %Phòng thủ 18%, Tinh thông 3%, mỗi nguyên tố 5% (7 hệ), vật lý 6%                        |
-| Vành Miện | %Tấn công 22%, %Máu 22%, %Phòng thủ 22%, Tinh thông 4%, Tỉ lệ chí mạng 10%, Sát thương chí mạng 10%, Trị liệu 10% |
+| Mảnh Canh | %Tấn công 26%, %Máu 26%, %Phòng thủ 26%, Tinh thông 11%, Hồi năng lượng 11%                                       |
+| Mảnh Chén | %Tấn công 19%, %Máu 19%, %Phòng thủ 18%, Tinh thông 3%, mỗi nguyên tố 5% (7 hệ), vật lý 6%                        |
+| Mảnh Miện | %Tấn công 22%, %Máu 22%, %Phòng thủ 22%, Tinh thông 4%, Tỉ lệ chí mạng 10%, Sát thương chí mạng 10%, Trị liệu 10% |
 
-> Đổi tên so với gợi ý: “Đồng Hồ Cát” thành **Đèn Canh** (thế giới đo giờ bằng đèn canh và trống canh, xem Phố Vạn Đăng), “Mũ Miện” thành **Vành Miện** cho gọn và hợp các món đội đầu kiểu vành tóc. Hoa Sao, Lông Vũ, Chén Ngọc giữ nguyên.
+> Tên ô theo concept Mảnh Sao (duyệt lần 2): Mảnh Hoa, Mảnh Lông, Mảnh Canh (vật đo thời gian, thay “Đồng Hồ Cát”; “canh” là đơn vị giờ đêm của thế giới), Mảnh Chén, Mảnh Miện. Id trong dữ liệu giữ `hoa`, `long`, `den`, `chen`, `mien`.
 
 Chỉ số mới (Tinh thông nguyên tố, Hồi năng lượng, Trị liệu, Phòng thủ, % sát thương theo hệ) đặt sẵn để khớp S30. Khi S30 vào `main`, Bảo Ấn nối thẳng vào chỉ số của S30; trước đó Chiến Lực và mô phỏng quy đổi chúng theo `chienLuc` (mục 7).
 
@@ -63,7 +69,7 @@ Cấp 0 bằng 20% giá trị tối đa của độ hiếm đó, tăng đều th
 | % sát thương 1 hệ    | 3,6%  | 18%    | 14,4%  | 10,8%  |
 | % sát thương vật lý  | 4,5%  | 22,5%  | 18%    | 13,5%  |
 
-Tầm số: Máu và Tấn công ở cấp 60 của nhân vật chừng 5.400 và 680, nên Hoa Sao +20 ≈ 20% Máu, Lông Vũ +20 ≈ 10% Tấn công.
+Tầm số: Máu và Tấn công ở cấp 60 của nhân vật chừng 5.400 và 680, nên Mảnh Hoa +20 ≈ 20% Máu, Mảnh Lông +20 ≈ 10% Tấn công.
 
 ### Chỉ số phụ (giá trị một lần tung, bậc 1 / 2 / 3 / 4)
 
@@ -101,26 +107,43 @@ Quy tắc: 2 món và 4 món của **cùng một bộ** cộng dồn (4 món là
 
 Hiệu ứng ghi bằng ngôn ngữ của S30 (nộ, kỹ năng, trọng kích, khiên, phản ứng, kháng). Trong bản S31, game đã áp thật: hiệu ứng chỉ số tĩnh (2 món) và phần quy đổi trung bình của 4 món vào chỉ số nhân vật. Khi S30 có hệ buff/debuff thật, phần 4 món chuyển sang buff có thời gian theo đúng chữ mô tả; chữ mô tả và quy đổi đã đặt sẵn.
 
+### Tên vì sao
+
+Mỗi bộ có `bo[].sao`: tên vì sao và truyện 2–3 câu kể nó rơi ở đâu, vỡ thành 5 mảnh ra sao. Hiện ở đầu khung hiệu ứng bộ và ở màn “sáng trọn”.
+
+| Bộ Ấn                  | Vì sao         |
+| ---------------------- | -------------- |
+| Đêm Hội Vạn Đăng       | Sao Vạn Đăng   |
+| Hồ Muối Gương Trời     | Sao Gương Muối |
+| Đình Trống Gọi Làng    | Sao Trống Làng |
+| Diều Đo Hướng Gió      | Sao Diều Gió   |
+| Vệt Cháy Đường Đua     | Sao Vệt Cháy   |
+| Gạch Men Nhà Chưa Xong | Sao Gạch Men   |
+| Đêm Rằm Đền Trăng      | Sao Rằm        |
+| Lan Tuyết Rừng Ranmori | Sao Lan Tuyết  |
+
 ### Tên và truyện từng món
+
+Truyện mỗi món nhắc tới mảnh sao gắn trên nó. Hai bộ mẫu (Đêm Hội Vạn Đăng, Lan Tuyết) đã viết lại theo hình mới; 6 bộ còn lại viết lại cùng lúc dựng icon ở Mốc 2.
 
 Theo [docs/writing/huong-dan-van-phong.md](../writing/huong-dan-van-phong.md): tên tối đa 6 âm tiết, truyện 2–3 câu, không ghi chỉ số, gắn địa danh có trong `docs/world`. Truyện đầy đủ nằm trong `content/bao-an.yaml`; schema kiểm tra số âm tiết, số câu, độ dài, không có chữ số.
 
-| Bộ Ấn                  | Hoa Sao             | Lông Vũ                | Đèn Canh              | Chén Ngọc            | Vành Miện            |
+| Bộ Ấn (vì sao)         | Mảnh Hoa            | Mảnh Lông              | Mảnh Canh             | Mảnh Chén            | Mảnh Miện            |
 | ---------------------- | ------------------- | ---------------------- | --------------------- | -------------------- | -------------------- |
-| Đêm Hội Vạn Đăng       | Hoa Giấy Đèn Lồng   | Lông Cánh Pháo Hoa     | Đèn Canh Chợ Đêm      | Chén Rượu Mừng Hội   | Vành Đèn Kết Hoa     |
+| Đêm Hội Vạn Đăng       | Hoa Giấy Đèn Lồng   | Lông Cánh Pháo Hoa     | Bình Cát Chợ Đêm      | Chén Rượu Mừng Hội   | Vành Lửa Người Múa   |
 | Hồ Muối Gương Trời     | Hoa Muối Đầu Mùa    | Lông Chim Lội Muối     | Đèn Đo Giông          | Chén Nước Hai Trời   | Vành Muối Kết Tinh   |
 | Đình Trống Gọi Làng    | Hoa Đồng Mặt Trống  | Lông Chim Lạc Bay Xuôi | Đèn Canh Hội Đồng     | Chén Nước Ba Hồi     | Vành Khăn Người Gõ   |
 | Diều Đo Hướng Gió      | Hoa Giấy Đuôi Diều  | Lông Hạc Chép Gió      | Đèn Gió Tầng Chín     | Chén Ngọc Hứng Mây   | Vành Dây Diều Bạc    |
 | Vệt Cháy Đường Đua     | Hoa Cỏ Sau Sét      | Lông Bờm Ngựa Giông    | Đèn Đếm Vòng Đua      | Chén Sữa Mừng Đích   | Vành Đá Sét Nóng     |
 | Gạch Men Nhà Chưa Xong | Hoa Lựu Trên Gạch   | Lông Chim Mái Vòm      | Đèn Đất Nung Khắc Tên | Chén Men Ốc Đảo      | Vành Vữa Đông Nhanh  |
 | Đêm Rằm Đền Trăng      | Hoa Súng Hồ Gương   | Lông Cò Đứng Bờ        | Đèn Trăng Mở Cửa      | Chén Nước Chuông Bạc | Vành Trăng Người Giữ |
-| Lan Tuyết Rừng Ranmori | Lan Tuyết Không Tan | Lông Cú Tuyết Tùng     | Đèn Băng Đường Thư    | Chén Ngọc Tôi Kiếm   | Vành Tuyết Không Lời |
+| Lan Tuyết Rừng Ranmori | Lan Tuyết Không Tan | Lông Cú Tuyết Tùng     | Bình Tuyết Đường Thư  | Chén Ngọc Tôi Kiếm   | Vành Tuyết Không Lời |
 
 Ví dụ hiển thị (định dạng mục 4.1 của hướng dẫn văn phong):
 
-> **Hoa Giấy Đèn Lồng** · Hoa Sao · 5★
+> **Hoa Giấy Đèn Lồng** · Mảnh Sao · Hoa · 5★
 > Bộ Đêm Hội Vạn Đăng: 2 món tăng 20% sát thương nộ; 4 món sau khi dùng nộ, đánh thường và trọng kích tăng 30% sát thương trong 8 giây.
-> _Bông hoa xếp từ giấy dán đèn lồng ở Phố Vạn Đăng. Đứa bé làm nó thức trọn đêm hội để kịp tặng người bán đèn. Cánh hoa vẫn ấm như vừa đứng cạnh bấc._
+> _Bông hoa cánh men đỏ, viền vàng như giấy dán đèn lồng ở Phố Vạn Đăng. Giữa nhụy là một mảnh sao rơi đúng đêm hội, người thợ đèn gắn vào để giữ lửa. Cầm lâu thấy tay ấm như đứng cạnh bấc._
 
 ## 5. Nguồn
 
@@ -218,16 +241,29 @@ Chiến Lực vẫn theo công thức `game.chienLuc` của `economy.yaml`. Bả
 - **Màn Nhân vật, thẻ Bảo Ấn:** 5 ô xếp quanh ảnh nhân vật, khung theo độ hiếm, số cấp. Dưới cùng là hiệu ứng bộ đang kích hoạt (sáng) và chưa đủ (mờ). Bấm một ô mở danh sách thay: thẻ kiểu S24, lọc theo bộ / ô / chỉ số chính, sắp xếp theo độ hiếm, cấp, bộ; bảng so sánh với món đang mang, tăng màu xanh, giảm màu đỏ.
 - **Tủ Đồ, tab Bảo Ấn:** lưới thẻ kiểu S24, chi tiết bên phải. Nâng cấp: chọn Sáp hoặc món làm nguyên liệu, thanh kinh nghiệm xem trước; khi qua mốc +4, dòng mới hoặc dòng được tăng nhảy số và sáng lên. Phân rã nhiều món: chế độ chọn, bộ chọn nhanh, xác nhận có tổng Bụi Ấn và Sáp nhận được. Khóa bằng biểu tượng ổ khóa trên thẻ.
 - **Bí Cảnh Bảo Ấn:** mục mới trong menu Bí Cảnh và cổng trên bản đồ; chọn Thiên Tượng, xem hai bộ rơi, vào đấu trường 3D của S28, xong mở rương.
+- **Sao sáng trọn (ghép sao):** khi nhân vật mang đủ 5 mảnh cùng vì sao, 5 ô trượt về 5 đỉnh của một ngôi sao năm cánh quanh nhân vật, các đường sáng nối đỉnh theo nét vẽ sao (Hoa → Chén → Lông → Miện → Canh → Hoa), lõi sáng giữa bùng lên theo màu vì sao (`bo[].mau`), rồi hiện tên vì sao. Dài khoảng 1,6 giây, chỉ chạy lúc vừa đủ bộ; sau đó chòm sao giữ sáng nhẹ và lấp lánh. Mang 4 mảnh thì 4 đường nối sáng, đường thiếu mờ. Có bản phác ở `media/bao-an/phac-ghep-sao.png` và `.mp4`.
 - **Admin:** cấp Bảo Ấn thử: chọn bộ, ô, độ hiếm, cấp, chỉ số chính và từng dòng phụ; nút “cấp đủ bộ 5 ô”.
 
 ## 10. Hình ảnh
 
-- 40 icon (8 bộ × 5 ô), dựng thủ tục trong Blender bằng chung thư viện đèn, vật liệu và máy quay với ảnh vũ khí S24 (`tools/blender/weapons/lib.py`). Dựng hình: `tools/blender/bao-an/render.py`, màu từng bộ: `tools/blender/bao-an/sets.py`.
-- Hậu kỳ bằng `tools/blender/weapons/hau-ky.sh` (quầng sáng, khung độ hiếm 3★ xanh, 4★ tím, 5★ vàng, bản 512/256/128 WebP). Ảnh nguồn ở `media/bao-an/`, ảnh game tải ở `public/bao-an/`.
-- Mỗi bộ có một bảng màu và một họa tiết riêng (đèn lồng, muối kết tinh, đồng trống, giấy diều, đá sét, men gạch, bạc trăng, băng tuyết). Không dùng biểu tượng tôn giáo hay hình mẫu văn hóa cụ thể.
-- Mốc 1 có 5 icon mẫu của bộ Đêm Hội Vạn Đăng.
+Hướng mỹ thuật (duyệt lần 2): **trang sức tinh xảo**, ngang hệ thánh di vật của các game nhập vai gacha lớn, mọi thiết kế tự dựng.
+
+- **Vật thể quen của thể loại**, dáng tự thiết kế: hoa cài, lông vũ, bình cát, chén chân cao, vành miện.
+- **Chất liệu PBR thật** (Cycles, không toon): kim loại chạm trổ nhiều lớp (dây xoắn, hoa văn cuộn chữ S, viền hạt kê), đá cắt giác trong suốt có tán sắc màng mỏng, men màu phủ bóng, ngọc trai óng, pha lê băng, giấy dó thắp sáng, dây và tua vải.
+- **Mảnh sao trên mọi món:** một ngôi sao năm cánh cắt giác, lõi sáng bên trong, viền kim loại, hạt ở mỗi đỉnh, ánh lấp lánh. Đây là điểm nhận ra hệ Mảnh Sao.
+- **Ngôn ngữ thiết kế riêng cho từng vì sao** (`tools/blender/bao-an/sets.py`): bảng màu, kim loại, đá, motif. 5 món cùng vì sao dùng chung motif nên nhìn là biết cùng bộ.
+
+| Vì sao        | Kim loại                                                                                        | Men, đá                                                    | Motif                                                           |
+| ------------- | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------- |
+| Sao Vạn Đăng  | Vàng ấm, đồng đỏ                                                                                | Men đỏ son chuyển cam, đá lửa hổ phách, hồng ngọc          | Ngọn lửa men hai lớp, giấy dó, tia pháo, tua đỏ, cát than hồng  |
+| Sao Lan Tuyết | Bạc, vàng trắng                                                                                 | Men trắng chuyển tím lan, pha lê băng, ngọc trai, lam ngọc | Hoa lan tuyết, gai băng, bông tuyết, chuỗi ngọc trai, cát tuyết |
+| 6 bộ còn lại  | Dựng ở Mốc 2 theo cùng khung: muối kết tinh, đồng trống, giấy diều, đá sét, men gạch, bạc trăng |                                                            |                                                                 |
+
+- Góc nhìn 3/4, đèn studio S24 thêm rim light theo màu vì sao. Ảnh lớn 1024 cho màn chi tiết; icon 256/128 trong khung độ hiếm S24 (3★ xanh, 4★ tím, 5★ vàng) bằng `tools/blender/weapons/hau-ky.sh`.
+- Dựng hình: `tools/blender/bao-an/render.py` (5 ô), khối trang sức dùng chung: `tools/blender/bao-an/jewel.py`. Ảnh nguồn ở `media/bao-an/`, ảnh game ở `public/bao-an/`.
+- Phong cách fantasy phi văn hóa: không biểu tượng tôn giáo, không chép món cụ thể của game khác.
 
 ## 11. Duyệt
 
-- **Mốc 1 (bản này):** tài liệu này, `content/bao-an.yaml`, schema Zod, 5 icon mẫu.
+- **Mốc 1 (bản này, gửi lại):** tài liệu này, `content/bao-an.yaml`, schema Zod, 10 món mẫu của 2 vì sao (icon + ảnh lớn 1024), bản phác ghép sao.
 - **Mốc 2:** cài đặt trong game, mô phỏng, đủ 40 icon; video màn Nhân vật, Tủ Đồ, một lượt Bí Cảnh Bảo Ấn; kết quả `economy:sim`.

@@ -207,7 +207,9 @@ async function render(host: HTMLElement, params: any) {
         icon("bao-an", { size: 48 }),
         h("h4", { class: "tt-h3" }, ["Bảo Ấn"]),
         tag("Sắp có", "warn"),
-        h("p", { class: "tt-dim" }, ["Bốn ô Bảo Ấn sẽ mở ở bản sau."]),
+        h("p", { class: "tt-dim" }, [
+          "Năm Mảnh Sao sẽ mở ở bản sau. Đủ năm mảnh cùng một vì sao thì vì sao sáng trọn.",
+        ]),
       ]),
     );
   } else if (tab === "skills") {

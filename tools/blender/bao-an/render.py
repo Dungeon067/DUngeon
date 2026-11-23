@@ -1,5 +1,5 @@
-"""Render icon Bảo Ấn (S31), cùng đèn và máy quay với ảnh vũ khí S24. Dùng:
-blender -b -P tools/blender/bao-an/render.py -- --out out/ [--bo dem-hoi-van-dang] [--samples 160] [--res 1024]
+"""Render Mảnh Sao (Bảo Ấn, S31): trang sức PBR bằng Cycles, đèn và máy quay như ảnh vũ khí S24. Dùng:
+blender -b -P tools/blender/bao-an/render.py -- --out out/ [--bo dem-hoi-van-dang] [--o hoa] [--samples 160] [--res 1024]
 Mỗi món ra <bo>-<o>.png (nền trong suốt) và <bo>-<o>-glow.png; hậu kỳ bằng tools/blender/weapons/hau-ky.sh.
 """
 import argparse
@@ -12,9 +12,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "weapons"))
 sys.path.insert(0, HERE)
 import lib  # noqa: E402
-from lib import (TAU, crystal, curve_obj, empty, extrude_poly, hexc, lathe, mat_aged, mat_cloth, mat_emit,  # noqa: E402
-                 mat_gem, star_poly)
-from models import tassel  # noqa: E402
+from lib import TAU, crystal, curve_obj, empty, hexc, lathe, mat_cloth  # noqa: E402
+from jewel import (beads_on, brilliant, circle, enamel, flame, gem, glass, glow, ice, ice_cluster, knot,  # noqa: E402
+                   metal, paper, pearl, petal, place2d, rope, s_scroll, scroll_ring, setting, spheres, star_gem,
+                   tassel_strands)
 from sets import SETS  # noqa: E402
 
 argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
@@ -26,171 +27,436 @@ ap.add_argument("--samples", type=int, default=160)
 ap.add_argument("--res", type=int, default=1024)
 a = ap.parse_args(argv)
 
-
-def gold(d):
-    return mat_aged("gold", hexc(d.get("gold", "#e0a94a")), hexc(d.get("cavity", "#3a2412")), 0.28)
-
-
-def petal_pts(length, width, n=24, notch=0.0):
-    pts = []
-    for i in range(n + 1):
-        t = i / n
-        w = width * math.sin(math.pi * t) ** 0.8 * (1 - 0.25 * t)
-        pts.append((w, length * t))
-    tip = [(0.0, length * (1 + notch))] if notch else []
-    right = pts
-    left = [(-x, z) for x, z in reversed(pts[1:-1])]
-    return right + tip + left
+FRONT = (0, -1, 0)
+X, Y, Z = (1, 0, 0), (0, 1, 0), (0, 0, 1)
 
 
-def rot2(pts, ang, dx=0.0, dz=0.0):
-    c, s = math.cos(ang), math.sin(ang)
-    return [(x * c - z * s + dx, x * s + z * c + dz) for x, z in pts]
+def materials(T):
+    M = {
+        "K": metal("kim", *T["kim"]),
+        "K2": metal("kim2", *T["kim2"]),
+        "E": enamel("men", T["men"][0], T["men"][1], 0.03, 0.22, "R"),
+        "EZ": enamel("menZ", T["men"][0], T["men"][1], -0.15, 0.4, "Z"),
+        "E2": enamel("men2", T["men2"][0], T["men2"][1], 0.0, 0.14, "R"),
+        "D": gem("da", T["da"], T["da"], 0.4),
+        "D2": gem("da2", T["da2"], T["da2"], 0.3, 1.76),
+        "S": gem("sao", T["sao"], T["loi"], 2.5, 2.1, film=280.0),
+        "C": glow("loi", T["loi"], 30.0),
+        "F": glow("lap", T["loi"], 14.0),
+        "P": pearl("ngoc"),
+        "G": glass("thuy", T["thuy"]),
+        "cat": glow("cat", T["cat"], 3.0 if T["motif"] == "lua" else 1.2),
+        "nuoc": glow("nuoc", T["nuoc"], 1.6 if T["motif"] == "lua" else 0.6),
+        "tua": mat_cloth("tua", hexc(T["tua"]), 0.9, 0.5, 300),
+    }
+    if T["motif"] == "lua":
+        M["giay"] = paper("giay", T["giay"], 1.4)
+        M["EL"] = enamel("men_ngon", "#7a0806", "#ff5a0c", 0.0, 0.09, "Z")
+        M["EC"] = enamel("men_chen", "#5a0306", "#d8360a", 0.0, 0.24, "Z")
+        M["Ei"] = enamel("men_lua", "#ff9a14", "#ffd860", 0.0, 0.1, "Z", glow=0.5)
+        M["tan"] = glow("tan", "#ffb040", 10.0)
+    else:
+        M["I"] = ice("bang", T["bang"])
+    return M
 
 
-def build_hoa(d, root):
-    """Hoa cài áo: hai tầng cánh, nhụy là một hạt đèn."""
-    p1 = mat_cloth("petal", hexc(d["petal"]), 0.05, 0.6, 220)
-    p2 = mat_emit("petal_in", hexc(d["paper2"]), d.get("paper_glow", 0.5))
-    mg = gold(d)
-    for ring, (k, ln, w, y, off, m) in enumerate(((8, 0.2, 0.075, 0.0, 0.0, p1), (8, 0.13, 0.055, -0.012, 0.39, p2))):
-        for i in range(k):
-            ang = TAU * i / k + off
-            o = extrude_poly(f"petal{ring}_{i}", rot2(petal_pts(ln, w, notch=0.04), ang), 0.006, [m], root, y=y,
-                             smooth=True)
-            o.rotation_euler = (math.radians(4 * math.sin(i * 1.7)), 0, 0)
-    curve_obj("vien", [[(0.205 * math.cos(TAU * i / 96), 0.01, 0.205 * math.sin(TAU * i / 96)) for i in range(96)]],
-              0.006, mg, root, cyclic=True)
-    lathe("nhuy", [(0.0, -0.05), (0.04, -0.045), (0.055, 0.0), (0.04, 0.045), (0.0, 0.05)], 32,
-          [mat_emit("bead", hexc(d["glow"]), 2.5)], root, axis="Y", offset=(0, -0.03, 0))
-    for i in range(12):
-        ang = TAU * i / 12
-        lathe(f"hat{i}", [(0.0, -0.01), (0.009, 0.0), (0.0, 0.01)], 12, [mg], root, axis="Y",
-              offset=(0.062 * math.cos(ang), -0.03, 0.062 * math.sin(ang)))
-    tassel(root, (0.0, 0.0, -0.21), 0.14, 40, d["tassel"], seed=3, spread=0.1)
+def fire(T):
+    return T["motif"] == "lua"
 
 
-def build_long(d, root):
-    """Lông chim cháy sém một mép, buộc dây đỏ, đầu lông còn tóe tia pháo."""
-    vane = mat_cloth("vane", hexc(d["feather"]), 0.05, 0.55, 400)
-    burn = mat_emit("burn", hexc(d["glow"]), 2.2)
-    mg = gold(d)
-    L = 0.62
-    right, left = [], []
-    for i in range(41):
-        t = i / 40
-        z = -0.12 + L * t
-        w = 0.12 * math.sin(math.pi * min(1, t * 1.08)) ** 0.7
-        right.append((w * 1.05 + 0.006 * math.sin(t * 40), z))
-        left.append((-w * 0.8, z))
-    extrude_poly("vane", right + list(reversed(left)), 0.004, [vane], root, smooth=True)
-    edge = [(x + 0.004, -0.003, z) for x, z in right[8:]]
-    curve_obj("mep_chay", [edge], 0.005, burn, root)
-    curve_obj("can", [[(0.0, -0.004, -0.3), (0.0, -0.004, -0.12), (0.004, -0.004, 0.2), (0.0, -0.004, 0.5)]], 0.006, mg,
-              root, kind="BEZIER")
-    cord = mat_cloth("cord", hexc(d["tassel"]), 0.6, 0.6)
-    for k in range(4):
-        z = -0.2 + k * 0.014
-        curve_obj(f"day{k}", [[(0.012 * math.cos(TAU * i / 24), 0.012 * math.sin(TAU * i / 24), z) for i in range(24)]],
-                  0.004, cord, root, cyclic=True)
-    lathe("hat", [(0.0, -0.26), (0.018, -0.25), (0.02, -0.235), (0.018, -0.22), (0.0, -0.21)], 24, [mg], root)
-    tassel(root, (0.0, 0.0, -0.26), 0.12, 40, d["tassel"], seed=5, spread=0.12)
-    rnd = lib.rng(11)
-    for k in range(9):
-        ang = rnd.uniform(-0.6, 1.4)
-        base = (0.03 + 0.05 * math.cos(ang), -0.01, 0.47 + 0.05 * math.sin(ang))
-        crystal(f"tia{k}", base, (math.cos(ang), 0, math.sin(ang)), rnd.uniform(0.03, 0.06), 0.006, 4, [burn], root)
+def pendant_tassel(T, M, root, top, length=0.16, seed=3):
+    knot("nut", top, 0.016, M["K"], root)
+    tassel_strands("tua", (top[0], top[1], top[2] - 0.035), length, 70, M["tua"], root, seed=seed, spread=0.12,
+                   sway=0.05)
 
 
-def build_den(d, root):
-    """Đèn canh: thân giấy có vạch chia canh, nóc và đáy đồng, móc treo."""
-    paper = mat_emit("paper", hexc(d["paper"]), 0.8)
-    mg = gold(d)
-    prof = [(0.0, -0.2), (0.1, -0.19), (0.15, -0.1), (0.16, 0.0), (0.15, 0.1), (0.1, 0.19), (0.0, 0.2)]
-    lathe("shade", prof, 48, [paper], root)
+def pearl_strands(M, root, top, n=3, length=0.12, seed=1):
+    for k in range(n):
+        dx = (k - (n - 1) / 2) * 0.03
+        pts = [(top[0] + dx * t, top[1], top[2] - length * t - 0.01 * math.sin(t * 3)) for t in
+               [i / 12 for i in range(13)]]
+        beads_on(f"chuoi{k}", pts, 0.0075, M["P"], root, 0.016)
+        end = pts[-1]
+        brilliant(f"giot{k}", (end[0], end[1], end[2] - 0.022), 0.014, FRONT, M["I"] if "I" in M else M["D"], root,
+                  sy=1.6, up=Z)
+
+
+# ---------------------------------------------------------------- 1. Hoa
+
+
+def build_hoa(T, M, root):
+    yb = 0.035
+    rope("vanh", circle((0, yb, 0), X, Z, 0.235, 180), 0.013, M["K"], root, closed=True, twists=45)
+    curve_obj("vanh_trong", [circle((0, yb, 0), X, Z, 0.205, 160)], 0.0045, M["K2"], root, cyclic=True)
+    beads_on("hat_ke", circle((0, yb - 0.004, 0), X, Z, 0.254, 220), 0.0055, M["K2"], root, closed=True)
+    scroll_ring("cuon", (0, yb, 0), X, Z, 0.22, 16, 0.058, M["K"], root, wire=0.0022)
+    if fire(T):
+        for k in range(12):
+            ang = TAU * k / 12 + TAU / 24
+            r0 = 0.25
+            flame(f"lua{k}", (r0 * math.cos(ang), yb, r0 * math.sin(ang)), 0.08 + 0.02 * (k % 2), 0.032, 0.0,
+                  M["EL"], M["K"], M["Ei"], root, lean=0.18, thick=0.008, rot_y=math.pi / 2 - ang)
+    else:
+        for k in range(12):
+            ang = TAU * k / 12 + TAU / 24
+            b = (0.245 * math.cos(ang), yb, 0.245 * math.sin(ang))
+            crystal(f"bang{k}", b, (math.cos(ang), 0, math.sin(ang)), 0.07 + 0.035 * (k % 2), 0.011, 6, [M["I"]],
+                    root)
+        spheres("ngoc_vanh", [(0.262 * math.cos(TAU * k / 12), yb - 0.01, 0.262 * math.sin(TAU * k / 12))
+                              for k in range(12)], 0.009, M["P"], root)
+    if fire(T):
+        layers = [(8, 0.0, 0.2, 0.072, 8, 0.0, M["E"], 0.0), (8, math.pi / 8, 0.145, 0.056, 24, -0.014, M["E2"], 0.0),
+                  (6, 0.2, 0.085, 0.034, 48, -0.03, M["K"], 0.0)]
+        for li, (n, off, ln, w, tilt, y0, m, cu) in enumerate(layers):
+            for i in range(n):
+                petal(f"canh{li}_{i}", (0, 0, 0), TAU * i / n + off, ln, w, [m], root, cup=0.45, curl=0.08, tilt=tilt,
+                      y0=y0, rim=M["K"] if m is not M["K"] else None, vein=M["K"] if li == 0 else None)
+        for i in range(8):
+            ang = TAU * i / 8 + math.pi / 8
+            loc = (0.165 * math.cos(ang), -0.012, 0.165 * math.sin(ang))
+            brilliant(f"da{i}", loc, 0.014, FRONT, M["D2"], root, up=Z)
+            setting(f"chau{i}", loc, 0.014, FRONT, M["K"], root, 4)
+    else:
+        spec = [(math.pi / 2, 0.225, 0.048, 6, 0.0, M["E"], 0.0), (math.pi * 7 / 6, 0.225, 0.048, 6, 0.0, M["E"], 0.0),
+                (-math.pi / 6, 0.225, 0.048, 6, 0.0, M["E"], 0.0), (math.pi / 6 + 0.05, 0.175, 0.085, 16, -0.012, M["E"], 0.1),
+                (math.pi * 5 / 6 - 0.05, 0.175, 0.085, 16, -0.012, M["E"], 0.1),
+                (-math.pi / 2, 0.13, 0.068, 34, -0.026, M["E2"], 0.06)]
+        for i, (rot, ln, w, tilt, y0, m, ru) in enumerate(spec):
+            petal(f"lan{i}", (0, 0, 0), rot, ln, w, [m], root, cup=0.55, curl=0.18 if i == 5 else 0.06, tilt=tilt,
+                  y0=y0, rim=M["K"], vein=M["K2"] if i < 5 else None, ruffle=ru, pw=0.6 if i < 3 else 0.9)
+        spheres("ngoc_nhuy", [(0.11 * math.cos(math.pi / 2 + TAU * k / 5), -0.03, 0.11 * math.sin(math.pi / 2 + TAU * k / 5))
+                              for k in range(5)], 0.011, M["P"], root)
+    star_gem("sao", (0, -0.05, 0), 0.055, FRONT, M["S"], M["C"], M["K"], root, flare=M["F"])
+    beads_on("day_treo", [(0, yb, -0.262), (0, yb - 0.005, -0.33)], 0.007, M["K"], root, 0.017)
+    brilliant("giot", (0, yb - 0.01, -0.37), 0.03, FRONT, M["D"], root, sy=1.55, up=Z)
+    setting("chau_giot", (0, yb - 0.01, -0.37), 0.03, FRONT, M["K"], root, 6, sy=1.55, up=Z)
+    if fire(T):
+        pendant_tassel(T, M, root, (0, yb, -0.42))
+    else:
+        pearl_strands(M, root, (0, yb, -0.42))
+
+
+# ---------------------------------------------------------------- 2. Lông
+
+
+def build_long(T, M, root):
+    def rach(t):
+        return (0.07 * math.sin(math.pi * t * 0.85) - 0.02 * t, 0.0, -0.32 + 0.8 * t)
+
+    def tang(t):
+        p0, p1 = rach(max(0, t - 0.01)), rach(min(1, t + 0.01))
+        dx, dz = p1[0] - p0[0], p1[2] - p0[2]
+        L = math.hypot(dx, dz)
+        return dx / L, dz / L
+
+    t0 = 0.2
+
+    def V(u, v, lift=0.0):
+        t = t0 + (1 - t0) * v
+        px, _, pz = rach(t)
+        tx, tz = tang(t)
+        sx, sz = tz, -tx
+        wr = 0.155 if u > 0 else 0.11
+        w = wr * math.sin(math.pi * min(1, v * 0.98 + 0.02) ** 0.72) ** 0.75 * (1 - 0.25 * v)
+        w *= 1 + 0.05 * math.sin(v * 61 + (3 if u > 0 else 0))
+        sweep = abs(u) * 0.05 * (1 - v * 0.5)
+        x = px + sx * u * w + tx * sweep
+        z = pz + sz * u * w + tz * sweep
+        ripple = 0.0022 * math.sin(TAU * (v * 38 - abs(u) * 2.4)) * abs(u)
+        y = -(0.03 * u * u * w / wr) - ripple - lift + 0.01 * u
+        return (x, y, z)
+
+    nu, nv = 24, 160
+    verts, faces = [], []
+    for j in range(nv + 1):
+        for i in range(nu + 1):
+            verts.append(V(-1 + 2 * i / nu, j / nv))
+    for j in range(nv):
+        for i in range(nu):
+            q = j * (nu + 1) + i
+            faces.append((q, q + 1, q + nu + 2, q + nu + 1))
+    o = lib.mesh_obj("phien", verts, faces, None, [M["EZ"]], smooth=True, sharp_deg=None, parent=root)
+    o.modifiers.new("day", "SOLIDIFY").thickness = 0.004
+    edge = [V(1, j / nv, 0.002) for j in range(nv + 1)] + [V(-1, j / nv, 0.002) for j in range(nv, -1, -1)]
+    curve_obj("vien", [edge], 0.0024, M["K"], root, bevel_res=2)
     ribs = []
+    for k in range(1, 9):
+        v = k / 9.5
+        for side in (1, -1):
+            ribs.append([V(side * i / 10, v, 0.0025) for i in range(1, 10)])
+    curve_obj("gan", ribs, 0.0016, M["K"], root, bevel_res=1)
+    scr = []
+    for k in range(5):
+        v = 0.12 + k * 0.16
+        for side in (1, -1):
+            c = V(side * 0.5, v, 0.004)
+            tx, tz = tang(t0 + (1 - t0) * v)
+            scr.append(place2d(s_scroll(0.05, c_only=True), c, (tx, 0, tz), (side * tz, 0, -side * tx)))
+    curve_obj("cuon", scr, 0.0017, M["K2"], root, bevel_res=1)
+    path = [rach(i / 120) for i in range(121)]
+    rope("can", path, 0.011, M["K"], root, twists=50, taper=lambda t: 1 - 0.75 * t)
+    for k in range(5):
+        t = 0.32 + k * 0.11
+        p = rach(t)
+        r = 0.016 - k * 0.0018
+        loc = (p[0], -0.012, p[2])
+        brilliant(f"da{k}", loc, r, FRONT, M["D"] if k % 2 == 0 else M["D2"], root, up=Z)
+        setting(f"chau{k}", loc, r, FRONT, M["K"], root, 4)
+    sp = rach(t0 - 0.02)
+    star_gem("sao", (sp[0], -0.03, sp[2]), 0.05, FRONT, M["S"], M["C"], M["K"], root, flare=M["F"])
+    b = rach(0.0)
+    lathe("ong", [(0.0, b[2] - 0.02), (0.012, b[2] - 0.018), (0.016, b[2]), (0.02, b[2] + 0.02), (0.014, b[2] + 0.035),
+                  (0.022, b[2] + 0.05), (0.018, b[2] + 0.065), (0.011, b[2] + 0.09), (0.0, b[2] + 0.095)], 40,
+          [M["K"]], root, offset=(b[0], 0, 0))
+    beads_on("vong_ong", circle((b[0], 0, b[2] + 0.05), X, Y, 0.023, 48), 0.004, M["K2"], root, closed=True)
+    if fire(T):
+        rnd = lib.rng(11)
+        tip = rach(1.0)
+        for k in range(14):
+            ang = rnd.uniform(-0.3, 1.7)
+            base = (tip[0] + 0.04 * math.cos(ang), -0.005, tip[2] - 0.05 + 0.05 * math.sin(ang))
+            crystal(f"tia{k}", base, (math.cos(ang), -0.2, math.sin(ang)), rnd.uniform(0.025, 0.05), 0.004, 4,
+                    [M["tan"]], root)
+        spheres("tan_hat", [(tip[0] + rnd.uniform(-0.08, 0.1), -0.01, tip[2] + rnd.uniform(-0.12, 0.08))
+                            for _ in range(16)], [rnd.uniform(0.002, 0.005) for _ in range(16)], M["tan"], root)
+        pendant_tassel(T, M, root, (b[0], 0, b[2] - 0.025), 0.1, 5)
+    else:
+        tip = rach(1.0)
+        ice_cluster("bang_ngon", tip, (0.2, -0.1, 1), 0.09, M["I"], root, 6, 3, 0.6, 0.012)
+        for k, v in enumerate((0.45, 0.62, 0.78)):
+            p = V(1, v)
+            ice_cluster(f"bang_mep{k}", p, (1, -0.1, 0.3), 0.05, M["I"], root, 3, 7 + k, 0.5, 0.007)
+        pearl_strands(M, root, (b[0], 0, b[2] - 0.025), 3, 0.1, 2)
+
+
+# ---------------------------------------------------------------- 3. Canh (đồng hồ cát)
+
+
+def build_canh(T, M, root):
+    H = 0.205
+    for sgn in (-1, 1):
+        prof = [(0.0, 0.25), (0.15, 0.25), (0.168, 0.242), (0.162, 0.229), (0.14, 0.222), (0.147, 0.213), (0.12, 0.205),
+                (0.0, 0.205)]
+        prof = [(r, sgn * z) for r, z in prof]
+        if sgn < 0:
+            prof = list(reversed(prof))
+        lathe(f"de{sgn}", prof, 72, [M["K"]], root)
+        beads_on(f"hat_de{sgn}", circle((0, 0, sgn * 0.247), X, Y, 0.158, 160), 0.0045, M["K2"], root, closed=True)
+        rope(f"vanh_de{sgn}", circle((0, 0, sgn * 0.216), X, Y, 0.146, 160), 0.007, M["K2"], root, closed=True)
+        for k in range(8):
+            ang = TAU * k / 8 + TAU / 16
+            loc = (0.168 * math.cos(ang), 0.168 * math.sin(ang), sgn * 0.235)
+            brilliant(f"da_de{sgn}{k}", loc, 0.0095, (math.cos(ang), math.sin(ang), 0), M["D2"] if k % 2 else M["D"],
+                      root, up=Z)
+    for k in range(4):
+        ang = TAU * k / 4 + TAU / 8
+        x, y = 0.128 * math.cos(ang), 0.128 * math.sin(ang)
+        path = [(x, y, -H + 2 * H * i / 60) for i in range(61)]
+        rope(f"cot{k}", path, 0.0095, M["K"], root, twists=45)
+        for z in (-0.12, 0.0, 0.12):
+            if fire(T) or z != 0.0:
+                lathe(f"dot{k}{z}", [(0, z - 0.016), (0.011, z - 0.012), (0.015, z), (0.011, z + 0.012), (0, z + 0.016)],
+                      24, [M["K2"]], root, offset=(x, y, 0))
+        if not fire(T):
+            spheres(f"ngoc_cot{k}", [(x, y, 0.0)], 0.014, M["P"], root)
+        a2 = ang + TAU / 8
+        c = (0.13 * math.cos(a2), 0.13 * math.sin(a2), 0.0)
+        tan = (-math.sin(a2), math.cos(a2), 0.0)
+        sc = [place2d(s_scroll(0.2, 1.0), c, Z, tan)]
+        sc += [place2d([(x2 * 0.45, y2 * 0.45) for x2, y2 in s_scroll(0.2, 1.0)], c, Z, (-tan[0], -tan[1], 0))]
+        curve_obj(f"cuon{k}", sc, 0.0024, M["K2"], root, bevel_res=2)
+
+    def rz(z):
+        t = abs(z) / H
+        return 0.012 + 0.092 * math.sin(math.pi * min(1.0, t) * 0.92 + 0.0) ** 0.75
+    prof = [(rz(-H + 2 * H * i / 60), -H + 2 * H * i / 60) for i in range(61)]
+    prof[0] = (0.04, -H)
+    prof[-1] = (0.04, H)
+    th = lathe("thuy", prof, 64, [M["G"]], root, cap=False)
+    sol = th.modifiers.new("vo", "SOLIDIFY")
+    sol.thickness = 0.004
+    lathe("cat_duoi", [(0.0, -H + 0.01), (0.085, -H + 0.012), (0.06, -0.15), (0.025, -0.125), (0.0, -0.118)], 48,
+          [M["cat"]], root)
+    lathe("cat_tren", [(0.0, 0.03), (0.03, 0.035), (0.075, 0.07), (0.088, 0.09), (0.0, 0.09)], 48, [M["cat"]], root)
+    curve_obj("dong_cat", [[(0, 0, 0.03), (0, 0, -0.118)]], 0.0022, M["cat"], root)
+    rope("eo", circle((0, 0, 0), X, Y, 0.02, 48), 0.006, M["K"], root, closed=True, twists=80)
+    star_gem("sao", (0, -0.03, 0.0), 0.036, FRONT, M["S"], M["C"], M["K"], root, flare=M["F"], flare_size=1.8)
+    if fire(T):
+        lathe("nom", [(0.0, 0.25), (0.03, 0.252), (0.022, 0.27), (0.03, 0.285), (0.0, 0.29)], 32, [M["K"]], root)
+        flame("lua_nom", (0, 0, 0.285), 0.13, 0.045, 0.0, M["EL"], M["K"], M["Ei"], root, lean=0.12, thick=0.01)
+        curve_obj("moc", [[(0.0, 0, 0.415), (0.03, 0, 0.44), (0.0, 0, 0.47), (-0.03, 0, 0.44), (-0.004, 0, 0.42)]],
+                  0.005, M["K"], root, kind="BEZIER")
+        lathe("nom_d", [(0.0, -0.29), (0.03, -0.285), (0.022, -0.27), (0.03, -0.252), (0.0, -0.25)], 32, [M["K"]],
+              root)
+        pendant_tassel(T, M, root, (0, 0, -0.3), 0.15, 2)
+    else:
+        lathe("nom", [(0.0, 0.25), (0.03, 0.252), (0.022, 0.27), (0.0, 0.275)], 32, [M["K"]], root)
+        c = (0, -0.005, 0.33)
+        for k in range(6):
+            ang = TAU * k / 6 + math.pi / 2
+            crystal(f"bong{k}", c, (math.cos(ang), 0, math.sin(ang)), 0.055, 0.009, 6, [M["I"]], root)
+            for s2 in (-1, 1):
+                b = (c[0] + 0.03 * math.cos(ang), c[1], c[2] + 0.03 * math.sin(ang))
+                a2 = ang + s2 * 0.8
+                crystal(f"nhanh{k}{s2}", b, (math.cos(a2), 0, math.sin(a2)), 0.022, 0.005, 6, [M["I"]], root)
+        spheres("tam_bong", [c], 0.013, M["P"], root)
+        for k in range(10):
+            ang = TAU * k / 10
+            r = 0.15 if k % 2 else 0.12
+            ice_cluster(f"bang_duoi{k}", (r * math.cos(ang), r * math.sin(ang), -0.25), (0, 0, -1),
+                        0.06 + 0.03 * (k % 3), M["I"], root, 2, k, 0.15, 0.008)
+
+
+# ---------------------------------------------------------------- 4. Chén
+
+
+def build_chen(T, M, root):
+    outer = [(0.05, 0.0), (0.1, 0.02), (0.145, 0.065), (0.17, 0.12), (0.182, 0.18), (0.19, 0.225)]
+    inner = [(0.182, 0.222), (0.175, 0.18), (0.162, 0.12), (0.135, 0.07), (0.09, 0.035), (0.0, 0.03)]
+    prof = [(0.0, 0.0)] + outer + inner
+    lathe("bat", prof, 96, [M["EC"] if fire(T) else M["I"]], root, cap=False)
+
+    def r_at(z):
+        for (r0, z0), (r1, z1) in zip(outer, outer[1:]):
+            if z0 <= z <= z1:
+                return r0 + (r1 - r0) * (z - z0) / (z1 - z0)
+        return outer[-1][0]
+    for z, w in ((0.06, 0.007), (0.14, 0.007)):
+        rope(f"dai{z}", circle((0, 0, z), X, Y, r_at(z) + 0.004, 160), w, M["K"], root, closed=True, twists=60)
+    scroll_ring("cuon_dai", (0, 0, 0.1), X, Y, r_at(0.1) + 0.003, 14, 0.07, M["K"], root, wire=0.0024, vert=Z)
+    for k in range(7):
+        ang = -math.pi / 2 + TAU * (k + 0.5) / 7
+        if abs(math.sin(ang) + 1) < 0.3:
+            continue
+        rr = r_at(0.1) + 0.008
+        loc = (rr * math.cos(ang), rr * math.sin(ang), 0.1)
+        brilliant(f"da{k}", loc, 0.015, (math.cos(ang), math.sin(ang), -0.1), M["D2"] if k % 2 else M["D"], root,
+                  up=Z)
+        setting(f"chau{k}", loc, 0.015, (math.cos(ang), math.sin(ang), -0.1), M["K"], root, 6)
+    rr = r_at(0.1) + 0.012
+    lathe("dia_sao", [(0.0, 0.0), (0.055, 0.0), (0.058, 0.008), (0.0, 0.01)], 48, [M["K"]], root, axis="Y",
+          offset=(0, -rr + 0.012, 0.1))
+    beads_on("vien_dia", circle((0, -rr + 0.002, 0.1), X, Z, 0.056, 80), 0.0042, M["K2"], root, closed=True)
+    star_gem("sao", (0, -rr - 0.006, 0.1), 0.045, (0, -1, -0.12), M["S"], M["C"], M["K"], root, flare=M["F"])
+    rope("mieng", circle((0, 0, 0.226), X, Y, 0.187, 180), 0.0085, M["K"], root, closed=True, twists=55)
+    beads_on("hat_mieng", circle((0, 0, 0.212), X, Y, 0.191, 200), 0.0042, M["K2"], root, closed=True)
+    lathe("nuoc", [(0.0, 0.19), (0.176, 0.19), (0.0, 0.1905)], 64, [M["nuoc"]], root)
+    if fire(T):
+        for k in range(16):
+            ang = TAU * k / 16
+            flame(f"lua{k}", (0.19 * math.cos(ang), 0.19 * math.sin(ang), 0.228), 0.05, 0.02, ang - math.pi / 2,
+                  M["EL"], M["K"], M["Ei"], root, lean=0.15, thick=0.006)
+        for s2 in (-1, 1):
+            pts = [(s2 * 0.185, 0, 0.19), (s2 * 0.27, 0, 0.21), (s2 * 0.29, 0, 0.12), (s2 * 0.22, 0, 0.05),
+                   (s2 * 0.15, 0, 0.045)]
+            curve_obj(f"quai{s2}", [pts], 0.009, M["K"], root, kind="BEZIER")
+            sc = place2d(s_scroll(0.08, c_only=True), (s2 * 0.25, 0, 0.13), (0, 0, 1), (s2, 0, 0))
+            curve_obj(f"quai_cuon{s2}", [sc], 0.004, M["K2"], root)
+            spheres(f"quai_hat{s2}", [(s2 * 0.275, 0, 0.2)], 0.012, M["K2"], root)
+    else:
+        ribs = []
+        for k in range(12):
+            ang = TAU * k / 12
+            ribs.append([((r + 0.005) * math.cos(ang), (r + 0.005) * math.sin(ang), z) for r, z in outer])
+        curve_obj("long_bac", ribs, 0.0035, M["K"], root, kind="BEZIER")
+        spheres("ngoc_mieng", [(0.192 * math.cos(TAU * k / 12), 0.192 * math.sin(TAU * k / 12), 0.236)
+                               for k in range(12)], 0.0085, M["P"], root)
+    lathe("chan", [(0.05, 0.0), (0.03, -0.02), (0.022, -0.05), (0.04, -0.07), (0.047, -0.085), (0.04, -0.1),
+                   (0.02, -0.12), (0.019, -0.16), (0.04, -0.185), (0.1, -0.21), (0.13, -0.225), (0.132, -0.238),
+                   (0.0, -0.238)], 72, [M["K"]], root)
     for k in range(10):
         ang = TAU * k / 10
-        ribs.append([(r * 1.01 * math.cos(ang), r * 1.01 * math.sin(ang), z) for r, z in prof[1:-1]])
-    curve_obj("ribs", ribs, 0.004, mg, root)
-    for z, r in ((-0.1, 0.153), (0.0, 0.163), (0.1, 0.153)):
-        curve_obj(f"canh{z}", [[(r * math.cos(TAU * i / 96), r * math.sin(TAU * i / 96), z) for i in range(96)]],
-                  0.005, mat_aged("son", hexc(d["tassel"]), hexc("#2a0a08"), 0.5), root, cyclic=True)
-    lathe("cap_t", [(0.0, 0.19), (0.08, 0.185), (0.1, 0.21), (0.05, 0.24), (0.02, 0.26), (0.0, 0.27)], 40, [mg], root)
-    lathe("cap_b", [(0.0, -0.27), (0.03, -0.26), (0.08, -0.215), (0.07, -0.19), (0.0, -0.19)], 40, [mg], root)
-    curve_obj("moc", [[(0, 0, 0.27), (0.05, 0, 0.34), (0.0, 0, 0.41), (-0.05, 0, 0.35), (-0.02, 0, 0.31)]], 0.007, mg,
-              root, kind="BEZIER")
-    tassel(root, (0.0, 0.0, -0.27), 0.15, 60, d["tassel"], seed=2, spread=0.14)
+        loc = (0.048 * math.cos(ang), 0.048 * math.sin(ang), -0.085)
+        if fire(T):
+            brilliant(f"da_than{k}", loc, 0.0085, (math.cos(ang), math.sin(ang), 0), M["D"], root, up=Z)
+        else:
+            spheres(f"ngoc_than{k}", [loc], 0.009, M["P"], root)
+    beads_on("hat_chan", circle((0, 0, -0.232), X, Y, 0.133, 180), 0.0045, M["K2"], root, closed=True)
+    scroll_ring("cuon_chan", (0, 0, -0.205), X, Y, 0.085, 10, 0.05, M["K2"], root, wire=0.002, lift=(0, 0, 0.004))
+    if not fire(T):
+        for k in range(6):
+            ang = TAU * k / 6 + 0.3
+            ice_cluster(f"bang_chan{k}", (0.12 * math.cos(ang), 0.12 * math.sin(ang), -0.215),
+                        (math.cos(ang), math.sin(ang), 1.2), 0.05, M["I"], root, 3, k, 0.4, 0.007)
 
 
-def build_chen(d, root):
-    """Chén ngọc mỏng trên chân cao, đáy hiện một chấm sáng."""
-    jade = mat_aged("jade", hexc(d["jade"]), hexc("#0e3a28"), 0.12, 3.0)
-    mg = gold(d)
-    prof = [(0.0, -0.02), (0.08, -0.015), (0.15, 0.04), (0.19, 0.12), (0.2, 0.16), (0.19, 0.16), (0.18, 0.12),
-            (0.14, 0.05), (0.07, 0.005), (0.0, 0.0)]
-    lathe("chen", prof, 72, [jade], root)
-    curve_obj("mieng", [[(0.198 * math.cos(TAU * i / 128), 0.198 * math.sin(TAU * i / 128), 0.162) for i in range(128)]],
-              0.007, mg, root, cyclic=True)
-    lathe("chan", [(0.0, -0.2), (0.12, -0.195), (0.13, -0.18), (0.05, -0.15), (0.03, -0.08), (0.05, -0.03),
-                   (0.08, -0.015), (0.0, -0.015)], 64, [mg], root)
-    lathe("nuoc", [(0.0, 0.1), (0.165, 0.1), (0.0, 0.1005)], 64, [mat_emit("nuoc", hexc("#ff8a20"), 0.5)],
-          root)
-    lathe("cham", [(0.0, 0.098), (0.03, 0.1), (0.0, 0.104)], 32, [mat_emit("cham", hexc(d["glow"]), 4)], root)
-    for k in range(6):
-        ang = TAU * k / 6
-        extrude_poly(f"van{k}", star_poly(4, 0.022, 0.008), 0.004, [mg], root).location = (
-            0.172 * math.cos(ang), 0.172 * math.sin(ang) - 0.0, 0.08)
+# ---------------------------------------------------------------- 5. Miện
 
 
-def build_mien(d, root):
-    """Vành tóc vàng kết mười hai đèn hạt đậu, thêm một đèn lạ màu khác."""
-    mg = gold(d)
-    R = 0.26
-    tilt = math.radians(30)
-
-    def p(ang, r=R, dz=0.0):
-        x, y = r * math.cos(ang), r * math.sin(ang)
-        return (x, y * math.cos(tilt) - dz * math.sin(tilt), y * math.sin(tilt) + dz * math.cos(tilt))
-
-    curve_obj("vanh", [[p(TAU * i / 160) for i in range(160)]], 0.012, mg, root, cyclic=True)
-    curve_obj("vanh2", [[p(TAU * i / 160, R * 0.97, 0.03 + 0.012 * math.sin(TAU * i / 160 * 12)) for i in range(160)]],
-              0.004, mg, root, cyclic=True)
-    lam = mat_emit("den", hexc(d["paper"]), 0.9)
-    odd = mat_emit("den13", hexc(d.get("odd", "#9fe8ff")), 2.2)
-    for k in range(13):
-        ang = TAU * k / 13 + 0.12
-        x, y, z = p(ang, R, -0.035)
-        m = odd if k == 12 else lam
-        s = 0.8 if k == 12 else 1.0
-        lathe(f"den{k}", [(0.0, -0.025 * s), (0.016 * s, -0.016 * s), (0.02 * s, 0.0), (0.016 * s, 0.016 * s),
-                           (0.0, 0.025 * s)], 20, [m], root, offset=(x, y, z - 0.01))
-        lathe(f"nap{k}", [(0.0, 0.024 * s), (0.008, 0.026 * s), (0.0, 0.03 * s)], 12, [mg], root,
-              offset=(x, y, z - 0.01))
-    extrude_poly("hoa", star_poly(6, 0.06, 0.025, 0.0, 0.0), 0.01, [mg], root).location = p(-math.pi / 2, R, 0.06)
-    lathe("ngoc", [(0.0, -0.02), (0.022, 0.0), (0.0, 0.02)], 24, [mat_gem("ngoc", hexc(d["glow"]), hexc(d["glow"]), 3)],
-          root, axis="Y", offset=tuple(c + o for c, o in zip(p(-math.pi / 2, R, 0.06), (0, -0.012, 0))))
-
-
-BUILDERS = {"hoa": build_hoa, "long": build_long, "den": build_den, "chen": build_chen, "mien": build_mien}
-# góc chụp từng ô: (angle, yaw, roll) như lib.frame
-POSE = {"hoa": (8, 0, 14), "long": (-32, 0, 18), "den": (12, 25, 8), "chen": (4, 0, 32), "mien": (0, 0, 0)}
-
-os.makedirs(a.out, exist_ok=True)
-for bo, d in SETS.items():
-    if a.bo and bo != a.bo:
-        continue
-    for slot, build in BUILDERS.items():
-        if a.o and slot != a.o:
+def build_mien(T, M, root):
+    R = 0.24
+    lathe("dai", [(R - 0.003, -0.002), (R + 0.004, -0.002), (R + 0.006, 0.047), (R - 0.002, 0.047), (R - 0.003, -0.002)],
+          160, [M["EC"] if fire(T) else M["E"]], root, cap=False)
+    for z in (-0.003, 0.048):
+        rope(f"day{z}", circle((0, 0, z), X, Y, R + 0.005, 240), 0.0075, M["K"], root, closed=True, twists=70)
+    beads_on("hat_dai", circle((0, 0, 0.06), X, Y, R + 0.004, 240), 0.0042, M["K2"], root, closed=True)
+    for k in range(18):
+        ang = TAU * k / 18
+        loc = ((R + 0.009) * math.cos(ang), (R + 0.009) * math.sin(ang), 0.0225)
+        nrm = (math.cos(ang), math.sin(ang), 0)
+        brilliant(f"da{k}", loc, 0.0105, nrm, M["D"] if k % 2 else M["D2"], root, up=Z)
+        setting(f"chau{k}", loc, 0.0105, nrm, M["K"], root, 4)
+    n = 12
+    for k in range(n):
+        ang = -math.pi / 2 + TAU * k / n
+        f = (1 - math.sin(ang)) / 2
+        h = 0.06 + 0.11 * f ** 2
+        base = (R * math.cos(ang), R * math.sin(ang), 0.055)
+        if k == 0:
             continue
-        t0 = time.time()
-        sc = lib.reset_scene()
-        sc.render.resolution_x = sc.render.resolution_y = a.res
-        root = empty()
-        build(d, root)
-        center, size = lib.frame(root, *POSE[slot], margin=1.18)
-        lib.studio(center, size, hexc(d["glow"]))
-        name = f"{bo}-{slot}"
-        lib.render(os.path.join(a.out, f"{name}.png"), a.samples)
-        lib.render_glow_mask(os.path.join(a.out, f"{name}-glow.png"))
-        print(f"[xong] {name} {time.time() - t0:.0f}s")
+        if fire(T):
+            flame(f"lua{k}", base, h, h * 0.36, ang - math.pi / 2, M["EL"], M["K"], M["Ei"], root, lean=0.12 * (1 if k % 2
+                  else -1), thick=0.008)
+        else:
+            ice_cluster(f"bang{k}", base, (0.12 * math.cos(ang), 0.12 * math.sin(ang), 1), h, M["I"], root, 3, k, 0.25,
+                        0.011)
+        tip = (base[0], base[1], base[2] + h * 0.35)
+        a2 = ang + math.pi / n
+        p2 = ((R + 0.002) * math.cos(a2), (R + 0.002) * math.sin(a2), 0.075)
+        spheres(f"ngoc{k}", [p2], 0.0085, M["P"] if not fire(T) else M["K2"], root)
+        del tip
+    c = (0, -R - 0.012, 0.19)
+    if fire(T):
+        flame("lua_giua", (0, -R, 0.05), 0.3, 0.11, 0.0, M["EL"], M["K"], M["Ei"], root, lean=0.0, thick=0.01)
+    else:
+        ice_cluster("bang_giua", (0, -R, 0.05), (0, 0, 1), 0.28, M["I"], root, 5, 99, 0.3, 0.016)
+        for s2 in (-1, 1):
+            petal(f"lan_giua{s2}", (0, -R - 0.02, 0.11), math.pi / 2 + s2 * 0.9, 0.08, 0.034, [M["E"]], root, cup=0.5,
+                  tilt=10, rim=M["K"], ruffle=0.06)
+    rope("hao_quang", circle((c[0], c[1] + 0.006, c[2]), X, Z, 0.075, 120), 0.0065, M["K"], root, closed=True,
+         twists=60)
+    beads_on("hao_hat", circle((c[0], c[1] + 0.008, c[2]), X, Z, 0.088, 140), 0.0038, M["K2"], root, closed=True)
+    star_gem("sao", c, 0.058, FRONT, M["S"], M["C"], M["K"], root, flare=M["F"], flare_size=1.7)
+    for k, da in enumerate((-0.5, -0.25, 0.0, 0.25, 0.5)):
+        ang = -math.pi / 2 + da
+        top = ((R + 0.006) * math.cos(ang), (R + 0.006) * math.sin(ang), -0.01)
+        L = 0.05 if k == 2 else 0.032
+        beads_on(f"rui{k}", [top, (top[0], top[1], top[2] - L)], 0.004, M["K"], root, 0.009)
+        loc = (top[0], top[1] - 0.004, top[2] - L - 0.02)
+        nrm = (math.cos(ang), math.sin(ang), 0)
+        brilliant(f"giot{k}", loc, 0.014 if k == 2 else 0.01, nrm, M["D"] if fire(T) else M["I"], root, sy=1.6, up=Z)
+
+
+BUILDERS = {"hoa": build_hoa, "long": build_long, "den": build_canh, "chen": build_chen, "mien": build_mien}
+# (angle quanh Y, yaw quanh Z, roll quanh X) như lib.frame: góc 3/4 cho thấy chiều sâu.
+POSE = {"hoa": (0, 26, 12), "long": (-18, 28, 10), "den": (0, 24, 14), "chen": (0, 18, 16), "mien": (0, 14, 24)}
+
+if __name__ == "__main__":
+    os.makedirs(a.out, exist_ok=True)
+    for bo, T in SETS.items():
+        if a.bo and bo != a.bo:
+            continue
+        for slot, build in BUILDERS.items():
+            if a.o and slot != a.o:
+                continue
+            t0 = time.time()
+            sc = lib.reset_scene()
+            sc.render.resolution_x = sc.render.resolution_y = a.res
+            root = empty()
+            build(T, materials(T), root)
+            center, size = lib.frame(root, *POSE[slot], margin=1.14)
+            lib.studio(center, size, hexc(T["rim"]))
+            name = f"{bo}-{slot}"
+            lib.render(os.path.join(a.out, f"{name}.png"), a.samples)
+            lib.render_glow_mask(os.path.join(a.out, f"{name}-glow.png"))
+            print(f"[xong] {name} {time.time() - t0:.0f}s", flush=True)

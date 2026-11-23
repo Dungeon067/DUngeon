@@ -30,16 +30,16 @@ chiSo:
 # chinh: chỉ số chính có thể ra ở ô này và trọng số tung (ô cố định chỉ có một).
 o:
   - id: hoa
-    ten: Hoa Sao
+    ten: Mảnh Hoa
     chinh: { hp: 1 }
   - id: long
-    ten: Lông Vũ
+    ten: Mảnh Lông
     chinh: { atk: 1 }
   - id: den
-    ten: Đèn Canh
+    ten: Mảnh Canh
     chinh: { atkPct: 26, hpPct: 26, defPct: 26, tinhThong: 11, hoiNl: 11 }
   - id: chen
-    ten: Chén Ngọc
+    ten: Mảnh Chén
     chinh:
       {
         atkPct: 19,
@@ -56,7 +56,7 @@ o:
         stVatLy: 6,
       }
   - id: mien
-    ten: Vành Miện
+    ten: Mảnh Miện
     chinh: { atkPct: 22, hpPct: 22, defPct: 22, tinhThong: 4, chiMang: 10, stcm: 10, triLieu: 10 }
 
 # ---------- Độ hiếm và cấp ----------
@@ -226,6 +226,9 @@ bo:
     ten: Đêm Hội Vạn Đăng
     vung: Phố Vạn Đăng
     vaiTro: Sát thương nộ
+    sao:
+      ten: Sao Vạn Đăng
+      truyen: "Vì sao rơi xuống Phố Vạn Đăng trong một đêm hội đèn, vỡ thành năm mảnh. Người phố nhặt về gắn lên hoa, lông, bình cát, chén và vành múa. Đủ năm mảnh, vì sao lại sáng như ngọn đèn lồng lớn nhất."
     mau: ["#ff8a3a", "#ffd27a"]
     hai:
       hieuUng: "Tăng 20% sát thương nộ."
@@ -236,23 +239,26 @@ bo:
     mon:
       hoa:
         ten: Hoa Giấy Đèn Lồng
-        truyen: "Bông hoa xếp từ giấy dán đèn lồng ở Phố Vạn Đăng. Đứa bé làm nó thức trọn đêm hội để kịp tặng người bán đèn. Cánh hoa vẫn ấm như vừa đứng cạnh bấc."
+        truyen: "Bông hoa cánh men đỏ, viền vàng như giấy dán đèn lồng ở Phố Vạn Đăng. Giữa nhụy là một mảnh sao rơi đúng đêm hội, người thợ đèn gắn vào để giữ lửa. Cầm lâu thấy tay ấm như đứng cạnh bấc."
       long:
         ten: Lông Cánh Pháo Hoa
-        truyen: "Chiếc lông chim cháy sém một mép, rơi xuống chợ đêm sau loạt pháo cuối. Không ai biết con chim nào bay qua đúng lúc ấy. Mép cháy còn lấp lánh như bụi pháo."
+        truyen: "Chiếc lông vàng đỏ rơi xuống chợ đêm sau loạt pháo cuối. Đầu lông còn tóe tia lửa, gốc lông kẹp một mảnh sao nhỏ. Không ai biết con chim nào bay qua đúng lúc ấy."
       den:
-        ten: Đèn Canh Chợ Đêm
-        truyen: "Ngọn đèn nhỏ người gác chợ đêm treo đầu sạp để đếm giờ. Dầu cạn một nấc là qua một canh. Có đêm đèn cạn mà chợ chưa ai muốn về."
+        ten: Bình Cát Chợ Đêm
+        truyen: "Bình cát người gác chợ đêm treo đầu sạp để đếm canh. Cát bên trong là than hồng nghiền mịn, chảy qua eo bình nơi gắn một mảnh sao. Có đêm cát cạn mà chợ chưa ai muốn về."
       chen:
         ten: Chén Rượu Mừng Hội
-        truyen: "Chén ngọc mỏng dùng mời khách trong đêm hội đèn. Rót nước vào thì đáy chén hiện một chấm sáng như đèn ở xa. Chủ quán nói chén chưa từng vỡ, dù rơi bao lần."
+        truyen: "Chén men đỏ dùng mời khách trong đêm hội đèn, miệng chén viền những ngọn lửa vàng. Rót rượu vào thì mảnh sao trên thân chén sáng lên. Chủ quán nói chén chưa từng vỡ, dù rơi bao lần."
       mien:
-        ten: Vành Đèn Kết Hoa
-        truyen: "Vành tóc kết mười hai chiếc đèn bé bằng hạt đậu, đội cho người múa mở đêm hội. Khi người múa xoay, đèn kéo thành một vòng sáng. Chiếc đèn thứ mười ba không biết ai thêm vào."
+        ten: Vành Lửa Người Múa
+        truyen: "Vành lửa đội cho người múa mở đêm hội ở Phố Vạn Đăng. Ngọn lửa giữa vành ôm một mảnh sao, khi người múa xoay thì cả vành kéo thành vòng sáng. Không ai nhớ ai đã gắn mảnh sao ấy vào."
   - id: ho-muoi-guong-troi
     ten: Hồ Muối Gương Trời
     vung: Hồ Muối Gương Trời
     vaiTro: Phản ứng nguyên tố
+    sao:
+      ten: Sao Gương Muối
+      truyen: "Vì sao rơi xuống hồ muối Khokhtal, mặt hồ soi nó thành hai. Năm mảnh nằm lẫn trong muối, chỉ ai đi chân trần mới thấy. Đủ năm mảnh, trời và hồ cùng sáng một lúc."
     mau: ["#b47bff", "#e8f0ff"]
     hai:
       hieuUng: "Tăng 60 Tinh thông nguyên tố."
@@ -280,6 +286,9 @@ bo:
     ten: Đình Trống Gọi Làng
     vung: Đình Trống Đồng
     vaiTro: Tăng sức đội sau nộ
+    sao:
+      ten: Sao Trống Làng
+      truyen: "Vì sao rơi trúng mặt trống ở Đình Trống Đồng, vỡ ra theo năm hồi trống. Người làng nhặt từng mảnh theo tiếng vang. Đủ năm mảnh, gõ một tiếng cả làng cùng nghe."
     mau: ["#e8b456", "#7a3a14"]
     hai:
       hieuUng: "Tăng 15% Tấn công."
@@ -307,6 +316,9 @@ bo:
     ten: Diều Đo Hướng Gió
     vung: Thiên Diên Thành
     vaiTro: Hồi năng lượng đội
+    sao:
+      ten: Sao Diều Gió
+      truyen: "Vì sao mắc vào dây diều trên Thiên Diên Thành rồi đứt làm năm mảnh. Gió mang mỗi mảnh về một hướng. Đủ năm mảnh, diều bay không cần người giữ dây."
     mau: ["#4cf0c0", "#e0f4ff"]
     hai:
       hieuUng: "Tăng 20% Hồi năng lượng."
@@ -334,6 +346,9 @@ bo:
     ten: Vệt Cháy Đường Đua
     vung: Đường Đua Giông
     vaiTro: Sát thương trọng kích
+    sao:
+      ten: Sao Vệt Cháy
+      truyen: "Vì sao rơi ngang Đường Đua Giông, để lại một vệt cháy dài trên cỏ. Năm mảnh nằm dọc vệt, mảnh xa nhất ở vạch đích. Đủ năm mảnh, vệt cháy sáng lại như vừa có sét."
     mau: ["#ffd24a", "#8a5cff"]
     hai:
       hieuUng: "Tăng 18% sát thương trọng kích."
@@ -361,6 +376,9 @@ bo:
     ten: Gạch Men Nhà Chưa Xong
     vung: Nhà Chưa Xong
     vaiTro: Khiên, che chắn
+    sao:
+      ten: Sao Gạch Men
+      truyen: "Vì sao rơi vào một ngôi nhà đang xây ở Golbaran, vỡ lẫn trong vữa. Thợ gạch nhặt năm mảnh, gắn mỗi mảnh vào một viên men. Đủ năm mảnh, ngôi nhà chưa xong vẫn che được mưa."
     mau: ["#3fb4ff", "#d8243a"]
     hai:
       hieuUng: "Khiên tạo ra bền thêm 30%."
@@ -388,6 +406,9 @@ bo:
     ten: Đêm Rằm Đền Trăng
     vung: Hồ Gương và Đền Trăng
     vaiTro: Trị liệu
+    sao:
+      ten: Sao Rằm
+      truyen: "Vì sao rơi xuống Hồ Gương đúng đêm rằm, người giữ Đền Trăng vớt được năm mảnh. Mỗi mảnh soi xuống nước thành một vầng trăng nhỏ. Đủ năm mảnh, hồ sáng như có hai mặt trăng."
     mau: ["#bfe8ff", "#f2f0f8"]
     hai:
       hieuUng: "Tăng 15% trị liệu."
@@ -415,6 +436,9 @@ bo:
     ten: Lan Tuyết Rừng Ranmori
     vung: Ranmori
     vaiTro: Giảm kháng của địch
+    sao:
+      ten: Sao Lan Tuyết
+      truyen: "Vì sao rơi xuống rừng Ranmori trong đêm tuyết đầu mùa, vỡ thành năm mảnh. Mỗi mảnh rơi vào một nơi người ta từng khóc, và lan tuyết nở ở đó. Đủ năm mảnh, vì sao sáng lạnh như mặt hồ đóng băng."
     mau: ["#9be8ff", "#3a5a78"]
     hai:
       hieuUng: "Tăng 15% sát thương nguyên tố."
@@ -425,16 +449,16 @@ bo:
     mon:
       hoa:
         ten: Lan Tuyết Không Tan
-        truyen: "Bông lan tuyết hái ở rìa rừng Ranmori. Lan tuyết chỉ nở ở nơi từng có người khóc. Bông này nở trên một tảng đá không ai ngồi."
+        truyen: "Bông lan tuyết hái ở rìa rừng Ranmori, được thợ bạc giữ lại trong một khung băng. Lan tuyết chỉ nở ở nơi từng có người khóc. Nhụy hoa là một mảnh sao lạnh, chạm vào thấy buốt."
       long:
         ten: Lông Cú Tuyết Tùng
-        truyen: "Chiếc lông của con cú làm tổ trong rừng tuyết tùng. Cú bay không một tiếng, chỉ có tuyết rơi khỏi cành. Lông lạnh như vừa nhặt dưới tuyết."
+        truyen: "Chiếc lông bạc của con cú làm tổ trong rừng tuyết tùng. Đầu lông mọc băng, gốc lông giữ một mảnh sao như hạt sương đông. Cú bay không một tiếng, chỉ có tuyết rơi khỏi cành."
       den:
-        ten: Đèn Băng Đường Thư
-        truyen: "Ngọn đèn băng ở trạm nghỉ cuối Đường Thư Núi. Người đưa thư thắp nó để báo đã qua núi an toàn. Lửa trong đèn màu xanh, đặt tay vào không thấy nóng."
+        ten: Bình Tuyết Đường Thư
+        truyen: "Bình tuyết ở trạm nghỉ cuối Đường Thư Núi, người đưa thư lật nó khi bắt đầu qua núi. Tuyết chảy hết là phải về tới trạm bên kia. Eo bình có một mảnh sao, đêm bão vẫn thấy sáng."
       chen:
         ten: Chén Ngọc Tôi Kiếm
-        truyen: "Chén ngọc ở Xưởng Rèn Shimogane, thợ dùng để nhúng thử lưỡi kiếm mới tôi. Nước trong chén không bao giờ sôi. Mép chén có một vết mẻ hình hoa lan."
+        truyen: "Chén pha lê băng ở Xưởng Rèn Shimogane, thợ dùng để nhúng thử lưỡi kiếm mới tôi. Nước trong chén không bao giờ sôi. Mảnh sao trên thân chén có một vết mẻ hình hoa lan."
       mien:
         ten: Vành Tuyết Không Lời
-        truyen: "Vành tuyết kết trên đỉnh Núi Không Lời, nơi không có gió. Ai nói một lời thật lòng ở đó thì nó rơi xuống tay. Vành không tan, nhưng nặng dần nếu người đội nói dối."
+        truyen: "Vành tuyết kết trên đỉnh Núi Không Lời, nơi không có gió. Ai nói một lời thật lòng ở đó thì nó rơi xuống tay, giữa vành là một mảnh sao. Vành không tan, nhưng nặng dần nếu người đội nói dối."

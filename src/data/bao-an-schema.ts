@@ -47,6 +47,7 @@ export const BoAnSchema = z
     ten: z.string().min(1),
     vung: z.string().min(1),
     vaiTro: z.string().min(1),
+    sao: Piece,
     mau: z.tuple([z.string().regex(/^#[0-9a-f]{6}$/i), z.string().regex(/^#[0-9a-f]{6}$/i)]),
     hai: SetEffect,
     bon: SetEffect,
@@ -233,6 +234,10 @@ export function validateBaoAn(raw: unknown, refs: BaoAnRefs): { baoAn?: BaoAnCon
       if (/\d|%/.test(p.truyen)) e(`${where}: truyện không ghi chỉ số`);
     }
     if (syllables(s.ten) > 6) e(`bộ ${s.id}: tên quá 6 âm tiết`);
+    const cs = sentences(s.sao.truyen);
+    if (cs < 2 || cs > 3) e(`bộ ${s.id}: truyện vì sao cần 2–3 câu (đang ${cs})`);
+    if (/\d|%/.test(s.sao.truyen)) e(`bộ ${s.id}: truyện vì sao không ghi chỉ số`);
+    if (syllables(s.sao.ten) > 6) e(`bộ ${s.id}: tên vì sao quá 6 âm tiết`);
     if (names.has(s.ten)) e(`bộ ${s.id}: tên trùng`);
   }
   const seen = new Map<string, string>();
