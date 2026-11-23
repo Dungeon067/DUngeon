@@ -46,7 +46,13 @@ function coilPath(o: THREE.Object3D, time: number) {
   for (let i = 0; i <= 400; i++) {
     const s = i * 0.03;
     const rise = 1.6 * (1 - THREE.MathUtils.smoothstep(s, 0, 2.6));
-    raw.push(new THREE.Vector3(Math.sin(s * 0.9 + time * 1.2) * 1.4 * Math.min(1, s * 0.45), p0.y + rise - 1.6, p0.z - s * 0.92));
+    raw.push(
+      new THREE.Vector3(
+        Math.sin(s * 0.9 + time * 1.2) * 1.4 * Math.min(1, s * 0.45),
+        p0.y + rise - 1.6,
+        p0.z - s * 0.92,
+      ),
+    );
   }
   driveSpine(bones, resamplePath(raw, seg, bones.length + 1));
 }
@@ -76,11 +82,20 @@ function inst(el: string) {
     let mm = cache.get(src);
     if (!mm) cache.set(src, (mm = monsterMat(src, u)));
     m.material = mm;
-    if (q.get("ol") !== "0" && (mm as any).userData.part !== "jelly" && (mm as any).userData.part !== "fin" && (mm as any).userData.part !== "glow") {
+    if (
+      q.get("ol") !== "0" &&
+      (mm as any).userData.part !== "jelly" &&
+      (mm as any).userData.part !== "fin" &&
+      (mm as any).userData.part !== "glow"
+    ) {
       const ol = (m as any).isSkinnedMesh
         ? new THREE.SkinnedMesh(m.geometry, outlineMat(0.006 * Math.max(size.x, size.y, size.z) ** 0.5))
         : new THREE.Mesh(m.geometry, outlineMat(0.006));
-      if ((ol as any).isSkinnedMesh) (ol as unknown as THREE.SkinnedMesh).bind((m as unknown as THREE.SkinnedMesh).skeleton, (m as THREE.SkinnedMesh).bindMatrix);
+      if ((ol as any).isSkinnedMesh)
+        (ol as unknown as THREE.SkinnedMesh).bind(
+          (m as unknown as THREE.SkinnedMesh).skeleton,
+          (m as THREE.SkinnedMesh).bindMatrix,
+        );
       m.parent!.add(ol);
       ol.position.copy(m.position);
       ol.quaternion.copy(m.quaternion);
@@ -103,15 +118,47 @@ function inst(el: string) {
   return { o, u, mixer, act };
 }
 
+const NAMES: Record<string, string> = {
+  idle: "Đứng yên",
+  patrol: "Đi tuần",
+  chase: "Chạy đuổi",
+  tele: "Lấy đà",
+  draw: "Kéo cung",
+  cast: "Niệm phép",
+  attack: "Ra đòn",
+  hurt: "Trúng đòn",
+  stun: "Choáng",
+  fan: "Quạt đuôi",
+  rain: "Mưa nước",
+  charge: "Lao tới",
+  summon: "Gọi quái",
+  roar: "Gầm chuyển giai đoạn",
+  dead: "Tan thành bụi sao",
+};
+let reel: ((dt: number) => void) | null = null;
 const els = (q.get("els") ?? q.get("el") ?? "water").split(",");
-const views: { s: THREE.Scene; cam: THREE.Camera; vp: number[]; mixer: THREE.AnimationMixer; u: MonsterUniforms; o: THREE.Object3D }[] = [];
+const views: {
+  s: THREE.Scene;
+  cam: THREE.Camera;
+  vp: number[];
+  mixer: THREE.AnimationMixer;
+  u: MonsterUniforms;
+  o: THREE.Object3D;
+}[] = [];
 const ext = Math.max(size.x, size.y, size.z);
 function cam(yaw: number, aspect: number, pitch = 0.18) {
   const c = new THREE.PerspectiveCamera(28, aspect, 0.01, 100);
-  const fit = Math.max(size.y / (2 * Math.tan((14 * Math.PI) / 180)), Math.max(size.x, size.z) / (2 * Math.tan((14 * Math.PI) / 180) * aspect));
+  const fit = Math.max(
+    size.y / (2 * Math.tan((14 * Math.PI) / 180)),
+    Math.max(size.x, size.z) / (2 * Math.tan((14 * Math.PI) / 180) * aspect),
+  );
   const dist = (fit * 1.25 + ext * 0.5) / +(q.get("zoom") ?? 1);
   const tgt = ctr.clone().add(new THREE.Vector3(0, size.y * +(q.get("ty") ?? 0), 0));
-  c.position.set(tgt.x + Math.sin(yaw) * dist * Math.cos(pitch), tgt.y + dist * Math.sin(pitch), tgt.z + Math.cos(yaw) * dist * Math.cos(pitch));
+  c.position.set(
+    tgt.x + Math.sin(yaw) * dist * Math.cos(pitch),
+    tgt.y + dist * Math.sin(pitch),
+    tgt.z + Math.cos(yaw) * dist * Math.cos(pitch),
+  );
   c.lookAt(tgt);
   return c;
 }
@@ -127,7 +174,14 @@ if (mode === "grid") {
   const s = stage();
   const it = inst(els[0]);
   s.add(it.o);
-  views.push({ s, cam: cam(+(q.get("yaw") ?? 0.6), W / H, +(q.get("pitch") ?? 0.18)), vp: [0, 0, W, H], mixer: it.mixer, u: it.u, o: it.o });
+  views.push({
+    s,
+    cam: cam(+(q.get("yaw") ?? 0.6), W / H, +(q.get("pitch") ?? 0.18)),
+    vp: [0, 0, W, H],
+    mixer: it.mixer,
+    u: it.u,
+    o: it.o,
+  });
 } else if (mode === "strip") {
   // Dải khung hình của một clip: ?mode=strip&clip=patrol&n=6 (khung cách đều, đứng yên).
   const n = +(q.get("n") ?? 6);
@@ -141,8 +195,73 @@ if (mode === "grid") {
       a.paused = true;
       it.mixer.update(0);
     }
-    views.push({ s, cam: cam(+(q.get("yaw") ?? 0.9), W / n / H, +(q.get("pitch") ?? 0.18)), vp: [(i * W) / n, 0, W / n, H], mixer: it.mixer, u: it.u, o: it.o });
+    views.push({
+      s,
+      cam: cam(+(q.get("yaw") ?? 0.9), W / n / H, +(q.get("pitch") ?? 0.18)),
+      vp: [(i * W) / n, 0, W / n, H],
+      mixer: it.mixer,
+      u: it.u,
+      o: it.o,
+    });
   }
+} else if (mode === "reel") {
+  // Video hoạt ảnh: chơi lần lượt mọi clip, có nhãn, máy quay xoay chậm. Xong thì đặt window.__reelDone.
+  const s = stage();
+  const it = inst(els[0]);
+  s.add(it.o);
+  it.mixer.stopAllAction();
+  views.push({ s, cam: cam(0.6, W / H, 0.16), vp: [0, 0, W, H], mixer: it.mixer, u: it.u, o: it.o });
+  const order = [
+    "idle",
+    "patrol",
+    "chase",
+    "tele",
+    "draw",
+    "cast",
+    "attack",
+    "hurt",
+    "stun",
+    "fan",
+    "rain",
+    "charge",
+    "summon",
+    "roar",
+    "dead",
+  ];
+  const clips = order
+    .map((n) => THREE.AnimationClip.findByName(g.animations, n))
+    .filter(Boolean) as THREE.AnimationClip[];
+  const label = document.createElement("div");
+  label.style.cssText =
+    "position:fixed;left:40px;bottom:36px;font:600 34px system-ui;color:#f4ecd8;text-shadow:0 2px 6px #000";
+  document.body.appendChild(label);
+  let i = -1,
+    left = 0,
+    prev: THREE.AnimationAction | null = null;
+  reel = (dt: number) => {
+    left -= dt;
+    if (left <= 0) {
+      if (++i >= clips.length) return void ((window as any).__reelDone = true);
+      const c = clips[i];
+      const a = it.mixer.clipAction(c);
+      const once = /^(tele|draw|cast|attack|hurt|dead|fan|rain|roar|summon)$/.test(c.name);
+      a.reset()
+        .setLoop(once ? THREE.LoopOnce : THREE.LoopRepeat, Infinity)
+        .play();
+      a.clampWhenFinished = true;
+      if (prev) prev.crossFadeTo(a, 0.15, false);
+      prev = a;
+      left = once ? c.duration + 0.9 : Math.max(2.4, c.duration * 2);
+      label.textContent = `${NAMES[c.name] ?? c.name}  ·  ${c.name}`;
+      if (c.name === "roar") it.u.uPhase.value = 1;
+    }
+    const c = clips[i];
+    if (c.name === "hurt") it.u.uHit.value = Math.max(0, 1 - (c.duration + 0.9 - left) * 4);
+    if (c.name === "dead") it.u.uDust.value = Math.min(1.05, Math.max(0, (c.duration + 0.9 - left - 0.4) / 1.2));
+    const v = views[0];
+    const y = 0.6 + clk.elapsedTime * 0.12;
+    v.cam = cam(y, W / H, 0.16);
+  };
 } else {
   const yaws = [0, Math.PI / 4, Math.PI / 2, Math.PI];
   yaws.forEach((y, i) => {
@@ -156,6 +275,7 @@ r.setScissorTest(true);
 const clk = new THREE.Clock();
 function frame() {
   const dt = clk.getDelta();
+  reel?.(dt);
   for (const v of views) {
     v.mixer.update(dt);
     if (serpent) coilPath(v.o, v.u.uTime.value);

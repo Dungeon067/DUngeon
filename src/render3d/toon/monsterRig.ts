@@ -48,7 +48,12 @@ export function driveSpine(bones: THREE.Bone[], pts: THREE.Vector3[], k = 1) {
 }
 
 /** Chia lại một đường gấp khúc theo khoảng `seg` (đơn vị thế giới), trả `n` điểm. */
-export function resamplePath(path: THREE.Vector3[], seg: number, n: number, out: THREE.Vector3[] = []): THREE.Vector3[] {
+export function resamplePath(
+  path: THREE.Vector3[],
+  seg: number,
+  n: number,
+  out: THREE.Vector3[] = [],
+): THREE.Vector3[] {
   out.length = 0;
   if (!path.length) return out;
   out.push(path[0].clone());

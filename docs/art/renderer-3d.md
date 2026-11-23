@@ -8,7 +8,7 @@ Hướng đồ họa (chủ dự án chốt 23/11): hoạt hình 3D kiểu anime
 - `src/render3d/renderer3d.ts` (Three.js 0.170, tải sau): camera, ánh sáng, ngày đêm, đèn nguyên tố, hạt, vệt vũ khí, hậu kỳ.
 - `src/render3d/toon/terrain.ts`: địa hình mượt, nước, cỏ, cây, đá, bia, cổng, rương, cầu.
 - `src/render3d/toon/actor.ts`: nhân vật VRM, hoạt ảnh, vũ khí trên tay.
-- `src/render3d/toon/monsters.ts`: quái low-poly tạm thời và Hắc Giao 3D (đốt thân bám `b.segs` của logic).
+- `src/render3d/toon/monsterGlb.ts` (S29): quái và Hắc Giao tải từ GLB (`public/media/models/monsters/<id>.glb`, nguồn Blender `tools/blender/monsters`, file gốc `art-src/monsters`). Clip theo trạng thái AI, đổi màu theo `e.el` qua uniform (`monsterKit.ts`), LOD và hoạt ảnh thưa cho quái xa, chết tan thành bụi sao. Thân Hắc Giao bám vệt đường đi của logic (`monsterRig.ts`).
 - `src/render3d/toon/arena.ts`: đấu trường Tháp Tinh Tú và hang Hắc Giao (S28).
 - `src/render3d/toon/tele3d.ts`: vùng cảnh báo đòn và sóng xung kích 3D trên sàn đấu trường.
 - `src/render3d/toon/sky.ts`, `mat.ts`: bầu trời, vật liệu toon 3 tông, viền inverted hull.

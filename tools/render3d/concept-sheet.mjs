@@ -75,18 +75,55 @@ await shot(`${S.close}&mode=turn&el=${grid[0].split("@")[0]}`, `${tmp}/close.png
 await shot(`${S.close}&mode=turn&el=${grid[0].split("@")[0]}&ol=0&bg=fff`, `${tmp}/sketchsrc.png`, 2400, 760);
 for (const [i, g] of grid.entries()) {
   const [el, ph] = g.split("@");
-  await shot(`mode=grid&el=${el}${ph === "2" ? "&phase=2" : ""}&${S.vq ?? ""}`, `${tmp}/v${i}.png`, Math.round(1680 / grid.length), 760);
+  await shot(
+    `mode=grid&el=${el}${ph === "2" ? "&phase=2" : ""}&${S.vq ?? ""}`,
+    `${tmp}/v${i}.png`,
+    Math.round(1680 / grid.length),
+    760,
+  );
 }
 await b.close();
 
 const im = (...a) => execFileSync("convert", a.flat(Infinity).map(String));
-im(`${tmp}/sketchsrc.png`, "-crop", S.crop ?? "600x760+0+0", "+repage", "-colorspace", "Gray", "-edge", "1.2", "-negate",
-  "-level", "35%,95%", "-blur", "0x0.4", "(", "+clone", "-fill", "#f3ecdf", "-colorize", "100", ")", "+swap",
-  "-compose", "multiply", "-composite", `${tmp}/sketch.png`);
-im(grid.map((_, i) => `${tmp}/v${i}.png`), "+append", `${tmp}/variants.png`);
+im(
+  `${tmp}/sketchsrc.png`,
+  "-crop",
+  S.crop ?? "600x760+0+0",
+  "+repage",
+  "-colorspace",
+  "Gray",
+  "-edge",
+  "1.2",
+  "-negate",
+  "-level",
+  "35%,95%",
+  "-blur",
+  "0x0.4",
+  "(",
+  "+clone",
+  "-fill",
+  "#f3ecdf",
+  "-colorize",
+  "100",
+  ")",
+  "+swap",
+  "-compose",
+  "multiply",
+  "-composite",
+  `${tmp}/sketch.png`,
+);
+im(
+  grid.map((_, i) => `${tmp}/v${i}.png`),
+  "+append",
+  `${tmp}/variants.png`,
+);
 const atlas = `${homedir()}/s29-build/${id}`;
 const maps = ["albedo", "normal", "mask"].filter((m) => existsSync(`${atlas}/${id}_${m}.png`));
-im(maps.map((m) => [`${atlas}/${id}_${m}.png`, "-resize", "280x280"]), "+append", `${tmp}/atlas.png`);
+im(
+  maps.map((m) => [`${atlas}/${id}_${m}.png`, "-resize", "280x280"]),
+  "+append",
+  `${tmp}/atlas.png`,
+);
 const glb = readFileSync(`public/media/models/monsters/${id}.glb`);
 const n = glb.readUInt32LE(12);
 const j = JSON.parse(glb.subarray(20, 20 + n).toString());
@@ -98,23 +135,107 @@ const font = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
 const bold = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf";
 const notes = S.notes.map((s) => "• " + s).join("\n");
 writeFileSync(`${tmp}/notes.txt`, notes);
-im("-size", "2400x2000", "xc:#1b1826",
-  "-font", bold, "-fill", "#f1e6c8", "-pointsize", "56", "-annotate", "+60+90", `${S.name}`,
-  "-font", font, "-fill", "#a99fc4", "-pointsize", "26", "-annotate", "+60+135", `${id} · Tinh Tú S29 · bảng concept (mốc 1)`,
-  `${tmp}/turn.png`, "-geometry", "+0+160", "-composite",
-  `${tmp}/close.png`, "-geometry", "+0+930", "-composite",
-  "-fill", "#1b1826", "-draw", "rectangle 0 1700 2400 2000",
-  "(", `${tmp}/sketch.png`, "-resize", "236x300", ")", "-geometry", "+40+1690", "-composite",
-  `${tmp}/atlas.png`, "-geometry", "+300+1700", "-composite",
-  "-fill", "#e9e1cf", "-pointsize", "24", "-interline-spacing", "6", "-annotate", `+${300 + maps.length * 280 + 40}+1730`, notes,
-  "-fill", "#8f86ad", "-pointsize", "20", "-annotate", `+${300 + maps.length * 280 + 40}+1975`, stats,
-  `${tmp}/sheet-a.png`);
-im("-size", "2400x1000", "xc:#1b1826",
-  "-font", bold, "-fill", "#f1e6c8", "-pointsize", "40", "-annotate", "+60+70", `${S.name} · phác hoạ nét và biến thể`,
-  "(", `${tmp}/sketch.png`, "-resize", "620x860", ")", "-geometry", "+40+110", "-composite",
-  `${tmp}/variants.png`, "-geometry", "+680+130", "-composite",
-  "-font", font, "-fill", "#a99fc4", "-pointsize", "24", "-annotate", "+690+930",
-  id === "hacgiao" ? "Trái: giai đoạn 1 (Thủy). Phải: giai đoạn 2 (Lôi, nứt tím)." : `Nguyên tố: ${grid.join(", ")} (cùng một mô hình, đổi uniform)`,
-  `${tmp}/sheet-b.png`);
+im(
+  "-size",
+  "2400x2000",
+  "xc:#1b1826",
+  "-font",
+  bold,
+  "-fill",
+  "#f1e6c8",
+  "-pointsize",
+  "56",
+  "-annotate",
+  "+60+90",
+  `${S.name}`,
+  "-font",
+  font,
+  "-fill",
+  "#a99fc4",
+  "-pointsize",
+  "26",
+  "-annotate",
+  "+60+135",
+  `${id} · Tinh Tú S29 · bảng concept (mốc 1)`,
+  `${tmp}/turn.png`,
+  "-geometry",
+  "+0+160",
+  "-composite",
+  `${tmp}/close.png`,
+  "-geometry",
+  "+0+930",
+  "-composite",
+  "-fill",
+  "#1b1826",
+  "-draw",
+  "rectangle 0 1700 2400 2000",
+  "(",
+  `${tmp}/sketch.png`,
+  "-resize",
+  "236x300",
+  ")",
+  "-geometry",
+  "+40+1690",
+  "-composite",
+  `${tmp}/atlas.png`,
+  "-geometry",
+  "+300+1700",
+  "-composite",
+  "-fill",
+  "#e9e1cf",
+  "-pointsize",
+  "24",
+  "-interline-spacing",
+  "6",
+  "-annotate",
+  `+${300 + maps.length * 280 + 40}+1730`,
+  notes,
+  "-fill",
+  "#8f86ad",
+  "-pointsize",
+  "20",
+  "-annotate",
+  `+${300 + maps.length * 280 + 40}+1975`,
+  stats,
+  `${tmp}/sheet-a.png`,
+);
+im(
+  "-size",
+  "2400x1000",
+  "xc:#1b1826",
+  "-font",
+  bold,
+  "-fill",
+  "#f1e6c8",
+  "-pointsize",
+  "40",
+  "-annotate",
+  "+60+70",
+  `${S.name} · phác hoạ nét và biến thể`,
+  "(",
+  `${tmp}/sketch.png`,
+  "-resize",
+  "620x860",
+  ")",
+  "-geometry",
+  "+40+110",
+  "-composite",
+  `${tmp}/variants.png`,
+  "-geometry",
+  "+680+130",
+  "-composite",
+  "-font",
+  font,
+  "-fill",
+  "#a99fc4",
+  "-pointsize",
+  "24",
+  "-annotate",
+  "+690+930",
+  id === "hacgiao"
+    ? "Trái: giai đoạn 1 (Thủy). Phải: giai đoạn 2 (Lôi, nứt tím)."
+    : `Nguyên tố: ${grid.join(", ")} (cùng một mô hình, đổi uniform)`,
+  `${tmp}/sheet-b.png`,
+);
 im(`${tmp}/sheet-a.png`, `${tmp}/sheet-b.png`, "-append", "-quality", "88", `${outDir}/${id}-concept.jpg`);
 console.log(`${outDir}/${id}-concept.jpg`);
