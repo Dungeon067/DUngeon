@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="vi">
+<script type="module" crossorigin src="./assets/main-CM-vgPF5.js"></script>
+<link rel="modulepreload" crossorigin href="./assets/index-C4rfMCBh.js">
+<link rel="modulepreload" crossorigin href="./assets/logic-BtqBKD0e.js">
+<link rel="modulepreload" crossorigin href="./assets/tokens-CbqLiqUK.js">
+<link rel="stylesheet" crossorigin href="./assets/index-C4jjAAsS.css">
+<link rel="stylesheet" crossorigin href="./assets/main-DdQlGsJO.css">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Tinh Tú Ước Nguyện</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <meta name="theme-color" content="#0f1430" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Tinh Tú" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon-180.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png" />
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
+  <meta name="claude:viewport-fit-sides" content="cover" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+  />
+
+  <canvas id="game"></canvas>
+
+  <!-- ================= HUD ================= -->
+  <div id="hud" class="tt-root" hidden>
+    <div class="hud-tl">
+      <button type="button" id="miniBtn" class="hud-mini" aria-label="Bản đồ nhỏ. Chạm để mở bản đồ lớn">
+        <canvas id="mini" width="200" height="200"></canvas>
+        <span class="hud-mini-n" aria-hidden="true">B</span>
+      </button>
+      <div id="objective" class="hud-obj" role="status" aria-live="polite"></div>
+      <div id="modeInfo"></div>
+    </div>
+    <div id="bossBar" hidden>
+      <div class="bn" id="bossName"></div>
+      <div class="bbar"><span id="bossHp"></span></div>
+    </div>
+    <nav id="quickMenu" class="hud-qm" aria-label="Menu nhanh">
+      <button type="button" class="hud-qb" id="qmMap" data-icon="ban-do" aria-label="Bản đồ" title="Bản đồ"></button>
+      <button
+        type="button"
+        class="hud-qb"
+        id="qmSettings"
+        data-icon="cai-dat"
+        aria-label="Cài đặt"
+        title="Cài đặt"
+      ></button>
+      <button
+        type="button"
+        class="hud-qb"
+        id="pauseBtn"
+        data-icon="tam-dung"
+        aria-label="Tạm dừng"
+        title="Tạm dừng"
+      ></button>
+    </nav>
+    <div id="hudParty" class="hud-party" role="group" aria-label="Đội hình, chạm để đổi người"></div>
+    <div id="hudSelf" class="hud-self">
+      <div class="hud-self-n"><span id="actName"></span><span id="actLv"></span></div>
+      <div class="hud-hp" role="meter" aria-label="Máu" aria-valuemin="0" aria-valuemax="100" id="actHpMeter">
+        <span id="actHp"></span><i id="actSh"></i>
+      </div>
+      <div id="actHpTxt" class="hud-hp-t"></div>
+    </div>
+    <div id="hudStatus" class="hud-status" role="list" aria-label="Hiệu ứng đang có"></div>
+    <ol id="lootFeed" class="hud-loot" aria-live="polite" aria-label="Vật phẩm vừa nhặt"></ol>
+    <div id="stamRing" class="hud-stam" role="meter" aria-label="Thể lực" hidden>
+      <svg viewBox="0 0 36 36" aria-hidden="true">
+        <circle class="bg" cx="18" cy="18" r="15" />
+        <circle class="fg" id="stamArc" cx="18" cy="18" r="15" pathLength="100" />
+      </svg>
+    </div>
+    <div id="lowHp" class="hud-lowhp" aria-hidden="true"></div>
+    <div id="joyZone" class="hud-joyzone"></div>
+    <div id="joy" class="hud-joy" data-btn="joy" aria-label="Cần điều khiển"><div id="joyKnob"></div></div>
+    <div id="hudActions" class="hud-actions">
+      <button
+        type="button"
+        class="tt-act hud-btn"
+        id="bBurst"
+        data-btn="burst"
+        data-kind="no"
+        data-size="lg"
+        aria-label="Nộ"
+        data-action="burst"
+      ></button>
+      <button
+        type="button"
+        class="tt-act hud-btn"
+        id="bSkill"
+        data-btn="skill"
+        data-kind="ky-nang"
+        data-size="lg"
+        aria-label="Kỹ năng"
+        data-action="skill"
+      ></button>
+      <button
+        type="button"
+        class="tt-act hud-btn"
+        id="bAtk"
+        data-btn="atk"
+        data-kind="danh"
+        data-size="xl"
+        aria-label="Đánh"
+        data-action="attack"
+      ></button>
+      <button
+        type="button"
+        class="tt-act hud-btn"
+        id="bJump"
+        data-btn="jump"
+        data-kind="nhay"
+        data-size="lg"
+        aria-label="Nhảy"
+        data-action="jump"
+      ></button>
+      <button
+        type="button"
+        class="tt-act hud-btn"
+        id="bDash"
+        data-btn="dash"
+        data-kind="luot"
+        data-size="md"
+        aria-label="Lướt"
+        data-action="dash"
+      ></button>
+      <button
+        type="button"
+        class="tt-act hud-btn"
+        id="bInteract"
+        data-btn="interact"
+        data-kind="tuong-tac"
+        data-size="md"
+        aria-label="Tương tác"
+        data-action="interact"
+        hidden
+      ></button>
+    </div>
+    <div id="hudBanner"></div>
+    <div id="hudHint" class="hud-hint" aria-live="polite"></div>
+    <div id="layoutBar" class="hud-layoutbar" role="toolbar" aria-label="Chỉnh bố cục nút" hidden>
+      <span class="lb-t">Chỉnh bố cục: kéo nút để dời chỗ</span>
+      <label
+        >Cỡ <input type="range" id="lbScale" min="0.7" max="1.6" step="0.05" aria-label="Cỡ nút đang chọn"
+      /></label>
+      <label
+        >Độ rõ
+        <input type="range" id="lbOpacity" min="0.3" max="1" step="0.05" aria-label="Độ trong suốt nút đang chọn"
+      /></label>
+      <button type="button" class="tt-btn" data-variant="ghost" id="lbReset">Về mặc định</button>
+      <button type="button" class="tt-btn" data-variant="primary" id="lbDone" data-back>Lưu</button>
+    </div>
+  </div>
+  <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+    <filter id="cb-protan">
+      <feColorMatrix type="matrix" values="0.567 0.433 0 0 0  0.558 0.442 0 0 0  0 0.242 0.758 0 0  0 0 0 1 0" />
+    </filter>
+    <filter id="cb-deutan">
+      <feColorMatrix type="matrix" values="0.625 0.375 0 0 0  0.7 0.3 0 0 0  0 0.3 0.7 0 0  0 0 0 1 0" />
+    </filter>
+    <filter id="cb-tritan">
+      <feColorMatrix type="matrix" values="0.95 0.05 0 0 0  0 0.433 0.567 0 0  0 0.475 0.525 0 0  0 0 0 1 0" />
+    </filter>
+  </svg>
+  <div id="rotateOverlay" class="tt-root rotate-ov" role="alertdialog" aria-modal="true" aria-labelledby="rotT" hidden>
+    <div class="rot-box">
+      <svg class="rot-phone" viewBox="0 0 120 120" aria-hidden="true">
+        <g class="rot-dev">
+          <rect x="40" y="18" width="40" height="72" rx="7" />
+          <circle cx="60" cy="82" r="3" />
+        </g>
+        <path class="rot-arrow" d="M24 70a38 38 0 0 1 30-44M54 26l-8-4M54 26l-4 8" />
+      </svg>
+      <h2 id="rotT">Xoay ngang để chơi</h2>
+      <p>Tinh Tú Ước Nguyện được thiết kế cho màn hình ngang. Hãy xoay máy, game đang tạm dừng và sẽ chờ bạn.</p>
+    </div>
+  </div>
+
+  <!-- ================= HUB ================= -->
+
+  <!-- ================= WISH ================= -->
+  <div id="wishFx" class="tt-root" hidden>
+    <canvas id="wishCv"></canvas><video id="wishVid" playsinline muted hidden></video
+    ><canvas id="wishOv" hidden></canvas>
+    <p id="wishHint" hidden></p>
+    <div class="wish-ctl">
+      <button class="tt-btn tt-btn--ghost" id="wishFf" aria-pressed="false" hidden>Tua nhanh</button>
+      <button class="tt-btn tt-btn--ghost" id="wishSkip">Bỏ qua</button>
+    </div>
+  </div>
+
+  <!-- ================= CHARACTERS ================= -->
+
+  <!-- ================= TOWER ================= -->
+
+  <!-- ================= BOSS ================= -->
+
+  <!-- ================= DAILY ================= -->
+
+  <!-- ================= SERVER ================= -->
+
+  <!-- ================= HELP ================= -->
+  <template id="tplHelp">
+    <div class="tt-help">
+      <h3>Điều khiển</h3>
+      <div class="tbl">
+        <table>
+          <tr>
+            <th>Hành động</th>
+            <th>Máy tính</th>
+            <th>Điện thoại</th>
+          </tr>
+          <tr>
+            <td>Di chuyển</td>
+            <td>WASD / phím mũi tên</td>
+            <td>Kéo cần điều khiển bên trái</td>
+          </tr>
+          <tr>
+            <td>Đánh thường (combo 3 đòn, đòn 3 mang nguyên tố)</td>
+            <td>J hoặc giữ chuột</td>
+            <td>Nút Đánh</td>
+          </tr>
+          <tr>
+            <td>Kỹ năng nguyên tố</td>
+            <td>E</td>
+            <td>Nút Kỹ</td>
+          </tr>
+          <tr>
+            <td>Kỹ năng nộ (cần đầy năng lượng)</td>
+            <td>Q</td>
+            <td>Nút Nộ</td>
+          </tr>
+          <tr>
+            <td>Lướt né (bất tử ngắn), giữ để chạy nhanh</td>
+            <td>Shift</td>
+            <td>Nút Lướt</td>
+          </tr>
+          <tr>
+            <td>Đổi nhân vật</td>
+            <td>1 2 3 4</td>
+            <td>Chạm chân dung bên phải</td>
+          </tr>
+          <tr>
+            <td>Tương tác (rương, bia đá, cổng)</td>
+            <td>F</td>
+            <td>Nút hiện giữa màn hình</td>
+          </tr>
+        </table>
+      </div>
+      <h3>Phản ứng nguyên tố</h3>
+      <p>
+        Đánh trúng một nguyên tố sẽ để lại dấu trên quái (biểu tượng màu trên đầu). Đánh tiếp nguyên tố khác để kích
+        hoạt phản ứng:
+      </p>
+      <div class="tbl">
+        <table>
+          <tr>
+            <th>Kết hợp</th>
+            <th>Phản ứng</th>
+            <th>Hiệu quả</th>
+          </tr>
+          <tr>
+            <td>Hỏa + Thủy</td>
+            <td>Bốc Hơi</td>
+            <td>Thủy đánh lên Hỏa ×2, Hỏa đánh lên Thủy ×1.5</td>
+          </tr>
+          <tr>
+            <td>Hỏa + Băng</td>
+            <td>Tan Chảy</td>
+            <td>Hỏa lên Băng ×2, Băng lên Hỏa ×1.5</td>
+          </tr>
+          <tr>
+            <td>Hỏa + Lôi</td>
+            <td>Quá Tải</td>
+            <td>Nổ diện rộng, đẩy lùi</td>
+          </tr>
+          <tr>
+            <td>Thủy + Lôi</td>
+            <td>Điện Cảm</td>
+            <td>Gây sát thương liên tục 4 lần</td>
+          </tr>
+          <tr>
+            <td>Thủy + Băng</td>
+            <td>Đóng Băng</td>
+            <td>Quái đứng yên 3 giây</td>
+          </tr>
+          <tr>
+            <td>Lôi + Băng</td>
+            <td>Siêu Dẫn</td>
+            <td>Nổ nhỏ, quái nhận thêm 25% sát thương trong 8 giây</td>
+          </tr>
+          <tr>
+            <td>Phong + (Hỏa/Thủy/Lôi/Băng)</td>
+            <td>Khuếch Tán</td>
+            <td>Lan nguyên tố và sát thương sang quái xung quanh</td>
+          </tr>
+          <tr>
+            <td>Thổ + (Hỏa/Thủy/Lôi/Băng)</td>
+            <td>Kết Tinh</td>
+            <td>Rơi mảnh tinh thể, nhặt để nhận khiên</td>
+          </tr>
+        </table>
+      </div>
+      <h3>Mẹo</h3>
+      <p>
+        Dùng kỹ năng của một người, đổi sang người khác rồi đánh tiếp để tạo phản ứng. Kỹ năng trúng quái sẽ nạp năng
+        lượng cho cả đội. Bia đá trên bản đồ hồi đầy máu và hồi sinh cả đội. Quái càng xa trung tâm đảo càng mạnh.
+      </p>
+    </div>
+  </template>
+
+  <div class="modal" id="modal" hidden><div class="box" id="modalBox"></div></div>
+  <div class="toast" id="toast" hidden></div>
+  <!-- S22: bản cài đặt -->
+  <button type="button" id="pwaUpdate" class="tt-root pwa-update" hidden>Có bản cập nhật, chạm để tải lại</button>
+  <div id="pwaHint" class="tt-root pwa-hint" role="dialog" aria-labelledby="pwaHintT" hidden>
+    <svg class="pwa-hint-i" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 3v12M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+    </svg>
+    <p id="pwaHintT">
+      Chơi toàn màn hình: chạm <b>Chia sẻ</b> rồi <b>Thêm vào MH chính</b>, sau đó mở Tinh Tú từ màn hình chính.
+    </p>
+    <button type="button" id="pwaHintClose" class="pwa-hint-x" aria-label="Tắt gợi ý cài đặt">✕</button>
+  </div>
+
+</html>
