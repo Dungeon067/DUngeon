@@ -280,6 +280,59 @@ function glowMat(col: THREE.Color, op = 1) {
   });
 }
 
+/**
+ * Kết giới mờ đánh dấu khung đi lại của logic (`blocked` trong world/collision.ts: x 20..w−20, y 60..h−20),
+ * để người chơi thấy chỗ dừng thay vì vấp tường vô hình giữa sàn. Vách thấp phát sáng, gợn chạy theo thời gian.
+ */
+function boundsBarrier(B: { w: number; h: number }, col: THREE.Color) {
+  const x0 = 20 / TS,
+    x1 = (B.w - 20) / TS,
+    z0 = 60 / TS,
+    z1 = (B.h - 20) / TS,
+    H = 1.1;
+  const pts = [
+    [x0, z0],
+    [x1, z0],
+    [x1, z1],
+    [x0, z1],
+    [x0, z0],
+  ];
+  const pos: number[] = [],
+    uv: number[] = [],
+    idx: number[] = [];
+  let u = 0;
+  for (let i = 0; i < 4; i++) {
+    const [ax, az] = pts[i],
+      [bx, bz] = pts[i + 1],
+      len = Math.hypot(bx - ax, bz - az),
+      n = pos.length / 3;
+    pos.push(ax, 0, az, bx, 0, bz, bx, H, bz, ax, H, az);
+    uv.push(u, 0, u + len, 0, u + len, 1, u, 1);
+    idx.push(n, n + 1, n + 2, n, n + 2, n + 3);
+    u += len;
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx);
+  const mat = new THREE.ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+    blending: THREE.AdditiveBlending,
+    fog: false,
+    uniforms: { uC: { value: col.clone() }, uT: { value: 0 } },
+    vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+    fragmentShader: `uniform vec3 uC; uniform float uT; varying vec2 vUv;
+      void main(){ float v = vUv.y; float a = (1.0 - v) * (0.16 + 0.1 * sin(vUv.x * 2.2 - uT * 2.0));
+        a += smoothstep(0.06, 0.0, v) * 0.55;
+        gl_FragColor = vec4(uC * 1.3, a); }`,
+  });
+  const mesh = new THREE.Mesh(g, mat);
+  mesh.renderOrder = 3;
+  return { mesh, mat };
+}
+
 interface Beam {
   o: THREE.Group;
   mat: THREE.ShaderMaterial;
@@ -547,6 +600,8 @@ export function buildTowerArena(floor: number, B: { w: number; h: number }, Q: A
     sigils.setMatrixAt(i, m4);
   }
   group.add(sigils);
+  const barrier = boundsBarrier(B, P.main);
+  group.add(barrier.mesh);
 
   group.traverse((o: any) => o.isMesh && o !== dome.mesh && [o.material].flat().forEach(fadeOccluder));
 
@@ -574,6 +629,7 @@ export function buildTowerArena(floor: number, B: { w: number; h: number }, Q: A
     ringA.g.rotation.y = t * 0.03;
     ringB.g.rotation.y = -t * 0.05;
     ringA.pm.uniforms.uT.value = ringB.pm.uniforms.uT.value = t;
+    barrier.mat.uniforms.uT.value = t;
     const T = G.tower,
       waiting = T && !G.over && T.wave < T.waves.length && !G.enemies.some((e: any) => !e.dead),
       charge = waiting ? Math.max(0, Math.min(1, 1 - T.gap / 1.5)) : 0,
@@ -954,6 +1010,8 @@ export function buildBossArena(B: { w: number; h: number }, Q: ArenaQ): Arena {
 
   const water = caveWater(RX * 2.4, RZ * 2.4, cx, cz, Q, lamps);
   group.add(water.mesh);
+  const barrier = boundsBarrier(B, new THREE.Color(0x3af0d0));
+  group.add(barrier.mesh);
 
   group.traverse((o: any) => o.isMesh && o !== water.mesh && [o.material].flat().forEach(fadeOccluder));
   void outlineMat;
@@ -977,6 +1035,7 @@ export function buildBossArena(B: { w: number; h: number }, Q: ArenaQ): Arena {
     const { t, G, dt } = c;
     for (const h of hides) h(c.camera.position);
     water.uniforms.uT.value = t;
+    barrier.mat.uniforms.uT.value = t;
     spM.uniforms.uT.value = t;
     shaftMat.uniforms.uT.value = t * 0.2;
     const b = G.boss,
