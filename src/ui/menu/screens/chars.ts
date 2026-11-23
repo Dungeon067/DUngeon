@@ -4,7 +4,8 @@ import { fmt } from "../../../core/util";
 import { BURSTDESC, CHARS, EL, SKILLDESC, WEAP, byId } from "../../../data/content";
 import { MENU } from "../../../data/menu-content";
 import { affinityLevel, affinityNext, hasProfile, loadProfile, sectionLevel } from "../../../data/profiles";
-import { Server, lvCost, statsOf } from "../../../server/server";
+import { ECON } from "../../../data/economy";
+import { Server, lvCost, powerOf, statsOf } from "../../../server/server";
 import { button, charCard, elementBadge, h, progress, stars, tabs, tag } from "../../ds";
 import { blocksEl, sectionsEl, typewriter } from "../md";
 import { registerScreen, rerender } from "../shell";
@@ -153,7 +154,7 @@ async function render(host: HTMLElement, params: any) {
     if (own) {
       const cost = lvCost(own.lv);
       const row = h("div", { class: "tt-row" });
-      if (own.lv < 60) {
+      if (own.lv < ECON.game.capNhanVat.toiDa) {
         row.append(
           button(`Lên 1 cấp · ${cost.books} Sách, ${fmt(cost.coin)} Xu`, {
             variant: "primary",
@@ -163,7 +164,12 @@ async function render(host: HTMLElement, params: any) {
           button("Lên 10 cấp", { onClick: () => lvUp(c.id, 10) }),
         );
       } else row.append(tag("Đã đạt cấp tối đa", "ok"));
-      panel.append(h("p", { class: "tt-dim" }, [`Cấp ${own.lv}/60 · Nét Sao N${own.cons}`]), row);
+      panel.append(
+        h("p", { class: "tt-dim" }, [
+          `Cấp ${own.lv}/${ECON.game.capNhanVat.toiDa} · Nét Sao N${own.cons} · Chiến Lực ${fmt(powerOf(c.id))}`,
+        ]),
+        row,
+      );
     } else panel.append(h("p", { class: "tt-dim" }, ["Chưa sở hữu. Ước nguyện để gặp nhân vật này."]));
     const doc = hasProfile(c.id) ? (await loadProfile(c.id))["ho-so"] : null;
     const basic = doc?.sections[0];
@@ -171,12 +177,13 @@ async function render(host: HTMLElement, params: any) {
       panel.append(h("h4", { class: "tt-h4" }, [basic.title.replace(/^\d+\.\s*/, "")]), blocksEl(basic.blocks));
   } else if (tab === "stats") {
     const rows: [string, string][] = [
-      ["Cấp", `${st.lv}/60`],
+      ["Chiến Lực", fmt(powerOf(c.id))],
+      ["Cấp", `${st.lv}/${ECON.game.capNhanVat.toiDa}`],
       ["Máu", fmt(st.hp)],
       ["Tấn công", fmt(st.atk)],
       ["Tỉ lệ chí mạng", `${Math.round(st.crit * 100)}%`],
       ["Sát thương chí mạng", `${Math.round(st.cdmg * 100)}%`],
-      ["Nét Sao", `N${st.cons} (+${st.cons * 10}% máu và tấn công)`],
+      ["Nét Sao", `N${st.cons} (+${Math.round(st.cons * ECON.game.netSao.tangMoiNet * 100)}% máu và tấn công)`],
       ["Nguyên tố", EL[c.el]?.vi ?? c.el],
       ["Vũ khí", WEAP[c.w]?.vi ?? c.w],
     ];

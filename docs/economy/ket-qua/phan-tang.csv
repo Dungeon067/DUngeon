@@ -1,0 +1,37 @@
+loai,noi_dung,ngay,can,doi_4sao_mien_phi,du_f2p,du_nap-nhe,du_nap-kha,du_whale,f2p_qua_ngay
+thuong,"Cốt truyện chương 1",1,1400,1435,1.574,1.588,1.749,2.662,5
+thuong,"Cốt truyện chương 2",4,2000,2157,1.102,1.111,1.224,1.863,5
+thuong,"Cốt truyện chương 3",10,2900,3078,1.103,1.127,1.319,1.841,10
+thuong,"Cốt truyện chương 4",20,4200,4389,1.132,1.171,1.326,1.837,20
+thuong,"Sự kiện thường",21,4200,4403,1.132,1.171,1.326,1.837,25
+thuong,"Cốt truyện chương 5",35,5400,5732,1.155,1.354,1.493,1.921,35
+thuong,"Boss thế giới Hắc Giao (Thiên Tượng 3)",45,5500,5810,1.149,1.435,1.565,1.945,45
+thuong,"Cốt truyện chương 6",55,6500,6818,1.141,1.473,1.567,1.933,55
+thuong,"Khám phá vùng mới (Thiên Tượng 4)",60,6500,6818,1.141,1.488,1.581,1.938,60
+thuong,"Cốt truyện chương 7",80,7500,7904,1.146,1.559,1.649,2.019,80
+thuong,"Ủy thác và boss Thiên Tượng 6",90,7600,8032,1.149,1.603,1.672,2.029,90
+thuong,"Boss thế giới Thiên Tượng 8",120,9000,9474,1.144,1.631,1.712,2.064,120
+thap,"Tháp tầng 1 3★ (sát thương/giây)",,88,1,,,,,5
+thap,"Tháp tầng 2 3★ (sát thương/giây)",,144,1,,,,,5
+thap,"Tháp tầng 3 3★ (sát thương/giây)",,144,1,,,,,5
+thap,"Tháp tầng 4 3★ (sát thương/giây)",,374,1,,,,,5
+thap,"Tháp tầng 5 3★ (sát thương/giây)",,439,1,,,,,5
+thap,"Tháp tầng 6 3★ (sát thương/giây)",,556,1,,,,,5
+thap,"Tháp tầng 7 3★ (sát thương/giây)",,556,1,,,,,5
+thap,"Tháp tầng 8 3★ (sát thương/giây)",,688,1,,,,,5
+dinh,"F2P chơi kỹ ngày 30",30,8334,,0.0000,,,,0.0000
+dinh,"Nạp nhẹ (thẻ tháng + Hộ Chiếu Sao) ngày 30",30,8334,,,0.0000,,,0.0000
+dinh,"Nạp khá ngày 30",30,8334,,,,0.0000,,0.0000
+dinh,"Whale ngày 30",30,8334,,,,,0.0000,0.0000
+dinh,"F2P chơi kỹ ngày 90",90,8334,,0.0000,,,,0.0000
+dinh,"Nạp nhẹ (thẻ tháng + Hộ Chiếu Sao) ngày 90",90,8334,,,0.0000,,,0.0000
+dinh,"Nạp khá ngày 90",90,8334,,,,0.0000,,0.0000
+dinh,"Whale ngày 90",90,8334,,,,,0.6403,0.0000
+dinh,"F2P chơi kỹ ngày 180",180,8334,,0.2437,,,,0.0000
+dinh,"Nạp nhẹ (thẻ tháng + Hộ Chiếu Sao) ngày 180",180,8334,,,0.0704,,,0.0000
+dinh,"Nạp khá ngày 180",180,8334,,,,0.7040,,0.0000
+dinh,"Whale ngày 180",180,8334,,,,,1.0000,0.8395
+dinh,"F2P chơi kỹ ngày 365",365,8334,,0.9996,,,,0.0016
+dinh,"Nạp nhẹ (thẻ tháng + Hộ Chiếu Sao) ngày 365",365,8334,,,0.5527,,,0.0000
+dinh,"Nạp khá ngày 365",365,8334,,,,1.0000,,0.0588
+dinh,"Whale ngày 365",365,8334,,,,,1.0000,1.0000

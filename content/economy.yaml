@@ -1,0 +1,516 @@
+# Kinh tế và phân cấp sức mạnh (S19). Xem docs/economy/.
+# Game, trang Admin (/admin/#kinh-te) và công cụ mô phỏng (pnpm economy:sim) cùng đọc file này.
+# Mục "game" đang chạy trong game. Các mục còn lại ("thietKe") mới có trong tài liệu và mô phỏng.
+# KHÔNG có code thanh toán: mục "goiNap" chỉ dùng để mô phỏng.
+
+# ---------- Đang chạy trong game ----------
+game:
+  # Lên cấp nhân vật: Sách = sachGoc + floor(cấp / sachMoi), Xu = xuGoc + cấp × xuMoiCap.
+  capNhanVat:
+    toiDa: 60
+    sachGoc: 1
+    sachMoi: 6
+    xuGoc: 300
+    xuMoiCap: 120
+    # Máu và Tấn công tăng thêm mỗi cấp (theo chỉ số cấp 1).
+    tangMoiCap: 0.07
+  # Mỗi Nét Sao tăng Máu và Tấn công.
+  netSao:
+    tangMoiNet: 0.1
+    # Trùng khi đã N6 thì đổi thành Xu.
+    xuKhiDayN6:
+      "5": 20000
+      "4": 5000
+  chiMang:
+    "5": { tiLe: 0.25, satThuong: 0.9 }
+    "4": { tiLe: 0.15, satThuong: 0.6 }
+  # Ước nguyện ra vật phẩm 3★ thì cộng Xu.
+  xuVatPham3: 500
+  # Ước nguyện: tỉ lệ cơ bản và mốc Bảo Hộ Vận Sao nằm ở content/config.yaml (gacha).
+  uocNguyen:
+    tangMoiLuotSauMem: 0.06
+    bao4Sao: 10
+    tiLeDacBiet: 0.5
+  # Hai pool 5★ tách riêng. Thua 50/50 thì ra nhân vật thường trú. Banner giới hạn chỉ chọn nhân vật giới hạn
+  # (thứ tự dưới đây là thứ tự banner trong mô phỏng, mỗi banner 21 ngày).
+  nhanVat5Sao:
+    thuongTru: [thuynguyet, phongvan, loidinh, thachson, tuyetlan]
+    gioiHan: [lachong, golnar, takane, naraa, ardo, nghienthu]
+  # Thưởng hoạt động (Đá Sao, Xu, Sách Kinh Nghiệm).
+  thuong:
+    ruong:
+      daSao: { goc: 20, buoc: 10, soBuoc: 4 }
+      xu: { goc: 1500, ngauNhien: 1500 }
+      sach: { goc: 2, ngauNhien: 3 }
+    thap:
+      daSaoMoiSao: 30
+      xuGoc: 2000
+      xuMoiTang: 400
+      sachGoc: 2
+      sachChiaTang: 3
+    hacGiao:
+      daSaoLanDauGoc: 100
+      daSaoLanDauMoiCap: 40
+      daSaoLapLai: 20
+      xuGoc: 6000
+      xuMoiCap: 3000
+      sachGoc: 6
+      sachMoiCap: 3
+    uyThac:
+      moiViec: { daSao: 30, xu: 3000 }
+      duBon: { daSao: 60, sach: 5 }
+  # Chiến Lực = (Tấn công hiệu quả × trongSoTanCong + Máu × trongSoMau) × (1 + thưởng kỹ năng).
+  # Tấn công hiệu quả = Tấn công × (1 + tỉ lệ chí mạng × sát thương chí mạng) × (1 + tăng sát thương).
+  chienLuc:
+    trongSoTanCong: 1
+    trongSoMau: 0.08
+
+# ---------- Thiết kế (tài liệu + mô phỏng, chưa có trong game) ----------
+thietKe:
+  # Cấp Hộ Tinh 1–60 của Người Ước Nguyện. Không bán, chỉ tăng theo thời gian chơi.
+  capHoTinh:
+    toiDa: 60
+    # Kinh nghiệm cần để lên cấp L: goc + L × moiCap.
+    kinhNghiem: { goc: 400, moiCap: 90 }
+    kinhNghiemMoiNgay: 1300
+    # 5 bậc danh vọng, mốc cấp bắt đầu.
+    bac:
+      - { ten: Đom Đóm, tuCap: 1 }
+      - { ten: Đèn Lồng, tuCap: 16 }
+      - { ten: Ngọn Đuốc, tuCap: 31 }
+      - { ten: Vầng Trăng, tuCap: 41 }
+      - { ten: Sao Mai, tuCap: 51 }
+  # Thiên Tượng 0–8: mạnh quái và chất lượng phần thưởng. Mở theo cấp Hộ Tinh.
+  thienTuong:
+    moTaiCapHoTinh: [1, 16, 22, 28, 34, 40, 46, 52, 58]
+    capQuaiCong: 8
+    thuongNhan: 0.12
+  # Khai Tinh 0–6: mở giới hạn cấp nhân vật. Mỗi bậc tăng Máu và Tấn công.
+  khaiTinh:
+    gioiHanCap: [20, 30, 40, 45, 50, 55, 60]
+    canCapHoTinh: [1, 12, 20, 28, 36, 42, 48]
+    tangMoiBac: 0.03
+    xu: [20000, 40000, 60000, 80000, 100000, 120000]
+    loiSao: [3, 6, 10, 16, 24, 32]
+  # Kỹ năng 1–10 (đánh thường, kỹ năng, nộ tính chung). Mức tối đa theo Khai Tinh.
+  kyNang:
+    toiDa: 10
+    toiDaTheoKhaiTinh: [1, 2, 4, 6, 7, 8, 10]
+    tangMoiCap: 0.035
+  # Vũ khí 3★, 4★, 5★ (chỉ số ở cấp tối đa). Tấn công % cộng vào Tấn công, chỉ số phụ là tỉ lệ chí mạng,
+  # sát thương chí mạng hoặc Tấn công %, bị động tăng sát thương. Tinh luyện R1–R5 bằng bản trùng:
+  # mỗi bậc thêm buocTinhLuyen × bị động R1 (R5 gấp đôi R1).
+  vuKhi:
+    buocTinhLuyen: 0.25
+    # Vũ khí 4★ Lò Rèn: rèn bằng nguyên liệu Lòng Sao, đủ 5 bản (R5) ở ngày này.
+    loRenR5Ngay: 40
+    # Banner vũ khí "Binh Khí Tinh Tú": đôi vũ khí 5★ giới hạn mỗi đợt, Bảo Hộ Vận Sao riêng.
+    # La Bàn Sao: chọn trước 1 trong 2 vũ khí; mỗi lần 5★ ra không đúng vũ khí đã chọn thì tích 1 điểm,
+    # đủ laBanSao điểm thì 5★ kế tiếp chắc chắn là vũ khí đã chọn.
+    banner:
+      tiLe5: 0.7
+      tiLe4: 6
+      mem: 63
+      cung: 77
+      tangMoiLuotSauMem: 0.07
+      bao4Sao: 10
+      tiLeNoiBat: 0.75
+      laBanSao: 1
+    danhSach:
+      - {
+          id: hong-vu-truong-ca,
+          ten: Hồng Vũ Trường Ca,
+          loai: sword,
+          r: 5,
+          nguon: gioiHan,
+          cua: lachong,
+          tanCong: 0.44,
+          phu: { loai: satThuongChiMang, giaTri: 0.48 },
+          biDong: { ten: Cánh Lửa Trống Đồng, satThuong: 0.24 },
+        }
+      - {
+          id: thien-van-toa-nguyet,
+          ten: Thiên Văn Tỏa Nguyệt,
+          loai: cat,
+          r: 5,
+          nguon: gioiHan,
+          cua: golnar,
+          tanCong: 0.44,
+          phu: { loai: satThuongChiMang, giaTri: 0.48 },
+          biDong: { ten: Mái Vòm Ngàn Sao, satThuong: 0.24 },
+        }
+      - {
+          id: hoa-roi-tren-song,
+          ten: Hoa Rơi Trên Sóng,
+          loai: spear,
+          r: 5,
+          nguon: gioiHan,
+          cua: takane,
+          tanCong: 0.44,
+          phu: { loai: chiMang, giaTri: 0.24 },
+          biDong: { ten: Cánh Anh Đào Vỡ, satThuong: 0.24 },
+        }
+      - {
+          id: phong-tieu-du-ca,
+          ten: Phong Tiêu Du Ca,
+          loai: bow,
+          r: 5,
+          nguon: gioiHan,
+          cua: naraa,
+          tanCong: 0.44,
+          phu: { loai: chiMang, giaTri: 0.24 },
+          biDong: { ten: Gió Thảo Nguyên, satThuong: 0.24 },
+        }
+      - {
+          id: tram-sa-hoang-kim,
+          ten: Trầm Sa Hoàng Kim,
+          loai: great,
+          r: 5,
+          nguon: gioiHan,
+          cua: ardo,
+          tanCong: 0.44,
+          phu: { loai: chiMang, giaTri: 0.24 },
+          biDong: { ten: Bão Cát Vàng, satThuong: 0.24 },
+        }
+      - {
+          id: nghien-mac-thu-lam,
+          ten: Nghiên Mặc Thư Lâm,
+          loai: cat,
+          r: 5,
+          nguon: gioiHan,
+          cua: nghienthu,
+          tanCong: 0.44,
+          phu: { loai: chiMang, giaTri: 0.24 },
+          biDong: { ten: Nét Mực Ngàn Năm, satThuong: 0.24 },
+        }
+      - {
+          id: bang-lan-kiem,
+          ten: Băng Lan Kiếm,
+          loai: sword,
+          r: 5,
+          nguon: thuongTru,
+          tanCong: 0.38,
+          phu: { loai: chiMang, giaTri: 0.2 },
+          biDong: { ten: Hoa Băng Nở, satThuong: 0.16 },
+        }
+      - {
+          id: dai-kiem-bia-co,
+          ten: Đại Kiếm Bia Cổ,
+          loai: great,
+          r: 5,
+          nguon: thuongTru,
+          tanCong: 0.38,
+          phu: { loai: satThuongChiMang, giaTri: 0.4 },
+          biDong: { ten: Trăm Bia Lặng, satThuong: 0.16 },
+        }
+      - {
+          id: chuong-bac-ho-sau,
+          ten: Chuông Bạc Hồ Sâu,
+          loai: cat,
+          r: 5,
+          nguon: thuongTru,
+          tanCong: 0.38,
+          phu: { loai: chiMang, giaTri: 0.2 },
+          biDong: { ten: Thủy Triều Đêm, satThuong: 0.16 },
+        }
+      - {
+          id: cung-dinh-may,
+          ten: Cung Đỉnh Mây,
+          loai: bow,
+          r: 5,
+          nguon: thuongTru,
+          tanCong: 0.38,
+          phu: { loai: satThuongChiMang, giaTri: 0.4 },
+          biDong: { ten: Mũi Tên Cưỡi Gió, satThuong: 0.16 },
+        }
+      - {
+          id: thuong-may-giong,
+          ten: Thương Mây Giông,
+          loai: spear,
+          r: 5,
+          nguon: thuongTru,
+          tanCong: 0.38,
+          phu: { loai: chiMang, giaTri: 0.2 },
+          biDong: { ten: Sấm Đầu Mùa, satThuong: 0.16 },
+        }
+      - {
+          id: kiem-thep-lang-ren,
+          ten: Kiếm Thép Làng Rèn,
+          loai: sword,
+          r: 4,
+          nguon: loRen,
+          tanCong: 0.3,
+          phu: { loai: chiMang, giaTri: 0.1 },
+          biDong: { ten: Lửa Lò Rèn, satThuong: 0.1 },
+        }
+      - {
+          id: dai-kiem-dong-hun,
+          ten: Đại Kiếm Đồng Hun,
+          loai: great,
+          r: 4,
+          nguon: loRen,
+          tanCong: 0.3,
+          phu: { loai: tanCong, giaTri: 0.12 },
+          biDong: { ten: Tiếng Búa Đồng, satThuong: 0.1 },
+        }
+      - {
+          id: den-phap-pho-co,
+          ten: Đèn Pháp Phố Cổ,
+          loai: cat,
+          r: 4,
+          nguon: loRen,
+          tanCong: 0.3,
+          phu: { loai: chiMang, giaTri: 0.1 },
+          biDong: { ten: Ánh Đèn Lồng, satThuong: 0.1 },
+        }
+      - {
+          id: cung-tre-ven-song,
+          ten: Cung Tre Ven Sông,
+          loai: bow,
+          r: 4,
+          nguon: loRen,
+          tanCong: 0.3,
+          phu: { loai: satThuongChiMang, giaTri: 0.2 },
+          biDong: { ten: Sương Bờ Tre, satThuong: 0.1 },
+        }
+      - {
+          id: thuong-go-lim,
+          ten: Thương Gỗ Lim,
+          loai: spear,
+          r: 4,
+          nguon: loRen,
+          tanCong: 0.3,
+          phu: { loai: tanCong, giaTri: 0.12 },
+          biDong: { ten: Gỗ Già Bền Bỉ, satThuong: 0.1 },
+        }
+      - {
+          id: kiem-suong-som,
+          ten: Kiếm Sương Sớm,
+          loai: sword,
+          r: 4,
+          nguon: uocNguyen,
+          tanCong: 0.3,
+          phu: { loai: satThuongChiMang, giaTri: 0.2 },
+          biDong: { ten: Giọt Sương Đầu Ngày, satThuong: 0.12 },
+        }
+      - {
+          id: dai-kiem-song-bac,
+          ten: Đại Kiếm Sóng Bạc,
+          loai: great,
+          r: 4,
+          nguon: uocNguyen,
+          tanCong: 0.3,
+          phu: { loai: chiMang, giaTri: 0.1 },
+          biDong: { ten: Sóng Vỗ Mạn Thuyền, satThuong: 0.12 },
+        }
+      - {
+          id: ngoc-boi-ho-trang,
+          ten: Ngọc Bội Hồ Trăng,
+          loai: cat,
+          r: 4,
+          nguon: uocNguyen,
+          tanCong: 0.3,
+          phu: { loai: satThuongChiMang, giaTri: 0.2 },
+          biDong: { ten: Trăng Đáy Hồ, satThuong: 0.12 },
+        }
+      - {
+          id: cung-dem-set,
+          ten: Cung Đêm Sét,
+          loai: bow,
+          r: 4,
+          nguon: uocNguyen,
+          tanCong: 0.3,
+          phu: { loai: chiMang, giaTri: 0.1 },
+          biDong: { ten: Đèn Sét Đi Đêm, satThuong: 0.12 },
+        }
+      - {
+          id: thuong-mo-ngoc,
+          ten: Thương Mỏ Ngọc,
+          loai: spear,
+          r: 4,
+          nguon: uocNguyen,
+          tanCong: 0.3,
+          phu: { loai: satThuongChiMang, giaTri: 0.2 },
+          biDong: { ten: Mạch Ngọc Ngầm, satThuong: 0.12 },
+        }
+      - {
+          id: kiem-sat-tuan-tra,
+          ten: Kiếm Sắt Tuần Tra,
+          loai: sword,
+          r: 3,
+          nguon: uocNguyen,
+          tanCong: 0.2,
+          phu: { loai: tanCong, giaTri: 0 },
+          biDong: { ten: Bền Bỉ, satThuong: 0.06 },
+        }
+      - {
+          id: dai-kiem-tho-da,
+          ten: Đại Kiếm Thợ Đá,
+          loai: great,
+          r: 3,
+          nguon: uocNguyen,
+          tanCong: 0.2,
+          phu: { loai: tanCong, giaTri: 0 },
+          biDong: { ten: Tay Chai, satThuong: 0.06 },
+        }
+      - {
+          id: sach-hoc-tro,
+          ten: Sách Học Trò,
+          loai: cat,
+          r: 3,
+          nguon: uocNguyen,
+          tanCong: 0.2,
+          phu: { loai: tanCong, giaTri: 0 },
+          biDong: { ten: Chữ Đầu Tiên, satThuong: 0.06 },
+        }
+      - {
+          id: cung-san,
+          ten: Cung Săn,
+          loai: bow,
+          r: 3,
+          nguon: uocNguyen,
+          tanCong: 0.2,
+          phu: { loai: tanCong, giaTri: 0 },
+          biDong: { ten: Mắt Thợ Săn, satThuong: 0.06 },
+        }
+      - {
+          id: thuong-linh-gac,
+          ten: Thương Lính Gác,
+          loai: spear,
+          r: 3,
+          nguon: uocNguyen,
+          tanCong: 0.2,
+          phu: { loai: tanCong, giaTri: 0 },
+          biDong: { ten: Canh Đêm, satThuong: 0.06 },
+        }
+  # Bảo Ấn: 4 ô. Chất lượng rơi theo Thiên Tượng (0..1). Bộ Ấn thêm sát thương khi đủ 4 ô.
+  baoAn:
+    tanCongToiDa: 0.32
+    mauToiDa: 0.24
+    boAn: 0.12
+    chatLuongTheoThienTuong: [0.3, 0.4, 0.5, 0.6, 0.7, 0.78, 0.86, 0.93, 1]
+  # Linh Lực: năng lượng để nhận thưởng Lòng Sao. Không bán.
+  linhLuc:
+    toiDa: 160
+    hoiMoiNgay: 180
+    moiLuotLongSao: 20
+    thuongMoiLuot: { sach: 5, xu: 2200, loiSao: 1.2 }
+  # Thu nhập lặp lại của người không nạp (ngoài Ủy thác đã có trong game).
+  thuNhap:
+    tuan:
+      daSao: 120
+      xu: 60000
+    thang:
+      thapKy: 600
+      suKien: 800
+      baoTri: 200
+    # Một lần: khởi đầu + rương + cốt truyện + Tháp + Hắc Giao lần đầu, chia đều trong số ngày.
+    motLan:
+      daSao: 7800
+      trongSoNgay: 45
+  # Tháp Tinh Tú và cốt truyện: Chiến Lực đội yêu cầu, ước tính từ máu quái và thời gian 3★.
+  # Sát thương đội mỗi giây ≈ heSoSatThuong × (người đang ra trận + chiaSeNgoaiSan × ba người kia) × thoiGianDanh.
+  moHinhTran:
+    heSoSatThuong: 2.2
+    chiaSeNgoaiSan: 0.35
+    thoiGianDanh: 0.6
+    giayThap3Sao: 60
+    mauQuaiTB: 420
+    mauDaQuy: 3200
+  # Mô hình phân tầng nội dung (thay cho trần chênh lệch).
+  phanTang:
+    # Đội 4★ có sẵn và nhận trong cốt truyện: mọi người chơi đều có.
+    doiMienPhi: [suongmai, mailinh, bachvu, minhkhai]
+    # Nội dung thường: ngày dự kiến mở và Chiến Lực đội cần. Đội 4★ miễn phí đủ cấp phải qua được.
+    thuong:
+      - { ten: Cốt truyện chương 1, ngay: 1, chienLuc: 1400 }
+      - { ten: Cốt truyện chương 2, ngay: 4, chienLuc: 2000 }
+      - { ten: Cốt truyện chương 3, ngay: 10, chienLuc: 2900 }
+      - { ten: Cốt truyện chương 4, ngay: 20, chienLuc: 4200 }
+      - { ten: Sự kiện thường, ngay: 21, chienLuc: 4200 }
+      - { ten: Cốt truyện chương 5, ngay: 35, chienLuc: 5400 }
+      - { ten: Boss thế giới Hắc Giao (Thiên Tượng 3), ngay: 45, chienLuc: 5500 }
+      - { ten: Cốt truyện chương 6, ngay: 55, chienLuc: 6500 }
+      - { ten: Khám phá vùng mới (Thiên Tượng 4), ngay: 60, chienLuc: 6500 }
+      - { ten: Cốt truyện chương 7, ngay: 80, chienLuc: 7500 }
+      - { ten: Ủy thác và boss Thiên Tượng 6, ngay: 90, chienLuc: 7600 }
+      - { ten: Boss thế giới Thiên Tượng 8, ngay: 120, chienLuc: 9000 }
+    # Tháp Tinh Tú tầng 1..thapThuong đạt 3★ là nội dung thường; các tầng sau là nội dung đỉnh.
+    thapThuong: 8
+    # F2P chơi kỹ (trung vị) phải qua 100% nội dung thường trước ngày này.
+    hanThuong: 120
+    # Độ dễ theo độ dư Chiến Lực (có / cần): dưới 1 chưa qua; 1 → vuaDu: qua được; vuaDu → de: vừa đủ;
+    # de → ratNhe: dễ; từ ratNhe: rất nhẹ nhàng.
+    doDe: { vuaDu: 1.25, de: 1.5, ratNhe: 1.8 }
+    # Nội dung đỉnh: Tháp tầng (thapThuong + 1)–12 bản Đỉnh (quái thêm cấp, máu nhân hệ số), điểm cao, bảng xếp hạng.
+    # Đo bằng sát thương mỗi giây của đội, chủ lực gánh phần lớn. Chạm Đỉnh: sao tối đa tầng 12 bản Đỉnh.
+    # Điểm tối đa (bảng xếp hạng): heSoDiemToiDa × sát thương cần để chạm Đỉnh.
+    dinh:
+      capQuaiThem: 20
+      heSoMau: 1.8
+      heSoDiemToiDa: 1.38
+      # F2P chơi kỹ (trung vị) chạm Đỉnh trong khoảng ngày này (6–12 tháng).
+      f2pChamDinh: [180, 365]
+
+# ---------- Gói nạp đề xuất (chỉ mô phỏng, KHÔNG có thanh toán) ----------
+goiNap:
+  daSao:
+    - { id: ds1, gia: 20000, daSao: 50, thuong: 0 }
+    - { id: ds2, gia: 100000, daSao: 250, thuong: 15 }
+    - { id: ds3, gia: 300000, daSao: 750, thuong: 75 }
+    - { id: ds4, gia: 600000, daSao: 1500, thuong: 200 }
+    - { id: ds5, gia: 1000000, daSao: 2500, thuong: 400 }
+    - { id: ds6, gia: 2000000, daSao: 5000, thuong: 1000 }
+  napLanDauNhanDoi: true
+  theThang: { id: the-trang, gia: 79000, ngay: 30, daSaoNgay: 300, daSaoMoiNgay: 90 }
+  # Hộ Chiếu Sao: gói tiến trình theo mùa (có nhánh miễn phí cho mọi người).
+  hoChieuSao: { id: ho-chieu-sao, gia: 149000, ngay: 42, daSao: 680, sach: 120, xu: 300000, vuKhi4: 1, trangPhuc: 1 }
+  trangPhuc: { giaTu: 99000, giaDen: 299000 }
+  # Hạn mức tháng đề xuất cho tài khoản dưới 18 tuổi (bảo vệ người chơi, cần luật sư xác nhận).
+  hanMucDuoi18: 500000
+  # Mức mặc định người chơi tự đặt khi tạo tài khoản (hạ có hiệu lực ngay, nâng sau 24 giờ).
+  hanMucTuDatMacDinh: 2000000
+  # Cảnh báo khi tổng nạp trong một ngày vượt mức này.
+  canhBaoNgay: 1000000
+
+# ---------- Bốn hồ sơ người chơi để mô phỏng ----------
+# vndThang: tiền mua gói Đá Sao mỗi tháng, ngoài thẻ tháng và Hộ Chiếu Sao.
+# Nhân vật chủ lực là nhân vật giới hạn đầu tiên (banner ngày 1); vũ khí chủ lực là vũ khí đặc trưng của nhân vật đó.
+# mucTieu: thứ tự mục tiêu, "nvK" = chủ lực đạt Nét Sao NK, "vkK" = vũ khí chủ lực đạt RK. Chỉ ước khi banner đúng mục tiêu
+#   đang mở; ngoài ra giữ Đá Sao. uocKhac: Nét Sao muốn có cho nhân vật giới hạn khác (-1: không ước, dồn cho chủ lực;
+#   khi chủ lực đã xong mọi mục tiêu thì ước N0 nhân vật giới hạn mới thay vì giữ Đá Sao mãi).
+hoSo:
+  - id: f2p
+    ten: F2P chơi kỹ
+    vndThang: 0
+    theThang: false
+    hoChieu: false
+    mucTieu: [nv0, vk1, nv1, nv2, vk2, nv6, vk5]
+    uocKhac: -1
+  - id: nap-nhe
+    ten: Nạp nhẹ (thẻ tháng + Hộ Chiếu Sao)
+    vndThang: 0
+    theThang: true
+    hoChieu: true
+    mucTieu: [nv0, nv1, nv2, nv6]
+    uocKhac: 0
+  - id: nap-kha
+    ten: Nạp khá
+    vndThang: 2000000
+    theThang: true
+    hoChieu: true
+    mucTieu: [nv0, vk1, nv2, vk2, nv4, vk3, nv6, vk5]
+    uocKhac: 0
+  - id: whale
+    ten: Whale
+    vndThang: 20000000
+    theThang: true
+    hoChieu: true
+    mucTieu: [nv6, vk5]
+    uocKhac: 2
+
+moPhong:
+  soNguoi: 100000
+  soNgay: 365
+  mocNgay: [30, 90, 180, 365]
+  seed: 20261123

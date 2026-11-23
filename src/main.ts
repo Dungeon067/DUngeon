@@ -2,6 +2,7 @@ import { GS } from "./core/state";
 import { portraitCache } from "./art/chibi";
 import { frame } from "./core/loop";
 import { SAVE_KEY, Server } from "./server/server";
+import { ECON_KEY, reloadEcon } from "./data/economy";
 import { init as initCanvas } from "./core/canvas";
 import { init as initInput } from "./core/input";
 import { init as initModal } from "./ui/modal";
@@ -41,6 +42,11 @@ initModal();
 initMenuShell();
 // Trang Admin (tab khác) vừa ghi hồ sơ: đọc lại để game thấy ngay.
 addEventListener("storage", (e) => {
+  if (e.key === ECON_KEY) {
+    reloadEcon();
+    if (menuOpen()) rerender();
+    return;
+  }
   if (e.key !== SAVE_KEY || !Server.P) return;
   Server.reload();
   updateWallets();

@@ -3,7 +3,8 @@ import { GS } from "../../../core/state";
 import { EL, byId } from "../../../data/content";
 import { MENU } from "../../../data/menu-content";
 import { buildParty } from "../../../entities/party";
-import { Server, statsOf } from "../../../server/server";
+import { fmt } from "../../../core/util";
+import { Server, powerOf, statsOf } from "../../../server/server";
 import { buildHudParty } from "../../hud";
 import { button, charCard, elementBadge, h, tabs, tag, toast } from "../../ds";
 import { icon } from "../../icons/icons";
@@ -118,6 +119,7 @@ function render(host: HTMLElement, params: any) {
             head(c.id),
             h("span", { class: "nm" }, [c.name]),
             h("small", {}, [elementBadge(c.el, { size: 14, name: EL[c.el]?.vi }), ` Cấp ${statsOf(c.id).lv}`]),
+            h("small", { class: "tt-power" }, [`Chiến Lực ${fmt(powerOf(c.id))}`]),
           ]
         : [
             h("span", { class: "k" }, [String(s + 1)]),
@@ -203,6 +205,10 @@ function render(host: HTMLElement, params: any) {
     warn ?? "",
     h("div", { class: "tt-team-grid" }, [
       h("section", { class: "tt-panel" }, [
+        h("p", { class: "tt-team-power", "data-testid": "team-power" }, [
+          "Chiến Lực đội ",
+          h("b", {}, [fmt(draft.reduce((n, id) => n + powerOf(id), 0))]),
+        ]),
         slots,
         tips,
         h("p", { class: "tt-dim" }, ["Kéo nhân vật vào ô, hoặc chọn một ô rồi chọn người. Q/E đổi đội."]),

@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CHARS } from "../../src/data/content";
+import { ECON } from "../../src/data/economy";
 import { Server } from "../../src/server/server";
 import { mockRandom } from "./helpers";
 
@@ -45,6 +46,7 @@ describe("Ước nguyện", () => {
     const lost: any = Server.rollOne();
     expect(lost.r).toBe(5);
     expect(lost.id).not.toBe(featured);
+    expect(ECON.game.nhanVat5Sao.thuongTru).toContain(lost.id);
     expect(lost.feat).toBe(false);
     expect(Server.P.guaranteed).toBe(true);
     mockRandom([0, 0.9]);
