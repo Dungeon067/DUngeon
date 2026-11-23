@@ -291,8 +291,17 @@ export class VrmActor {
     return this.actions.has(name);
   }
 
+  /** Dáng nữ dùng bản nữ của clip (tên + "F") nếu có; phần "#..." là khóa phát lại. */
+  variant(name: string) {
+    if (this.dang?.gioi !== "nu") return name;
+    const i = name.indexOf("#"),
+      b = i < 0 ? name : name.slice(0, i);
+    return this.actions.has(b + "F") ? b + "F" + name.slice(b.length) : name;
+  }
+
   /** Chuyển clip (pha trộn mượt). once: chạy một lần rồi giữ khung cuối. */
   play(name: string, o: { once?: boolean; fade?: number; speed?: number; restart?: boolean } = {}) {
+    name = this.variant(name);
     const a = this.actions.get(name);
     if (!a) return;
     a.timeScale = o.speed ?? 1;
@@ -321,7 +330,7 @@ export class VrmActor {
   }
 
   duration(name: string) {
-    return this.actions.get(name)?.getClip().duration ?? 0.5;
+    return this.actions.get(this.variant(name))?.getClip().duration ?? 0.5;
   }
 
   /** Gắn dáng tư thế (content/poses.yaml). */

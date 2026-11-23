@@ -70,7 +70,7 @@ if (clip === "relax" || clip.startsWith("stow") || q.get("nov")) {
 a.obj.scale.multiply(new THREE.Vector3(sc[1], sc[0], sc[1]));
 a.obj.position.y = a.obj.userData.yOff ?? 0;
 a.play(clip, { once: true, fade: 0 });
-const act = (a as any).actions.get(clip) as THREE.AnimationAction;
+const act = (a as any).actions.get(a.variant(clip)) as THREE.AnimationAction;
 (window as any).dur = act.getClip().duration;
 (window as any).at = (t: number) => {
   act.time = t;

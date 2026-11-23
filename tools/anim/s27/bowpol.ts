@@ -1,7 +1,9 @@
 /** Cung: thế chờ một tay thả thấp bên hông, cung nghiêng chéo; rút / cất theo mocap Mixamo (Longbow pack). */
 import type { MocapRecipe } from "../mocap";
 import type { Hand, OverlayDef, V3 } from "../pose";
-import { fing, ik, kn, polish, SOFT, wgrip } from "./polish";
+import * as THREE from "three";
+import { fem, reElbow } from "./fem";
+import { fing, ik, kn, polish, rot, SOFT, wgrip } from "./polish";
 
 const BW = "mx/bow_standing_";
 export const BW_MC: Record<string, MocapRecipe> = {
@@ -53,4 +55,24 @@ export const BW_POL: Record<string, OverlayDef> = {
     );
     fing(r, "r", SOFT);
   }),
+};
+
+/** Bản nữ: thế chờ trên nền idle nữ (đứng thẳng, hông lệch), cung thả thấp chéo trước đùi; bắn / ngắm khép chân, trọng tâm cao. */
+const BW_THIGH = wgrip([0.19, -0.12, 0.17], [-0.5, 0.8, 0.3], [0, 0, 1], [0.7, -0.2, -0.5]);
+const SHOT = { half: 0.13, k: 0.6, up: 0.75 };
+export const BW_FEM: Record<string, OverlayDef> = {
+  bowReadyF: polish("relax", (r) => {
+    ikHip(r, "l", BW_THIGH);
+    fing(r, "l", { c: 0.85, t: 0.8, ci: 0.75, s: 2 });
+    fing(r, "r", SOFT);
+    rot(r, "head", [0, 0, -4]);
+  }),
+  bow1F: fem("bow1", SHOT),
+  bow2F: fem("bow2", SHOT),
+  bow3F: fem("bow3", SHOT),
+  bowAimF: fem("bowAim", { ...SHOT, up: 0.85 }, (r) => reElbow(r, "r", new THREE.Vector3(-0.2, 0.35, -1), 0.6)),
+  bwDrawF: fem("bwDraw"),
+  bwStowF: fem("bwStow"),
+  bowSkillF: fem("bowSkill", { half: 0.14 }),
+  bowBurstF: fem("bowBurst", { half: 0.14 }),
 };

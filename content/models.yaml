@@ -38,7 +38,7 @@ camVuKhi:
       cho: { pos: [-0.08, -0.012, 0.005], rot: [90, 0, 0], at: -0.3 },
     }
   # Cung: tay trái nắm giữa thân cung, cung dựng, dây quay về phía người.
-  bow: { bone: leftHand, pos: [0.08, -0.012, 0.005], rot: [90, 0, 0], scale: 0.85, at: 0 }
+  bow: { bone: leftHand, pos: [0.08, -0.012, 0.005], rot: [90, 0, 0], scale: 0.72, at: 0 }
   # Sách phép: không cầm, lơ lửng mở trang trước tay trái (rot: hướng sách theo thân người).
   cat: { bone: leftHand, pos: [0.02, 0.06, 0.22], rot: [-75, 0, 0], scale: 0.6, at: 0 }
 # Clip hoạt ảnh theo loại vũ khí (tên clip trong public/media/anim/humanoid.json, xem tools/anim/recipes.ts).
