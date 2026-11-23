@@ -242,6 +242,45 @@ for k, hk in enumerate(cfg.get("hooks", [])):
     ob = bake(ob)
     attach(ob, hk["bone"], hk.get("color", "#c8813c"), hk.get("shade", "#7a4520"), (0.08, 0.04, 0.0))
 
+head_x = bone_pos("J_Bip_C_Head").x
+for k, sh in enumerate(cfg.get("shapes", [])):
+    # khối cơ bản (sphere/cyl/cone) gắn cứng vào xương; tọa độ [trái, trước, lên] so với đầu xương,
+    # "outward": trục trái đổi dấu theo phía của xương (dùng một cấu hình cho cả hai bên)
+    o = bone_pos(sh["bone"])
+    sgn = (1.0 if (o.x - head_x) * lx >= 0 else -1.0) if sh.get("outward") else 1.0
+
+    def loc(v):
+        return o + sem([v[0] * sgn, v[1], v[2]])
+
+    seg = sh.get("seg", 12)
+    if sh["type"] == "sphere":
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=seg, ring_count=sh.get("rings", max(6, seg // 2)), radius=1)
+    elif sh["type"] == "cone":
+        bpy.ops.mesh.primitive_cone_add(vertices=seg, radius1=1, radius2=sh.get("tip", 0), depth=2)
+    else:
+        bpy.ops.mesh.primitive_cylinder_add(vertices=seg, radius=1, depth=2)
+    ob = bpy.context.active_object
+    ob.name = f"Shape_{k}"
+    if "from" in sh:
+        a, b = loc(sh["from"]), loc(sh["to"])
+        c, axis = (a + b) / 2, (b - a)
+        r = sh["size"] if isinstance(sh["size"], (int, float)) else sh["size"][0]
+        size = (r, r, axis.length / 2)
+        axis = axis.normalized()
+    else:
+        c = loc(sh["pos"])
+        a_ = sh.get("axis", [0, 0, 1])
+        axis = sem([a_[0] * sgn, a_[1], a_[2]]).normalized()
+        size = sh["size"]
+    ob.matrix_world = (
+        Matrix.Translation(c)
+        @ Vector((0, 0, 1)).rotation_difference(axis).to_matrix().to_4x4()
+        @ Matrix.Diagonal((*size, 1.0))
+    )
+    ob.select_set(False)
+    ob = bake(ob)
+    attach(ob, sh["bone"], sh["color"], sh.get("shade", sh["color"]), tuple(sh.get("emissive", (0, 0, 0))), sh.get("flat", False))
+
 sb = ext.spring_bone1
 for s in sb.springs:
     new = cfg.get("springRename", {}).get(s.vrm_name)

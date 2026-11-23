@@ -1,0 +1,183 @@
+{
+  "shapes": [
+    {
+      "bone": "J_Sec_Hair1_10",
+      "outward": true,
+      "type": "sphere",
+      "pos": [0.028, -0.023, 0.041],
+      "size": [0.047, 0.047, 0.042],
+      "axis": [0.093, -0.059, 0.142],
+      "seg": 16,
+      "color": "#ff9a6b",
+      "shade": "#e0663f"
+    },
+    {
+      "bone": "J_Sec_Hair1_10",
+      "outward": true,
+      "type": "cyl",
+      "from": [0.004, -0.004, 0.004],
+      "to": [0.01, -0.008, 0.013],
+      "size": 0.037,
+      "seg": 16,
+      "color": "#a8323f",
+      "shade": "#6e1e28"
+    },
+    {
+      "bone": "J_Sec_Hair1_10",
+      "outward": true,
+      "type": "cyl",
+      "from": [0.02, -0.03, 0.03],
+      "to": [0.105, -0.01, 0.055],
+      "size": 0.0025,
+      "seg": 6,
+      "color": "#d9b77a",
+      "shade": "#a3834c"
+    },
+    {
+      "bone": "J_Sec_Hair1_10",
+      "outward": true,
+      "type": "cyl",
+      "from": [0.1, -0.01, 0.053],
+      "to": [0.1, -0.01, 0.038],
+      "size": 0.001,
+      "seg": 4,
+      "color": "#a8323f",
+      "shade": "#6e1e28"
+    },
+    {
+      "bone": "J_Sec_Hair1_10",
+      "outward": true,
+      "type": "cyl",
+      "from": [0.1, -0.01, 0.039],
+      "to": [0.1, -0.01, 0.034],
+      "size": 0.009,
+      "seg": 8,
+      "color": "#ffd27a",
+      "shade": "#c99a3c"
+    },
+    {
+      "bone": "J_Sec_Hair1_10",
+      "outward": true,
+      "type": "sphere",
+      "pos": [0.1, -0.01, 0.019],
+      "size": [0.016, 0.016, 0.019],
+      "seg": 10,
+      "color": "#d1495b",
+      "shade": "#9c2a3c",
+      "emissive": [0.35, 0.1, 0.06]
+    },
+    {
+      "bone": "J_Sec_Hair1_10",
+      "outward": true,
+      "type": "cyl",
+      "from": [0.1, -0.01, 0.004],
+      "to": [0.1, -0.01, -0.001],
+      "size": 0.008,
+      "seg": 8,
+      "color": "#ffd27a",
+      "shade": "#c99a3c"
+    },
+    {
+      "bone": "J_Sec_Hair1_10",
+      "outward": true,
+      "type": "cone",
+      "from": [0.1, -0.01, -0.001],
+      "to": [0.1, -0.01, -0.03],
+      "size": 0.004,
+      "seg": 6,
+      "tip": 0.002,
+      "color": "#ffd27a",
+      "shade": "#c99a3c"
+    },
+    {
+      "bone": "J_Sec_Hair1_11",
+      "outward": true,
+      "type": "sphere",
+      "pos": [0.028, -0.023, 0.041],
+      "size": [0.047, 0.047, 0.042],
+      "axis": [0.093, -0.059, 0.142],
+      "seg": 16,
+      "color": "#ff9a6b",
+      "shade": "#e0663f"
+    },
+    {
+      "bone": "J_Sec_Hair1_11",
+      "outward": true,
+      "type": "cyl",
+      "from": [0.004, -0.004, 0.004],
+      "to": [0.01, -0.008, 0.013],
+      "size": 0.037,
+      "seg": 16,
+      "color": "#a8323f",
+      "shade": "#6e1e28"
+    },
+    {
+      "bone": "J_Sec_Hair1_11",
+      "outward": true,
+      "type": "cyl",
+      "from": [0.02, -0.03, 0.03],
+      "to": [0.105, -0.01, 0.055],
+      "size": 0.0025,
+      "seg": 6,
+      "color": "#d9b77a",
+      "shade": "#a3834c"
+    },
+    {
+      "bone": "J_Sec_Hair1_11",
+      "outward": true,
+      "type": "cyl",
+      "from": [0.1, -0.01, 0.053],
+      "to": [0.1, -0.01, 0.038],
+      "size": 0.001,
+      "seg": 4,
+      "color": "#a8323f",
+      "shade": "#6e1e28"
+    },
+    {
+      "bone": "J_Sec_Hair1_11",
+      "outward": true,
+      "type": "cyl",
+      "from": [0.1, -0.01, 0.039],
+      "to": [0.1, -0.01, 0.034],
+      "size": 0.009,
+      "seg": 8,
+      "color": "#ffd27a",
+      "shade": "#c99a3c"
+    },
+    {
+      "bone": "J_Sec_Hair1_11",
+      "outward": true,
+      "type": "sphere",
+      "pos": [0.1, -0.01, 0.019],
+      "size": [0.016, 0.016, 0.019],
+      "seg": 10,
+      "color": "#d1495b",
+      "shade": "#9c2a3c",
+      "emissive": [0.35, 0.1, 0.06]
+    },
+    {
+      "bone": "J_Sec_Hair1_11",
+      "outward": true,
+      "type": "cyl",
+      "from": [0.1, -0.01, 0.004],
+      "to": [0.1, -0.01, -0.001],
+      "size": 0.008,
+      "seg": 8,
+      "color": "#ffd27a",
+      "shade": "#c99a3c"
+    },
+    {
+      "bone": "J_Sec_Hair1_11",
+      "outward": true,
+      "type": "cone",
+      "from": [0.1, -0.01, -0.001],
+      "to": [0.1, -0.01, -0.03],
+      "size": 0.004,
+      "seg": 6,
+      "tip": 0.002,
+      "color": "#ffd27a",
+      "shade": "#c99a3c"
+    }
+  ],
+  "skirtColliders": true
+}
