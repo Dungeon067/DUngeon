@@ -1,0 +1,529 @@
+# Câu đố nguyên tố, bí cảnh và quest mini trên Đảo Lạc (S23).
+# Vật thể nhận đòn nguyên tố của nhân vật đang ra sân (đánh thường, kỹ năng, nộ, đạn, vùng hiệu ứng).
+# Mỗi loại có các bước; mỗi bước nhận một trong các nguyên tố ghi trong bước đó.
+# Câu đố có Băng hoặc Lôi chỉ là tùy chọn và luôn có cách giải bằng nguyên tố cơ bản (ghi ở `thayThe`).
+
+goiYSau: 20 # giây đứng gần mà chưa giải thì hiện gợi ý
+banKinhKyHieu: 170 # px, ký hiệu nguyên tố phát sáng khi người chơi đến gần
+
+loai:
+  den: { ten: Đèn đá, buoc: [[fire]], tat: [water], bieuTuong: fire, trangThai: [Tắt, Đang cháy] }
+  denLan:
+    { ten: Đèn lồng gió, buoc: [[fire], [wind]], tat: [water], lan: 260, bieuTuong: wind, trangThai: [Tắt, Bùng sáng] }
+  gai: { ten: Bụi gai, buoc: [[fire]], chan: true, bieuTuong: fire, trangThai: [Chắn đường, Đã cháy rụi] }
+  bangChan: { ten: Tảng băng chắn, buoc: [[fire]], chan: true, bieuTuong: fire, trangThai: [Đóng băng, Đã tan] }
+  bon: { ten: Bồn đá cạn, buoc: [[water]], bieuTuong: water, trangThai: [Cạn, Đầy nước] }
+  bonHoi: { ten: Bồn đá hơi, buoc: [[water], [fire]], bieuTuong: water, trangThai: [Cạn, Bốc hơi nâng bệ] }
+  lua: { ten: Lửa chắn, buoc: [[water]], chan: true, bieuTuong: water, trangThai: [Đang cháy, Đã dập] }
+  mam: { ten: Mầm cây khô, buoc: [[water]], bieuTuong: water, trangThai: [Héo, Mọc cầu lá] }
+  cot: { ten: Bệ cột đá, buoc: [[earth]], bieuTuong: earth, trangThai: [Trống, Cột đá đè công tắc] }
+  cau: { ten: Cầu gãy, buoc: [[earth]], bieuTuong: earth, trangThai: [Gãy, Đã vá] }
+  tuong: { ten: Tường đá nứt, buoc: [[earth]], chan: true, bieuTuong: earth, trangThai: [Nứt, Đã vỡ] }
+  coi: { ten: Cối gió, buoc: [[wind]], bieuTuong: wind, trangThai: [Đứng im, Đang quay] }
+  suong: { ten: Sương độc, buoc: [[wind]], chan: true, bieuTuong: wind, trangThai: [Che lối, Đã tan] }
+  luongGio: { ten: Miệng gió, buoc: [[wind]], nang: true, bieuTuong: wind, trangThai: [Lặng, Gió đẩy lên] }
+  # Tùy chọn: Băng hoặc Thổ; Lôi hoặc Hỏa.
+  bangMat: { ten: Mặt nước sâu, buoc: [[ice, earth]], bieuTuong: ice, trangThai: [Sâu, Có lối qua] }
+  loiTru: { ten: Cột thu sấm, buoc: [[bolt, fire]], bieuTuong: bolt, trangThai: [Nguội, Lõi đồng rực sáng] }
+
+cauDo:
+  # ---------- Trên đảo (gắn quest mini) ----------
+  - id: den-canh-ven-bien
+    ten: Bốn Đèn Canh Ven Biển
+    vung: Làng Vạn Lưới
+    kieu: don
+    batBuoc: true
+    dat: { goc: 120, banKinh: 30 }
+    vatThe:
+      - { loai: den, dx: -3, dy: -2, giay: 14 }
+      - { loai: den, dx: 3, dy: -2, giay: 14 }
+      - { loai: den, dx: -3, dy: 2, giay: 14 }
+      - { loai: den, dx: 3, dy: 2, giay: 14 }
+    ruong: thuong
+    goiY: Đèn tự tắt sau ít giây. Thắp liền tay cả bốn đèn.
+  - id: ruong-kho
+    ten: Ruộng Khô Đầu Làng
+    vung: Làng Vạn Lưới
+    kieu: don
+    batBuoc: true
+    dat: { goc: 150, banKinh: 22 }
+    vatThe:
+      - { loai: mam, dx: -2, dy: 0 }
+      - { loai: mam, dx: 0, dy: 1 }
+      - { loai: mam, dx: 2, dy: 0 }
+    ruong: thuong
+    goiY: Mầm héo vì thiếu nước. Dùng đòn Thủy tưới từng mầm.
+  - id: bac-da-vong-van
+    ten: Bậc Đá Lên Đài Đếm Sao
+    vung: Đỉnh Vọng Vân
+    kieu: don
+    batBuoc: true
+    dat: { goc: 270, banKinh: 30 }
+    vatThe:
+      - { loai: cot, dx: -2, dy: 1 }
+      - { loai: cot, dx: 0, dy: -1 }
+      - { loai: cot, dx: 2, dy: 1 }
+    ruong: thuong
+    goiY: Ba bệ trống cần cột đá. Dùng đòn Thổ dựng cột.
+  - id: coi-gio-bom-nuoc
+    ten: Cối Gió Bơm Nước
+    vung: Bến Sông Sương
+    kieu: don
+    batBuoc: true
+    dat: { goc: 60, banKinh: 24 }
+    vatThe:
+      - { loai: coi, dx: -2, dy: 0, giay: 12 }
+      - { loai: coi, dx: 2, dy: 0, giay: 12 }
+    ruong: thuong
+    goiY: Cối ngừng quay sau ít giây. Cho cả hai cối cùng quay bằng đòn Phong.
+  - id: den-mo-thu-bay
+    ten: Đèn Mỏ Thứ Bảy
+    vung: Mỏ Ngọc Lòng Chảo
+    kieu: don
+    batBuoc: true
+    dat: { goc: 210, banKinh: 26 }
+    vatThe:
+      - { loai: den, dx: -4, dy: 0 }
+      - { loai: den, dx: -3, dy: -2 }
+      - { loai: den, dx: -1, dy: -3 }
+      - { loai: den, dx: 1, dy: -3 }
+      - { loai: den, dx: 3, dy: -2 }
+      - { loai: den, dx: 4, dy: 0 }
+      - { loai: den, dx: 0, dy: 1 }
+    ruong: thuong
+    goiY: Bảy đèn mỏ đều phải sáng. Nước làm đèn tắt.
+  - id: gai-truc-may
+    ten: Lối Gai Rừng Trúc
+    vung: Rừng Trúc Mây
+    kieu: don
+    batBuoc: true
+    dat: { goc: 180, banKinh: 32 }
+    vatThe:
+      - { loai: gai, dx: -2, dy: 0 }
+      - { loai: gai, dx: 0, dy: 0 }
+      - { loai: gai, dx: 2, dy: 0 }
+    ruong: thuong
+    goiY: Gai khô bắt lửa rất nhanh. Dùng đòn Hỏa.
+  - id: lua-hang-den
+    ten: Lửa Chắn Hàng Đèn
+    vung: Phố Vạn Đăng
+    kieu: don
+    batBuoc: true
+    dat: { goc: 90, banKinh: 14 }
+    vatThe:
+      - { loai: lua, dx: -2, dy: 0 }
+      - { loai: lua, dx: 0, dy: -1 }
+      - { loai: lua, dx: 2, dy: 0 }
+    ruong: thuong
+    goiY: Dầu đèn đổ ra đang cháy. Dùng đòn Thủy dập lửa.
+  - id: cau-gay-song-suong
+    ten: Cầu Gãy Sông Sương
+    vung: Bến Sông Sương
+    kieu: don
+    batBuoc: true
+    dat: { goc: 30, banKinh: 34 }
+    vatThe:
+      - { loai: cau, dx: -1, dy: 0 }
+      - { loai: cau, dx: 1, dy: 0 }
+    ruong: thuong
+    goiY: Hai nhịp cầu bị gãy. Dùng đòn Thổ vá lại bằng đá.
+  - id: suong-doc-vinh-khoi
+    ten: Sương Độc Vịnh Khơi
+    vung: Vịnh Khơi và Làng Chìm
+    kieu: don
+    batBuoc: true
+    dat: { goc: 0, banKinh: 36 }
+    vatThe:
+      - { loai: suong, dx: -2, dy: -1 }
+      - { loai: suong, dx: 0, dy: 1 }
+      - { loai: suong, dx: 2, dy: -1 }
+    ruong: thuong
+    goiY: Sương độc đọng ở chỗ kín gió. Dùng đòn Phong thổi tan.
+  - id: bang-bo-ho
+    ten: Sương Giá Bờ Hồ
+    vung: Hồ Gương và Đền Trăng
+    kieu: don
+    batBuoc: true
+    dat: { goc: 20, banKinh: 12 }
+    vatThe:
+      - { loai: bangChan, dx: -2, dy: 0 }
+      - { loai: bangChan, dx: 0, dy: -1 }
+      - { loai: bangChan, dx: 2, dy: 0 }
+    ruong: thuong
+    goiY: Ba tảng băng vây quanh bờ hồ. Dùng đòn Hỏa làm tan.
+  # ---------- Kết hợp ----------
+  - id: hoi-nong-be-da
+    ten: Hơi Nóng Nâng Bệ
+    vung: Hồ Gương và Đền Trăng
+    kieu: ket-hop
+    batBuoc: true
+    dat: { goc: 240, banKinh: 12 }
+    vatThe:
+      - { loai: bonHoi, dx: -2, dy: 0 }
+      - { loai: bonHoi, dx: 2, dy: 0 }
+    ruong: quy
+    goiY: Đổ nước vào bồn trước, rồi dùng lửa nung cho bốc hơi.
+  - id: gio-lan-lua-dinh
+    ten: Gió Lan Lửa Đình
+    vung: Đình Trống Đồng
+    kieu: ket-hop
+    batBuoc: true
+    dat: { goc: 330, banKinh: 16 }
+    vatThe:
+      - { loai: denLan, dx: -4, dy: 0 }
+      - { loai: denLan, dx: -2, dy: 0 }
+      - { loai: denLan, dx: 0, dy: 0 }
+      - { loai: denLan, dx: 2, dy: 0 }
+      - { loai: denLan, dx: 4, dy: 0 }
+    ruong: quy
+    goiY: Thắp một đèn bằng lửa, rồi dùng gió thổi cho lửa lan sang cả dãy.
+  - id: may-chan-tuong-nut
+    ten: Mây Chắn Tường Nứt
+    vung: Trại Bắc
+    kieu: ket-hop
+    batBuoc: true
+    dat: { goc: 300, banKinh: 36 }
+    vatThe:
+      - { loai: suong, dx: 0, dy: 1 }
+      - { loai: tuong, dx: -1, dy: -1 }
+      - { loai: tuong, dx: 1, dy: -1 }
+    ruong: quy
+    goiY: Thổi tan mây che bằng gió, rồi dùng đất đập vỡ tường nứt.
+  # ---------- Tùy chọn (Băng, Lôi) ----------
+  - id: mat-nuoc-dong
+    ten: Mặt Nước Đông
+    vung: Hồ Gương và Đền Trăng
+    kieu: don
+    batBuoc: false
+    dat: { goc: 200, banKinh: 16 }
+    vatThe:
+      - { loai: bangMat, dx: -1, dy: 0 }
+      - { loai: bangMat, dx: 1, dy: 0 }
+    ruong: quy
+    goiY: Làm đông mặt nước bằng Băng, hoặc dựng đá bằng Thổ để có lối qua.
+    thayThe: Hạ Vy (Băng, nhận miễn phí qua quest "Sương Giá Bờ Hồ") làm đông mặt nước. Không dùng Băng thì đòn Thổ của Ngọc Thạch dựng bậc đá qua chỗ nước sâu.
+  - id: cot-thu-sam
+    ten: Cột Thu Sấm
+    vung: Đỉnh Vọng Vân
+    kieu: don
+    batBuoc: false
+    dat: { goc: 250, banKinh: 38 }
+    vatThe:
+      - { loai: loiTru, dx: -2, dy: 0 }
+      - { loai: loiTru, dx: 2, dy: 0 }
+    ruong: quy
+    goiY: Lõi đồng cần nóng rực. Sấm làm được, lửa nung lâu cũng được.
+    thayThe: Không có nhân vật Lôi thì dùng đòn Hỏa (Mai Linh) nung đỏ lõi đồng.
+  # ---------- Cửa bí cảnh ----------
+  - id: cua-lo-den
+    ten: Cửa Lò Đèn
+    vung: Phố Vạn Đăng
+    kieu: cua-bi-canh
+    batBuoc: true
+    dat: { goc: 105, banKinh: 20 }
+    vatThe:
+      - { loai: den, dx: -2, dy: 0, giay: 16 }
+      - { loai: den, dx: 2, dy: 0, giay: 16 }
+    goiY: Hai đèn hai bên cửa phải cùng sáng.
+  - id: cua-gieng-trang
+    ten: Cửa Giếng Trăng
+    vung: Hồ Gương và Đền Trăng
+    kieu: cua-bi-canh
+    batBuoc: true
+    dat: { goc: 160, banKinh: 10 }
+    vatThe:
+      - { loai: bon, dx: -2, dy: 0 }
+      - { loai: bon, dx: 2, dy: 0 }
+    goiY: Hai bồn đá cạn. Đổ đầy nước thì phao nổi lên, cửa mở.
+  - id: cua-ham-ngoc
+    ten: Cửa Hầm Ngọc Cũ
+    vung: Mỏ Ngọc Lòng Chảo
+    kieu: cua-bi-canh
+    batBuoc: true
+    dat: { goc: 225, banKinh: 34 }
+    vatThe:
+      - { loai: tuong, dx: 0, dy: 0 }
+    goiY: Tường đá nứt chắn cửa hầm. Cần sức mạnh của đất.
+  - id: cua-hang-gio
+    ten: Cửa Hang Gió
+    vung: Rừng Trúc Mây
+    kieu: cua-bi-canh
+    batBuoc: true
+    dat: { goc: 195, banKinh: 40 }
+    vatThe:
+      - { loai: coi, dx: -2, dy: 0 }
+      - { loai: coi, dx: 2, dy: 0 }
+    goiY: Hai chong chóng gỗ kéo then cửa. Cho chúng quay bằng gió.
+  # ---------- Phòng trong bí cảnh ----------
+  - id: lo-den-bang
+    ten: Gian Băng Đọng
+    vung: Lò Đèn Phố Cũ
+    kieu: phong
+    batBuoc: true
+    vatThe:
+      - { loai: bangChan, dx: -2, dy: 0 }
+      - { loai: bangChan, dx: 2, dy: 0 }
+    goiY: Băng đọng từ đêm sương. Dùng lửa làm tan.
+  - id: lo-den-gai
+    ten: Gian Dây Leo Khô
+    vung: Lò Đèn Phố Cũ
+    kieu: phong
+    batBuoc: true
+    vatThe:
+      - { loai: gai, dx: 0, dy: 0 }
+      - { loai: den, dx: -3, dy: -1, giay: 12 }
+      - { loai: den, dx: 3, dy: -1, giay: 12 }
+    goiY: Đốt dây leo, rồi thắp cả hai đèn cùng lúc.
+  - id: gieng-trang-lua
+    ten: Gian Dầu Cháy
+    vung: Giếng Đền Trăng
+    kieu: phong
+    batBuoc: true
+    vatThe:
+      - { loai: lua, dx: -1, dy: 0 }
+      - { loai: lua, dx: 1, dy: 0 }
+    goiY: Dầu đèn cũ còn cháy. Dập bằng nước.
+  - id: gieng-trang-mam
+    ten: Gian Cầu Lá
+    vung: Giếng Đền Trăng
+    kieu: phong
+    batBuoc: true
+    vatThe:
+      - { loai: mam, dx: -2, dy: 0 }
+      - { loai: mam, dx: 2, dy: 0 }
+    goiY: Tưới mầm cho dây leo bện thành cầu lá.
+  - id: ham-ngoc-cot
+    ten: Gian Công Tắc Đá
+    vung: Hầm Ngọc Cũ
+    kieu: phong
+    batBuoc: true
+    vatThe:
+      - { loai: cot, dx: -2, dy: 0 }
+      - { loai: cot, dx: 2, dy: 0 }
+    goiY: Dựng cột đá đè lên hai công tắc.
+  - id: ham-ngoc-cau
+    ten: Gian Vực Ngọc
+    vung: Hầm Ngọc Cũ
+    kieu: phong
+    batBuoc: true
+    vatThe:
+      - { loai: cau, dx: 0, dy: 0 }
+    goiY: Vá nhịp cầu gãy bằng đá.
+  - id: hang-gio-suong
+    ten: Gian Mây Đặc
+    vung: Hang Gió Trúc Mây
+    kieu: phong
+    batBuoc: true
+    vatThe:
+      - { loai: suong, dx: -1, dy: 0 }
+      - { loai: suong, dx: 1, dy: 0 }
+    goiY: Mây đặc che lối. Thổi tan bằng gió.
+  - id: hang-gio-nang
+    ten: Gian Gió Ngược
+    vung: Hang Gió Trúc Mây
+    kieu: phong
+    batBuoc: true
+    vatThe:
+      - { loai: luongGio, dx: 0, dy: 0 }
+      - { loai: coi, dx: 3, dy: -1 }
+    goiY: Đánh gió vào miệng gió rồi nhảy lên, gió đẩy cậu lên gờ cao. Quay cối để mở cửa.
+
+biCanh:
+  - id: lo-den-pho-cu
+    ten: Lò Đèn Phố Cũ
+    vung: Phố Vạn Đăng
+    nguyenTo: fire
+    moTa: Lò nung đèn lồng bỏ hoang dưới hàng đèn Phố Cũ. Thợ đèn xưa nung men ở đây, giờ chỉ còn băng đọng và dây leo khô.
+    cua: cua-lo-den
+    phong: [lo-den-bang, lo-den-gai]
+    tran: { quai: [goblin, shaman], cap: 6 }
+    ruong: tinhXao
+  - id: gieng-den-trang
+    ten: Giếng Đền Trăng
+    vung: Hồ Gương và Đền Trăng
+    nguyenTo: water
+    moTa: Giếng đá sau Đền Trăng, nối ngầm với Hồ Gương. Hội Đền Trăng đóng giếng từ khi mặt hồ thôi phẳng lặng.
+    cua: cua-gieng-trang
+    phong: [gieng-trang-lua, gieng-trang-mam]
+    tran: { quai: [slime, archer], cap: 6 }
+    ruong: tinhXao
+  - id: ham-ngoc-cu
+    ten: Hầm Ngọc Cũ
+    vung: Mỏ Ngọc Lòng Chảo
+    nguyenTo: earth
+    moTa: Đường hầm phía tây Mỏ Ngọc, đóng từ năm sập hầm. Vách đá còn vết búa của thợ mỏ đời trước.
+    cua: cua-ham-ngoc
+    phong: [ham-ngoc-cot, ham-ngoc-cau]
+    tran: { quai: [golem, goblin], cap: 7 }
+    ruong: tinhXao
+  - id: hang-gio-truc-may
+    ten: Hang Gió Trúc Mây
+    vung: Rừng Trúc Mây
+    nguyenTo: wind
+    moTa: Khe núi giữa Rừng Trúc Mây, gió lùa qua thành tiếng sáo. Người trong làng bảo Yêu Rừng giữ cửa hang.
+    cua: cua-hang-gio
+    phong: [hang-gio-suong, hang-gio-nang]
+    tran: { quai: [archer, shaman], cap: 7 }
+    ruong: tinhXao
+
+# Quest mini: hiện trong Nhật ký Nhiệm vụ (loại "Quest mini") và có điểm đánh dấu trên bản đồ.
+mini:
+  - id: mq-den-canh
+    ten: Bốn Đèn Canh Ven Biển
+    npc: Bà Hạnh
+    vung: Làng Vạn Lưới
+    moTa: Bốn đèn canh ven bờ Vạn Lưới tắt từ đêm bão. Thuyền về muộn không thấy đường vào bến.
+    thoai:
+      - { ai: Bà Hạnh, loi: "Cháu ơi, đêm qua bốn đèn canh ngoài bãi tắt cả." }
+      - { ai: Bà Hạnh, loi: "Gió biển mạnh, thắp đèn này thì đèn kia tắt mất." }
+      - { ai: Người Ước Nguyện, loi: "Vậy cháu thắp liền tay cả bốn." }
+      - { ai: Bà Hạnh, loi: "Phải đấy. Bốn đèn cùng sáng thì thuyền mới thấy đường." }
+    cauDo: [den-canh-ven-bien]
+    thuong: { daSao: 10, xu: 1000 }
+  - id: mq-ruong-kho
+    ten: Ruộng Khô Đầu Làng
+    npc: Út Gạo
+    vung: Làng Vạn Lưới
+    moTa: Mầm lúa đầu làng héo vì nắng. Út Gạo gánh nước không kịp.
+    thoai:
+      - { ai: Út Gạo, loi: "Anh chị biết dùng nước không? Em gánh cả sáng mà ruộng vẫn khô." }
+      - { ai: Út Gạo, loi: "Bà em bảo mầm héo ba ngày nữa là chết." }
+      - { ai: Sương Mai, loi: "Để chị. Nước sông Sương chưa bao giờ phụ người làng." }
+    cauDo: [ruong-kho]
+    thuong: { daSao: 10, xu: 1000 }
+  - id: mq-bac-da
+    ten: Bậc Đá Lên Đài Đếm Sao
+    npc: Đầu Sổ Kỳ Lam
+    vung: Đỉnh Vọng Vân
+    moTa: Lở đá làm sụt ba bậc lên Đài Đếm Sao. Người Đếm Sao phải đi đường vòng cả buổi.
+    thoai:
+      - { ai: Đầu Sổ Kỳ Lam, loi: "Ba bậc đá dưới chân đài sụt từ mùa mưa." }
+      - { ai: Đầu Sổ Kỳ Lam, loi: "Sổ sao không chờ người đi đường vòng." }
+      - { ai: Người Ước Nguyện, loi: "Cần người dựng lại bằng đá phải không ạ?" }
+      - { ai: Đầu Sổ Kỳ Lam, loi: "Cần sức mạnh của đất. Có rồi thì quay lại đây." }
+    cauDo: [bac-da-vong-van]
+    thuong: { daSao: 10, xu: 1000 }
+  - id: mq-coi-gio
+    ten: Cối Gió Bơm Nước
+    npc: Hai Khoác
+    vung: Bến Sông Sương
+    moTa: Hai cối gió bơm nước lên bể làng đứng im vì trời lặng gió.
+    thoai:
+      - { ai: Hai Khoác, loi: "Này, nghe chuyện chưa? Cối gió bến này quay từ thời ông cố tôi." }
+      - { ai: Hai Khoác, loi: "Ba hôm nay trời lặng, cối đứng im, bể làng cạn trơ đáy." }
+      - { ai: Bạch Vũ, loi: "Gió thì tôi có. Hai cối phải quay cùng lúc à?" }
+      - { ai: Hai Khoác, loi: "Cùng lúc. Một cối quay thì nước chỉ lên nửa ống." }
+    cauDo: [coi-gio-bom-nuoc]
+    thuong: { daSao: 10, xu: 1000 }
+  - id: np_08
+    ten: Đèn Mỏ Thứ Bảy
+    npc: Ông Đinh Bảo
+    vung: Mỏ Ngọc Lòng Chảo
+    moTa: Quest np_08. Thắp lại bảy đèn mỏ trong đường hầm cũ. Ngọc Thạch, con gái ông bà, nhập đội khi đèn thứ bảy sáng.
+    thoai:
+      - { ai: Ông Đinh Bảo, loi: "Đường hầm cũ phía tây có bảy cái đèn, tắt từ năm sập hầm." }
+      - { ai: Bà Hiền, loi: "Đèn phải sáng đủ bảy thì cửa đá mới mở. Thợ mỏ xưa làm thế." }
+      - { ai: Mai Linh, loi: "Thắp đèn thì cháu quen tay rồi." }
+      - { ai: Ngọc Thạch, loi: "Con đi với các anh chị. Con biết đường trong hầm." }
+      - { ai: Bà Hiền, loi: "Đi cẩn thận. Đèn thứ bảy khắc tên người." }
+    cauDo: [den-mo-thu-bay]
+    thuong: { daSao: 25, xu: 1500 }
+    tang: ngocthach
+  - id: mq-gai-truc
+    ten: Lối Gai Rừng Trúc
+    npc: Bé Sen
+    vung: Rừng Trúc Mây
+    moTa: Bụi gai khô mọc kín lối mòn Bé Sen hay đi hái nấm.
+    thoai:
+      - { ai: Bé Sen, loi: "Lối hái nấm của em bị gai mọc kín rồi." }
+      - { ai: Bé Sen, loi: "Bà Tư bảo đừng chui qua, gai cào rách áo." }
+      - { ai: Mai Linh, loi: "Gai khô thì đốt là sạch. Em đứng lùi ra nhé." }
+    cauDo: [gai-truc-may]
+    thuong: { daSao: 10, xu: 1000 }
+  - id: mq-lua-hang-den
+    ten: Lửa Chắn Hàng Đèn
+    npc: Bà Ngoan
+    vung: Phố Vạn Đăng
+    moTa: Dầu đèn đổ ra đường hàng đèn và bén lửa. Bà Ngoan không qua được để lấy giấy dán đèn.
+    thoai:
+      - { ai: Bà Ngoan, loi: "Chết thôi, thùng dầu đèn đổ ra đường mà bén lửa rồi." }
+      - { ai: Bà Ngoan, loi: "Giấy dán đèn của bà để cả ở bên kia." }
+      - { ai: Sương Mai, loi: "Bà đừng lo. Lửa dầu thì phải dập từng đám." }
+      - { ai: Bà Ngoan, loi: "Cảm ơn cháu. Tết này hàng đèn vẫn sáng." }
+    cauDo: [lua-hang-den]
+    thuong: { daSao: 10, xu: 1000 }
+  - id: mq-cau-gay
+    ten: Cầu Gãy Sông Sương
+    npc: Ông Sáo
+    vung: Bến Sông Sương
+    moTa: Nước lũ đánh gãy hai nhịp cầu đá. Đò của Ông Sáo không chở xuể người qua sông.
+    thoai:
+      - { ai: Ông Sáo, loi: "Lũ tháng trước đánh gãy hai nhịp cầu đá." }
+      - { ai: Ông Sáo, loi: "Đò tôi chở mỗi lần sáu người. Cả làng thì chở đến tối." }
+      - { ai: Người Ước Nguyện, loi: "Đá thì phải có người dùng được sức đất." }
+      - { ai: Ông Sáo, loi: "Vá xong cầu, tôi thổi cho các cậu một bài." }
+    cauDo: [cau-gay-song-suong]
+    thuong: { daSao: 10, xu: 1000 }
+  - id: mq-suong-doc
+    ten: Sương Độc Vịnh Khơi
+    npc: Lão Neo
+    vung: Vịnh Khơi và Làng Chìm
+    moTa: Sương độc đọng trên bãi đá Vịnh Khơi, ngư dân không dám xuống mò ốc.
+    thoai:
+      - { ai: Lão Neo, loi: "Sương ở bãi đá này không phải sương thường." }
+      - { ai: Lão Neo, loi: "Hít vào là chóng mặt. Thằng Út về nằm ba hôm." }
+      - { ai: Bạch Vũ, loi: "Để tôi thổi đi. Gió ngoài khơi đủ mạnh." }
+      - { ai: Lão Neo, loi: "Thổi cho sạch. Sương tan thì nhìn thấy cả mái đình làng chìm." }
+    cauDo: [suong-doc-vinh-khoi]
+    thuong: { daSao: 10, xu: 1000 }
+  - id: mq-hoi-nong
+    ten: Hơi Nóng Nâng Bệ
+    npc: Bà Cả Thu Vọng
+    vung: Hồ Gương và Đền Trăng
+    moTa: Bệ đá cúng trăng chìm xuống bùn. Theo sách cũ, hơi nước nóng dưới bồn sẽ nâng bệ lên.
+    thoai:
+      - { ai: Bà Cả Thu Vọng, loi: "Bệ cúng trăng chìm xuống bùn đã ba mùa." }
+      - { ai: Bà Cả Thu Vọng, loi: "Sách cũ chép rằng nước gặp lửa thành hơi, hơi nâng được đá." }
+      - { ai: Sương Mai, loi: "Cháu đổ nước, Mai Linh nhóm lửa." }
+      - { ai: Mai Linh, loi: "Nước trước, lửa sau. Ngược lại thì chỉ có khói." }
+      - { ai: Bà Cả Thu Vọng, loi: "Đúng như sách. Các cháu đọc sách nhiều hơn ta tưởng." }
+    cauDo: [hoi-nong-be-da]
+    thuong: { daSao: 10, xu: 1000 }
+  - id: mq-gio-lan
+    ten: Gió Lan Lửa Đình
+    npc: Thầy Đồ Khiêm
+    vung: Đình Trống Đồng
+    moTa: Dãy năm đèn lồng trước cổng Đình phải sáng cùng lúc trước giờ đánh trống.
+    thoai:
+      - { ai: Thầy Đồ Khiêm, loi: "Năm đèn lồng trước cổng Đình phải sáng trước giờ đánh trống." }
+      - { ai: Thầy Đồ Khiêm, loi: "Người xưa thắp một đèn, rồi chờ gió nồm thổi lửa sang đèn bên." }
+      - { ai: Bạch Vũ, loi: "Gió nồm hôm nay không về. Nhưng tôi thì có." }
+      - { ai: Thầy Đồ Khiêm, loi: "Hay. Ta viết được thêm một vế đối rồi." }
+    cauDo: [gio-lan-lua-dinh]
+    thuong: { daSao: 10, xu: 1000 }
+  - id: mq-may-chan
+    ten: Mây Chắn Tường Nứt
+    npc: Cai Tôn
+    vung: Trại Bắc
+    moTa: Mây núi đọng che kín một bức tường nứt sau Trại Bắc. Sau tường là kho gạo cũ của Quân Trấn Thủ.
+    thoai:
+      - { ai: Cai Tôn, loi: "Sau trại có bức tường nứt, sau tường là kho gạo cũ." }
+      - { ai: Cai Tôn, loi: "Mây núi đọng ở đó quanh năm, lính không nhìn thấy đường đập." }
+      - { ai: Bạch Vũ, loi: "Tôi thổi mây. Còn tường thì cần người dùng đất." }
+      - { ai: Cai Tôn, loi: "Lấy được gạo thì trại chia cho làng một nửa." }
+    cauDo: [may-chan-tuong-nut]
+    thuong: { daSao: 10, xu: 1000 }
+  - id: mq-ha-vy
+    ten: Sương Giá Bờ Hồ
+    npc: Bà Tám Lụa
+    vung: Hồ Gương và Đền Trăng
+    moTa: Hạ Vy luyện cung ở bờ đông Hồ Gương, băng của chính cô vây kín lối ra. Phá băng thì cô nhập đội (nguồn Băng miễn phí).
+    thoai:
+      - { ai: Bà Tám Lụa, loi: "Cháu có thấy con gái tôi không? Con bé tên Hạ Vy, sáng nay ra hồ tập bắn." }
+      - { ai: Bà Tám Lụa, loi: "Mùa hè mà nó cứ đi đến đâu là sương giá theo đến đó." }
+      - { ai: Mai Linh, loi: "Bờ đông hồ đang đóng băng kìa. Để cháu làm tan." }
+      - { ai: Hạ Vy, loi: "Con xin lỗi mẹ. Con tập mạnh tay quá, băng vây cả lối về." }
+      - { ai: Hạ Vy, loi: "Cho em đi cùng anh chị nhé. Băng của em dùng được việc khác ngoài việc tự nhốt mình." }
+    cauDo: [bang-bo-ho]
+    thuong: { daSao: 10, xu: 1000 }
+    tang: havy

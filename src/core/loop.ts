@@ -17,6 +17,8 @@ import { fxText } from "../entities/fx";
 import { cur } from "../entities/party";
 import { towerLogic } from "../modes/tower";
 import { worldLogic } from "../modes/world";
+import { domainLogic } from "../modes/domain";
+import { pulseElement, puzzleTick } from "../world/puzzles";
 import { affinityTick } from "../ui/menu/progress";
 import { Server } from "../server/server";
 import { updateHud } from "../ui/hud";
@@ -174,7 +176,8 @@ export function update(dt: number) {
       if ((t === TL.TREE || t === TL.ROCK) && !above) pr.life = 0;
     }
     if (GS.G.bounds && (pr.x < 0 || pr.y < 0 || pr.x > GS.G.bounds.w || pr.y > GS.G.bounds.h)) pr.life = 0;
-    if (pr.own === "p") {
+    if (pr.own === "p" && pr.el && pulseElement(pr.x, pr.y, pr.r + 8, pr.el)) pr.life = 0;
+    if (pr.own === "p" && pr.life > 0) {
       for (const e of GS.G.enemies) {
         if (e.dead) continue;
         if (dist(pr.x, pr.y, e.x, e.y - (e.isBoss ? 24 : 12)) < pr.r + e.r) {
@@ -250,6 +253,7 @@ export function update(dt: number) {
     }
     if (f.tick <= 0) {
       f.tick = f.ti;
+      if (f.el && f.own !== "e") pulseElement(f.x, f.y, f.r, f.el);
       for (const e of GS.G.enemies) {
         if (!e.dead && dist(f.x, f.y, e.x, e.y) < f.r + e.r)
           hitEnemy(e, f.m, f.mult, f.el, { cast: f.cast, noKb: true });
@@ -329,6 +333,8 @@ export function update(dt: number) {
     worldLogic(dt);
     affinityTick(dt);
   }
+  if (GS.G.mode === "domain") domainLogic(dt);
+  if (GS.G.map?.puzzles) puzzleTick(dt);
   if (GS.G.mode === "tower") towerLogic(dt);
   // camera
   const ct = cameraTarget(dt),
@@ -395,6 +401,7 @@ export function frame(now: number) {
 /** Lướt kèm sát thương (kỹ năng lướt), dùng cả trên mặt đất và trên không. */
 function dashHitStep(p: any) {
   if (p.dashHit) {
+    pulseElement(p.x, p.y, 50, p.dashHit.el);
     for (const e of GS.G.enemies) {
       if (e.dead || p.dashHit.set.has(e)) continue;
       if (dist(p.x, p.y, e.x, e.y) < 50 + e.r) {

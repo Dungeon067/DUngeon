@@ -4,6 +4,7 @@ import { cv } from "../core/canvas";
 import { $ } from "../core/util";
 import { switchTo } from "../entities/party";
 import { doInteract } from "../modes/world";
+import { dialogNext, dialogOpen } from "../ui/dialog";
 import { pause, resume } from "../ui/modal";
 import { ACTIONS, type Action } from "../data/schema";
 import { CONTROLS } from "../data/content";
@@ -50,6 +51,10 @@ export function onMapAction(f: () => void) {
 
 /** Bấm một thao tác (bàn phím, tay cầm). */
 export function actionDown(a: Action) {
+  if (dialogOpen()) {
+    if (a === "interact" || a === "attack" || a === "jump") dialogNext();
+    return;
+  }
   if (a === "pause") {
     if (GS.scene !== "play" || !GS.G) return;
     if (GS.overlay) return;

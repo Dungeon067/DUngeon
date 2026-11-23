@@ -8,17 +8,21 @@ import { enterPlay, showBanner } from "../modes/session";
 import { Server } from "../server/server";
 import { buildHudParty } from "../ui/hud";
 import { lootFeed } from "../ui/hud/feed";
-import { updateWallets } from "../ui/screens";
+import { leaveWorld, updateWallets } from "../ui/screens";
 import { openMenu } from "../ui/menu/shell";
 import { exploreAround, rollDrop } from "../ui/menu/progress";
 import { toast } from "../ui/toast";
 import { blockedAt } from "../world/collision";
 import { TS, genWorld } from "../world/map";
+import { buildPuzzles, puzzleInteract } from "../world/puzzles";
+import { openMiniDialog } from "../ui/dialog";
+import { domainInteract, startDomain } from "./domain";
 
 export function startWorld() {
   if (!GS.WORLD) GS.WORLD = genWorld();
   GS.G = newSession("world");
   GS.G.map = GS.WORLD;
+  buildPuzzles(GS.WORLD);
   const s = GS.WORLD.statues[0],
     back = GS.worldPos;
   GS.G.p.x = back ? back.x : (s.x + 0.5) * TS;
@@ -69,6 +73,7 @@ export function worldLogic(dt: number) {
   });
   check((W.tower.x + 0.5) * TS, (W.tower.y + 0.8) * TS, "tower", 0, "Vào Tháp Tinh Tú");
   check((W.gate.x + 0.5) * TS, (W.gate.y + 0.8) * TS, "gate", 0, "Vào hang Hắc Giao");
+  puzzleInteract(check);
   GS.G.interact = best;
   exploreAround(p.x / TS, p.y / TS);
   // passive statue heal
@@ -112,5 +117,10 @@ export function doInteract() {
     openMenu("tower");
   } else if (it.kind === "gate") {
     openMenu("boss");
-  }
+  } else if (it.kind === "npc") {
+    openMiniDialog(GS.G.map.npcs[it.i].mini);
+  } else if (it.kind === "portal") {
+    leaveWorld();
+    startDomain(GS.G.map.portals[it.i].d);
+  } else domainInteract(it);
 }

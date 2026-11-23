@@ -245,6 +245,7 @@ export function freeGemsOnDay(day: number, E: Economy) {
   if (day % 7 === 0) g += t.tuan.daSao;
   if (day % 30 === 0) g += t.thang.thapKy + t.thang.suKien + t.thang.baoTri;
   if (day <= t.motLan.trongSoNgay) g += t.motLan.daSao / t.motLan.trongSoNgay;
+  if (day <= t.cauDo.trongSoNgay) g += t.cauDo.daSao / t.cauDo.trongSoNgay;
   return g;
 }
 

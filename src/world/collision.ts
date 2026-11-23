@@ -1,5 +1,6 @@
 import { GS } from "../core/state";
 import { GAP, MH, MW, SOLID, TL, TS } from "../world/map";
+import { blockedByPuzzle } from "../world/puzzles";
 
 /* =========================================================
    VA CHẠM. Mỗi ô có độ cao (bậc, lớp W.h). Vật đứng ở độ cao
@@ -39,6 +40,7 @@ export function solidTile(x: number, y: number, W: any) {
   return blocksAt(x, y, W, 0, false);
 }
 export function blockedAt(x: number, y: number, r: number, W: any, foot = 0, air = false) {
+  if (W?.blockers && !air && blockedByPuzzle(x, y, r, W)) return true;
   return (
     blocksAt(x - r, y, W, foot, air) ||
     blocksAt(x + r, y, W, foot, air) ||

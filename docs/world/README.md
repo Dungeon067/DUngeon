@@ -18,5 +18,6 @@ Bộ tài liệu nền tảng về thế giới của **Tinh Tú Ước Nguyện
 | [`09-tu-dien.md`](09-tu-dien.md)                               | Từ điển tên riêng và thuật ngữ                                                         |
 | [`10-cau-hoi-mo.md`](10-cau-hoi-mo.md)                         | Điểm cố ý bỏ ngỏ                                                                       |
 | [`11-dat-ten.md`](11-dat-ten.md)                               | Quy tắc đặt tên, phương án tên, rà thuật ngữ                                           |
+| [`cau-do-bi-canh.md`](cau-do-bi-canh.md)                       | Câu đố nguyên tố, bí cảnh, quest mini (S23)                                            |
 
 Khi sửa: cập nhật cả `09-tu-dien.md` nếu thêm hoặc đổi tên riêng. Khi hai file mâu thuẫn, file có số nhỏ hơn được ưu tiên.
