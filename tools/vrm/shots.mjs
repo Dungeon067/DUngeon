@@ -12,6 +12,7 @@ const views = [
   ["4-sau", "yaw=180", 1000, 1400],
   ["5-can-mat", "yaw=0&face=1", 1000, 1000],
   ["6-can-mat-34", "yaw=35&face=1", 1000, 1000],
+  ["7-can-mat-nghieng", "yaw=90&face=1", 1000, 1000],
 ];
 const { mkdirSync, readFileSync } = await import("node:fs");
 const w0 =
