@@ -145,7 +145,7 @@ function clampView() {
 function draw() {
   if (!cv || !cv.isConnected) return;
   const c = cv.getContext("2d")!,
-    M = GS.G?.map ?? GS.WORLD,
+    M = islandMap(),
     s = scale(),
     W = cv.width,
     H = cv.height;
