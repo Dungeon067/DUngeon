@@ -11,10 +11,12 @@ Số liệu theo S19 (`docs/economy/`, `content/economy.yaml: thietKe.vuKhi`). T
 | Hậu kỳ       | `tools/blender/weapons/hau-ky.sh raw/ media/weapons danh-sach.json public/weapons` (ImageMagick, có WebP)                                                |
 
 - `lib.py`: cảnh, vật liệu PBR thủ tục (thép có vân tôi và cạnh mài, đồng cũ, đá quý, vải, gỗ), đèn studio, máy quay trực giao góc chéo 45°, nền trong suốt, lần render thứ hai chỉ lấy phần phát sáng.
-- `models.py`: bộ dựng theo loại (kiếm, đại kiếm, thương, cung, pháp khí dạng sách, đèn, ngọc bội, chuông, nghiên, thiên cầu, hoa trong băng). `designs.py`: màu, hoa văn, chi tiết theo từng id, lấy ý từ truyện của vũ khí và vùng đất trong `docs/world`.
+- `models.py`: bộ dựng theo loại (kiếm, đại kiếm, thương, cung, pháp khí dạng sách, đèn, ngọc bội, chuông, thiên cầu, hoa trong băng). `designs.py`: màu, hoa văn, chi tiết theo từng id, lấy ý từ truyện của vũ khí và vùng đất trong `docs/world`.
 - 5★ cầu kỳ, có phát sáng; 4★ vừa phải; 3★ thép trơn, không phát sáng. Cả 26 vũ khí đều render 3D, không dùng SVG.
 - Ảnh không có chữ, không có watermark. Khung độ hiếm (3★ xanh, 4★ tím, 5★ vàng) vẽ bằng CSS trong game; bản icon có khung ở `media/weapons/<id>-icon*.png`.
 - `media/weapons/` (Git LFS): `<id>.png` 1024² nền trong suốt, `<id>-icon.png` có khung, bản 256/128 PNG và WebP. `public/weapons/`: WebP 512/256/128 game tải; thiếu ảnh thì hiện biểu tượng loại vũ khí.
+
+Định hướng mỹ thuật: fantasy phi văn hóa như các game nhập vai thế giới mở. Văn hóa vùng chỉ góp motif cách điệu nhỏ (màu, một chi tiết, ví dụ mặt trống nhỏ ở đốc Hồng Vũ Trường Ca), không sao nguyên đồ cổ hay phủ kín họa tiết truyền thống.
 
 ![Bảng ghép icon](../../media/weapons/bang-ghep.png)
 

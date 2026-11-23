@@ -195,6 +195,22 @@ def build_sword(d):
         extrude_poly("tsuba_star", star_poly(6, r * 0.55, r * 0.18, 0, -0.012), 0.004, [me], root, y=-0.008)
         lathe("habaki", [(0.028, -0.006), (0.03, 0.05), (0.024, 0.06)], 32, [mg], root)
         gz = -0.02
+    elif d.get("guard") in ("wing", "crystal"):
+        # chắn tay vuốt cong kiểu fantasy, mũi hất về phía lưỡi; "crystal" mọc thêm tinh thể ở hai mũi
+        sp = d.get("guard_span", 0.2)
+        pts = [(-sp, 0.035), (-sp * 0.55, 0.0), (-0.04, -0.008), (0.04, -0.008), (sp * 0.55, 0.0), (sp, 0.035),
+               (sp * 0.62, -0.03), (0.045, -0.052), (-0.045, -0.052), (-sp * 0.62, -0.03)]
+        extrude_poly("guard", pts, 0.036, [mg], root, bevel_w=0.004, smooth=True)
+        gem = mat_gem("guard_gem", hexc(d.get("gem", d["glow"])), hexc(d["glow"]), 5)
+        extrude_poly("guard_gem", star_poly(4, 0.026, 0.012, 0, -0.028), 0.012, [gem], root, y=-0.022)
+        if d["guard"] == "crystal":
+            ice = mat_gem("guard_ice", hexc("#d8f3ff"), hexc(d["glow"]), 5, 0.06)
+            for k, sx in enumerate((-1, 1)):
+                for j, (ang, ln) in enumerate(((55, 0.075), (75, 0.05), (35, 0.045))):
+                    a = math.radians(ang)
+                    crystal(f"gice{k}{j}", (sx * sp * 0.92, 0.0, 0.03), (sx * math.sin(a), 0.0, math.cos(a)), ln, 0.01,
+                            6, [ice], root)
+        gz = -0.052
     else:
         extrude_poly("guard", [(-0.16, -0.01), (0.16, -0.01), (0.12, -0.045), (-0.12, -0.045)], 0.04, [mg], root,
                      bevel_w=0.004)
@@ -206,7 +222,8 @@ def build_sword(d):
     lathe("collar", [(0.026, gz - 0.012), (0.034, gz - 0.006), (0.034, gz), (0.028, gz + 0.004)], 40, [mg], root)
     pz = gz - gl
     if d.get("pommel") == "drum":
-        lathe("pommel", [(0.028, pz), (0.042, pz - 0.015), (0.046, pz - 0.035), (0.03, pz - 0.05), (0, pz - 0.055)],
+        # mặt trống nhỏ cách điệu ở đốc, chỉ là điểm nhấn
+        lathe("pommel", [(0.026, pz), (0.034, pz - 0.012), (0.036, pz - 0.03), (0.026, pz - 0.045), (0, pz - 0.05)],
               48, [mg], root)
         gem = mat_gem("gem", hexc(d.get("gem", "#ff3b1f")), hexc(d["glow"]), 6)
         lathe("pommel_gem", [(0, pz - 0.075), (0.016, pz - 0.062), (0.018, pz - 0.052), (0, pz - 0.045)], 24, [gem],

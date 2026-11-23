@@ -1,5 +1,6 @@
 """Thiết kế hình ảnh theo id vũ khí (S23: content/weapons.yaml). Id không có ở đây dùng mặc định theo loại.
 
+Định hướng: fantasy phi văn hóa; văn hóa vùng chỉ là motif cách điệu nhỏ (màu, một chi tiết), không sao đồ cổ.
 Cảm hứng lấy từ truyện ngắn của từng vũ khí và docs/world: Đảo Lạc (trống đồng, chim Lạc, tre, đồng hun),
 Shizukane (thép tôi, hoa lan băng, tuyết), Khokhtal (cung sừng, bờm ngựa giông), Golbaran (men xanh, nhà băng, hoa lựu),
 Marevia (chuông đồng, lò lửa), Lũng Vân (nghiên đá, mây, trúc). 5★ cầu kỳ và phát sáng, 4★ vừa phải, 3★ đơn giản.
@@ -16,9 +17,9 @@ DESIGNS = {
         blade_motif="veins", motif_col="#d9c3ff", motif_glow=6.0, fuller_glow=5.0, shaft_col="#16121f",
         shaft_col2="#3b2f55", crack_glow=6.0, tassel="#2a1838", gem="#c99bff", glow_strength=7, wings=True),
     "tuyet-lac-vo-thanh": dict(
-        r=5, type="sword", single_edge=True, steel="#6f7d8c", edge="#eef7ff", curve=0.05, length=1.05, width=0.05,
-        hamon_glow=9.0, glow="#8fe1ff", gold="#c7d3df", cavity="#2a3440", guard="tsuba", wrap="#dce8f2",
-        grip_core="#22313f", wrap_turns=9, ice_orchids=True, tassel="#8fc9e8", glow_strength=6),
+        r=5, type="sword", single_edge=True, steel="#6f7d8c", edge="#eef7ff", curve=0.025, length=1.02, width=0.06,
+        hamon_glow=9.0, glow="#8fe1ff", gold="#c7d3df", cavity="#2a3440", guard="crystal", guard_span=0.2,
+        gem="#bff0ff", wrap="#3a5a78", grip_core="#22313f", ice_orchids=True, tassel="#8fc9e8", glow_strength=6),
     "doa-hong-ngu-trong-bang": dict(r=5, type="cat", form="iceflower", glow="#bfe8ff", gold="#d9a84a", flower="#d8243a",
                                     angle=0, yaw=25, roll=12),
     "phong-dinh-vo-cuc": dict(
@@ -32,13 +33,13 @@ DESIGNS = {
         r=5, type="great", steel="#6e5f50", edge="#f4e2c0", glow="#ffb040", gold="#e0a040", cavity="#3a2010",
         blade_motif="veins", motif_col="#ffcf7a", motif_glow=6.0, fuller_glow=5.0, guard="bell", guard_span=0.17,
         gem="#ffb040", wrap="#4a2a14", glow_strength=7),
-    "thuy-mac-van-thien": dict(r=5, type="cat", form="inkstone", stone="#2e4a44", glow="#7af0d8", gold="#c9a35a",
+    "thuy-mac-van-thien": dict(r=5, type="cat", form="orb", orb="#173a36", core=1.4, glow="#7af0d8", gold="#c9a35a",
                                angle=20, yaw=40, roll=35),
     # ---------------- 5★ thường trú
     "hong-vu-truong-ca": dict(
         r=5, type="sword", steel="#5e626c", edge="#e9e4da", curve=0.02, length=1.0, width=0.07, blade_motif="feather",
         motif_col="#e3a446", motif_glow=7.0, fuller_glow=4.0, glow="#ff6a2a", gold="#e6a64a", cavity="#3a1a0c",
-        guard="lac_bird", guard_span=0.27, wrap="#5c1212", pommel="drum", gem="#ff3b1f", tassel="#c8302a",
+        guard="wing", guard_span=0.21, wrap="#5c1212", pommel="drum", gem="#ff3b1f", tassel="#c8302a",
         glow_strength=8),
     "ban-thach-tran-son": dict(r=5, type="great", steel="#7a7466", edge="#e0dccc", glow="#ffd27a", gold="#b8a070",
                                cavity="#2a2a20", blade_motif="veins", motif_col="#d8d0a0", motif_glow=3.5,
