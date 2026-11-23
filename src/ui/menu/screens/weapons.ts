@@ -293,7 +293,8 @@ function renderUpgrade(host: HTMLElement, params: any) {
       ).reverse()) {
         const c = weaponCell(m, { picked: up.mats.has(m.uid) });
         c.addEventListener("click", () => {
-          up.mats.has(m.uid) ? up.mats.delete(m.uid) : up.mats.add(m.uid);
+          if (up.mats.has(m.uid)) up.mats.delete(m.uid);
+          else up.mats.add(m.uid);
           rerender();
         });
         grid.append(c);

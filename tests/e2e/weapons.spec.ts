@@ -37,7 +37,7 @@ test("thay vũ khí ở màn Nhân vật, Chiến Lực tăng", async ({ page })
   await expect(page.locator(".tt-compare .d.up").first()).toBeVisible();
   await page.locator("#weaponEquip").click();
   await expect.poll(() => P(page, "owned.lachong.vk")).toBe(uid);
-  expect(await P(page, `weapons.${before}.id`)).toBe("kiem-sat-tuan-tra");
+  expect(await P(page, `weapons.${before}.id`)).toBe("kiem-sat-lu-khach");
   await expect.poll(() => screen(page)).toBe("chars");
   await expect(page.locator(".tt-tabpanel .tt-wcard")).toHaveAttribute("data-uid", uid);
   expect(errors).toEqual([]);
@@ -66,7 +66,7 @@ test("đổi vũ khí đang ở nhân vật khác cần xác nhận", async ({ p
 test("nâng cấp bằng quặng, khóa, kho vũ khí lọc và sắp xếp", async ({ page }) => {
   const errors = watchErrors(page);
   await boot(page);
-  const uid = await give(page, "kiem-suong-som");
+  const uid = await give(page, "suong-som-ben-song");
   await page.evaluate(() => (window as any).__tinhtu.menu.openMenu("weapons"));
   await page.getByRole("tab", { name: "Kiếm đơn" }).click();
   await page.getByRole("button", { name: "4★" }).click();
@@ -91,13 +91,13 @@ test("nâng cấp bằng quặng, khóa, kho vũ khí lọc và sắp xếp", as
 test("tinh luyện bằng bản trùng 4★ có hộp xác nhận", async ({ page }) => {
   const errors = watchErrors(page);
   await boot(page);
-  const uid = await give(page, "kiem-suong-som");
-  const dup = await give(page, "kiem-suong-som");
+  const uid = await give(page, "suong-som-ben-song");
+  const dup = await give(page, "suong-som-ben-song");
   await page.evaluate((uid) => (window as any).__tinhtu.menu.openMenu("wupgrade", { uid, mode: "tl" }), uid);
   await expect(page.locator(`#dupGrid [data-uid="${dup}"]`)).toBeVisible();
   await page.locator("#weaponRefineGo").click();
   const dlg = page.locator(".tt-scrim .tt-dialog");
-  await expect(dlg).toContainText("Kiếm Sương Sớm");
+  await expect(dlg).toContainText("Sương Sớm Bến Sông");
   await dlg.getByRole("button", { name: "Tinh luyện" }).click();
   await expect.poll(() => P(page, `weapons.${uid}.tl`)).toBe(2);
   expect(await P(page, `weapons.${dup}`)).toBeUndefined();
