@@ -1,5 +1,7 @@
 const n=`# Lôi Đình: Hồ sơ
 
+> **Loại 5★:** \`thuong-tru\` (5★ thường trú, có trong pool cố định, ra khi thua 50/50). Đề xuất S06, chờ chủ dự án duyệt; cơ chế pool và banner do S19 làm.
+
 > Hồ sơ nhân vật \`loidinh\`. Nguồn khớp: \`docs/world/04-phe-phai.md\` mục 5, \`docs/world/03-dia-ly.md\` mục 8, \`docs/world/08-vat-pham-va-di-vat.md\` mục 1, \`content/characters/loidinh.yaml\`.
 
 ## 1. Thông tin cơ bản

@@ -1,5 +1,7 @@
 const n=`# Thạch Sơn: Hồ sơ
 
+> **Loại 5★:** \`thuong-tru\` (5★ thường trú, có trong pool cố định, ra khi thua 50/50). Đề xuất S06, chờ chủ dự án duyệt; cơ chế pool và banner do S19 làm.
+
 > Hộ Tinh hệ Thổ, đại kiếm, 5★. Danh hiệu trong game: **Thợ Đá Hóa Thần**.
 > Nguồn đối chiếu: \`docs/world/04-phe-phai.md\` mục 3, \`docs/world/02-lich-su.md\` NS 1310–1350, \`docs/writing/huong-dan-van-phong.md\` mục 2.9.
 

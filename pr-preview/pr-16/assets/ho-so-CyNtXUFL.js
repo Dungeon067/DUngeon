@@ -1,5 +1,7 @@
 const n=`# Ardo: Hồ sơ
 
+> **Loại 5★:** \`gioi-han\` (5★ giới hạn, chỉ ra ở banner theo kỳ, có thể quay lại ở kỳ sau). Đề xuất S06, chờ chủ dự án duyệt; truyện chính không tặng nhân vật này, chỉ cho xuất hiện như NPC hoặc khách mời, không vào đội.
+
 > Hộ Tinh hệ Hỏa, đại kiếm, 5★. Danh hiệu trong game: **Thợ Đúc Chuông Lửa**.
 > Nguồn đối chiếu: \`docs/world/03-dia-ly.md\` mục 7 (Marevia, Ardentia, Mons Fornax, Lò Lớn), \`docs/world/04-phe-phai.md\` (Phường Lò Lớn), \`docs/world/07-hac-giao-va-hoi-mat-na.md\` mục 2.5.5 (Mặt Nạ Sáp), \`docs/world/11-dat-ten.md\` mục 2.
 
