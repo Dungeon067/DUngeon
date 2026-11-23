@@ -3,7 +3,10 @@ import { fmt } from "../../../core/util";
 import { ITEMS } from "../../../data/menu-content";
 import { ECON } from "../../../data/economy";
 import { Server, achState, linhLucNow, shopLeft, vk, wDef } from "../../../server/server";
-import { button, h, progress, toast } from "../../ds";
+import { button, h, lootCard, progress, toast, type LootRarity } from "../../ds";
+import { itemIcon } from "./bag";
+import { weaponBadge } from "../weapon-ui";
+import { ITEM_BY_ID } from "../../../data/menu-content";
 import { icon } from "../../icons/icons";
 import { refreshWallets, registerScreen, rerender } from "../shell";
 
@@ -64,7 +67,13 @@ registerScreen("bicanh", {
       b.dataset.id = it.id;
       shop.append(
         h("li", { class: "tt-task" + (left <= 0 ? " is-done" : "") }, [
-          icon("cua-hang", { size: 24 }),
+          lootCard({
+            rarity: (ITEM_BY_ID[it.id]?.rarity ?? 3) as LootRarity,
+            art: icon(itemIcon(it.id, ITEM_BY_ID[it.id]?.type ?? ""), { size: 30 }),
+            label: `×${bagOf(it.id)}`,
+            static: true,
+            ariaLabel: `${itemName(it.id)}, đang có ${bagOf(it.id)}`,
+          }),
           h("div", { class: "tt" }, [
             h("b", {}, [itemName(it.id)]),
             h("small", { class: "tt-dim" }, [`Còn ${left}/${it.moiTuan} lượt tuần này · Đang có ${bagOf(it.id)}`]),
@@ -90,7 +99,7 @@ registerScreen("bicanh", {
       b.dataset.id = it.id;
       shop.append(
         h("li", { class: "tt-task" + (left <= 0 ? " is-done" : "") }, [
-          icon("danh", { size: 24 }),
+          weaponBadge(it.id, "4★"),
           h("div", { class: "tt" }, [
             h("b", {}, [wName(it.id)]),
             h("small", { class: "tt-dim" }, [`Vũ khí 4★ · Còn ${left}/${it.moiTuan} lượt tuần này`]),

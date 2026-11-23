@@ -424,6 +424,8 @@ export interface LootOpts {
   picked?: boolean;
   disabled?: boolean;
   starSize?: number;
+  /** Thẻ chỉ để hiển thị (nằm trong nút khác hoặc danh sách): dùng thẻ span, không nhận chạm. */
+  static?: boolean;
 }
 /** Thẻ đồ dọc: ảnh trên nền theo độ hiếm, hàng sao đè mép, dải nhãn sáng, R góc trái, khóa/người dùng góc phải. */
 export function lootCard(o: LootOpts) {
@@ -436,16 +438,19 @@ export function lootCard(o: LootOpts) {
           o.holder ? h("span", { class: "tt-loot__who" }, [o.holder]) : null,
         ])
       : null;
+  const cls = "tt-loot" + (o.selected ? " is-sel" : "") + (o.picked ? " is-picked" : "");
   return h(
-    "button",
-    {
-      type: "button",
-      class: "tt-loot" + (o.selected ? " is-sel" : "") + (o.picked ? " is-picked" : ""),
-      "data-r": o.rarity,
-      "aria-pressed": String(!!(o.selected || o.picked)),
-      "aria-label": o.ariaLabel,
-      disabled: o.disabled,
-    },
+    o.static ? "span" : "button",
+    o.static
+      ? { class: cls + " is-static", "data-r": o.rarity, role: "img", "aria-label": o.ariaLabel }
+      : {
+          type: "button",
+          class: cls,
+          "data-r": o.rarity,
+          "aria-pressed": String(!!(o.selected || o.picked)),
+          "aria-label": o.ariaLabel,
+          disabled: o.disabled,
+        },
     [
       h("span", { class: "tt-loot__art" }, [
         o.art,

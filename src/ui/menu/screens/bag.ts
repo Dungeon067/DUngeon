@@ -77,7 +77,7 @@ export function bagRows(P: any = Server.P) {
 }
 const fmtQ = new Intl.NumberFormat("vi-VN");
 /** Biểu tượng riêng cho từng vật phẩm; còn lại dùng biểu tượng của loại. */
-function itemIcon(id: string, type: string) {
+export function itemIcon(id: string, type: string) {
   if (id.startsWith("quang-")) return "quang";
   if (id.startsWith("phoi-")) return "phoi";
   if (id === "sach-kinh-nghiem") return "huong-dan";

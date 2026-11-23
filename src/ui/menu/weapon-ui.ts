@@ -52,6 +52,25 @@ export function weaponCell(w: WeaponInst, o: { selected?: boolean; picked?: bool
   return b;
 }
 
+/** Thẻ đồ chỉ để hiển thị (Thay vũ khí, Lò Rèn, cửa hàng, kết quả). */
+export function weaponBadge(
+  id: string,
+  label: string,
+  o: { refine?: number; locked?: boolean; holder?: string | null } = {},
+) {
+  const d = wDef(id)!;
+  return lootCard({
+    rarity: d.r as LootRarity,
+    art: weaponImg(id, 128, d.ten),
+    label,
+    refine: o.refine,
+    locked: o.locked,
+    holder: o.holder ? miniPortrait(o.holder) : null,
+    static: true,
+    ariaLabel: `${d.ten}, ${d.r} sao, ${label}`,
+  });
+}
+
 /** Các dòng chỉ số của một vũ khí ở cấp hiện tại. */
 export function statRows(w: Pick<WeaponInst, "id" | "lv" | "tl">) {
   const d = wDef(w.id)!,

@@ -222,8 +222,8 @@
   cursor: pointer;
 }
 .tt-wrow .art {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  flex: none;
 }
 .tt-wrow .txt {
   display: grid;
@@ -311,8 +311,7 @@
   );
 }
 .tt-forge-item .art {
-  width: 120px;
-  height: 120px;
+  width: 112px;
 }
 
 /* Banner vũ khí */
@@ -459,4 +458,15 @@
   padding: var(--tt-sp-6) var(--tt-sp-3) var(--tt-sp-2);
   margin: 0 calc(-1 * var(--tt-sp-4)) calc(-1 * var(--tt-sp-3));
   background: linear-gradient(0deg, rgb(6 10 28 / 0.85), transparent);
+}
+
+.tt-wrow .art .tt-loot,
+.tt-forge-item .art .tt-loot {
+  width: 100%;
+  min-width: 0;
+}
+.tt-task > .tt-loot {
+  width: 56px;
+  min-width: 56px;
+  flex: none;
 }

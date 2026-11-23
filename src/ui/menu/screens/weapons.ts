@@ -24,6 +24,7 @@ import {
   weaponCell,
   sortWeapons,
   filterWeapons,
+  weaponBadge,
 } from "../weapon-ui";
 
 /* S24: Kho vũ khí, Nâng cấp / Tinh luyện, Thay vũ khí, Lò Rèn. Mọi thay đổi đi qua Server.req. */
@@ -428,7 +429,7 @@ function renderSwap(host: HTMLElement, params: any) {
         "aria-selected": String(w.uid === sw.sel),
       },
       [
-        h("span", { class: "art" }, [weaponImg(w.id, 128)]),
+        h("span", { class: "art" }, [weaponBadge(w.id, `Cấp ${w.lv}`, { refine: w.tl, locked: w.lock, holder: who })]),
         h("span", { class: "txt" }, [
           h("b", {}, [d.ten]),
           h("small", {}, [stars(d.r, 10), ` Cấp ${w.lv} · R${w.tl}`]),
@@ -526,7 +527,7 @@ function renderForge(host: HTMLElement) {
     b.dataset.id = d.id;
     grid.append(
       h("article", { class: "tt-forge-item", "data-r": d.r, "data-id": d.id }, [
-        h("span", { class: "art" }, [weaponImg(d.id, 256, d.ten)]),
+        h("span", { class: "art" }, [weaponBadge(d.id, `Đang có ${n}`)]),
         h("b", {}, [d.ten]),
         h("small", { class: "tt-dim" }, [`${TYPE_NAME(d.loai)} · Tấn công +${pct(d.tanCong)} · ${d.biDong.ten}`]),
         h("small", {}, [`Đang có ${n}`]),

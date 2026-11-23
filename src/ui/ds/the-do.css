@@ -366,3 +366,8 @@
   animation: none;
   transition: none;
 }
+
+.tt-loot.is-static {
+  cursor: inherit;
+  pointer-events: none;
+}
