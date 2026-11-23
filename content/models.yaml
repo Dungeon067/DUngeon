@@ -12,13 +12,13 @@ vuKhiMacDinh:
   spear: thuong-go-lim
   bow: cung-tre-dau-lang
   cat: vo-chep-thay-do
-# Vị trí vũ khí trên tay: xương VRM, độ lệch theo trục xương (đơn vị ô), góc xoay (độ), tỉ lệ.
+# Cách cầm vũ khí: xương VRM chuẩn hóa, độ lệch trong hệ bàn tay (m), góc xoay (độ), tỉ lệ, điểm cầm dọc thân vũ khí (at).
 camVuKhi:
-  sword: { bone: rightHand, pos: [-0.07, -0.02, 0.12], rot: [90, 0, 0], scale: 0.75 }
-  great: { bone: rightHand, pos: [-0.07, -0.02, 0.2], rot: [90, 0, 0], scale: 0.85 }
-  spear: { bone: rightHand, pos: [-0.07, -0.02, 0.45], rot: [90, 0, 0], scale: 0.9 }
-  bow: { bone: leftHand, pos: [0.07, 0, 0], rot: [0, 0, 90], scale: 0.85 }
-  cat: { bone: rightHand, pos: [-0.08, 0.08, 0], rot: [0, 0, 0], scale: 0.6 }
+  sword: { bone: rightHand, pos: [-0.08, -0.012, 0.005], rot: [90, 0, 0], scale: 0.75, at: -0.17 }
+  great: { bone: rightHand, pos: [-0.08, -0.012, 0.005], rot: [90, 0, 0], scale: 0.85, at: -0.12 }
+  spear: { bone: rightHand, pos: [-0.08, -0.012, 0.005], rot: [90, 0, 0], scale: 0.9, at: -0.62 }
+  bow: { bone: leftHand, pos: [0.08, -0.012, 0.005], rot: [90, 0, 0], scale: 0.85, at: 0 }
+  cat: { bone: rightHand, pos: [-0.06, 0.14, 0.02], rot: [0, 0, 0], scale: 0.6, at: 0 }
 # Clip hoạt ảnh theo loại vũ khí (tên clip trong public/media/anim/humanoid.json, xem tools/anim/recipes.ts).
 hoatAnh:
   sword: { stand: swordIdle, atk: [sword1, sword2, sword3], charge: cast, skill: skill, burst: burst, speed: 1 }

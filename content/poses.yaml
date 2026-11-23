@@ -1,0 +1,79 @@
+# S27: dáng (archetype) dùng chung cho mọi nhân vật. Lớp chỉnh cộng (additive) lên bộ clip gốc theo vũ khí,
+# áp lúc chạy trong src/render3d/toon/pose-layer.ts. Đơn vị: góc là độ, khoảng cách theo chiều cao hông (H).
+# Ràng buộc nội dung: mọi tư thế trang nhã, không nhấn vào cơ thể (schema giới hạn biên độ nghiêng hông/vai);
+# dáng trẻ em (tre: true) chỉ dùng tư thế hồn nhiên: không nghiêng hông, không đặt tay trước người.
+#  dung: đứng yên ngoài trận   chan: nới (+) / khép (−) mỗi bàn chân theo chiều ngang
+#        hong / vai: nghiêng hông / vai (vai ngược chiều hông)   lung: ngả lưng (+ cúi, − thẳng)   dau: nghiêng đầu
+#        tay: mo = dang cánh tay khỏi người, gap = gập khuỷu, truoc = đưa hai tay khép nhẹ trước người (0..1)
+#        tho: nhịp thở (lần/giây), bien = biên độ (độ)   doiTrong: nhịp + biên độ dồn trọng tâm
+#  cho:  thế chờ trong trận: chan (nới thêm), ha (hạ hông), cui (đổ người tới trước), nhun + nhipNhun (nhún)
+#  chay: bien = biên độ sải, nhip = nhịp bước (nhân tốc độ clip), nay = độ nảy
+#  don:  nang 0..1: đòn nặng thì hạ hông và xoay thân nhiều hơn
+#  tiLe: chỉ dùng cho bảng so sánh khi chưa có mô hình riêng (co giãn chiều cao / bề ngang).
+dang:
+  nu-nho:
+    ten: Nữ nhỏ (dáng trẻ em)
+    gioi: nu
+    tre: true
+    dung: { chan: 0, hong: 0, vai: 0, lung: 0, dau: 4, tay: { mo: 9, gap: 12, truoc: 0 }, tho: { nhip: 0.34, bien: 1.4 }, doiTrong: { nhip: 0.28, bien: 1.3 } }
+    cho: { chan: 0.03, ha: 0.03, cui: 6, nhun: 0.016, nhipNhun: 2.2 }
+    chay: { bien: 1, nhip: 1.15, nay: 1.5 }
+    don: { nang: 0.2 }
+    tiLe: { cao: 0.8, rong: 0.94 }
+  nu-teen:
+    ten: Thiếu nữ
+    gioi: nu
+    dung: { chan: -0.01, hong: 1, vai: 0.5, lung: 0, dau: 2, tay: { mo: 4, gap: 14, truoc: 0 }, tho: { nhip: 0.27, bien: 1 }, doiTrong: { nhip: 0.21, bien: 1 } }
+    cho: { chan: 0.04, ha: 0.045, cui: 5, nhun: 0.006, nhipNhun: 1.6 }
+    chay: { bien: 1, nhip: 1.05, nay: 1.1 }
+    don: { nang: 0.4 }
+    tiLe: { cao: 1, rong: 1 }
+  nu-truong-thanh:
+    ten: Nữ trưởng thành
+    gioi: nu
+    dung: { chan: -0.005, hong: 1, vai: 0.6, lung: -0.5, dau: 0, tay: { mo: 3, gap: 10, truoc: 0 }, tho: { nhip: 0.23, bien: 0.9 }, doiTrong: { nhip: 0.18, bien: 0.9 } }
+    cho: { chan: 0.05, ha: 0.05, cui: 4, nhun: 0.004, nhipNhun: 1.4 }
+    chay: { bien: 1.05, nhip: 1, nay: 1 }
+    don: { nang: 0.5 }
+    tiLe: { cao: 1.04, rong: 1 }
+  nu-dam-dang:
+    ten: Nữ đằm thắm (điềm tĩnh, nữ tính)
+    gioi: nu
+    dung: { chan: -0.02, hong: 1.8, vai: 1, lung: -1, dau: 1.5, tay: { mo: 2, gap: 24, truoc: 0.7 }, tho: { nhip: 0.2, bien: 0.8 }, doiTrong: { nhip: 0.15, bien: 0.8 } }
+    cho: { chan: 0.05, ha: 0.04, cui: 3, nhun: 0.003, nhipNhun: 1.2 }
+    chay: { bien: 0.95, nhip: 0.95, nay: 0.8 }
+    don: { nang: 0.55 }
+    tiLe: { cao: 1.02, rong: 1.06 }
+  nam-nho:
+    ten: Nam nhỏ (dáng trẻ em)
+    gioi: nam
+    tre: true
+    dung: { chan: 0.02, hong: 0, vai: 0, lung: 0, dau: 3, tay: { mo: 10, gap: 10, truoc: 0 }, tho: { nhip: 0.34, bien: 1.4 }, doiTrong: { nhip: 0.3, bien: 1.3 } }
+    cho: { chan: 0.05, ha: 0.035, cui: 7, nhun: 0.016, nhipNhun: 2.3 }
+    chay: { bien: 1.05, nhip: 1.15, nay: 1.5 }
+    don: { nang: 0.25 }
+    tiLe: { cao: 0.8, rong: 0.96 }
+  nam-teen:
+    ten: Thiếu niên
+    gioi: nam
+    dung: { chan: 0.02, hong: 0.5, vai: 0.3, lung: 0, dau: 1, tay: { mo: 6, gap: 12, truoc: 0 }, tho: { nhip: 0.26, bien: 1 }, doiTrong: { nhip: 0.2, bien: 1 } }
+    cho: { chan: 0.07, ha: 0.05, cui: 6, nhun: 0.006, nhipNhun: 1.6 }
+    chay: { bien: 1.05, nhip: 1.05, nay: 1.05 }
+    don: { nang: 0.5 }
+    tiLe: { cao: 1.03, rong: 0.98 }
+  nam-truong-thanh:
+    ten: Nam trưởng thành
+    gioi: nam
+    dung: { chan: 0.035, hong: 0.3, vai: 0.2, lung: 0, dau: 0, tay: { mo: 8, gap: 10, truoc: 0 }, tho: { nhip: 0.22, bien: 0.9 }, doiTrong: { nhip: 0.17, bien: 0.8 } }
+    cho: { chan: 0.08, ha: 0.06, cui: 5, nhun: 0.004, nhipNhun: 1.3 }
+    chay: { bien: 1.1, nhip: 1, nay: 0.9 }
+    don: { nang: 0.65 }
+    tiLe: { cao: 1.08, rong: 1.03 }
+  nam-vam-vo:
+    ten: Nam vạm vỡ (to cao)
+    gioi: nam
+    dung: { chan: 0.06, hong: 0, vai: 0, lung: -1, dau: 0, tay: { mo: 15, gap: 14, truoc: 0 }, tho: { nhip: 0.18, bien: 1.1 }, doiTrong: { nhip: 0.14, bien: 0.7 } }
+    cho: { chan: 0.1, ha: 0.07, cui: 6, nhun: 0.003, nhipNhun: 1.1 }
+    chay: { bien: 1.1, nhip: 0.9, nay: 0.7 }
+    don: { nang: 1 }
+    tiLe: { cao: 1.14, rong: 1.2 }

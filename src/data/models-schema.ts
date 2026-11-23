@@ -9,7 +9,10 @@ export const ModelsSchema = z.object({
   mau: z.string().min(1),
   macDinh: look,
   vuKhiMacDinh: perType(z.string()),
-  camVuKhi: perType(z.object({ bone: z.string(), pos: v3, rot: v3, scale: z.number().positive() })),
+  /** Gắn vũ khí vào xương CHUẨN HÓA (trục trùng hệ gốc ở tư thế chữ T): pos/rot trong hệ bàn tay (m, độ), at = điểm cầm dọc trục Y của vũ khí. */
+  camVuKhi: perType(
+    z.object({ bone: z.string(), pos: v3, rot: v3, scale: z.number().positive(), at: z.number().default(0) }),
+  ),
   hoatAnh: perType(
     z.object({
       stand: z.string(),

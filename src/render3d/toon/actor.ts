@@ -6,10 +6,14 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { VRMLoaderPlugin, VRMUtils, type VRM } from "@pixiv/three-vrm";
 import modelsRaw from "../../../content/models.yaml";
+import posesRaw from "../../../content/poses.yaml";
+import { validatePoses, type DangParams } from "../../data/poses-schema";
+import { PoseLayer, type PoseInput } from "./pose-layer";
 import { validateModels, type WeaponType } from "../../data/models-schema";
 import { outlineMat, toonMat } from "./mat";
 
 export const MODELS = validateModels(modelsRaw);
+export const POSES = validatePoses(posesRaw);
 const base = (import.meta as any).env?.BASE_URL ?? "/";
 const loader = new GLTFLoader();
 loader.register((p) => new VRMLoaderPlugin(p));
@@ -83,6 +87,11 @@ export class VrmActor {
   private cur: THREE.AnimationAction | null = null;
   curName = "";
   weapon: THREE.Object3D | null = null;
+  /** S27: lớp chỉnh tư thế theo dáng; poseIn do renderer đặt mỗi khung. */
+  layer: PoseLayer | null = null;
+  poseIn: PoseInput = { mode: "relax", freeL: true, freeR: true };
+  restHips: THREE.Vector3;
+  hipsH: number;
   constructor(
     public vrm: VRM,
     public wtype: WeaponType,
@@ -96,6 +105,8 @@ export class VrmActor {
     const restHips = hipsN.position.clone();
     vrm.scene.updateMatrixWorld(true);
     const hipsH = Math.max(0.3, hipsN.getWorldPosition(new THREE.Vector3()).y);
+    this.restHips = restHips;
+    this.hipsH = hipsH;
     const v0 = vrm.meta?.metaVersion === "0";
     for (const [name, c] of Object.entries(clips)) {
       const times = Array.from({ length: c.n }, (_, i) => i / fps);
@@ -163,13 +174,19 @@ export class VrmActor {
     if (wid) {
       const w = await loadWeapon(wid);
       const grip = MODELS.camVuKhi[wtype];
-      const bone = vrm.humanoid.getRawBoneNode(grip.bone as any);
+      // Xương chuẩn hóa có trục trùng hệ gốc ở tư thế chữ T nên cùng một cấu hình cầm đúng cho mọi mô hình.
+      const bone = vrm.humanoid.getNormalizedBoneNode(grip.bone as any);
       if (w && bone) {
         const holder = new THREE.Group();
         const bs = bone.getWorldScale(new THREE.Vector3()).x || 1;
         holder.position.fromArray(grip.pos).divideScalar(bs);
         holder.rotation.set(...(grip.rot.map((d) => (d * Math.PI) / 180) as [number, number, number]));
+        if (vrm.meta?.metaVersion === "0") {
+          holder.position.set(-holder.position.x, holder.position.y, -holder.position.z);
+          holder.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI));
+        }
         holder.scale.setScalar(grip.scale / bs);
+        w.position.y = -grip.at;
         holder.add(w);
         bone.add(holder);
         a.weapon = holder;
@@ -203,8 +220,15 @@ export class VrmActor {
     return this.actions.get(name)?.getClip().duration ?? 0.5;
   }
 
+  /** Gắn dáng tư thế (content/poses.yaml). */
+  setDang(p: DangParams) {
+    this.layer = new PoseLayer(this.vrm, p, this.restHips, this.hipsH, this.obj);
+  }
+
   update(dt: number) {
+    this.layer?.restore();
     this.mixer.update(dt);
+    this.layer?.apply(dt, this.poseIn);
     this.vrm.update(dt);
   }
 
