@@ -21,9 +21,10 @@ import { CanvasSprite } from "./actors3d";
 import { getRenderable, renderObjects } from "./renderables";
 import type { WorldRenderer } from "./select";
 import { MODELS, VrmActor } from "./toon/actor";
-import { toonMat } from "./toon/mat";
+import { FADE, fadeOccluder, toonMat } from "./toon/mat";
 import { animateMonster, buildMonster, type MonsterView } from "./toon/monsters";
 import { buildSky } from "./toon/sky";
+import { createS23Layer } from "./toon/s23";
 import { LV, buildGrass, buildHeight, buildProps, buildTerrain, buildWater, type HeightField } from "./toon/terrain";
 
 /** Thiết lập theo mức đồ họa. */
@@ -220,15 +221,17 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   // Quái: mô hình toon tạm. Vật thể câu đố: renderable (bản 2D dựng thành tấm phẳng nếu chưa có bản 3D).
   const monsters = new Map<any, MonsterView>();
   const renderables = new Map<any, { o: any; auto?: CanvasSprite }>();
+  const s23 = createS23Layer(scene);
 
   // Hạt nguyên tố.
   const MAXP = 700;
   const parts = new THREE.InstancedMesh(
     new THREE.OctahedronGeometry(0.06, 0),
-    new THREE.MeshBasicMaterial({ color: 0xffffff, fog: false }),
+    new THREE.MeshBasicMaterial({ color: 0xffffff, fog: false, transparent: true, opacity: 0.7, depthWrite: false }),
     MAXP,
   );
   parts.frustumCulled = false;
+  fadeOccluder(parts.material as THREE.Material);
   scene.add(parts);
   // Vật rơi (xu, sách, mảnh nguyên tố, cầu năng lượng).
   const PICK_G: Record<string, THREE.BufferGeometry> = {
@@ -241,6 +244,45 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   const ringPool: THREE.Mesh[] = [],
     arrowPool: THREE.Object3D[] = [],
     orbPool: THREE.Mesh[] = [];
+  /** Vệt chém lưỡi liềm 3D: lõi sáng ở mép ngoài, nhạt dần vào trong và theo thời gian. */
+  const slashPool: { g: THREE.Group; m: THREE.Mesh; mat: THREE.ShaderMaterial }[] = [];
+  const slashGeo = new Map<number, THREE.BufferGeometry>();
+  const slashGeom = (arc: number) => {
+    const k = Math.round(arc * 20) / 20;
+    let g = slashGeo.get(k);
+    if (!g) {
+      g = new THREE.RingGeometry(0.5, 1, 28, 1, -k, k * 2);
+      slashGeo.set(k, g);
+    }
+    return g;
+  };
+  function slashMesh() {
+    const mat = new THREE.ShaderMaterial({
+      uniforms: {
+        uC: { value: new THREE.Color() },
+        uCore: { value: new THREE.Color() },
+        uK: { value: 1 },
+        uArc: { value: 1 },
+      },
+      vertexShader: `varying vec2 vP; void main(){ vP = position.xy; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+      fragmentShader: `uniform vec3 uC; uniform vec3 uCore; uniform float uK; uniform float uArc; varying vec2 vP;
+        void main(){ float r = length(vP); float a = atan(vP.y, vP.x);
+          float edge = smoothstep(0.5, 1.0, r);
+          // Đầu vệt (phía cuối cung) đậm, đuôi nhạt: theo chiều vung.
+          float along = clamp((a + uArc) / (2.0 * uArc), 0.0, 1.0);
+          float alpha = clamp(edge * 1.4, 0.0, 1.0) * (0.35 + 0.65 * along) * uK;
+          vec3 col = mix(uC, uCore, smoothstep(0.82, 0.98, r));
+          gl_FragColor = vec4(col * 1.3, alpha); }`,
+      transparent: true,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+    });
+    const m = new THREE.Mesh(slashGeom(1), mat);
+    m.rotation.x = -Math.PI / 2;
+    const g = new THREE.Group();
+    g.add(m);
+    return { g, m, mat };
+  }
 
   function setupPost() {
     composer?.dispose();
@@ -321,6 +363,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     world.add(buildTerrain(W, F, Q.shadows, Q.soft));
     const P = buildProps(W, F, Q.shadows, (i) => Server.P.chests.includes(i));
     world.add(P.grp);
+    P.grp.traverse((o: any) => o.isMesh && [o.material].flat().forEach(fadeOccluder));
     chests = P.chests;
     lamps = P.lamps;
     lods = P.lods;
@@ -371,6 +414,26 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   let lastT = 0;
   const camTarget = new THREE.Vector3();
   let camInit = false;
+  const fv = new THREE.Vector3(),
+    fsz = new THREE.Vector2();
+  /** Cập nhật vị trí làm mờ vật cản theo nhân vật đang điều khiển. */
+  function updateFade() {
+    const p = GS.G?.p;
+    if (!p || !GS.G.map) return void (FADE.uFadeR.value = 0);
+    gl.getDrawingBufferSize(fsz);
+    const el = lift(p),
+      gy = groundY(p.x, p.y, el.g) + el.air / TS;
+    fv.set(p.x / TS, gy + 0.8, p.y / TS).project(camera);
+    const sx = (fv.x * 0.5 + 0.5) * fsz.x,
+      sy = (fv.y * 0.5 + 0.5) * fsz.y,
+      z = fv.z * 0.5 + 0.5;
+    fv.set(p.x / TS, gy + 1.7, p.y / TS).project(camera);
+    const hy = (fv.y * 0.5 + 0.5) * fsz.y;
+    FADE.uFadeS.value.set(sx, sy);
+    FADE.uFadeZ.value = z;
+    FADE.uFadeR.value = Math.max(40, Math.abs(hy - sy) * 2.2);
+  }
+
   function frame(t: number): boolean {
     if (gl.getContext().isContextLost()) return false;
     const dt = Math.min(0.05, t - lastT || 0.016);
@@ -469,7 +532,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         heroFallback?.dispose();
         heroFallback = null;
         tipHist.length = baseHist.length = 0;
-        VrmActor.load(m.c.id, (m.c.w as WeaponType) ?? "sword", wid).then((a) => {
+        VrmActor.load(m.c.id, (m.c.w as WeaponType) ?? "sword", wid, (m.c as any).look).then((a) => {
           if (key !== heroKey) return a?.dispose();
           hero = a;
           if (a) scene.add(a.obj);
@@ -627,9 +690,21 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         renderables.delete(o);
       }
 
+    // Câu đố, NPC quest mini (S23): mô hình toon. Ký hiệu gợi ý và cửa bí cảnh vẫn chiếu 2D (core/render.ts).
+    s23.sync(
+      G.map,
+      p,
+      Server.P.puz,
+      TS,
+      (x, y) => groundY(x, y, 0),
+      t,
+      (x, y) => Math.abs(x - p.x) < 1100 && Math.abs(y - p.y) < 1100,
+    );
+
     // Mũi tên, đạn phép, vòng, hạt; đèn điểm theo nguyên tố.
     const glow: { x: number; y: number; z: number; c: THREE.Color; i: number }[] = [];
-    let ai = 0,
+    let si = 0,
+      ai = 0,
       oi = 0,
       ri = 0,
       pi = 0;
@@ -700,8 +775,14 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       const k = f.life / f.max,
         gy = groundY(f.x, f.y, 0);
       if (f.k === "dot")
-        addP(f.x / TS, gy + 0.2 + (f.z ?? 0) / TS + (1 - k) * 0.4, f.y / TS, f.col, Math.max(0.5, f.size * k * 0.5));
-      else if (f.k === "pt") addP(f.x / TS, gy + 0.5 + (1 - k) * 0.5, f.y / TS, f.col ?? "#fff", 0.9 * k + 0.4);
+        addP(
+          f.x / TS,
+          gy + 0.2 + (f.z ?? 0) / TS + (1 - k) * 0.4,
+          f.y / TS,
+          f.col,
+          Math.min(1, Math.max(0.35, f.size * k * 0.3)),
+        );
+      else if (f.k === "pt") addP(f.x / TS, gy + 0.5 + (1 - k) * 0.5, f.y / TS, f.col ?? "#fff", 0.5 * k + 0.25);
       else if (f.k === "ring") {
         let r = ringPool[ri];
         if (!r) {
@@ -727,7 +808,27 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         mat.color.set(f.col);
         mat.opacity = k;
         if (k > 0.5) glow.push({ x: f.x / TS, y: gy + 0.6, z: f.y / TS, c: new THREE.Color(f.col), i: 2 * k });
-      } else if (f.k === "slash" || f.k === "arrowRain" || f.k === "meteor") {
+      } else if (f.k === "slash") {
+        let s = slashPool[si];
+        if (!s) {
+          s = slashMesh();
+          slashPool.push(s);
+          fxGroup.add(s.g);
+        }
+        si++;
+        s.g.visible = true;
+        const arc = f.arc ?? 1.1,
+          R = Math.max(0.6, (f.r ?? 60) / TS) * (1.05 - k * 0.2);
+        s.m.geometry = slashGeom(arc);
+        s.mat.uniforms.uArc.value = arc;
+        s.mat.uniforms.uK.value = Math.min(1, k * 1.4);
+        s.mat.uniforms.uC.value.set(f.col ?? "#ffffff");
+        s.mat.uniforms.uCore.value.set(f.core ?? "#ffffff");
+        s.g.position.set(f.x / TS, gy + 0.75 + (f.trail === "heavy" ? -0.15 : 0), f.y / TS);
+        s.g.rotation.set(0, -(f.ang ?? 0), (f.flip ?? 1) * 0.25);
+        s.m.scale.set(R, R * (f.flip ?? 1), 1);
+        glow.push({ x: f.x / TS, y: gy + 0.8, z: f.y / TS, c: new THREE.Color(f.col ?? "#fff"), i: 1.2 * k });
+      } else if (f.k === "arrowRain" || f.k === "meteor") {
         for (let j = 0; j < 8; j++)
           addP(
             f.x / TS + Math.sin(j * 2.1 + f.x) * 0.6 * (1 - k),
@@ -753,16 +854,16 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     const inBurst = p.act?.k === "burst" && G.time - p.act.t0 < 1.3;
     if (m && (inBurst || (p.act?.k === "skill" && G.time - p.act.t0 < 0.7))) {
       const elc = EL[m.c.el];
-      for (let j = 0; j < (inBurst ? 90 : 40); j++) {
+      for (let j = 0; j < (inBurst ? 32 : 14); j++) {
         const a = j * 2.4 + t * (inBurst ? 4 : 2),
-          r = 0.5 + ((j * 37) % 10) / 7,
+          r = 0.9 + ((j * 37) % 10) / 6,
           hy = ((j * 13 + t * 60) % 30) / 14;
         addP(
           pos.x + Math.cos(a) * r,
           pos.y + hy,
           pos.z + Math.sin(a) * r,
           j % 4 ? elc.c2 : "#ffffff",
-          0.8 + (j % 3) * 0.2,
+          0.45 + (j % 3) * 0.12,
         );
       }
       glow.push({ x: pos.x, y: pos.y + 2.6, z: pos.z, c: new THREE.Color(elc.c), i: inBurst ? 1.4 : 0.8 });
@@ -779,6 +880,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     parts.instanceMatrix.needsUpdate = true;
     if (parts.instanceColor) parts.instanceColor.needsUpdate = true;
     for (let i = ri; i < ringPool.length; i++) ringPool[i].visible = false;
+    for (let i = si; i < slashPool.length; i++) slashPool[i].g.visible = false;
     if (night) {
       for (const l of lamps) glow.push({ x: l.x, y: l.y, z: l.z, c: new THREE.Color(l.c), i: 1.4 });
       if (m) glow.push({ x: pos.x, y: pos.y + 1.8, z: pos.z + 0.6, c: new THREE.Color(EL[m.c.el].c), i: 0.35 });
@@ -794,6 +896,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       }
     });
 
+    updateFade();
     if (composer) composer.render();
     else gl.render(scene, camera);
     return true;

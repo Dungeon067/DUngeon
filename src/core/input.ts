@@ -6,6 +6,8 @@ import { $ } from "../core/util";
 import { switchTo } from "../entities/party";
 import { doInteract } from "../modes/world";
 import { dialogNext, dialogOpen } from "../ui/dialog";
+import { storyDialogOpen, storyNext } from "../story/story";
+import { chestRevealOpen, closeChestReveal } from "../ui/chest-reveal";
 import { pause, resume } from "../ui/modal";
 import { ACTIONS, type Action } from "../data/schema";
 import { CONTROLS } from "../data/content";
@@ -54,6 +56,15 @@ export function onMapAction(f: () => void) {
 export function actionDown(a: Action) {
   if (dialogOpen()) {
     if (a === "interact" || a === "attack" || a === "jump") dialogNext();
+    return;
+  }
+  // Màn mở rương: phím xác nhận chỉ đóng màn; phím khác (đổi người, di chuyển...) đóng màn rồi làm tiếp như thường.
+  if (chestRevealOpen()) {
+    closeChestReveal();
+    if (a === "interact" || a === "attack" || a === "jump" || a === "pause") return;
+  }
+  if (storyDialogOpen()) {
+    if (a === "interact" || a === "attack" || a === "jump") storyNext();
     return;
   }
   if (a === "pause") {

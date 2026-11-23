@@ -16,7 +16,10 @@ import { blockedAt } from "../world/collision";
 import { TS, genWorld } from "../world/map";
 import { buildPuzzles, puzzleInteract } from "../world/puzzles";
 import { openMiniDialog } from "../ui/dialog";
+import { lootOf, showChestReveal } from "../ui/chest-reveal";
 import { domainInteract, startDomain } from "./domain";
+import { REGIONS, cellAt, regionEffectText } from "../world/regions";
+import { startStory, storySave, storyTick } from "../story/story";
 
 export function startWorld() {
   if (!GS.WORLD) GS.WORLD = genWorld();
@@ -52,10 +55,25 @@ export function startWorld() {
   });
   enterPlay();
   showBanner("Đảo Lạc");
+  // Người chơi mới: vào thẳng Mở đầu. Người cũ: chạm dòng mục tiêu để bắt đầu khi muốn.
+  if (!storySave().done.length && !Server.P.chests.length && !/[?&]e2e/.test(location.search))
+    setTimeout(() => startStory(), 1200);
 }
+let lastRegion = -1;
 export function worldLogic(dt: number) {
+  storyTick();
   const p = GS.G.p,
     W = GS.G.map;
+  // Vào vùng mới: hiện tên vùng và hiệu ứng (S12).
+  const rg = cellAt(W, p.x, p.y).r;
+  if (rg !== lastRegion && rg > 0) {
+    if (lastRegion >= 0) {
+      showBanner(REGIONS[rg]!.name);
+      const fx = regionEffectText(rg);
+      if (fx.length) toast(`${REGIONS[rg]!.name}: ${fx.join(" · ")}`);
+    }
+    lastRegion = rg;
+  }
   let best = null,
     bd = 60;
   const check = (x: number, y: number, kind: string, i: number, label: string) => {
@@ -102,7 +120,8 @@ export function doInteract() {
   } else if (it.kind === "chest") {
     const r = Server.req("openChest", { idx: it.i });
     if (r.ok) {
-      rollDrop("chest");
+      const extra = rollDrop("chest", false);
+      showChestReveal("thuong", lootOf(r.data, extra));
       sfx("chest");
       fxBurst(it.x, it.y - 14, "#f0c060", 30, 240, 4);
       fxRing(it.x, it.y - 10, 60, "#f0c060", 0.5, 6);

@@ -1,3 +1,4 @@
+import { lootOf, showChestReveal } from "../ui/chest-reveal";
 import { GS } from "../core/state";
 import { sfx } from "../core/audio";
 import { dist, fmt } from "../core/util";
@@ -86,6 +87,7 @@ function onSolved(st: PState) {
   fxBurst(st.x, st.y - 20, "#ffe27a", 36, 260, 4);
   fxText(st.x, st.y - 70, `Đã giải: ${st.p.ten}`, "#ffe27a", 18);
   if (r.data.gems) {
+    showChestReveal(st.p.ruong ?? "thuong", lootOf(r.data));
     fxText(st.x, st.y - 50, `+${r.data.gems} Đá Sao · +${fmt(r.data.coin)} Xu`, "#7fc8ff", 14);
     lootFeed("gems", "Đá Sao", r.data.gems, "da-sao", "#7fc8ff");
     lootFeed("coin", "Xu", r.data.coin, "xu", "#f0c060");

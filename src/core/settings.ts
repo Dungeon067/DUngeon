@@ -20,7 +20,7 @@ export interface Settings {
   music: number;
   sfx: number;
   quality: Quality;
-  /** Lớp vẽ thế giới: tự chọn (3D nếu có WebGL2), 3D, hoặc Canvas 2D cũ. */
+  /** Lớp vẽ thế giới: tự chọn (3D nếu máy đủ mạnh, không thì 2D), 3D, hoặc Canvas 2D cũ. */
   renderer: RendererPref;
   shake: boolean;
   vibrate: boolean;

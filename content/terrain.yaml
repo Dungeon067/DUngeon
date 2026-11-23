@@ -31,13 +31,71 @@ terrains:
   - id: dat
     name: Đường đất
 
-# Bộ hiệu ứng của vùng: áp lên toàn vùng (all) và riêng từng loại địa hình (terrain).
-# Hiệu ứng vùng nhân với hiệu ứng địa hình. Đảo Lạc là vùng gốc nên chưa có hiệu ứng.
+# Bộ hiệu ứng của vùng: áp lên toàn vùng (effects) và riêng từng loại địa hình (terrain).
+# Hiệu ứng vùng nhân với hiệu ứng địa hình. Chỉ lệch nhẹ, tối đa khoảng ±10%.
+# seed: tâm vùng tính theo ô, lệch so với tâm đảo [dx, dy]; mỗi ô đất thuộc vùng có tâm gần nhất.
+# Vùng 0 (dao-lac) là vùng gốc: biển và chỗ không thuộc vùng nào.
 regions:
   - id: dao-lac
     name: Đảo Lạc
     effects: {}
     terrain: {}
+  - id: pho-van-dang
+    name: Phố Vạn Đăng
+    desc: Phố đèn lồng thắp suốt đêm. Lửa ở đây cháy to hơn.
+    seed: [0, 0]
+    effects: { fireDmg: 1.1 }
+    terrain: { dat: { moveSpeed: 1.05 } }
+  - id: bai-sao-roi
+    name: Bãi Sao Rơi
+    desc: Cát đen lấp lánh vụn sao. Cát lún chân nhưng gió biển giúp hồi sức.
+    seed: [0, 30]
+    effects: { staminaRegen: 1.1, iceDmg: 0.95 }
+    terrain: { cat: { moveSpeed: 0.95 } }
+  - id: lang-van-luoi
+    name: Làng Vạn Lưới
+    desc: Làng chài ven vịnh. Nước nghe lời người quen biển.
+    seed: [-30, 6]
+    effects: { waterDmg: 1.1, dashStamina: 0.9 }
+    terrain: {}
+  - id: ho-guong
+    name: Hồ Gương
+    desc: Mặt hồ phẳng như gương, hơi lạnh bốc lên mỗi sáng.
+    seed: [28, 0]
+    effects: { waterDmg: 1.08, iceDmg: 1.08, fireDmg: 0.92 }
+    terrain: {}
+  - id: rung-truc-may
+    name: Rừng Trúc Mây
+    desc: Trúc cao đến tận mây, gió lùa không ngớt. Rừng rậm nên đi chậm.
+    seed: [20, 24]
+    effects: { windDmg: 1.1, moveSpeed: 0.96 }
+    terrain: {}
+  - id: mo-ngoc
+    name: Mỏ Ngọc
+    desc: Đường hầm và vách đá ngọc. Đất đá vững chân nhưng không khí ngột ngạt.
+    seed: [-24, -22]
+    effects: { earthDmg: 1.1, staminaRegen: 0.92 }
+    terrain: { da: { moveSpeed: 1.05 } }
+  - id: trai-bac
+    name: Trại Bắc
+    desc: Trại lính canh cửa hang phía bắc. Trời hay nổi giông.
+    seed: [6, -32]
+    effects: { boltDmg: 1.1, waterDmg: 0.95 }
+    terrain: {}
 
 # Các hệ số hiệu ứng được phép (S12 thêm mục mới thì khai báo ở đây trước).
-effectKeys: [moveSpeed, staminaRegen, dashStamina, jumpHeight, friction, elementDmg]
+effectKeys:
+  [
+    moveSpeed,
+    staminaRegen,
+    dashStamina,
+    jumpHeight,
+    friction,
+    elementDmg,
+    fireDmg,
+    waterDmg,
+    windDmg,
+    boltDmg,
+    earthDmg,
+    iceDmg,
+  ]

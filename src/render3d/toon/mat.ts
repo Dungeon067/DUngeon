@@ -68,3 +68,33 @@ export function noise2(x: number, y: number, s = 0): number {
     d = hash2(xi + 1, yi + 1, s);
   return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
 }
+
+/** Vị trí nhân vật trên màn hình (px buffer) và độ sâu; vật đứng trước nhân vật trong bán kính này bị làm thưa (dither). */
+export const FADE = {
+  uFadeS: { value: new THREE.Vector2(-1e5, -1e5) },
+  uFadeZ: { value: 0 },
+  uFadeR: { value: 0 },
+};
+
+/** Gắn hiệu ứng làm mờ vật cản giữa camera và nhân vật vào vật liệu. */
+export function fadeOccluder(m: THREE.Material): void {
+  if ((m as any).userData?.fade) return;
+  m.userData.fade = true;
+  const prev = m.onBeforeCompile;
+  m.onBeforeCompile = (sh, r) => {
+    prev?.call(m, sh, r);
+    Object.assign(sh.uniforms, FADE);
+    sh.fragmentShader = sh.fragmentShader.replace(
+      "void main() {",
+      `uniform vec2 uFadeS; uniform float uFadeZ; uniform float uFadeR;
+void main() {
+  if (uFadeR > 0.0 && gl_FragCoord.z < uFadeZ) {
+    float k = 1.0 - smoothstep(uFadeR * 0.55, uFadeR, distance(gl_FragCoord.xy, uFadeS));
+    float n = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715))));
+    if (n < k * 0.8) discard;
+  }`,
+    );
+  };
+  m.customProgramCacheKey = () => "fade";
+  m.needsUpdate = true;
+}
