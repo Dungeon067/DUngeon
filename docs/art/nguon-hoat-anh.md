@@ -58,3 +58,13 @@ Mỗi vũ khí giảm còn khoảng 3k tam giác; vật liệu thủ tục đư�
 | @pixiv/three-vrm-animation                               | 3.5.5     | MIT (đã cài, dành cho file .vrma về sau) |
 | @gltf-transform/core, functions (chỉ dùng trong công cụ) | 4.1.1     | MIT                                      |
 | Blender (chỉ dùng trong công cụ)                         | 4.2 LTS   | GPL (không phân phối cùng game)          |
+
+## Clip khung hóa tay (không lấy từ thư viện)
+
+Các đòn sau được khung hóa bằng code trên xương humanoid VRM (`tools/anim/authored.ts`, công cụ `tools/anim/author.ts`), thay cho bản lật/ghép clip UAL trước đây:
+
+- Kiếm: `sword2` (chém ngang phải sang trái), `sword3` (nhảy bổ dọc). `sword1` vẫn là `Sword_Attack` của UAL.
+- Đại kiếm: `great1` (bổ chéo qua vai), `great2` (xoay người quét ngang), `great3` (hất lên rồi đập xuống).
+
+Chạy `pnpm anim:author` sau mỗi lần chạy `tools/anim/extract.ts` (extract ghi đè `humanoid.json`).
+Xem trước: `pnpm dev` rồi mở `/tools/anim/preview.html?w=great&clip=great2`.

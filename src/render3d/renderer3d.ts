@@ -24,6 +24,7 @@ import { MODELS, VrmActor } from "./toon/actor";
 import { FADE, fadeOccluder, toonMat } from "./toon/mat";
 import { animateMonster, buildMonster, type MonsterView } from "./toon/monsters";
 import { buildSky } from "./toon/sky";
+import { createS23Layer } from "./toon/s23";
 import { LV, buildGrass, buildHeight, buildProps, buildTerrain, buildWater, type HeightField } from "./toon/terrain";
 
 /** Thiết lập theo mức đồ họa. */
@@ -220,6 +221,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   // Quái: mô hình toon tạm. Vật thể câu đố: renderable (bản 2D dựng thành tấm phẳng nếu chưa có bản 3D).
   const monsters = new Map<any, MonsterView>();
   const renderables = new Map<any, { o: any; auto?: CanvasSprite }>();
+  const s23 = createS23Layer(scene);
 
   // Hạt nguyên tố.
   const MAXP = 700;
@@ -648,6 +650,17 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         e.auto?.dispose();
         renderables.delete(o);
       }
+
+    // Câu đố, NPC quest mini (S23): mô hình toon. Ký hiệu gợi ý và cửa bí cảnh vẫn chiếu 2D (core/render.ts).
+    s23.sync(
+      G.map,
+      p,
+      Server.P.puz,
+      TS,
+      (x, y) => groundY(x, y, 0),
+      t,
+      (x, y) => Math.abs(x - p.x) < 1100 && Math.abs(y - p.y) < 1100,
+    );
 
     // Mũi tên, đạn phép, vòng, hạt; đèn điểm theo nguyên tố.
     const glow: { x: number; y: number; z: number; c: THREE.Color; i: number }[] = [];

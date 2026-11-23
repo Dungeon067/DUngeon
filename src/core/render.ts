@@ -408,7 +408,7 @@ function drawPuzzles3d(r3: WorldRenderer, tm: number) {
   const dr: Parameters<typeof queuePuzzles>[0] = [],
     hw = GS.VW / GS.ZOOM,
     hh = GS.VH / GS.ZOOM;
-  queuePuzzles(dr, (x, y) => Math.abs(x - GS.G.cam.x) < hw && Math.abs(y - GS.G.cam.y) < hh * 1.4, tm);
+  queuePuzzles(dr, (x, y) => Math.abs(x - GS.G.cam.x) < hw && Math.abs(y - GS.G.cam.y) < hh * 1.4, tm, true);
   dr.sort((a, b) => a.y - b.y);
   for (const d of dr) {
     if (!d.at) continue;

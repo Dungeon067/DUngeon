@@ -383,7 +383,13 @@ function drawGate(g: Portal, tm: number) {
 }
 
 /** Đẩy mọi vật thể S23 vào hàng đợi vẽ theo chiều sâu. */
-export function queuePuzzles(dr: Q, vis: (x: number, y: number) => boolean, tm: number) {
+export function queuePuzzles(
+  dr: Q,
+  vis: (x: number, y: number) => boolean,
+  tm: number,
+  /** Renderer 3D đã dựng mô hình cho vật thể và NPC: chỉ vẽ ký hiệu gợi ý. */
+  only2dOverlay = false,
+) {
   const W = GS.G.map,
     p = GS.G.p,
     R = PUZZLES.banKinhKyHieu;
@@ -395,12 +401,12 @@ export function queuePuzzles(dr: Q, vis: (x: number, y: number) => boolean, tm: 
         at: [o.x, o.y],
         y: o.y + (o.def.chan || o.loai === "cau" || o.loai === "bangMat" || o.loai === "luongGio" ? -30 : 0),
         f: () => {
-          drawObj(o, tm);
+          if (!only2dOverlay) drawObj(o, tm);
           if (!o.done && d < R) glyph(o, tm, 1 - d / R);
         },
       });
     }
-  for (const n of (W.npcs ?? []) as Npc[])
+  for (const n of only2dOverlay ? [] : ((W.npcs ?? []) as Npc[]))
     if (vis(n.x, n.y)) dr.push({ at: [n.x, n.y], y: n.y, f: () => drawNpc(n, tm) });
   for (const g of (W.portals ?? []) as Portal[])
     if (vis(g.x, g.y)) dr.push({ at: [g.x, g.y], y: g.y, f: () => drawGate(g, tm) });
