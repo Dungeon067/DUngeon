@@ -19,7 +19,7 @@ function withContent(o: unknown) {
   const e = withWeapons(o, WEAPONS) as any;
   const edited: any[] = (o as any)?.thietKe?.vuKhi?.danhSach ?? [];
   for (const w of e?.thietKe?.vuKhi?.danhSach ?? []) {
-    const p = edited.find((x) => x?.id === w.id);
+    const p = edited.find((x) => x?.id === w.id && x.r === w.r && x.nguon === w.nguon && x.loai === w.loai);
     if (typeof p?.tanCong === "number") w.tanCong = p.tanCong;
     if (typeof p?.phu?.giaTri === "number") w.phu.giaTri = p.phu.giaTri;
     if (typeof p?.biDong?.satThuong === "number") w.biDong.satThuong = p.biDong.satThuong;

@@ -35,6 +35,21 @@ describe("Bản chỉnh kinh tế từ Admin", () => {
     expect(reloaded.thietKe.vuKhi.danhSach.find((x) => x.id === "thien-loi-pha-tran")!.tanCong).toBe(0.5);
   });
 
+  it("vũ khí cũ trùng id nhưng khác độ hiếm hoặc nguồn thì lấy chỉ số mới", async () => {
+    const { ECON_BASE, WEAPONS } = await load();
+    const old = structuredClone(ECON_BASE) as any;
+    const lim = old.thietKe.vuKhi.danhSach.find((x: any) => x.id === "thuong-go-lim");
+    Object.assign(lim, { r: 4, nguon: "loRen", tanCong: 0.9 });
+    const hong = old.thietKe.vuKhi.danhSach.find((x: any) => x.id === "hong-vu-truong-ca");
+    Object.assign(hong, { nguon: "gioiHan", tanCong: 0.9 });
+    localStorage.setItem(KEY, JSON.stringify(old));
+    const { ECON } = await load();
+    for (const id of ["thuong-go-lim", "hong-vu-truong-ca"])
+      expect(ECON.thietKe.vuKhi.danhSach.find((x) => x.id === id)!.tanCong).toBe(
+        WEAPONS.danhSach.find((x) => x.id === id)!.tanCong,
+      );
+  });
+
   it("trình duyệt chặn lưu trữ thì vẫn khởi động bằng file gốc", async () => {
     const spy = vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
       throw new DOMException("blocked", "SecurityError");
