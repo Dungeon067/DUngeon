@@ -1,0 +1,5 @@
+{
+  "src": "VRoid export (havy.vroid)",
+  "reshape": "python tools/vrm/reshape_face.py havy_vroid_raw.vrm havy_vroid.vrm short=0.15 p=2.2",
+  "short": 0.15, "p": 2.2, "alpha": 0.75, "cheek": 0.04, "back": 0.003
+}
