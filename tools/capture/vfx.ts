@@ -97,7 +97,6 @@ async function main() {
         await page.screenshot({ path: join(dir, `${String(f).padStart(5, "0")}.jpg`), type: "jpeg", quality: 92 });
       }
       const mp4 = `${dir}.mp4`;
-      const label = `${s.ten}${slow ? " - chậm 0,5x" : ""}`.replace(/:/g, "\\:");
       execFileSync("ffmpeg", [
         "-y",
         "-loglevel",
@@ -106,8 +105,6 @@ async function main() {
         "60",
         "-i",
         join(dir, "%05d.jpg"),
-        "-vf",
-        `drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='${label}':x=24:y=H-56:fontsize=30:fontcolor=white:borderw=3:bordercolor=black@0.7`,
         "-c:v",
         "libx264",
         "-pix_fmt",

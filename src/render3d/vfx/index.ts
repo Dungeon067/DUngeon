@@ -57,14 +57,14 @@ export function paintHero(G: any, m: any, X: Vfx) {
 
 /** Tia va chạm theo nguyên tố: [hình mảnh, màu lõi, màu đuôi]. */
 const HIT: Record<string, [Cell, Cell, string, string]> = {
-  ice: ["manhBang", "hoaTuyet", "#ffffff", "#5fb8ff"],
+  ice: ["manhBang", "hoaTuyet", "#e4f6ff", "#5fb8ff"],
   water: ["giotNuoc", "sao4", "#e8fbff", "#2f8cff"],
   fire: ["tanLua", "canhMai", "#fff2c0", "#ff5a2a"],
   wind: ["soiGio", "longVu", "#f0fff8", "#4fe0b0"],
   bolt: ["tiaSet", "sao4", "#fbf0ff", "#b36bff"],
   earth: ["manhVo", "bui", "#fff0c8", "#c8902a"],
   wood: ["canhMai", "sao6", "#f4ffe0", "#6fcf4a"],
-  phys: ["manhVo", "sao4", "#ffffff", "#c8c8d8"],
+  phys: ["manhVo", "sao4", "#eef0ff", "#c8c8d8"],
 };
 /** Trúng đòn: tia lửa kéo dài, mảnh vỡ có trọng lực, chớp sao, vòng xung nhỏ. Mạnh yếu theo hệ số đòn. */
 export function paintHit(f: any, X: Vfx) {
@@ -124,15 +124,15 @@ export function paintHit(f: any, X: Vfx) {
       x,
       y,
       z,
-      life: 0.16,
-      size: 1.1 * pw,
-      size1: 0.3,
-      col: "#ffffff",
+      life: 0.12,
+      size: 0.6 * pw,
+      size1: 0.2,
+      col: h0,
       col1: h1,
       rot: Math.random(),
     }));
   }
   if (f.w === "cat" && f.normal) catBurst(f, X);
   X.shock(x, y - 0.75, z, 0.9 * pw, a, [h0, h1, h1], 0.8);
-  if (a < 0.4) X.flash(x, y, z, h1, (1 - a / 0.4) * 1.5 * pw, 0.9);
+  if (a < 0.4) X.flash(x, y, z, h1, (1 - a / 0.4) * 0.8 * pw, 0.8);
 }

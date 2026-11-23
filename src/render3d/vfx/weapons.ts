@@ -195,7 +195,7 @@ export class Catalyst {
     g.scale.setScalar((0.25 + 0.75 * appear) * 1.7);
     this.book.pose(V.t, this.el, open, this.flip, glow, dis);
     // Vòng phù văn quanh sách, xoay nhẹ; nạp trọng kích thì to hơn, nhanh hơn, hiện thêm vòng chữ.
-    const ringA = open * (0.35 + this.chargeK * 0.6) * (1 - dis);
+    const ringA = open * (0.45 + this.chargeK * 0.9) * (1 - dis);
     const ring = X.use("cat-ring", SH.decal, { map: runeTex(RUNE[this.el] ?? "ice"), side: THREE.DoubleSide });
     if (ring) {
       ring.m.position.copy(this.pos);
@@ -205,6 +205,7 @@ export class Catalyst {
       ring.u.uA.value = ringA;
       ring.u.uRot.value = V.t * (0.5 + this.chargeK * 3);
       ring.u.uAge.value = 0.3;
+      ring.u.uGlow.value = 1 + this.chargeK * 0.8;
     }
     V.glow(this.pos.x, this.pos.y + 0.2, this.pos.z, cols[1], (0.5 + glow) * open);
     // Rút ra / cất đi: hạt sáng xoáy vào (rút) hoặc tản ra (cất).
@@ -280,7 +281,7 @@ export class Catalyst {
         };
       });
       // Vòng chữ quanh sách: các phù văn nhỏ xoay quanh theo vòng tròn đứng.
-      const n = 10;
+      const n = 12;
       for (let i = 0; i < n; i++) {
         const a = V.t * 2.5 + (i / n) * Math.PI * 2;
         const e = X.use("cat-letter", SH.decal, {
@@ -295,14 +296,15 @@ export class Catalyst {
           this.pos.z + Math.cos(a) * 0.62 * lz,
         );
         e.m.rotation.set(Math.PI / 2, yaw, a, "YXZ");
-        e.m.scale.setScalar(0.12);
+        e.m.scale.setScalar(0.2);
         setCols(e.u, ...cols);
-        e.u.uA.value = this.chargeK;
+        e.u.uA.value = Math.min(1, this.chargeK * 1.6);
+        e.u.uGlow.value = 1.6;
         e.u.uRot.value = i;
       }
     }
     if (this.wasCharging && !charging && p.charge?.done !== false) {
-      X.flash(this.pos.x, this.pos.y + 0.1, this.pos.z, cols[1], 6, 2.2);
+      X.flash(this.pos.x, this.pos.y + 0.1, this.pos.z, cols[1], 4, 2);
       X.shock(h.x, h.y, h.z, 3, 0.05, cols, 1);
       this.flip = 0;
     }
@@ -313,16 +315,16 @@ export class Catalyst {
   muzzle(X: Vfx) {
     if (this.out < 0.5) return;
     const cols = colsOf(this.el);
-    X.flash(this.pos.x, this.pos.y + 0.08, this.pos.z, cols[1], 3.2, 1.2);
+    X.flash(this.pos.x, this.pos.y + 0.08, this.pos.z, cols[1], 2.2, 1.1);
     X.emit(1, () => ({
       cell: "sao4",
       x: this.pos.x,
       y: this.pos.y + 0.1,
       z: this.pos.z,
       life: 0.14,
-      size: 0.9,
-      size1: 0.2,
-      col: "#ffffff",
+      size: 0.6,
+      size1: 0.15,
+      col: cols[1],
       col1: cols[1],
       rot: Math.random(),
     }));
@@ -436,8 +438,8 @@ export function catProj(pr: any, X: Vfx) {
   if (core) {
     core.m.position.set(x, y, z);
     core.m.scale.setScalar(0.09 * s);
-    setCols(core.u, "#ffffff", "#ffffff", cols[1]);
-    core.u.uGlow.value = 1.6;
+    setCols(core.u, cols[1], cols[1], cols[2]);
+    core.u.uGlow.value = 1.1;
   }
   const shell = X.use("cp-shell", SH.ball, { fres: 1.8, fresAlpha: true });
   if (shell) {
@@ -612,5 +614,5 @@ export function catBurst(f: any, X: Vfx) {
       };
     });
   }
-  if (a < 0.35) X.flash(x, y, z, cols[1], (1 - a / 0.35) * 3, 1.2);
+  if (a < 0.35) X.flash(x, y, z, cols[1], (1 - a / 0.35) * 1.6, 1.1);
 }

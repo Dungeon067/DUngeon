@@ -26,7 +26,7 @@ function lantern(X: Vfx, x: number, y: number, z: number, s: number, lit: number
     setCols(body.u, ...PAPER);
     body.u.uA.value = al;
     body.u.uNs.value.set(12, 1);
-    body.u.uNA.value = 0.35;
+    body.u.uNA.value = 0.2;
     body.u.uAge.value = 0.55;
     body.u.uGlow.value = 0.35 + lit * 0.35;
   }
@@ -36,7 +36,7 @@ function lantern(X: Vfx, x: number, y: number, z: number, s: number, lit: number
     shell.m.scale.set(0.33 * s, 0.39 * s, 0.33 * s);
     setCols(shell.u, ...FIRE);
     shell.u.uAge.value = 0.6;
-    shell.u.uA.value = al * (0.08 + lit * 0.12);
+    shell.u.uA.value = al * (0.04 + lit * 0.06);
     shell.u.uNs.value.set(6, 6);
     shell.u.uScroll.value.set(0, 0.6);
   }
@@ -49,6 +49,18 @@ function lantern(X: Vfx, x: number, y: number, z: number, s: number, lit: number
     r.u.uAge.value = 0.5;
     r.u.uA.value = al;
     r.u.uNA.value = 0;
+  }
+  // Nan giấy: bốn vòng đứng quanh thân đèn.
+  for (let i = 0; i < 4; i++) {
+    const rb = X.use("ml-rib", () => SH.shock(0.93), { add: false, side: THREE.DoubleSide });
+    if (!rb) break;
+    rb.m.position.set(x, y, z);
+    rb.m.rotation.set(Math.PI / 2, spin + (i * Math.PI) / 4, 0, "YXZ");
+    rb.m.scale.set(0.305 * s, 1, 0.365 * s);
+    setCols(rb.u, "#d8642a", "#8a1c14", "#4a0c08");
+    rb.u.uAge.value = 0.5;
+    rb.u.uA.value = al;
+    rb.u.uNA.value = 0;
   }
   const f = X.use("ml-core", SH.flame, {});
   if (f) {
@@ -245,16 +257,16 @@ export const MAILINH: Painters = {
         z = f.y / V.TS,
         gy = V.ground(f.x, f.y),
         R = (f.r ?? 90) / V.TS,
-        hy = gy + 2.6;
+        hy = gy + 1.7;
       plum(X, x, hy, z, 0.9 * ease(a * 2.5), a * 2.5, a * 2, (1 - a) * 0.9, 0, Math.max(0, a - 0.5) * 2);
       X.rune("fire", x, gy, z, R, a, PLUM, (1 - a) * 0.8, 0.6);
       X.shock(x, gy, z, R * 1.2, a, FIRE, 0.5);
       if (X.first(f)) {
-        X.flash(x, hy, z, PLUM[1], 3, 1.4);
+        X.flash(x, hy, z, PLUM[1], 2, 1.3);
         X.emit(36, (i) => {
           const th = Math.acos(1 - 2 * Math.random()),
             ph = Math.random() * TAU,
-            s = 3.2 + Math.random() * 1.2;
+            s = 2.4 + Math.random() * 0.9;
           return {
             cell: i % 4 ? "sao4" : "canhMai",
             x,
@@ -268,7 +280,7 @@ export const MAILINH: Painters = {
             life: 1,
             size: 0.22,
             size1: 0.05,
-            col: i % 2 ? PLUM[0] : "#ffffff",
+            col: i % 2 ? PLUM[0] : FIRE[0],
             col1: i % 3 ? FIRE[1] : "#ff5aa0",
             spin: 4,
             stretch: 2,

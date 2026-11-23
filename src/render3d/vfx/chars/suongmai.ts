@@ -240,7 +240,7 @@ export const SUONGMAI: Painters = {
         R = (f.r ?? 220) / V.TS,
         sweep = ease(a * 2.2) * 1.3;
       for (let i = 0; i < 3; i++) {
-        const r = R * (0.55 + ease(a * 2) * 0.45) * (1 - i * 0.12);
+        const r = R * 0.8 * (0.55 + ease(a * 2) * 0.45) * (1 - i * 0.12);
         crescent(
           X,
           `sm-song${i}`,
@@ -253,7 +253,7 @@ export const SUONGMAI: Painters = {
           3,
           0.7 - i * 0.15,
           sweep - i * 0.08,
-          (1 - a) * (1 - i * 0.2),
+          Math.min(1, (1 - a) * 2) * (1 - i * 0.2),
           Math.max(0, a - 0.5) * 2,
         );
       }
@@ -261,11 +261,11 @@ export const SUONGMAI: Painters = {
       X.shock(x, gy, z, R * 1.1, a, SILVER, 0.9, 0.85);
       if (X.every(f, 0.03) && a < 0.6) {
         const t = yaw + (Math.random() - 0.5) * 2.9,
-          r = R * (0.55 + ease(a * 2) * 0.45);
+          r = R * 0.8 * (0.55 + ease(a * 2) * 0.45);
         droplets(X, x + Math.sin(t) * r, gy + 1.4, z + Math.cos(t) * r, 3, 1.2);
       }
       if (X.first(f)) {
-        X.flash(x, gy + 1, z, WATER[1], 3, 1.6);
+        X.flash(x, gy + 1, z, WATER[1], 2, 1.4);
         mist(X, x, gy, z, 16, R * 0.8);
       }
     },

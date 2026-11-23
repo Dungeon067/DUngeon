@@ -183,8 +183,8 @@ export const BACHVU: Painters = {
         c = cols(fl.hutEl),
         born = ease(a * fl.max * 1.5),
         out = Math.min(1, (fl.life ?? 1) * 2);
-      funnel(X, x, gy, z, R * 0.8 * born, 3.6 * born, 5, born, out * 0.8, c);
-      blades(X, x, gy, z, R * 0.9, 3, 0.75 * out, c, 0.3);
+      funnel(X, x, gy, z, R * 0.8 * born, 3.6 * born, 4, born, out * 0.55, c);
+      blades(X, x, gy, z, R * 0.9, 3, 0.55 * out, c, 0.3);
       X.rune("wind", x, gy, z, R * 1.05, Math.min(0.5, a * 4), c, 0.8 * out, -0.8);
       X.shock(x, gy, z, R * 1.2, (V.t * 1.5) % 1, c, 0.5 * out);
       if (X.every(fl, 0.03)) suck(X, x, gy, z, R * 1.1, 3, c);
@@ -202,7 +202,7 @@ export const BACHVU: Painters = {
           out * 0.9,
         );
       }
-      if (X.first(fl)) X.flash(x, gy + 1.2, z, c[1], 3, 1.6);
+      if (X.first(fl)) X.flash(x, gy + 1.2, z, c[1], 2, 1.4);
       V.glow(x, gy + 1.4, z, c[1], 1.4 * out);
     },
   },

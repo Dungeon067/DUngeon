@@ -56,8 +56,11 @@ export function hitB(e: any, b: any, c: Ctx, mult = b.m, o: any = {}) {
   return d;
 }
 /** Hiệu ứng 3D riêng của chiêu (vẽ ở src/render3d/kit-fx.ts). */
+/** Thời lượng hiển thị riêng của một số hiệu ứng (chỉ phần vẽ). */
+const FX_LIFE: Record<string, number> = { songBac: 1.4 };
 export function kfx(id: string | undefined, c: Ctx, x: number, y: number, r: number, life = 0.6, extra: any = {}) {
   if (!id) return;
+  life = FX_LIFE[id] ?? life;
   const K = KITS[c.m.c.id];
   GS.G.fx.push({
     k: "kfx",
