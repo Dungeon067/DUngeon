@@ -1,0 +1,9 @@
+{
+  "reshape": "python tools/vrm/reshape_face.py bachvu_raw.vrm bachvu_vroid.vrm short=0.12 p=2.4 alpha=0.65 cheek=0.02",
+  "blush": "python tools/vrm/paint_blush.py textures/bachvu_face_blush.png size=1024 a=0.28 u=0.365 rx=0.055 ry=0.028 v=0.65 skin=<texture da mat goc>",
+  "short": 0.12,
+  "p": 2.4,
+  "alpha": 0.65,
+  "cheek": 0.02,
+  "back": 0.003
+}
