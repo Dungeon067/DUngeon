@@ -246,10 +246,12 @@ Chiến Lực vẫn theo công thức `game.chienLuc` của `economy.yaml`. Bả
 
 ## 10. Hình ảnh
 
-Hướng mỹ thuật (duyệt lần 2): **trang sức tinh xảo**, ngang hệ thánh di vật của các game nhập vai gacha lớn, mọi thiết kế tự dựng.
+Hướng mỹ thuật (duyệt lần 3): **trang sức kiểu hoạt hình**, hợp game toon anime, mọi thiết kế tự dựng.
 
 - **Vật thể quen của thể loại**, dáng tự thiết kế: hoa cài, lông vũ, bình cát, chén chân cao, vành miện.
-- **Chất liệu PBR thật** (Cycles, không toon): kim loại chạm trổ nhiều lớp (dây xoắn, hoa văn cuộn chữ S, viền hạt kê), đá cắt giác trong suốt có tán sắc màng mỏng, men màu phủ bóng, ngọc trai óng, pha lê băng, giấy dó thắp sáng, dây và tua vải.
+- **Shading hoạt hình** (`tools/blender/bao-an/toon.py`, Cycles): mỗi vật liệu phân 2–3 tông theo hướng sáng, chuyển tông bằng gradient vẽ tay, đốm highlight sắc, rim sáng một bên, viền tối mảnh quanh silhouette (Freestyle, bản icon viền dày hơn). Không dùng PBR thật.
+- **Chất liệu vẽ:** kim loại có dải phản chiếu cách điệu (tối giữa, sáng trên), đá cắt giác mỗi mặt một tông rõ kèm lấp lánh, men màu tươi, ngọc trai, pha lê trong (Chén Ngọc Tôi Kiếm), giấy dó thắp sáng, tua vải.
+- **Khối gọn, chi tiết to:** ít vòng cuộn, hạt và đá hơn bản trang sức, dây và hạt to hơn để đọc rõ ở icon 128.
 - **Mảnh sao trên mọi món:** một ngôi sao năm cánh cắt giác, lõi sáng bên trong, viền kim loại, hạt ở mỗi đỉnh, ánh lấp lánh. Đây là điểm nhận ra hệ Mảnh Sao.
 - **Ngôn ngữ thiết kế riêng cho từng vì sao** (`tools/blender/bao-an/sets.py`): bảng màu, kim loại, đá, motif. 5 món cùng vì sao dùng chung motif nên nhìn là biết cùng bộ.
 
@@ -259,8 +261,8 @@ Hướng mỹ thuật (duyệt lần 2): **trang sức tinh xảo**, ngang hệ 
 | Sao Lan Tuyết | Bạc, vàng trắng                                                                                 | Men trắng chuyển tím lan, pha lê băng, ngọc trai, lam ngọc | Hoa lan tuyết, gai băng, bông tuyết, chuỗi ngọc trai, cát tuyết |
 | 6 bộ còn lại  | Dựng ở Mốc 2 theo cùng khung: muối kết tinh, đồng trống, giấy diều, đá sét, men gạch, bạc trăng |                                                            |                                                                 |
 
-- Góc nhìn 3/4, đèn studio S24 thêm rim light theo màu vì sao. Ảnh lớn 1024 cho màn chi tiết; icon 256/128 trong khung độ hiếm S24 (3★ xanh, 4★ tím, 5★ vàng) bằng `tools/blender/weapons/hau-ky.sh`.
-- Dựng hình: `tools/blender/bao-an/render.py` (5 ô), khối trang sức dùng chung: `tools/blender/bao-an/jewel.py`. Ảnh nguồn ở `media/bao-an/`, ảnh game ở `public/bao-an/`.
+- Góc nhìn 3/4 như ảnh S24, rim theo màu vì sao. Ảnh lớn 1024 cho màn chi tiết; icon 256/128 trong khung độ hiếm S24 (3★ xanh, 4★ tím, 5★ vàng) bằng `tools/blender/weapons/hau-ky.sh`.
+- Dựng hình: `tools/blender/bao-an/render.py` (5 ô), khối trang sức dùng chung: `tools/blender/bao-an/jewel.py`, vật liệu hoạt hình: `tools/blender/bao-an/toon.py` (`--pbr` để render lại bản PBR cũ). Ảnh nguồn ở `media/bao-an/`, ảnh game ở `public/bao-an/`.
 - Phong cách fantasy phi văn hóa: không biểu tượng tôn giáo, không chép món cụ thể của game khác.
 
 ## 11. Duyệt
