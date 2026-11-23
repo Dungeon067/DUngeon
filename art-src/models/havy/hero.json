@@ -27,5 +27,13 @@
   },
   "post": "blender -b --python tools/vrm/post.py -- havy_hero_vroid.vrm post.vrm post.blend post_hero.json",
   "acc": "blender -b --python tools/vrm/hero_acc.py -- post.vrm acc.vrm hero_acc.json",
-  "cloth": "blender -b --python tools/vrm/cloth.py -- acc.vrm havy_hero.vrm --shorts '#272838' --blend havy_hero.blend"
+  "cloth": "blender -b --python tools/vrm/cloth.py -- acc.vrm havy_hero.vrm --shorts '#272838' --blend havy_hero.blend",
+  "hero2": {
+    "note": "Bản làm lại sau góp ý 'giống NPC': 7,4 đầu, đáy chậu→gót 52,8%, mái lệch + buộc nửa đầu, áo khoác lửng, váy trên gối",
+    "export": "VRoid: havy_hero2.vroid -> havy_hero2_raw.vrm (texture: textures/paint_hero2.py)",
+    "post": "blender -b --python tools/vrm/post.py -- havy_hero2_raw.vrm post.vrm post.blend post_hero2.json",
+    "acc": "blender -b --python tools/vrm/hero_acc.py -- post.vrm acc.vrm hero2_acc.json",
+    "cloth": "blender -b --python tools/vrm/cloth.py -- acc.vrm havy_hero2.vrm --shorts '#272838' --blend havy_hero2.blend",
+    "height": 1.62
+  }
 }

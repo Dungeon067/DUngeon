@@ -44,9 +44,14 @@ async function lineup(list: string[]) {
     acts: VrmActor[] = [];
   let top = 0;
   for (const [i, s] of list.entries()) {
-    const [cid, wt = "sword"] = s.split(":");
+    // id:vũKhí[:chiềuCao] — chiều cao (m) ghi đè, dùng khi so bản chưa có trong content (vd. npc/lamchi:bow:1.55)
+    const [cid, wt = "sword", hs] = s.split(":");
     const a = await VrmActor.load(cid, wt as any, null);
     if (!a) throw new Error(`không tải được VRM ${cid}`);
+    if (hs) {
+      const bb = new THREE.Box3().setFromObject(a.obj);
+      a.obj.scale.multiplyScalar(+hs / Math.max(0.1, bb.max.y - bb.min.y));
+    }
     a.obj.position.set((i - (list.length - 1) / 2) * gap, a.obj.userData.yOff ?? 0, 0);
     scene.add(a.obj);
     a.play(clip, { once: true, fade: 0 });

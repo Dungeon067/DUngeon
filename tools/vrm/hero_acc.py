@@ -14,6 +14,14 @@ cfg = json.load(open(cfgp, encoding="utf-8"))
 bpy.ops.wm.read_homefile(use_empty=True)
 bpy.ops.import_scene.vrm(filepath=src)
 arm = next(o for o in bpy.data.objects if o.type == "ARMATURE")
+# giảm đa giác theo tên mesh để vừa ngân sách (vd. {"Hair": 0.88})
+for o in [o for o in bpy.data.objects if o.type == "MESH"]:
+    for key, ratio in cfg.get("decimate", {}).items():
+        if o.name.startswith(key) and not o.data.shape_keys:
+            dm = o.modifiers.new("Dec", "DECIMATE")
+            dm.ratio = ratio
+            bpy.context.view_layer.objects.active = o
+            bpy.ops.object.modifier_apply(modifier=dm.name)
 ext = arm.data.vrm_addon_extension
 A, Ai = arm.matrix_world, arm.matrix_world.inverted()
 human = ext.vrm1.humanoid.human_bones
