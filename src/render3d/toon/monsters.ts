@@ -1,4 +1,9 @@
-/** Quái và boss tạm thời: mô hình toon low-poly cách điệu, dựng bằng code. Giữ nguyên logic AI. */
+/**
+ * Quái và boss tạm thời: mô hình toon low-poly cách điệu, dựng bằng code. Giữ nguyên logic AI.
+ * Điểm thay mô hình (S29, GLB): renderer chỉ gọi `buildMonster(e)` một lần mỗi quái, `animateMonster(v, e, t, yaw)`
+ * mỗi khung, và gỡ/dọn `v.obj` + `v.mats` khi quái biến mất. Quái thường: renderer đặt `v.obj` ở chân quái.
+ * Boss (`v.boss`): `animateMonster` tự đặt các phần theo tọa độ thế giới từ `b.segs`; `v.deadT` (0→1) là tiến độ chìm khi bị hạ.
+ */
 import * as THREE from "three";
 import { EL } from "../../data/content";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
