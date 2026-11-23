@@ -58,9 +58,10 @@ export function actionDown(a: Action) {
     if (a === "interact" || a === "attack" || a === "jump") dialogNext();
     return;
   }
+  // Màn mở rương: phím xác nhận chỉ đóng màn; phím khác (đổi người, di chuyển...) đóng màn rồi làm tiếp như thường.
   if (chestRevealOpen()) {
-    if (a === "interact" || a === "attack" || a === "jump" || a === "pause") closeChestReveal();
-    return;
+    closeChestReveal();
+    if (a === "interact" || a === "attack" || a === "jump" || a === "pause") return;
   }
   if (storyDialogOpen()) {
     if (a === "interact" || a === "attack" || a === "jump") storyNext();
