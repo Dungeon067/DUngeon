@@ -24,7 +24,9 @@ export const isNativeApp = () => isCapacitor() || isTauri();
 export const isStandalone = () =>
   isNativeApp() ||
   (navigator as Navigator & { standalone?: boolean }).standalone === true ||
-  matchMedia("(display-mode: standalone), (display-mode: fullscreen)").matches;
+  matchMedia("(display-mode: standalone)").matches ||
+  // Fullscreen API trên tab thường cũng khớp display-mode: fullscreen, không tính là đã cài.
+  (matchMedia("(display-mode: fullscreen)").matches && !document.fullscreenElement);
 
 /** iPhone, iPad (iPadOS báo là Mac nhưng có màn cảm ứng). */
 export const isIOS = () =>
