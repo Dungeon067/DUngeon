@@ -93,8 +93,6 @@ export const QuestsSchema = z.object({
         )
         .min(1),
       reward: z.string(),
-      /** Nhân vật nhận miễn phí khi xong nhiệm vụ (S25: Hạ Vy). */
-      unlock: z.string().optional(),
     }),
   ),
 });

@@ -2,7 +2,6 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { decodePng } from "../../tools/sprites/png";
 import { DIR8, camRelative, dir8 } from "../../src/core/facing";
-import { QUESTS } from "../../src/data/menu-content";
 
 const dir = "public/media/sprites/havy/";
 const J = JSON.parse(readFileSync(dir + "sheet.json", "utf8"));
@@ -89,11 +88,5 @@ describe("hướng 8 (S25)", () => {
     const [x, y] = camRelative(1, 0, Math.PI / 2);
     expect(x).toBeCloseTo(0);
     expect(y).toBeCloseTo(1);
-  });
-});
-
-describe("quest Hầm Băng Biết Cười", () => {
-  it("tặng Hạ Vy", () => {
-    expect(QUESTS.find((q) => q.id === "ham-bang-biet-cuoi")?.unlock).toBe("havy");
   });
 });
