@@ -291,12 +291,14 @@ export class VrmActor {
     return this.actions.has(name);
   }
 
-  /** Dáng nữ dùng bản nữ của clip (tên + "F") nếu có; phần "#..." là khóa phát lại. */
+  /** Dáng nữ dùng bản nữ của clip (tên + "F", trẻ em ưu tiên "C") nếu có; phần "#..." là khóa phát lại. */
   variant(name: string) {
     if (this.dang?.gioi !== "nu") return name;
     const i = name.indexOf("#"),
       b = i < 0 ? name : name.slice(0, i);
-    return this.actions.has(b + "F") ? b + "F" + name.slice(b.length) : name;
+    for (const s of this.dang.tre ? ["C", "F"] : ["F"])
+      if (this.actions.has(b + s)) return b + s + name.slice(b.length);
+    return name;
   }
 
   /** Chuyển clip (pha trộn mượt). once: chạy một lần rồi giữ khung cuối. */

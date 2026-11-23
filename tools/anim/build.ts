@@ -15,6 +15,7 @@ import { GR_MC, GR_POL } from "./s27/great";
 import { CT_MC, CT_POL } from "./s27/cat";
 import { SP_MC, SP_POL } from "./s27/spear";
 import { BW_FEM, BW_MC, BW_POL } from "./s27/bowpol";
+import { MELEE_FEM } from "./s27/femsets";
 
 const FILE = "public/media/anim/humanoid.json";
 const lib = JSON.parse(readFileSync(FILE, "utf8"));
@@ -29,6 +30,7 @@ const OVER: Record<string, OverlayDef> = {
   ...BOW_MOVE,
   ...MELEE_MOVE,
   ...BW_FEM,
+  ...MELEE_FEM,
 };
 const rig = new Rig();
 for (const n of MOVE_BASE) {

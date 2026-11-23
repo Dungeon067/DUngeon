@@ -6,7 +6,7 @@
 import * as THREE from "three";
 import type { OverlayDef, Rig } from "../pose";
 import { solveLimb } from "../../../src/render3d/toon/ik";
-import { polish } from "./polish";
+import { polish, rot } from "./polish";
 
 export interface FemOpt {
   /** Nửa khoảng cách tối đa giữa hai bàn chân (m, ngang + trước sau). */
@@ -19,6 +19,8 @@ export interface FemOpt {
   toe?: number;
   /** Kéo khuỷu về sát thân (0..1). */
   elbow?: number;
+  /** Hông lệch (contrapposto, độ), vai bù ngược. */
+  hip?: number;
 }
 const Y = new THREE.Vector3(0, 1, 0);
 export function femLegs(r: Rig, o: FemOpt = {}) {
@@ -32,6 +34,11 @@ export function femLegs(r: Rig, o: FemOpt = {}) {
     qr = r.quat("rightFoot");
   const H = r.bones.hips;
   if (H.position.y < 0) H.position.y *= 1 - up;
+  if (o.hip) {
+    rot(r, "hips", [0, 0, o.hip]);
+    rot(r, "spine", [0, 0, -o.hip * 0.7]);
+    rot(r, "chest", [0, 0, -o.hip * 0.3]);
+  }
   r.root.updateMatrixWorld(true);
   const mid = fl.clone().add(fr).multiplyScalar(0.5);
   const fwd = new THREE.Vector3(0, 0, 1).applyQuaternion(r.quat("hips"));
@@ -50,7 +57,7 @@ export function femLegs(r: Rig, o: FemOpt = {}) {
     t.y = mid.y + y;
     const pole = fwd
       .clone()
-      .addScaledVector(new THREE.Vector3(-sg, 0, 0), 0.08)
+      .addScaledVector(new THREE.Vector3(-sg, 0, 0), 0.22)
       .normalize();
     const fq = new THREE.Quaternion().setFromAxisAngle(Y, (sg * toe * Math.PI) / 180).multiply(q);
     solveLimb(r.legs[s], t, pole, fq);
@@ -82,4 +89,9 @@ export function fem(from: string, o: FemOpt = {}, extra?: OverlayDef["mod"]): Ov
     femArms(r, o.elbow ?? 0);
     extra?.(r, f, i);
   });
+}
+
+/** Bộ bản nữ (hậu tố `suf`) cho danh sách clip. */
+export function femSet(names: string[], o: FemOpt, suf = "F", extra: Record<string, OverlayDef["mod"]> = {}) {
+  return Object.fromEntries(names.map((n) => [n + suf, fem(n, o, extra[n])])) as Record<string, OverlayDef>;
 }

@@ -113,7 +113,7 @@ dang:
         tho: { nhip: 0.36, bien: 1.5 },
         doiTrong: { nhip: 0.32, bien: 1.6 },
       }
-    cho: { chan: 0.03, ha: 0.03, cui: 8, nhun: 0.022, nhipNhun: 2.4 }
+    cho: { chan: 0, ha: 0.004, cui: 2, nhun: 0.016, nhipNhun: 2.4 }
     chay: { bien: 0.85, nhip: 1.3, nay: 1.2, mo: 4, nghieng: 2, lac: 8 }
     nghi: { sau: 5, clip: [idleHop, idleLook] }
     don: { nang: 0.2 }
@@ -137,7 +137,7 @@ dang:
         tho: { nhip: 0.27, bien: 1.1 },
         doiTrong: { nhip: 0.21, bien: 1.1 },
       }
-    cho: { chan: 0.045, ha: 0.045, cui: 5, nhun: 0.008, nhipNhun: 1.7 }
+    cho: { chan: 0, ha: 0.012, cui: 2, nhun: 0.006, nhipNhun: 1.7 }
     chay: { bien: 1, nhip: 1.08, nay: 1.0, mo: 4, nghieng: 2, lac: 10 }
     nghi: { sau: 6, clip: [idleHair, idleLook, idleStretch] }
     don: { nang: 0.4 }
@@ -161,7 +161,7 @@ dang:
         tho: { nhip: 0.23, bien: 0.9 },
         doiTrong: { nhip: 0.17, bien: 0.9 },
       }
-    cho: { chan: 0.06, ha: 0.055, cui: 4, nhun: 0.005, nhipNhun: 1.4 }
+    cho: { chan: 0.005, ha: 0.016, cui: 2, nhun: 0.004, nhipNhun: 1.4 }
     chay: { bien: 1.12, nhip: 0.98, nay: 0.9, mo: 3, nghieng: 2, lac: 9 }
     nghi: { sau: 7, clip: [idleLook, idleStretch, idleHair] }
     don: { nang: 0.5 }
@@ -185,7 +185,7 @@ dang:
         tho: { nhip: 0.19, bien: 0.8 },
         doiTrong: { nhip: 0.14, bien: 0.7 },
       }
-    cho: { chan: 0.05, ha: 0.04, cui: 3, nhun: 0.003, nhipNhun: 1.2 }
+    cho: { chan: 0, ha: 0.01, cui: 1, nhun: 0.003, nhipNhun: 1.2 }
     chay: { bien: 0.9, nhip: 0.92, nay: 0.7, mo: 4, nghieng: 0, lac: 6 }
     nghi: { sau: 8, clip: [idleHair, idleLook] }
     don: { nang: 0.55 }
