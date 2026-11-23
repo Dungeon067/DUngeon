@@ -25,7 +25,7 @@ Video dựng sẵn cho phần sao băng của màn ước nguyện (cảnh 1–4
 | `10x4` | ước 10 lần, cao nhất 4★: 9 sao băng phụ rơi xuống biển             |
 | `10x5` | ước 10 lần, cao nhất 5★: 9 sao băng phụ, sao chính đổi vàng        |
 
-Cảnh 1–2 render một lần, dùng chung cho mọi bản. Mỗi bản có 4 file trong `media/cinematic/out/video/`: `<bản>-1080.webm`, `<bản>-1080.mp4`, `<bản>-720.webm`, `<bản>-720.mp4`. Âm thanh ở `out/audio/<bản>.ogg` (Opus) và `.mp3`, dài 10,5 giây (thêm 1,5 giây đuôi cho cảnh 5).
+Cảnh 1–2 render một lần, dùng chung cho mọi bản. Mỗi bản có 4 file trong `media/cinematic/out/video/`: `<bản>-1080.webm`, `<bản>-1080.mp4`, `<bản>-720.webm`, `<bản>-720.mp4` (riêng `10x4` chỉ có 720p). Âm thanh ở `out/audio/<bản>.ogg` (Opus) và `.mp3`, dài 10,5 giây (thêm 1,5 giây đuôi cho cảnh 5).
 
 ## Quy chuẩn
 
@@ -86,18 +86,16 @@ Mọi mốc tính bằng giây từ đầu video.
 | `fastForward`          | cho tua nhanh từ lần ước thứ `allowedFromWish`, tốc độ `rate`, đến mốc `until` thì về tốc độ thường |
 | `variants`             | độ hiếm, có phải ước 10 lần, danh sách file video theo độ cao và file âm thanh                      |
 
-## Cách đưa vào game (việc của S10)
+## Trong game (`src/ui/wish/video.ts`)
 
 1. **Chọn bản.** Kết quả cao nhất 3★/4★ dùng `3`/`4`; 5★ luân phiên `5a`/`5b`; ước 10 lần dùng `10x4` hoặc `10x5`.
-2. **Tải trước** khi người chơi mở màn ước nguyện: `<video preload="auto" muted playsinline>` với nguồn WebM trước, MP4 sau. Chọn 720p khi cạnh dài màn hình nhân `devicePixelRatio` không quá 1500 hoặc bật tiết kiệm dữ liệu.
-3. **Âm thanh** phát riêng (Opus, Safari dùng MP3) theo âm lượng hiệu ứng của game, đồng bộ theo `video.currentTime`; lệch quá 0,12 giây thì đặt lại.
-4. **Chòm sao banner:** vẽ bằng canvas chồng lên video theo `constellation`, tính đúng phần bị cắt khi video phủ kín màn hình (`object-fit: cover`).
-5. **Bỏ qua:** nút luôn hiện trong lúc phát; bấm thì dừng video, đưa âm thanh tới `cues.reveal` và vào cảnh 5.
-6. **Tua nhanh:** từ lần ước thứ 2 trong phiên, cho tăng tốc lên `fastForward.rate` (video và âm thanh) đến `fastForward.until`.
-7. **Dự phòng:** video không tải được sau 4 giây, lỗi khi phát, máy dưới 2GB bộ nhớ hoặc không phát được VP9/H.264 thì chạy hoạt ảnh bằng code (bản mẫu).
-8. **GitHub Pages** không phục vụ file LFS. Workflow deploy cần `actions/checkout` với `lfs: true` và chép `media/cinematic/out/` vào bản build.
-
-`media/cinematic/preview/` làm đúng các bước trên, S10 có thể đọc để chép cách làm.
+2. **Tải khi cần:** chỉ khi bấm ước mới tải `timeline.json`, một file video và một file âm thanh (`fetch` cả file, service worker lưu vào cache `tinhtu-media`; PWA không precache `media/`). WebM trước, MP4 sau. 1080p khi cạnh dài màn hình từ 1100px và cạnh dài nhân `devicePixelRatio` từ 1500, không bật tiết kiệm dữ liệu; còn lại 720p.
+3. **Âm thanh** phát riêng (Opus, Safari dùng MP3) qua kênh hiệu ứng, đồng bộ theo `video.currentTime`; lệch quá 0,12 giây thì đặt lại. Âm thanh tắt thì video chạy không tiếng.
+4. **Chòm sao banner:** vẽ bằng canvas `#wishOv` chồng lên video theo `constellation`, tính đúng phần bị cắt khi video phủ kín màn hình (`object-fit: cover`).
+5. **Bỏ qua** (nút hoặc Esc): dừng video, đưa âm thanh tới `cues.reveal` và vào thẳng cảnh 5.
+6. **Tua nhanh** (nút hoặc Space/Enter/F): từ lần ước thứ 2 trong phiên, video và âm thanh chạy `fastForward.rate` lần đến `fastForward.until`.
+7. **Dự phòng:** `content/cinematic.yaml` đặt `video: false`, thiếu bản trong `timeline.json`, file là con trỏ LFS, tải quá `videoTimeoutMs`, lỗi khi phát, máy dưới 2GB bộ nhớ hoặc không phát được VP9/H.264 thì chạy hoạt ảnh bằng code.
+8. **Build và deploy:** `scripts/copy-cinematic.mjs` chép âm thanh, video 720p và 1080p WebM vào `dist/` rồi ghi lại `timeline.json` chỉ gồm file có thật (chưa kéo LFS thì game dùng bản code). Workflow deploy kéo LFS cho các file đó; bản xem thử PR chỉ kéo 720p.
 
 ## Trang thử
 
