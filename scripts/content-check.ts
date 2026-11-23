@@ -30,13 +30,18 @@ try {
       if (!clips[k])
         throw new Error(`models.yaml hoatAnh.${t}: không có clip ${k} trong public/media/anim/humanoid.json`);
   const rk = loadRawKits();
-  const kv = validateKits(rk.kits, rk.statuses, c.characters.map((x) => x.id));
+  const kv = validateKits(
+    rk.kits,
+    rk.statuses,
+    c.characters.map((x) => x.id),
+  );
   const kc = JSON.parse(readFileSync("public/media/anim/kits.json", "utf8")).clips;
   for (const [id, k] of Object.entries(kv.kits)) {
     if (k.no.cost !== c.characters.find((x) => x.id === id)!.burst.cost)
       throw new Error(`kits/${id}.yaml: no.cost khác burst.cost trong characters/${id}.yaml`);
     for (const cl of clipsOfKit(k))
-      if (!kc[cl] && !clips[cl]) throw new Error(`kits/${id}.yaml: không có clip ${cl} trong public/media/anim/kits.json`);
+      if (!kc[cl] && !clips[cl])
+        throw new Error(`kits/${id}.yaml: không có clip ${cl} trong public/media/anim/kits.json`);
   }
   for (const [t, id] of Object.entries(md.vuKhiMacDinh))
     if (!existsSync(`public/media/models/weapons/${id}.glb`))
