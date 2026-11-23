@@ -54,7 +54,7 @@ def bandsweep(n, f1, f2, q=3.0):
 def tone(f, dur, a=0.005, d=1.0, f2=None, partials=((1, 1),)):
     n = int(dur * SR)
     t = np.arange(n) / SR
-    fr = f if f2 is None else f * (f2 / f) ** (t / dur)
+    fr = np.full(n, f) if f2 is None else f * (f2 / f) ** (t / dur)
     ph = 2 * np.pi * np.cumsum(fr) / SR
     y = sum(g * np.sin(ph * m) for m, g in partials)
     return y * env(n, a, d)
