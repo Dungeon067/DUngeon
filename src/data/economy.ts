@@ -23,6 +23,9 @@ function withContent(o: unknown) {
     if (typeof p?.tanCong === "number") w.tanCong = p.tanCong;
     if (typeof p?.phu?.giaTri === "number") w.phu.giaTri = p.phu.giaTri;
     if (typeof p?.biDong?.satThuong === "number") w.biDong.satThuong = p.biDong.satThuong;
+    if (w.biDong.coChe && p?.biDong?.coChe?.loai === w.biDong.coChe.loai)
+      for (const k of ["toiDa", "moiTang", "giay"])
+        if (typeof p.biDong.coChe[k] === "number") w.biDong.coChe[k] = p.biDong.coChe[k];
   }
   if (e?.game) e.game.nhanVat5Sao = clone(ECON_BASE.game.nhanVat5Sao);
   // Bản chỉnh lưu trước S24 thiếu các mục vũ khí mới: lấy từ file thay vì bỏ cả bản chỉnh.
@@ -31,6 +34,8 @@ function withContent(o: unknown) {
   if (v && typeof v === "object") {
     for (const k of ["cap", "quang", "loRen", "macDinh", "khoiDau", "nguon"])
       if (v[k] === undefined) v[k] = clone(b[k]);
+    if (v.nguon && typeof v.nguon === "object" && v.nguon.cuaHangVuKhi === undefined)
+      v.nguon.cuaHangVuKhi = clone(b.nguon.cuaHangVuKhi);
     if (v.banner && typeof v.banner === "object")
       for (const k of ["gia", "noiBat"]) if (v.banner[k] === undefined) v.banner[k] = clone(b.banner[k]);
   }

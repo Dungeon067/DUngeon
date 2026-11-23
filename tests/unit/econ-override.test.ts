@@ -36,6 +36,19 @@ describe("Bản chỉnh kinh tế từ Admin", () => {
     expect(ECON.thietKe.vuKhi.banner.noiBat).toEqual(ECON_BASE.thietKe.vuKhi.banner.noiBat);
   });
 
+  it("bản chỉnh thiếu cửa hàng vũ khí tuần lấy theo file; chỉnh tích tầng được giữ", async () => {
+    const { ECON_BASE } = await load();
+    const old = structuredClone(ECON_BASE) as any;
+    delete old.thietKe.vuKhi.nguon.cuaHangVuKhi;
+    const mb = old.thietKe.vuKhi.danhSach.find((w: any) => w.id === "mat-bao-ngu-yen");
+    mb.biDong.coChe.toiDa = 6;
+    localStorage.setItem(KEY, JSON.stringify(old));
+    const { ECON } = await load();
+    expect(ECON.thietKe.vuKhi.nguon.cuaHangVuKhi).toEqual(ECON_BASE.thietKe.vuKhi.nguon.cuaHangVuKhi);
+    expect(ECON.thietKe.vuKhi.nguon.cuaHangVuKhi.length).toBeGreaterThan(0);
+    expect(ECON.thietKe.vuKhi.danhSach.find((w) => w.id === "mat-bao-ngu-yen")!.biDong.coChe!.toiDa).toBe(6);
+  });
+
   it("bản chỉnh lưu trước S23 (thiếu rương câu đố) vẫn giữ, rương câu đố lấy theo file", async () => {
     const { ECON_BASE } = await load();
     const old = structuredClone(ECON_BASE) as any;
