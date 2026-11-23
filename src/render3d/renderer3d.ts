@@ -167,6 +167,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     tilt: ShaderPass | null = null;
   let world: THREE.Group | null = null,
     worldOf: any = null,
+    miniOf: any = null,
     F: HeightField | null = null,
     water: ReturnType<typeof buildWater> | null = null,
     grass: ReturnType<typeof buildGrass> | null = null,
@@ -298,7 +299,8 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
 
   function syncWorld() {
     const W = GS.G.map;
-    if (worldOf === W) return;
+    // openDoor (bí cảnh) sửa lưới tại chỗ và tạo lại W.mini: dựng lại cảnh khi thấy đổi.
+    if (worldOf === W && miniOf === W.mini) return;
     dropWorld();
     F = buildHeight(W, Q.R);
     world = new THREE.Group();
@@ -316,6 +318,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       scene.add(grass.mesh);
     }
     worldOf = W;
+    miniOf = W.mini;
   }
 
   /** Độ cao mặt đất hiển thị (mượt) tại điểm logic, không thấp hơn mặt đất logic (bệ, cầu cao). */
