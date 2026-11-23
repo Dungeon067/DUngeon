@@ -38,13 +38,17 @@ interface Tpl {
 }
 const tpls = new Map<string, Promise<Tpl | null>>();
 const ready = new Map<string, Tpl | null>();
+const failedAt = new Map<string, number>();
+const RETRY_MS = 5000;
 
 export const monsterUrl = (id: string) => `${base}media/models/monsters/${id}.glb`;
 export const speciesOf = (e: any): string => (e.isBoss ? "hacgiao" : e.type);
 
 export function loadMonster(id: string): Promise<Tpl | null> {
   let p = tpls.get(id);
-  if (p) return p;
+  const fail = failedAt.get(id);
+  if (p && (fail === undefined || performance.now() - fail < RETRY_MS)) return p;
+  failedAt.delete(id);
   const url = monsterUrl(id);
   p = loader
     .loadAsync(url)
@@ -58,7 +62,10 @@ export function loadMonster(id: string): Promise<Tpl | null> {
       console.error(`[quái 3D] Thiếu hoặc hỏng mô hình ${url} (loài "${id}"), quái này sẽ không hiện.`, err);
       return null;
     });
-  p.then((t) => ready.set(id, t));
+  p.then((t) => {
+    if (t) ready.set(id, t);
+    else failedAt.set(id, performance.now());
+  });
   tpls.set(id, p);
   return p;
 }
@@ -323,7 +330,10 @@ export function animateMonster(
 ): boolean {
   const tpl = ready.get(v.id);
   if (!v.inner) {
-    if (!tpl) return !e.dead;
+    if (!tpl) {
+      void loadMonster(v.id);
+      return !e.dead;
+    }
     attach(v, tpl, e);
   }
   if (!v.boss) v.obj.rotation.y = yaw;
