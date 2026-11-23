@@ -56,6 +56,10 @@ def guess(mat_name, d):
 
 weapons = json.load(open(a.list, encoding="utf8"))
 ids = [x for x in a.ids.split(",") if x]
+# Vũ khí chỉ để hiển thị (glb_ornate, không có trong weapons.yaml): luôn có mặt để xuất được bằng --ids.
+from designs import DESIGNS  # noqa: E402
+have = {w["id"] for w in weapons}
+weapons += [dict(id=k, r=v["r"], loai=v["type"]) for k, v in DESIGNS.items() if v.get("glb_ornate") and k not in have]
 os.makedirs(a.out, exist_ok=True)
 for w in weapons:
     if ids and w["id"] not in ids:
