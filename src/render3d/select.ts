@@ -15,6 +15,8 @@ export interface WorldRenderer {
   unproject(sx: number, sy: number): { x: number; y: number };
   setQuality(q: Quality): void;
   resize(): void;
+  /** Ẩn canvas 3D khi đang vẽ bằng 2D (đấu trường, menu). */
+  hide?(): void;
   dispose(): void;
   stats(): { calls: number; tris: number; textures: number };
 }

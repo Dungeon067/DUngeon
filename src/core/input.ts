@@ -1,3 +1,4 @@
+import { renderer3d } from "../render3d/select";
 import { GS } from "../core/state";
 import { press } from "../combat/actions";
 import { cv } from "../core/canvas";
@@ -116,6 +117,8 @@ export function holdBtn(el: HTMLElement, down: () => void, up?: () => void) {
 /** Toạ độ thế giới của điểm trên màn hình (cùng phép biến đổi với render.ts). */
 export function screenToWorld(sx: number, sy: number) {
   const G = GS.G;
+  const r3 = renderer3d();
+  if (r3 && G.map) return r3.unproject(sx, sy);
   return { x: G.cam.x + (sx - GS.VW / 2) / GS.ZOOM, y: G.cam.y + (sy - GS.VH / 2) / GS.ZOOM };
 }
 
