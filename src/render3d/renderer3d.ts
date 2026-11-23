@@ -13,6 +13,7 @@ import { settings, type Quality } from "../core/settings";
 import { lift } from "../core/render-z";
 import { EL } from "../data/content";
 import type { WeaponType } from "../data/models-schema";
+import { drawChibi } from "../art/chibi";
 import { cur } from "../entities/party";
 import { Server } from "../server/server";
 import { TS } from "../world/map";
@@ -178,6 +179,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   // Nhân vật đang điều khiển (VRM).
   let heroKey = "",
     hero: VrmActor | null = null,
+    heroFallback: CanvasSprite | null = null,
     heroYaw = Math.PI;
   const blob = new THREE.Mesh(
     new THREE.CircleGeometry(0.34, 16),
@@ -267,6 +269,9 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     dropWorld();
     hero?.dispose();
     hero = null;
+    heroFallback?.obj.removeFromParent();
+    heroFallback?.dispose();
+    heroFallback = null;
     heroKey = "";
     setupPost();
     resize();
@@ -451,11 +456,19 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         heroKey = key;
         hero?.dispose();
         hero = null;
+        heroFallback?.obj.removeFromParent();
+        heroFallback?.dispose();
+        heroFallback = null;
         tipHist.length = baseHist.length = 0;
         VrmActor.load(m.c.id, (m.c.w as WeaponType) ?? "sword", wid).then((a) => {
           if (key !== heroKey) return a?.dispose();
           hero = a;
           if (a) scene.add(a.obj);
+          else {
+            // Không tải được VRM (mất mạng, file hỏng): vẽ chibi 2D lên tấm phẳng để nhân vật không biến mất.
+            heroFallback = new CanvasSprite(80, 96, Q.shadows);
+            scene.add(heroFallback.obj);
+          }
         });
       }
     }
@@ -508,6 +521,20 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       }
       trailGeo.attributes.position.needsUpdate = true;
       trailGeo.attributes.a.needsUpdate = true;
+    }
+    if (!hero && heroFallback && m) {
+      heroFallback.paint((c) =>
+        drawChibi(c, m.c, 0, 0, 1.12, {
+          fx: p.fx,
+          back: p.back,
+          walk: p.walk,
+          moving: p.moving,
+          atk: p.atkAnim,
+          t,
+          noShadow: true,
+        }),
+      );
+      heroFallback.obj.position.copy(pos);
     }
     blob.position.set(pos.x, pg + 0.02, pos.z);
     blob.scale.setScalar(L.shadow);
