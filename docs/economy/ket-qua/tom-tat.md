@@ -16,7 +16,7 @@ Kết luận: **ĐẠT**
 
 - Một vũ khí 4★ lên cấp 60: ngày 36 (mục tiêu 30–45).
 - Vũ khí 4★ Lò Rèn R5: ngày 40 (mục tiêu khoảng 40).
-- Xu cho vũ khí (cửa hàng quặng, kinh nghiệm, đột phá, Lò Rèn) tới ngày 40: 424.036. Mô hình nuôi nhân vật chưa trừ khoản này.
+- Xu cho vũ khí (cửa hàng quặng, kinh nghiệm, đột phá, Lò Rèn) tới ngày 40: 393.436, đã trừ vào Xu nuôi nhân vật (nhân vật ưu tiên).
 
 ## Bốn hồ sơ
 
@@ -46,11 +46,11 @@ F2P chơi kỹ (trung vị) qua 100% nội dung thường từ ngày **120** (y�
 
 | Nội dung                               | Ngày mở | Chiến Lực cần | Đội 4★ miễn phí | F2P chơi kỹ    | Nạp nhẹ (thẻ tháng + Hộ Chiếu Sao) | Nạp khá        | Whale               | F2P qua từ ngày |
 | -------------------------------------- | ------- | ------------- | --------------- | -------------- | ---------------------------------- | -------------- | ------------------- | --------------- |
-| Cốt truyện chương 1                    | 1       | 1.400         | 1.435 (1,02×)   | 1,60× dễ       | 1,62× dễ                           | 1,78× dễ       | 2,72× rất nhẹ nhàng | 5               |
-| Cốt truyện chương 2                    | 4       | 2.000         | 2.092 (1,05×)   | 1,12× qua được | 1,14× qua được                     | 1,24× qua được | 1,90× rất nhẹ nhàng | 5               |
-| Cốt truyện chương 3                    | 10      | 2.900         | 3.078 (1,06×)   | 1,10× qua được | 1,13× qua được                     | 1,32× vừa đủ   | 1,85× rất nhẹ nhàng | 10              |
-| Cốt truyện chương 4                    | 20      | 4.200         | 4.389 (1,04×)   | 1,13× qua được | 1,17× qua được                     | 1,33× vừa đủ   | 1,85× rất nhẹ nhàng | 20              |
-| Sự kiện thường                         | 21      | 4.200         | 4.403 (1,05×)   | 1,13× qua được | 1,17× qua được                     | 1,33× vừa đủ   | 1,85× rất nhẹ nhàng | 25              |
+| Cốt truyện chương 1                    | 1       | 1.400         | 1.435 (1,02×)   | 1,57× dễ       | 1,60× dễ                           | 1,75× dễ       | 2,68× rất nhẹ nhàng | 5               |
+| Cốt truyện chương 2                    | 4       | 2.000         | 2.092 (1,05×)   | 1,10× qua được | 1,12× qua được                     | 1,23× qua được | 1,87× rất nhẹ nhàng | 5               |
+| Cốt truyện chương 3                    | 10      | 2.900         | 3.034 (1,05×)   | 1,09× qua được | 1,11× qua được                     | 1,30× vừa đủ   | 1,83× rất nhẹ nhàng | 10              |
+| Cốt truyện chương 4                    | 20      | 4.200         | 4.267 (1,02×)   | 1,10× qua được | 1,14× qua được                     | 1,29× vừa đủ   | 1,79× dễ            | 20              |
+| Sự kiện thường                         | 21      | 4.200         | 4.403 (1,05×)   | 1,10× qua được | 1,14× qua được                     | 1,29× vừa đủ   | 1,79× dễ            | 25              |
 | Cốt truyện chương 5                    | 35      | 5.400         | 5.732 (1,06×)   | 1,16× qua được | 1,36× vừa đủ                       | 1,53× dễ       | 1,98× rất nhẹ nhàng | 35              |
 | Boss thế giới Hắc Giao (Thiên Tượng 3) | 45      | 5.500         | 5.810 (1,06×)   | 1,15× qua được | 1,47× vừa đủ                       | 1,60× dễ       | 2,00× rất nhẹ nhàng | 45              |
 | Cốt truyện chương 6                    | 55      | 6.500         | 6.818 (1,05×)   | 1,14× qua được | 1,50× vừa đủ                       | 1,60× dễ       | 1,98× rất nhẹ nhàng | 55              |
@@ -76,10 +76,10 @@ F2P chơi kỹ (trung vị) qua 100% nội dung thường từ ngày **120** (y�
 
 | Hồ sơ                              | Độ dư thấp nhất | Độ dư trung vị | Độ dễ         |
 | ---------------------------------- | --------------- | -------------- | ------------- |
-| F2P chơi kỹ                        | 1,10×           | 1,15×          | qua được      |
-| Nạp nhẹ (thẻ tháng + Hộ Chiếu Sao) | 1,13×           | 1,50×          | vừa đủ        |
-| Nạp khá                            | 1,24×           | 1,60×          | dễ            |
-| Whale                              | 1,85×           | 1,99×          | rất nhẹ nhàng |
+| F2P chơi kỹ                        | 1,09×           | 1,15×          | qua được      |
+| Nạp nhẹ (thẻ tháng + Hộ Chiếu Sao) | 1,11×           | 1,50×          | vừa đủ        |
+| Nạp khá                            | 1,23×           | 1,60×          | dễ            |
+| Whale                              | 1,79×           | 1,99×          | rất nhẹ nhàng |
 
 ## B. Nội dung đỉnh
 

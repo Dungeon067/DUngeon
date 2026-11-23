@@ -56,7 +56,7 @@ export function mulberry32(seed: number) {
 }
 
 /** Đầu tư của đội theo ngày (không phụ thuộc may rủi): cấp, Khai Tinh, kỹ năng, Bảo Ấn; nuôi đội 4 người khi đủ Sách, Xu, Lõi Sao. */
-export function investOnDay(day: number, p: Profile | null, E: Economy) {
+export function investOnDay(day: number, p: Profile | null, E: Economy, wx = weaponXu(day, E)) {
   const T = E.thietKe,
     ht = hoTinhLevel(day, E),
     cp = caps(ht, E);
@@ -76,7 +76,8 @@ export function investOnDay(day: number, p: Profile | null, E: Economy) {
     Math.floor(day * B.luotMoiNgay) * B.xu +
     day * 4 * U.moiViec.xu +
     Math.floor(day / 7) * T.thuNhap.tuan.xu +
-    seasons * E.goiNap.hoChieuSao.xu;
+    seasons * E.goiNap.hoChieuSao.xu -
+    wx;
   let loi = runs * T.linhLuc.thuongMoiLuot.loiSao;
   let lv = 1,
     khai = 0;
@@ -105,6 +106,7 @@ export function investOnDay(day: number, p: Profile | null, E: Economy) {
       kyNang: Math.min(cp.kyNang, T.kyNang.toiDaTheoKhaiTinh[khai]!),
       baoAn: T.baoAn.chatLuongTheoThienTuong[cp.thienTuong]! * Math.min(1, day / 30),
     } satisfies Omit<Invest, "cons" | "vuKhi">,
+    coinLeft: coin,
   };
 }
 
@@ -118,7 +120,11 @@ export interface WeaponFlow {
   xu: number[];
 }
 const flowCache = new WeakMap<object, WeaponFlow>();
-/** Dòng nguyên liệu vũ khí của người không nạp: Bí Cảnh, Ủy thác, cửa hàng tuần, thành tựu và sự kiện (vuKhi.nguon). */
+/**
+ * Dòng nguyên liệu vũ khí của người không nạp: Bí Cảnh, Ủy thác, cửa hàng tuần, thành tựu và sự kiện (vuKhi.nguon).
+ * Xu dùng chung với nuôi nhân vật: nhân vật ưu tiên, vũ khí chỉ tiêu phần Xu dư mà mọi ngày sau vẫn còn dư,
+ * nên trừ khoản này vào investOnDay không làm đội chậm đi. Thứ tự tiêu: cửa hàng quặng, đột phá, kinh nghiệm, Lò Rèn.
+ */
 export function weaponFlow(E: Economy, days = 400): WeaponFlow {
   const V = E.thietKe.vuKhi;
   const hit = flowCache.get(V);
@@ -129,36 +135,57 @@ export function weaponFlow(E: Economy, days = 400): WeaponFlow {
     ex = (o: Record<string, number>, k = 1) =>
       Object.entries(o).reduce((s, [id, n]) => s + (id === sao ? 0 : (expOf.get(id) ?? 0) * n * k), 0),
     so = (o: Record<string, number>, k = 1) => (o[sao] ?? 0) * k,
-    shop = Object.fromEntries(N.cuaHang.map((x) => [x.id, x.moiTuan])),
-    shopXu = N.cuaHang.reduce((s, x) => s + x.xu * x.moiTuan, 0);
-  let lvNeed = 0;
-  for (let L = 1; L < V.cap.toiDa; L++) lvNeed += V.cap.kinhNghiem.goc + V.cap.kinhNghiem.moiCap * (L - 1);
+    expNeed = (lv: number) => {
+      let n = 0;
+      for (let L = 1; L < lv; L++) n += V.cap.kinhNghiem.goc + V.cap.kinhNghiem.moiCap * (L - 1);
+      return n;
+    },
+    lvNeed = expNeed(V.cap.toiDa),
+    phoi0 = V.khoiDau[V.loRen.nguyenLieu] ?? 0;
+  // Ngân sách: Xu dư thấp nhất từ ngày d trở đi của đội F2P chưa tiêu cho vũ khí.
+  const left = Array.from({ length: days + 1 }, (_, d) => investOnDay(d, null, E, 0).coinLeft);
+  for (let d = days - 1; d >= 0; d--) left[d] = Math.min(left[d]!, left[d + 1]!);
   let exp = ex(V.khoiDau),
     saoHave = so(V.khoiDau),
+    saoUsed = 0,
+    expUsed = 0,
+    asc = 0,
+    forges = 0,
     runs = 0,
+    spent = 0,
     lvDay: number | null = null,
     r5Day: number | null = null;
-  let bought = 0;
   const r: number[] = [],
     xu: number[] = [],
-    phoi0 = V.khoiDau[V.loRen.nguyenLieu] ?? 0;
+    weekLeft = new Map<string, number>();
   for (let d = 0; d <= days; d++) {
     if (d > 0) {
       runs += N.biCanh.luotMoiNgay;
       exp += ex(N.biCanh.roi, N.biCanh.luotMoiNgay) + ex(N.uyThac);
       saoHave += so(N.biCanh.roi, N.biCanh.luotMoiNgay) + so(N.uyThac);
-      if ((d - 1) % 7 === 0) {
-        exp += ex(shop);
-        saoHave += so(shop);
-        bought += shopXu;
-      }
+      if ((d - 1) % 7 === 0) for (const x of N.cuaHang) weekLeft.set(x.id, x.moiTuan);
     }
-    let asc = 0;
-    for (let s = 0; asc < 6 && s + V.cap.dotPha.quang[asc]! <= saoHave; asc++) s += V.cap.dotPha.quang[asc]!;
-    if (lvDay === null && asc === 6 && exp >= lvNeed) lvDay = d;
+    const budget = () => Math.max(0, Math.floor(left[d]!) - spent);
+    for (const x of N.cuaHang) {
+      const k = Math.min(weekLeft.get(x.id) ?? 0, Math.floor(budget() / x.xu));
+      if (k <= 0) continue;
+      weekLeft.set(x.id, weekLeft.get(x.id)! - k);
+      spent += k * x.xu;
+      if (x.id === sao) saoHave += k;
+      else exp += (expOf.get(x.id) ?? 0) * k;
+    }
+    while (asc < 6 && saoHave - saoUsed >= V.cap.dotPha.quang[asc]! && budget() >= V.cap.dotPha.xu[asc]!) {
+      saoUsed += V.cap.dotPha.quang[asc]!;
+      spent += V.cap.dotPha.xu[asc]!;
+      asc++;
+    }
+    const e = Math.min(exp, expNeed(V.cap.gioiHan[asc]!)) - expUsed,
+      k = Math.max(0, Math.min(e, Math.floor(budget() / V.cap.xuMoiKinhNghiem)));
+    expUsed += k;
+    spent += k * V.cap.xuMoiKinhNghiem;
+    if (lvDay === null && asc === 6 && expUsed >= lvNeed) lvDay = d;
     const event = Math.floor((d * N.phoi.suKienMoiThang) / 30);
-    let forges = 0;
-    for (let i = 0; i < 6; i++) {
+    for (;;) {
       const stat: Record<string, number> = {
         biCanh: runs,
         dotPha: asc,
@@ -166,13 +193,11 @@ export function weaponFlow(E: Economy, days = 400): WeaponFlow {
         ren: forges,
       };
       const ach = N.phoi.thanhTuu.reduce((s, a) => s + ((stat[a.loai] ?? 0) >= a.can ? a.phoi : 0), 0);
-      forges = Math.min(5, Math.floor((phoi0 + event + ach) / V.loRen.so));
+      if (forges >= 5 || Math.floor((phoi0 + event + ach) / V.loRen.so) <= forges || budget() < V.loRen.xu) break;
+      forges++;
+      spent += V.loRen.xu;
     }
     r.push(Math.max(1, forges));
-    let capNeed = 0;
-    for (let L = 1; L < V.cap.gioiHan[asc]!; L++) capNeed += V.cap.kinhNghiem.goc + V.cap.kinhNghiem.moiCap * (L - 1);
-    let spent = bought + Math.min(exp, capNeed) * V.cap.xuMoiKinhNghiem + forges * V.loRen.xu;
-    for (let i = 0; i < asc; i++) spent += V.cap.dotPha.xu[i]!;
     xu.push(Math.ceil(spent));
     if (r5Day === null && forges >= 5) r5Day = d;
   }
@@ -180,6 +205,11 @@ export function weaponFlow(E: Economy, days = 400): WeaponFlow {
   flowCache.set(V, f);
   return f;
 }
+/** Xu đã tiêu cho vũ khí tới ngày `day`; mô hình nuôi nhân vật trừ khoản này trước. */
+export const weaponXu = (day: number, E: Economy) => {
+  const f = weaponFlow(E, Math.max(400, day));
+  return f.xu[Math.min(day, f.xu.length - 1)]!;
+};
 /** Bậc tinh luyện vũ khí 4★ Lò Rèn ở ngày `day`. */
 export const craftRefine = (day: number, E: Economy) => {
   const f = weaponFlow(E, Math.max(400, day));

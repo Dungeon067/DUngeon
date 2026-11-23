@@ -63,7 +63,7 @@ game:
       quy: { daSao: 10, xu: 1500, sach: 2 }
       tinhXao: { daSao: 20, xu: 3000, sach: 4 }
     uyThac:
-      moiViec: { daSao: 30, xu: 3000 }
+      moiViec: { daSao: 30, xu: 3500 }
       duBon: { daSao: 60, sach: 5 }
   # Chiến Lực = (Tấn công hiệu quả × trongSoTanCong + Máu × trongSoMau) × (1 + thưởng kỹ năng).
   # Tấn công hiệu quả = Tấn công × (1 + tỉ lệ chí mạng × sát thương chí mạng) × (1 + tăng sát thương).
@@ -163,15 +163,15 @@ thietKe:
       # phần Linh Lực còn lại dành cho thưởng Lòng Sao. Tạm là lượt quét độc lập trong menu: bí cảnh S23 chỉ khám phá một lần; khi có chế độ đánh lại thì dùng chung số này.
       biCanh:
         linhLuc: 20
-        xu: 1200
+        xu: 2500
         roi: { quang-tinh-luyen-tho: 3, quang-tinh-luyen: 1 }
         luotMoiNgay: 2
       # Ủy thác: cộng thêm vào thưởng hoàn thành ngày.
       uyThac: { quang-tinh-luyen-tho: 2 }
       # Cửa hàng đổi Xu lấy quặng, giới hạn mỗi tuần (làm mới thứ Hai).
       cuaHang:
-        - { id: quang-tinh-luyen, xu: 1500, moiTuan: 7 }
-        - { id: quang-tinh-luyen-sao, xu: 8000, moiTuan: 3 }
+        - { id: quang-tinh-luyen, xu: 1200, moiTuan: 7 }
+        - { id: quang-tinh-luyen-sao, xu: 7000, moiTuan: 3 }
       # Phôi Lòng Sao: thành tựu Binh Khí (một lần) và cửa hàng sự kiện mỗi tháng.
       # Hệ sự kiện chưa có trong game: suKienMoiThang hiện chỉ dùng cho mô phỏng.
       phoi:
