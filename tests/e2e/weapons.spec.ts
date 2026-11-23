@@ -138,3 +138,30 @@ test("ước banner Binh Khí Tinh Tú 10 lần, La Bàn Sao, lịch sử riêng
   await expect(page.locator("#wishHist li")).toHaveCount(10);
   expect(errors).toEqual([]);
 });
+
+test("Tủ Đồ: hiệu ứng thẻ và bảng chi tiết, tắt khi Giảm chuyển động", async ({ page }) => {
+  const errors = watchErrors(page);
+  await boot(page);
+  const uid = await give(page, "hong-vu-truong-ca");
+  await give(page, "mat-bao-ngu-yen");
+  await page.evaluate((uid) => (window as any).__tinhtu.menu.openMenu("bag", { uid }), uid);
+  const card = page.locator(`[data-uid="${uid}"]`);
+  await expect(card.locator(".tt-loot__shine")).toHaveCount(1);
+  await expect(page.locator(".tt-tudo-ring")).toBeVisible();
+  await expect(page.locator(".tt-tudo-sky")).toHaveCount(1);
+  expect(await page.locator(".tt-mote").count()).toBeGreaterThan(0);
+  const anim = () => page.evaluate(() => getComputedStyle(document.querySelector(".tt-tudo-ring")!).animationName);
+  expect(await anim()).toBe("tt-spin");
+  await page.locator(".tt-wcell").nth(1).click();
+  await expect(page.locator(".tt-wcell.is-pop")).toHaveCount(1);
+  await page.evaluate(() => {
+    const T = (window as any).__tinhtu;
+    T.settings.reduceMotion = true;
+    T.saveSettings();
+    T.menu.openMenu("bag", {});
+  });
+  await expect(page.locator("html")).toHaveClass(/tt-calm/);
+  expect(await anim()).toBe("none");
+  await expect(page.locator(".tt-mote").first()).toBeHidden();
+  expect(errors).toEqual([]);
+});

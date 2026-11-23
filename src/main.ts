@@ -16,7 +16,7 @@ import "./ui/menu/screens";
 import { initLayoutEditor } from "./ui/hud/layout";
 import { initRotate } from "./ui/hud/rotate";
 import { initHints } from "./ui/hud/hints";
-import { applyDocumentSettings } from "./core/settings";
+import { applyDocumentSettings, saveSettings, settings } from "./core/settings";
 import { initPwa } from "./ui/pwa";
 
 /* =========================================================
@@ -69,6 +69,8 @@ if (new URLSearchParams(location.search).has("e2e"))
     __tinhtu: {
       S: GS,
       Server,
+      settings,
+      saveSettings,
       menu: { openMenu, closeMenu, currentScreen },
       pz: { pulse: pulseElement, startDomain, exitDomain, data: { DOMAINS, MINI, PZ } },
     },
