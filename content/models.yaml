@@ -29,3 +29,4 @@ hoatAnh:
   cat: { stand: idle, atk: [cat1, cat2, cat3], charge: cast, skill: skill, burst: burst, speed: 1 }
 nhanVat:
   havy: { height: 1.55, dang: nu-teen }
+  suongmai: { height: 1.56, dang: nu-teen }
