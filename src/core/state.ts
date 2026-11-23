@@ -11,6 +11,8 @@ export const GS = {
   ZOOM: 1,
   BASE_ZOOM: 1,
   camZoom: 1,
+  /** Góc xoay camera 3D quanh trục đứng (rad); 0 là nhìn về phía bắc như bản 2D. */
+  camYaw: 0,
   G: null as any,
   scene: "menu",
   paused: false,

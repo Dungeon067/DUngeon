@@ -1,6 +1,7 @@
 import { DOMAINS, MINI, PZ } from "./data/puzzles";
 import { exitDomain, startDomain } from "./modes/domain";
 import { pulseElement } from "./world/puzzles";
+import { applyRenderer } from "./render3d/select";
 import { GS } from "./core/state";
 import { portraitCache } from "./art/chibi";
 import { frame } from "./core/loop";
@@ -37,6 +38,7 @@ function start(data: any) {
 // Thứ tự khởi tạo giữ đúng thứ tự chạy trong bản một file.
 applyDocumentSettings();
 initCanvas();
+void applyRenderer();
 initHud();
 initInput();
 initLayoutEditor();

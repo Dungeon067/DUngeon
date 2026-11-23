@@ -328,6 +328,7 @@ export const ControlsSchema = z
         music: unit,
         sfx: unit,
         quality: z.enum(["high", "medium", "low"]),
+        renderer: z.enum(["auto", "3d", "2d"]),
         shake: z.boolean(),
         vibrate: z.boolean(),
         fontScale: z.number().min(0.8).max(1.4),

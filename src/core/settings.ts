@@ -12,6 +12,7 @@ const OLD_FEEL_KEY = "tinhtu.feel.v1";
 
 export type Quality = "high" | "medium" | "low";
 export type ColorMode = "none" | "protan" | "deutan" | "tritan";
+export type RendererPref = "auto" | "3d" | "2d";
 export type JoyMode = "dynamic" | "fixed";
 
 export interface Settings {
@@ -19,6 +20,8 @@ export interface Settings {
   music: number;
   sfx: number;
   quality: Quality;
+  /** Lớp vẽ thế giới: tự chọn (3D nếu có WebGL2), 3D, hoặc Canvas 2D cũ. */
+  renderer: RendererPref;
   shake: boolean;
   vibrate: boolean;
   fontScale: number;
@@ -58,6 +61,7 @@ export function sanitize(raw: any): Settings {
   num("music");
   num("sfx");
   if (["high", "medium", "low"].includes(raw.quality)) s.quality = raw.quality;
+  if (["auto", "3d", "2d"].includes(raw.renderer)) s.renderer = raw.renderer;
   for (const k of ["shake", "vibrate", "mouseAim", "showHints"] as const)
     if (typeof raw[k] === "boolean") s[k] = raw[k];
   if (typeof raw.fontScale === "number") s.fontScale = clamp(raw.fontScale, 0.8, 1.4);

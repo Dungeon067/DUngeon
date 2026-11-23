@@ -1,4 +1,5 @@
 import { GS } from "../core/state";
+import { camRelative, dir8 } from "./facing";
 import { tryAttack, updateBuffer } from "../combat/actions";
 import { FEEL, charFx, gameDt } from "../combat/feel";
 import { cameraTarget, updateZoom } from "../core/camera";
@@ -44,7 +45,7 @@ export function update(dt: number) {
   const p = GS.G.p,
     m = cur();
   // movement input
-  let [mx, my] = moveAxis();
+  let [mx, my] = camRelative(...moveAxis(), GS.camYaw ?? 0);
   const ml = Math.hypot(mx, my);
   if (ml > 1) {
     mx /= ml;
@@ -54,6 +55,7 @@ export function update(dt: number) {
   if (p.moving) {
     p.dirX = mx;
     p.dirY = my;
+    if (p.atkCd <= 0) p.face8 = dir8(Math.atan2(my, mx), p.face8);
   }
   if (p.air) {
     updateAir(p, dt, GS.G.over ? 0 : mx, GS.G.over ? 0 : my);
