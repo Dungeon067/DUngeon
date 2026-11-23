@@ -145,7 +145,7 @@ export function weaponFlow(E: Economy, days = 400): WeaponFlow {
     phoi0 = V.khoiDau[V.loRen.nguyenLieu] ?? 0;
   // Ngân sách: Xu dư thấp nhất từ ngày d trở đi của đội F2P chưa tiêu cho vũ khí.
   // Bản rèn đầu tiên (Phôi khởi đầu) làm ngay khi tạo hồ sơ, trước cả nuôi nhân vật: đội cần vũ khí 4★ từ ngày 1.
-  const pre = phoi0 >= V.loRen.so ? V.loRen.xu : 0;
+  const pre = phoi0 >= V.loRen.so && V.loRen.xu <= E.thietKe.thuNhap.motLan.xu ? V.loRen.xu : 0;
   const left = Array.from({ length: days + 1 }, (_, d) => investOnDay(d, null, E, pre).coinLeft + pre);
   for (let d = days - 1; d >= 0; d--) left[d] = Math.min(left[d]!, left[d + 1]!);
   let exp = ex(V.khoiDau),

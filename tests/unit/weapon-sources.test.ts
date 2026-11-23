@@ -114,6 +114,13 @@ describe("Nguồn nguyên liệu vũ khí", () => {
     expect(f.xu[done + 60]).toBe(f.xu[done]);
   });
 
+  it("mô phỏng: Lò Rèn đắt hơn Xu khởi đầu thì không rèn sẵn và Xu không âm", () => {
+    const E = structuredClone(ECON);
+    E.thietKe.vuKhi.loRen.xu = E.thietKe.thuNhap.motLan.xu + 1;
+    expect(weaponFlow(E).r[0]).toBe(0);
+    expect(investOnDay(1, null, E).coinLeft).toBeGreaterThanOrEqual(0);
+  });
+
   it("mô phỏng: Xu khởi đầu bằng hồ sơ mới trong game", () => {
     expect(ECON.thietKe.thuNhap.motLan.xu).toBe(freshProfile().coin);
   });
