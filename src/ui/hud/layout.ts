@@ -166,6 +166,10 @@ export function initLayoutEditor() {
   $("hud").append(zone);
   addEventListener("resize", applyLayout);
   screen.orientation?.addEventListener?.("change", () => setTimeout(applyLayout, 60));
+  // WKWebView (iOS) báo env(safe-area-inset-*) = 0 vài giây đầu rồi mới cập nhật, không kèm resize.
+  safeInsets();
+  if (probe && typeof ResizeObserver !== "undefined")
+    new ResizeObserver(() => applyLayout()).observe(probe, { box: "border-box" });
 
   for (const b of HUD_BUTTONS) {
     const e = el(b);
