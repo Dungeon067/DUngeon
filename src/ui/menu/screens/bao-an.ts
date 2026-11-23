@@ -296,7 +296,10 @@ export function renderBaoAnBag(host: HTMLElement, params: any, tl: HTMLElement) 
         ]),
         h("div", { class: "tt-row tt-wrap" }, [
           button("Chọn 3★", { variant: "ghost", onClick: pick((a) => a.r === 3) }),
-          button("Chọn 4★ chưa nâng", { variant: "ghost", onClick: pick((a) => a.r === 4 && a.lv === 0) }),
+          button("Chọn 4★ chưa nâng", {
+            variant: "ghost",
+            onClick: pick((a) => a.r === 4 && a.lv === 0),
+          }),
           button("Chọn tất cả trong lọc", { variant: "ghost", onClick: pick((a) => a.r < 5) }),
           button("Bỏ chọn", { variant: "ghost", onClick: () => (bag.picked.clear(), rerender()) }),
         ]),
@@ -540,6 +543,12 @@ function renderUpgrade(host: HTMLElement, params: any) {
   else {
     right.append(h("h3", { class: "tt-h3" }, ["Sáp Ấn"]));
     const ores = h("div", { class: "tt-wores" });
+    const selExp = () => {
+      let t = 0;
+      for (const s of BA.kinhNghiem.sap) t += (up.sap[s.id] ?? 0) * s.kinhNghiem;
+      for (const u of up.mats) if (P.baoAn[u]) t += fodderExp(BA, P.baoAn[u]!);
+      return t;
+    };
     for (const s of BA.kinhNghiem.sap) {
       const have = bagOf(s.id),
         n = up.sap[s.id] ?? 0;
@@ -548,7 +557,11 @@ function renderUpgrade(host: HTMLElement, params: any) {
       const all = button("Tối đa", { variant: "ghost", disabled: n >= have });
       minus.addEventListener("click", () => ((up.sap[s.id] = n - 1), rerender()));
       plus.addEventListener("click", () => ((up.sap[s.id] = n + 1), rerender()));
-      all.addEventListener("click", () => ((up.sap[s.id] = have), rerender()));
+      all.addEventListener("click", () => {
+        const need = previewExp(BA, a, Number.MAX_SAFE_INTEGER).used - selExp() + n * s.kinhNghiem;
+        up.sap[s.id] = Math.min(have, Math.max(0, Math.ceil(need / s.kinhNghiem)));
+        rerender();
+      });
       plus.dataset.sap = s.id;
       ores.append(
         h("div", { class: "tt-wore", "data-r": s.r }, [
@@ -580,9 +593,7 @@ function renderUpgrade(host: HTMLElement, params: any) {
       grid.append(c);
     }
     right.append(fod.length ? grid : h("p", { class: "tt-dim" }, ["Không có Bảo Ấn rảnh để dùng."]));
-    let exp = 0;
-    for (const s of BA.kinhNghiem.sap) exp += (up.sap[s.id] ?? 0) * s.kinhNghiem;
-    for (const u of up.mats) if (P.baoAn[u]) exp += fodderExp(BA, P.baoAn[u]!);
+    const exp = selExp();
     const pv = previewExp(BA, a, exp),
       cost = Math.ceil(pv.used * BA.kinhNghiem.xuMoiKinhNghiem);
     const moc = Math.floor(pv.lv / BA.mocCap) - Math.floor(a.lv / BA.mocCap);
