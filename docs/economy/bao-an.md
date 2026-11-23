@@ -131,8 +131,8 @@ Theo [docs/writing/huong-dan-van-phong.md](../writing/huong-dan-van-phong.md): t
 | Bộ Ấn (vì sao)         | Mảnh Hoa            | Mảnh Lông              | Mảnh Canh             | Mảnh Chén            | Mảnh Miện            |
 | ---------------------- | ------------------- | ---------------------- | --------------------- | -------------------- | -------------------- |
 | Đêm Hội Vạn Đăng       | Hoa Giấy Đèn Lồng   | Lông Cánh Pháo Hoa     | Bình Cát Chợ Đêm      | Chén Rượu Mừng Hội   | Vành Lửa Người Múa   |
-| Hồ Muối Gương Trời     | Hoa Muối Đầu Mùa    | Lông Chim Lội Muối     | Đèn Đo Giông          | Chén Nước Hai Trời   | Vành Muối Kết Tinh   |
-| Đình Trống Gọi Làng    | Hoa Đồng Mặt Trống  | Lông Chim Lạc Bay Xuôi | Đèn Canh Hội Đồng     | Chén Nước Ba Hồi     | Vành Khăn Người Gõ   |
+| Hồ Muối Gương Trời     | Hoa Muối Đầu Mùa    | Lông Chim Lội Muối     | Bình Muối Đo Giông    | Chén Nước Hai Trời   | Vành Muối Kết Tinh   |
+| Đình Trống Gọi Làng    | Hoa Đồng Mặt Trống  | Lông Chim Lạc Bay Xuôi | Bình Cát Hội Đồng     | Chén Nước Ba Hồi     | Vành Đồng Người Gõ   |
 | Diều Đo Hướng Gió      | Hoa Giấy Đuôi Diều  | Lông Hạc Chép Gió      | Đèn Gió Tầng Chín     | Chén Ngọc Hứng Mây   | Vành Dây Diều Bạc    |
 | Vệt Cháy Đường Đua     | Hoa Cỏ Sau Sét      | Lông Bờm Ngựa Giông    | Đèn Đếm Vòng Đua      | Chén Sữa Mừng Đích   | Vành Đá Sét Nóng     |
 | Gạch Men Nhà Chưa Xong | Hoa Lựu Trên Gạch   | Lông Chim Mái Vòm      | Đèn Đất Nung Khắc Tên | Chén Men Ốc Đảo      | Vành Vữa Đông Nhanh  |

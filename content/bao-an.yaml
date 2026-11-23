@@ -269,19 +269,19 @@ bo:
     mon:
       hoa:
         ten: Hoa Muối Đầu Mùa
-        truyen: "Bông hoa kết từ tinh thể muối trên mặt hồ ở Khokhtal. Mỗi mùa giông nó mọc lại đúng chỗ cũ. Nhìn nghiêng thấy trong cánh hoa có một tia sét nhỏ nằm im."
+        truyen: "Bông hoa muối hồng kết sáu cánh trên mặt hồ Khokhtal sau cơn giông đầu mùa. Giữa nhụy là một mảnh sao rơi xuống hồ, muối bám quanh nó mà thành hoa. Nhìn nghiêng thấy trong cánh có một tia sét nhỏ nằm im."
       long:
         ten: Lông Chim Lội Muối
-        truyen: "Chiếc lông trắng của loài chim lội nông kiếm ăn trên hồ muối. Sét đánh ngay cạnh mà chim không bay. Lông vẫn còn mùi nắng và mùi mặn."
+        truyen: "Chiếc lông hồng của loài chim lội nông kiếm ăn trên hồ muối. Đầu lông đọng mấy khối muối xếp bậc, gốc lông kẹp một mảnh sao. Sét đánh ngay cạnh mà con chim không bay."
       den:
-        ten: Đèn Đo Giông
-        truyen: "Ngọn đèn thủy tinh người chăn ngựa đặt giữa hồ để đoán giông. Lửa trong đèn nghiêng trước khi gió tới. Có lần nó nghiêng về phía không có gió nào."
+        ten: Bình Muối Đo Giông
+        truyen: "Bình muối người chăn ngựa cắm giữa hồ để đoán giông. Muối chảy qua eo bình nơi gắn mảnh sao, giông càng gần thì chảy càng nhanh. Có lần muối chảy hết mà trời vẫn trong."
       chen:
         ten: Chén Nước Hai Trời
-        truyen: "Chén ngọc múc nước hồ, nhìn vào thấy cả bầu trời lẫn đáy hồ. Người Khokhtal đưa nó mời khách mới tới. Uống xong ai cũng nói nước ngọt, dù hồ thì mặn."
+        truyen: "Chén bạc men hồng múc nước hồ, nhìn vào thấy cả bầu trời lẫn đáy hồ. Mảnh sao trên thân chén soi xuống nước thành hai. Uống xong ai cũng nói nước ngọt, dù hồ thì mặn."
       mien:
         ten: Vành Muối Kết Tinh
-        truyen: "Vành tóc kết bằng muối hồ đã cứng như đá. Người về đầu cuộc đua giông được đội nó một ngày. Sau ngày ấy vành tự tan thành nước."
+        truyen: "Vành tóc kết bằng muối hồ, các khối muối xếp bậc như thềm đá. Người về đầu cuộc đua giông được đội nó một ngày, mảnh sao giữa vành sáng suốt ngày ấy. Hôm sau vành tự tan thành nước."
   - id: dinh-trong-goi-lang
     ten: Đình Trống Gọi Làng
     vung: Đình Trống Đồng
@@ -299,19 +299,19 @@ bo:
     mon:
       hoa:
         ten: Hoa Đồng Mặt Trống
-        truyen: "Bông hoa mười hai cánh gõ từ miếng đồng thừa khi đúc trống. Người thợ giữ nó trong túi suốt đời. Áp tai vào hoa sẽ nghe một tiếng trống rất xa."
+        truyen: "Bông hoa mười hai cánh gõ từ miếng đồng thừa khi đúc trống ở Đình Trống Đồng. Vòng tia quanh hoa chép đúng hình mặt trống, giữa nhụy là mảnh sao rơi trúng trống. Áp tai vào hoa sẽ nghe một tiếng trống rất xa."
       long:
         ten: Lông Chim Lạc Bay Xuôi
-        truyen: "Chiếc lông gò theo vòng chim Lạc trên mặt trống cổ ở Đình Trống Đồng. Các con chim ấy bay ngược chiều kim đồng hồ, chỉ một con bay xuôi. Chiếc lông này là của con chim đó."
+        truyen: "Chiếc lông men xanh gỉ đồng, gò theo vòng chim Lạc trên mặt trống cổ. Cả đàn chim bay ngược, chỉ một con bay xuôi. Mảnh sao ở gốc lông là con mắt của con chim đó."
       den:
-        ten: Đèn Canh Hội Đồng
-        truyen: "Ngọn đèn đặt giữa bàn mỗi khi Hội Đồng họp ở Đình Trống. Đèn tắt là phải thôi cãi nhau mà đi ngủ. Nghe nói có lần ai đó lén thêm dầu."
+        ten: Bình Cát Hội Đồng
+        truyen: "Bình cát đồng đặt giữa bàn mỗi khi Hội Đồng họp ở Đình Trống. Cát qua hết eo bình, nơi gắn mảnh sao, là phải thôi cãi nhau mà đi ngủ. Nghe nói có lần ai đó lén lật ngược bình."
       chen:
         ten: Chén Nước Ba Hồi
-        truyen: "Chén ngọc đựng nước đặt trước trống, mỗi hồi trống nước gợn một vòng. Người già nhìn vòng nước mà đoán giờ. Ba hồi dồn thì nước dâng tới miệng chén mà không tràn."
+        truyen: "Chén đồng hai quai đựng nước đặt trước trống, mỗi hồi trống nước gợn một vòng. Mảnh sao trên thân chén rung theo nhịp. Ba hồi dồn thì nước dâng tới miệng chén mà không tràn."
       mien:
-        ten: Vành Khăn Người Gõ
-        truyen: "Vành khăn đỏ của người gõ trống mở hội. Khăn thấm mồ hôi bao đời mà màu không phai. Người đội nó tự nhiên đứng thẳng lưng hơn."
+        ten: Vành Đồng Người Gõ
+        truyen: "Vành đồng dát tia mặt trống, đội cho người gõ trống mở hội. Mảnh sao giữa vành sáng lên ở tiếng trống đầu tiên. Người đội nó tự nhiên đứng thẳng lưng hơn."
   - id: dieu-do-huong-gio
     ten: Diều Đo Hướng Gió
     vung: Thiên Diên Thành
