@@ -219,7 +219,8 @@ class Ghosts {
       o.skeleton.update();
       m.skeleton.boneMatrices.set(o.skeleton.boneMatrices);
       if (m.skeleton.boneTexture) m.skeleton.boneTexture.needsUpdate = true;
-      if (o.morphTargetInfluences && m.morphTargetInfluences) m.morphTargetInfluences.splice(0, Infinity, ...o.morphTargetInfluences);
+      if (o.morphTargetInfluences && m.morphTargetInfluences)
+        m.morphTargetInfluences.splice(0, Infinity, ...o.morphTargetInfluences);
       // Detached: vị trí thế giới = matrixWorld · bindMatrix⁻¹ · Σ(xương · bindMatrix · v) → đặt matrixWorld = bindMatrix.
       m.matrix.copy(o.bindMatrix);
       m.matrixWorld.copy(o.bindMatrix);
@@ -246,7 +247,13 @@ class Streaks {
   lines: THREE.LineSegments;
   private p = new Float32Array(NL * 6);
   private c = new Float32Array(NL * 6);
-  private o = Array.from({ length: NL }, () => ({ p: new THREE.Vector3(), v: new THREE.Vector3(), len: 0, age: 9, life: 1 }));
+  private o = Array.from({ length: NL }, () => ({
+    p: new THREE.Vector3(),
+    v: new THREE.Vector3(),
+    len: 0,
+    age: 9,
+    life: 1,
+  }));
   private col = new THREE.Color(0xffffff);
   private i = 0;
   constructor() {
@@ -255,7 +262,12 @@ class Streaks {
     g.setAttribute("color", new THREE.BufferAttribute(this.c, 3));
     this.lines = new THREE.LineSegments(
       g,
-      new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }),
+      new THREE.LineBasicMaterial({
+        vertexColors: true,
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      }),
     );
     this.lines.frustumCulled = false;
   }

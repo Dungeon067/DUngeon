@@ -12,8 +12,15 @@ import { WeaponFx } from "./weapon-fx";
 import { PoseLayer, type PoseInput } from "./pose-layer";
 import { BowRig } from "./bow-rig";
 import { ClothGuard } from "./cloth";
+import { solveLimb, type Limb } from "./ik";
 import { validateModels, type WeaponType } from "../../data/models-schema";
 import { outlineMat, toonMat } from "./mat";
+
+const _v = new THREE.Vector3(),
+  _s = new THREE.Vector3(),
+  _p = new THREE.Vector3(),
+  _q = new THREE.Quaternion(),
+  _q2 = new THREE.Quaternion();
 
 export const MODELS = validateModels(modelsRaw);
 export { POSES };
@@ -90,6 +97,15 @@ export class VrmActor {
   private cur: THREE.AnimationAction | null = null;
   curName = "";
   weapon: THREE.Object3D | null = null;
+  /** Vũ khí hai tay: tay trái bám điểm cầm thứ hai trên thân vũ khí (IK cánh tay). */
+  offHand: {
+    limb: Limb;
+    w: THREE.Object3D;
+    at: number;
+    q: THREE.Quaternion;
+    off: THREE.Vector3;
+    r: THREE.Object3D;
+  } | null = null;
   /** S27: lớp chỉnh tư thế theo dáng; poseIn do renderer đặt mỗi khung. */
   layer: PoseLayer | null = null;
   poseIn: PoseInput = { mode: "relax", freeL: true, freeR: true };
@@ -208,6 +224,31 @@ export class VrmActor {
             vrm.humanoid.getNormalizedBoneNode("rightMiddleProximal") ??
             vrm.humanoid.getNormalizedBoneNode("rightHand");
         if (wtype === "bow" && str?.isMesh && gr && nock) a.bow = new BowRig(str, gr, nock, a.obj);
+        const lh = ["leftUpperArm", "leftLowerArm", "leftHand"].map((n) =>
+          vrm.humanoid.getNormalizedBoneNode(n as any),
+        );
+        const rh = vrm.humanoid.getNormalizedBoneNode("rightHand");
+        if (grip.tay2 && rh && lh.every(Boolean)) {
+          const v0 = vrm.meta?.metaVersion === "0";
+          const q = new THREE.Quaternion().setFromEuler(
+            new THREE.Euler(...(grip.tay2.rot.map((d) => (d * Math.PI) / 180) as [number, number, number])),
+          );
+          if (v0) {
+            const F = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
+            q.premultiply(F).multiply(F);
+          }
+          a.offHand = {
+            limb: { a: lh[0]!, b: lh[1]!, c: lh[2]!, poleRest: new THREE.Vector3(0, 0, v0 ? 1 : -1) },
+            w,
+            at: grip.tay2.at,
+            q,
+            // Cổ tay so với điểm cầm, hệ bàn tay trái (đối xứng tay phải).
+            off: new THREE.Vector3(-grip.pos[0], -grip.pos[1], -grip.pos[2])
+              .multiply(new THREE.Vector3(-1, 1, 1))
+              .multiply(v0 ? new THREE.Vector3(-1, 1, -1) : new THREE.Vector3(1, 1, 1)),
+            r: rh,
+          };
+        }
         a.wfx = new WeaponFx(vrm, holder, wtype, POSES.vuKhi, (n) => a.duration(n), grip.scale, a.obj);
       }
     }
@@ -296,9 +337,23 @@ export class VrmActor {
     this.mixer.update(dt);
     this.layer?.apply(dt, this.poseIn);
     if (this.layer) this.obj.rotation.z = this.layer.bank;
+    this.grip2();
     this.cloth.update(dt);
     this.wfx?.update(dt);
     if (this.bow) this.bow.update(this.wfx && this.wfx.st !== "hand" ? 0 : this.strNow());
+  }
+
+  /** Tay trái đỡ vũ khí hai tay (gọi sau lớp tư thế). */
+  grip2() {
+    const o = this.offHand;
+    if (!o || !this.weapon?.visible || (this.wfx && this.wfx.st !== "hand")) return;
+    o.w.updateWorldMatrix(true, false);
+    const shaft = o.w.localToWorld(_v.set(0, o.at, 0));
+    const q = o.r.getWorldQuaternion(_q).multiply(o.q);
+    const hs = o.limb.c.getWorldScale(_s).x;
+    const wrist = shaft.add(_s.copy(o.off).multiplyScalar(hs).applyQuaternion(q));
+    const pole = _p.set(0.6, -1, -0.5).normalize().applyQuaternion(this.obj.getWorldQuaternion(_q2));
+    solveLimb(o.limb, wrist, pole, q);
   }
 
   dispose() {

@@ -73,7 +73,14 @@ export type DangParams = z.infer<typeof Dang>;
 
 const v3 = z.tuple([z.number(), z.number(), z.number()]);
 const Noi = z
-  .object({ bone: z.string(), pos: v3, rot: v3, clip: z.string().optional(), luc: z.number().min(0).max(1) })
+  .object({
+    bone: z.string(),
+    pos: v3,
+    rot: v3,
+    clip: z.string().optional(),
+    luc: z.number().min(0).max(1),
+    giu: z.number().positive().optional(),
+  })
   .strict();
 export const WEAPONS = ["sword", "great", "spear", "bow", "cat"] as const;
 const VuKhi = z

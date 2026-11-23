@@ -49,6 +49,8 @@ if (moving) {
   scene.add(base, grid);
 }
 const camOff = cam.position.clone();
+// Thử cách cầm (grip={"rot":[..],"pos":[..]}) mà không sửa content.
+if (q.get("grip")) Object.assign(MODELS.camVuKhi[w as keyof typeof MODELS.camVuKhi], JSON.parse(q.get("grip")!));
 const a = await VrmActor.load(id, w, null);
 if (q.get("cloth") === "0" && a) a.cloth.off = true;
 (window as any).__a = a;
@@ -85,6 +87,8 @@ const act = (a as any).actions.get(clip) as THREE.AnimationAction;
     a.mixer.update(0);
     a.layer.apply(0, a.poseIn);
   }
+  a.grip2();
+  for (let i = 0; i < 30; i++) a.wfx?.update(0.05);
   a.vrm.update(0);
   a.bow?.update(a.strNow());
   gl.render(scene, cam);
@@ -298,9 +302,22 @@ function sequence(src: string) {
       else if (iv) {
         play(iv.split("#")[0], { once: true, fade: 0.35, restart: iv !== cur });
         cur = iv;
-      } else play(armed ? (A.ready ?? A.stand) : a!.dang?.gioi === "nam" ? "relaxNam" : "relax", { fade: armed ? 0.2 : 0.35 });
+      } else
+        play(armed ? (A.ready ?? A.stand) : a!.dang?.gioi === "nam" ? "relaxNam" : "relax", {
+          fade: armed ? 0.2 : 0.35,
+        });
     }
-    const jv = jd ? (ju < 0.35 ? 1 - ju / 0.35 : adash ? 1 : ju < 0.9 ? (ju - 0.6) / 0.3 : 1) : s.k === "jump" && ju < 0.8 ? 1 - 2 * (ju / 0.8) : 1;
+    const jv = jd
+      ? ju < 0.35
+        ? 1 - ju / 0.35
+        : adash
+          ? 1
+          : ju < 0.9
+            ? (ju - 0.6) / 0.3
+            : 1
+      : s.k === "jump" && ju < 0.8
+        ? 1 - 2 * (ju / 0.8)
+        : 1;
     const free = !armed;
     a!.poseIn = {
       mode:
@@ -344,7 +361,8 @@ function sequence(src: string) {
       huong: s.k === "nguoc" ? -90 : env.huong,
       nguon,
       mieng: s.k === "vent" ? [{ x: 0, z: 0 }] : [],
-      luot: luotW > 0 ? { x: -Math.sin(a!.obj.rotation.y) * luotW, z: -Math.cos(a!.obj.rotation.y) * luotW } : undefined,
+      luot:
+        luotW > 0 ? { x: -Math.sin(a!.obj.rotation.y) * luotW, z: -Math.cos(a!.obj.rotation.y) * luotW } : undefined,
     };
     wind.tick(dt);
     wind.sample(a!.cloth.wind, a!.obj.position, T, e);

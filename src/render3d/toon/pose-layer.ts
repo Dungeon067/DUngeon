@@ -182,15 +182,7 @@ export class PoseLayer {
     const bk = THREE.MathUtils.clamp(-this.turn * 0.09, -1, 1) * chay.lac * D * this.wMove;
     this.bank += (bk - this.bank) * Math.min(1, dt * 7);
     // Lướt: clip `dash` / `dashAir` đã đổ người từ hông, thân trên thẳng; lớp này không gập thêm.
-    // Đỉnh cú nhảy: co chân.
-    if (this.wTuck > 0.01) {
-      const w = this.wTuck;
-      this.post("leftUpperLeg", -40 * w, 0, 0);
-      this.post("rightUpperLeg", -30 * w, 0, 0);
-      this.post("leftLowerLeg", 66 * w, 0, 0);
-      this.post("rightLowerLeg", 52 * w, 0, 0);
-      this.post("spine", 8 * w, 0, 0);
-    }
+    // Đỉnh cú nhảy: clip mocap jumpUp / jumpAir đã tự co chân, lớp này không co thêm.
     // Ra đòn: dáng nặng hạ hông sâu hơn, xoay thân rộng hơn.
     if (this.wAct > 0.01) {
       const a = 1 + (don.nang - 0.5) * 0.3 * this.wAct;

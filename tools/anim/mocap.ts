@@ -128,6 +128,8 @@ export interface MocapRecipe {
   aim?: number;
   /** Thẳng lưng: nhân độ gập spine/chest/upperChest với hệ số này, bù ở cổ và đầu cho mắt nhìn ngang. */
   straight?: number;
+  /** Giới hạn độ đổ người của ngực (độ); phần thừa trừ bớt ở hông. */
+  lean?: number;
   /** Nối nhiều đoạn [từ, đến, tốc độ] (bỏ qua from/to/speed). */
   segs?: [number, number, number][];
 }
@@ -193,7 +195,9 @@ export function bakeMocap(r: MocapRecipe, names: string[], fill: ClipData, fps =
   let face = r.inPlace && move.length() > hipsH * 0.3 ? move : fwdSum;
   if (r.aim !== undefined) {
     poseAt(s, r.aim);
-    face = wp(s.by.get("LeftHand")!).sub(wp(s.by.get("RightHand")!)).setY(0);
+    face = wp(s.by.get("LeftHand")!)
+      .sub(wp(s.by.get("RightHand")!))
+      .setY(0);
   }
   const str: number[] = [];
   const yaw = Math.atan2(face.x, face.z) - THREE.MathUtils.degToRad(r.yaw ?? 0);
@@ -218,7 +222,13 @@ export function bakeMocap(r: MocapRecipe, names: string[], fill: ClipData, fps =
     }
     const k = i / (n - 1);
     const p = hp[i].clone();
-    if (r.inPlace) p.sub(hp[0].clone().lerp(hp[n - 1], k).setY(0));
+    if (r.inPlace)
+      p.sub(
+        hp[0]
+          .clone()
+          .lerp(hp[n - 1], k)
+          .setY(0),
+      );
     else p.sub(hp[0].clone().setY(0));
     p.y -= ground + hipsH;
     p.applyQuaternion(Y).divideScalar(hipsH);
@@ -235,7 +245,7 @@ export function bakeMocap(r: MocapRecipe, names: string[], fill: ClipData, fps =
     if (rel > 0) for (let i = rel; i < n; i++) str[i] = 0;
     out.str = str.map((v) => +v.toFixed(3));
   }
-  if (r.straight !== undefined) straighten(out, r.straight);
+  if (r.straight !== undefined) straighten(out, r.straight, r.lean);
   if (r.mirror) {
     const nb: ClipData["bones"] = {};
     for (const [b, tr] of Object.entries(out.bones)) {
@@ -252,7 +262,10 @@ export function bakeMocap(r: MocapRecipe, names: string[], fill: ClipData, fps =
       const i = n - L + j,
         w = (j + 1) / L;
       for (const tr of Object.values(out.bones))
-        tr.q[i] = new THREE.Quaternion().fromArray(tr.q[i]).slerp(new THREE.Quaternion().fromArray(tr.q[0]), w).toArray();
+        tr.q[i] = new THREE.Quaternion()
+          .fromArray(tr.q[i])
+          .slerp(new THREE.Quaternion().fromArray(tr.q[0]), w)
+          .toArray();
       out.hips[i] = out.hips[i].map((v, c) => v + (out.hips[0][c] - v) * w);
     }
   }
@@ -265,11 +278,12 @@ const CHAIN = ["hips", "spine", "chest", "upperChest", "neck", "head"];
 /** Độ cúi (độ, dương là cúi tới) của trục lên xương `upto` trong khung i. */
 function pitchOf(c: ClipData, i: number, upto: string) {
   const q = new THREE.Quaternion();
-  for (const b of CHAIN.slice(0, CHAIN.indexOf(upto) + 1)) q.multiply(new THREE.Quaternion().fromArray(c.bones[b].q[i]));
+  for (const b of CHAIN.slice(0, CHAIN.indexOf(upto) + 1))
+    q.multiply(new THREE.Quaternion().fromArray(c.bones[b].q[i]));
   const u = new THREE.Vector3(0, 1, 0).applyQuaternion(q);
   return THREE.MathUtils.radToDeg(Math.atan2(u.z, u.y));
 }
-function straighten(c: ClipData, k: number) {
+function straighten(c: ClipData, k: number, lean?: number) {
   const e = new THREE.Euler(0, 0, 0, "YXZ");
   const X = new THREE.Vector3(1, 0, 0);
   for (let i = 0; i < c.n; i++) {
@@ -278,11 +292,23 @@ function straighten(c: ClipData, k: number) {
       e.x *= k;
       c.bones[b].q[i] = new THREE.Quaternion().setFromEuler(e).toArray();
     }
+    if (lean !== undefined && c.bones.hips?.q[i]) {
+      const pc = pitchOf(c, i, "upperChest"),
+        ex = THREE.MathUtils.degToRad(-(pc - THREE.MathUtils.clamp(pc, -lean, lean)));
+      if (ex)
+        c.bones.hips.q[i] = new THREE.Quaternion()
+          .setFromAxisAngle(X, ex)
+          .multiply(new THREE.Quaternion().fromArray(c.bones.hips.q[i]))
+          .toArray();
+    }
     // Mắt nhìn ngang: đưa độ cúi của đầu về khoảng ±4°, chia đều cho cổ và đầu.
     const ph = pitchOf(c, i, "head"),
       fix = THREE.MathUtils.degToRad(-(ph - THREE.MathUtils.clamp(ph, -4, 4)) / 2);
     for (const b of ["neck", "head"])
-      c.bones[b].q[i] = new THREE.Quaternion().setFromAxisAngle(X, fix).multiply(new THREE.Quaternion().fromArray(c.bones[b].q[i])).toArray();
+      c.bones[b].q[i] = new THREE.Quaternion()
+        .setFromAxisAngle(X, fix)
+        .multiply(new THREE.Quaternion().fromArray(c.bones[b].q[i]))
+        .toArray();
   }
 }
 
@@ -315,7 +341,12 @@ if (process.argv[2] === "bake") {
   const lib = JSON.parse(readFileSync(F, "utf8"));
   const [, , , file, name, a, b] = process.argv;
   const dur = load(file).dur;
-  lib.clips[name] = bakeMocap({ file, from: +(a ?? 0), to: +(b ?? dur) }, Object.keys(lib.clips.idle.bones), lib.clips.relax, lib.fps);
+  lib.clips[name] = bakeMocap(
+    { file, from: +(a ?? 0), to: +(b ?? dur) },
+    Object.keys(lib.clips.idle.bones),
+    lib.clips.relax,
+    lib.fps,
+  );
   writeFileSync(F, JSON.stringify(lib));
   console.log(name, lib.clips[name].n, "khung");
 }

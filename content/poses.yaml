@@ -18,6 +18,7 @@
 # Vũ khí ngoài trận: thôi đánh / rời trận `cho` giây thì cất (clip `clip` nếu đứng yên, vũ khí chuyển tới chỗ `noi`),
 # giữ `giu` giây rồi tan thành hạt sáng theo nguyên tố trong `tan` giây. Đánh thường / kỹ năng / nộ: hiện lại trong tay
 # ngay khung đầu (tụ hạt `hien` giây, không làm chậm đòn). gan: khoảng cách quái (px logic) được tính là đang trong trận.
+# Cất luôn đi LÊN và ra sau lưng theo quỹ đạo vòng cung 0,25 giây (weapon-fx.ts), không hạ thấp.
 # noi: xương VRM chuẩn hóa, pos (m, hệ xương ở tư thế chữ T: +X trái, +Y lên, +Z trước), rot (độ, XYZ).
 vuKhi:
   cho: 2.5
@@ -27,11 +28,12 @@ vuKhi:
   hien: 0.14
   hat: { so: 48, coDo: 0.05, bay: 0.5 }
   noi:
-    sword: { bone: hips, pos: [0.15, 0.02, 0.02], rot: [-125, 0, 0], clip: stowHip, luc: 0.55 }
+    sword: { bone: upperChest, pos: [-0.1, 0.1, -0.14], rot: [0, 0, -145], clip: stowBackR, luc: 0.5 }
     great: { bone: upperChest, pos: [-0.12, 0.12, -0.15], rot: [0, 0, -150], clip: stowBackR, luc: 0.5 }
-    spear: { bone: upperChest, pos: [-0.05, 0.02, -0.15], rot: [0, 0, -140], clip: stowBackR, luc: 0.5 }
+    spear: { bone: upperChest, pos: [-0.05, 0.0, -0.15], rot: [0, 0, 35], clip: stowBackR, luc: 0.5 }
     bow: { bone: upperChest, pos: [0.04, 0.0, -0.13], rot: [0, 0, 150], clip: stowBackL, luc: 0.5 }
-    cat: { bone: rightHand, pos: [-0.06, 0.14, 0.02], rot: [0, 0, 0], luc: 0 }
+    # Sách gập lại, bay lên lơ lửng sau hông phải (ngang thắt lưng), lắc nhẹ, giu giây sau mới tan.
+    cat: { bone: hips, pos: [-0.17, 0.16, -0.17], rot: [15, -30, -12], luc: 0, giu: 1.4 }
 # Gió (spring bone tóc, vải) ở runtime: src/render3d/toon/wind.ts + cloth.ts. Hướng: độ, 0 = thổi về +X thế giới, 90 = về +Z.
 #  vung: gió nền theo vùng (id trong content/terrain.yaml; mac-dinh cho vùng không khai báo), luc ~ độ cứng spring bone
 #  thoiTiet: hệ số nhân theo thời tiết (khi game có thời tiết)   doCao: lên cao hơn `tu` m thì cộng moiM mỗi m, tối đa toiDa (đỉnh núi)

@@ -1,7 +1,8 @@
 /**
  * S27: cất vũ khí ngoài trận và rút lại khi đánh.
- *  cất: (đứng yên) chạy clip cất, tới mốc `luc` vũ khí chuyển sang chỗ đeo (lưng / hông) rồi trượt vào vị trí;
- *       giữ `giu` giây rồi tan thành hạt sáng theo màu nguyên tố.
+ *  cất: (đứng yên) chạy clip cất, tới mốc `luc` vũ khí chuyển sang chỗ đeo rồi bay vào vị trí theo vòng cung
+ *       đi lên và ra sau lưng (SLIDE giây, không tụt xuống thấp); giữ `giu` giây rồi tan thành hạt sáng theo màu nguyên tố.
+ *  Sách phép: lơ lửng mở trang trước tay trái, lật trang khi niệm; cất thì gập lại, lơ lửng sau hông, lắc nhẹ.
  *  rút: hiện ngay trong tay ở khung đầu, hạt sáng tụ nhanh quanh vũ khí (không làm chậm đòn).
  */
 import * as THREE from "three";
@@ -11,6 +12,9 @@ import { setWorldQuat } from "./ik";
 
 type St = "hand" | "stowing" | "worn" | "fading" | "gone";
 const D = Math.PI / 180;
+const SLIDE = 0.25;
+/** Sách mở: bìa trước xoay quanh gáy. */
+const OPEN = -150 * D;
 
 export class WeaponFx {
   st: St = "hand";
@@ -46,10 +50,21 @@ export class WeaponFx {
     private root: THREE.Object3D | null = null,
   ) {
     this.cat = wtype === "cat";
+    this.v0 = vrm.meta?.metaVersion === "0";
     this.hand = holder.parent!;
     this.handPos = holder.position.clone();
     this.handQuat = holder.quaternion.clone();
     this.handScale = holder.scale.clone();
+    this.floatQuat.copy(this.handQuat);
+    if (this.v0)
+      this.floatQuat.premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI));
+    if (this.cat) {
+      this.rigBook();
+      const bh = this.hand.getWorldScale(new THREE.Vector3()).x || 1,
+        br = root?.getWorldScale(new THREE.Vector3()).y || 1;
+      this.floatOff.copy(this.handPos).multiplyScalar(bh / br);
+      if (this.v0) this.floatOff.set(-this.floatOff.x, this.floatOff.y, -this.floatOff.z);
+    }
     const noi = cfg.noi[wtype as keyof VuKhiCfg["noi"]];
     this.sock = vrm.humanoid.getNormalizedBoneNode(noi.bone as any) ?? null;
     if (this.sock) {
@@ -61,6 +76,7 @@ export class WeaponFx {
         this.sockQuat.premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI));
       }
       this.sockScale.setScalar(gripScale / bs);
+      this.sockBs = bs;
     }
     this.noi = noi;
     const n = cfg.hat.so * 2;
@@ -88,20 +104,78 @@ export class WeaponFx {
   }
   private noi: VuKhiCfg["noi"]["sword"];
   private cat = false;
+  private v0 = false;
+  private sockBs = 1;
+  private floatQuat = new THREE.Quaternion();
+  /** Chỗ sách lơ lửng so với bàn tay, trong hệ thân người (+X trái, +Y lên, +Z trước). */
+  private floatOff = new THREE.Vector3();
+  private cover: THREE.Object3D | null = null;
+  private page: THREE.Object3D | null = null;
+  private openK = 0;
+  private flip = 0;
+
+  /** Tách bìa trước (kèm góc bọc, huy hiệu) và thêm một tờ lật, cùng xoay quanh gáy sách. */
+  private rigBook() {
+    const w = this.holder.children[0];
+    if (!w) return;
+    const parts = ["cover_f", "emblem", "emblem_c", "corner-1-1", "corner-11", "corner1-1", "corner11"]
+      .map((n) => w.getObjectByName(n))
+      .filter((o): o is THREE.Object3D => !!o);
+    const pages = w.getObjectByName("pages") as THREE.Mesh | undefined;
+    if (!parts.length) return;
+    const hinge = new THREE.Vector3(-0.18, 0, 0.05);
+    const pv = new THREE.Group();
+    pv.position.copy(hinge);
+    w.add(pv);
+    for (const o of parts) {
+      o.position.sub(hinge);
+      pv.add(o);
+    }
+    this.cover = pv;
+    if (pages?.isMesh) {
+      const g = new THREE.PlaneGeometry(0.33, 0.45).translate(0.175, 0, 0);
+      const m = (pages.material as THREE.Material).clone();
+      m.side = THREE.DoubleSide;
+      const pg = new THREE.Group();
+      pg.position.set(-0.18, 0, 0.042);
+      pg.add(new THREE.Mesh(g, m));
+      pg.visible = false;
+      w.add(pg);
+      this.page = pg;
+    }
+  }
+
+  private book(dt: number) {
+    const want = this.st === "hand" ? 1 : 0;
+    this.openK += (want - this.openK) * Math.min(1, dt * (want ? 9 : 12));
+    const e = this.openK * this.openK * (3 - 2 * this.openK);
+    if (this.cover) this.cover.rotation.y = OPEN * e;
+    if (!this.page) return;
+    // Lật trang: chậm khi chờ, nhanh khi đang niệm (pháp khí bay vòng).
+    this.flip += dt * (this.orbit ? 2.2 : 0.55);
+    const ph = this.flip % 1;
+    const k = ph < 0.45 ? 0 : Math.min(1, (ph - 0.45) / 0.4);
+    this.page.visible = this.openK > 0.9 && k > 0 && k < 1;
+    this.page.rotation.y = OPEN * 0.97 * k * k * (3 - 2 * k);
+  }
   private fpos: THREE.Vector3 | null = null;
   /** Pháp khí: khi ra đòn bay vòng quanh người (renderer đặt mỗi khung). */
   orbit = false;
   private wOrb = 0;
   private oa = 0;
 
-  /** Pháp khí lơ lửng cạnh tay phải (bám theo tay có trễ, nhấp nhô và xoay chậm), không dính cứng vào lòng bàn tay. */
+  /** Pháp khí lơ lửng trước tay trái (bám theo tay có trễ, nhấp nhô và xoay chậm), không dính cứng vào lòng bàn tay. */
   private float(dt: number) {
     if (!this.root) return;
     const t = (this.t2 += dt);
     const rq = this.root.getWorldQuaternion(new THREE.Quaternion()),
       sc = this.root.getWorldScale(new THREE.Vector3()).y;
     const hp = this.hand.getWorldPosition(new THREE.Vector3());
-    const off = new THREE.Vector3(-0.13, 0.13 + 0.025 * Math.sin(t * 2.2), 0.1).multiplyScalar(sc).applyQuaternion(rq);
+    const off = this.floatOff
+      .clone()
+      .setY(this.floatOff.y + 0.025 * Math.sin(t * 2.2))
+      .multiplyScalar(sc)
+      .applyQuaternion(rq);
     const tgt = hp.add(off);
     this.wOrb += ((this.orbit ? 1 : 0) - this.wOrb) * Math.min(1, dt * 7);
     this.oa += dt * (1.2 + 9 * this.wOrb);
@@ -118,7 +192,7 @@ export class WeaponFx {
     const bob = new THREE.Quaternion().setFromEuler(
       new THREE.Euler(0.12 * Math.sin(t * 1.3), 0.35 * Math.sin(t * 0.7), 0.08 * Math.sin(t * 1.7)),
     );
-    setWorldQuat(this.holder, rq.multiply(this.handQuat).multiply(bob));
+    setWorldQuat(this.holder, rq.multiply(this.floatQuat).multiply(bob));
   }
   private t2 = 0;
 
@@ -201,6 +275,7 @@ export class WeaponFx {
   update(dt: number) {
     this.t += dt;
     if (this.cat && this.st === "hand") this.float(dt);
+    if (this.cat) this.book(dt);
     if (this.st === "stowing") {
       const at = this.clip ? this.noi.luc * this.clipDur(this.clip) : 0;
       if (this.t >= at && this.holder.parent === this.hand) {
@@ -210,7 +285,7 @@ export class WeaponFx {
       }
     } else if (this.st === "worn") {
       if (this.clip && this.t > this.clipDur(this.clip) * (1 - this.noi.luc)) this.clip = null;
-      if (this.t >= this.cfg.giu) {
+      if (this.t >= (this.noi.giu ?? this.cfg.giu)) {
         this.st = "fading";
         this.t = 0;
         this.burst(false);
@@ -225,11 +300,21 @@ export class WeaponFx {
         this.clip = null;
       }
     }
-    if (this.slide < 1 && this.holder.parent === this.sock) {
-      this.slide = Math.min(1, this.slide + dt / 0.22);
+    if (this.holder.parent === this.sock && (this.slide < 1 || this.cat)) {
+      this.slide = Math.min(1, this.slide + dt / SLIDE);
       const e = 1 - (1 - this.slide) ** 3;
       this.holder.position.lerpVectors(this.fromPos, this.sockPos, e);
+      // Vòng cung đi lên và ra sau lưng (hệ xương ở tư thế chữ T: +Y lên, -Z sau; VRM0 đảo trục Z).
+      const arc = Math.sin(Math.PI * this.slide) / this.sockBs;
+      this.holder.position.y += 0.12 * arc;
+      this.holder.position.z += (this.v0 ? 0.1 : -0.1) * arc;
       this.holder.quaternion.slerpQuaternions(this.fromQuat, this.sockQuat, e);
+      if (this.cat) {
+        // Sách lơ lửng sau hông: nhấp nhô và lắc nhẹ, không tụt xuống.
+        const t = (this.t2 += dt);
+        this.holder.position.y += (0.012 * Math.sin(t * 2.4) * e) / this.sockBs;
+        this.holder.rotateZ(0.06 * Math.sin(t * 1.7) * e);
+      }
     }
     // Hạt sáng.
     let any = false;

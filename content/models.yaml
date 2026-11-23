@@ -14,11 +14,32 @@ vuKhiMacDinh:
   cat: vo-chep-thay-do
 # Cách cầm vũ khí: xương VRM chuẩn hóa, độ lệch trong hệ bàn tay (m), góc xoay (độ), tỉ lệ, điểm cầm dọc thân vũ khí (at).
 camVuKhi:
+  # Kiếm: một tay, cán vuông góc nắm tay.
   sword: { bone: rightHand, pos: [-0.08, -0.012, 0.005], rot: [90, 0, 0], scale: 0.75, at: -0.17 }
-  great: { bone: rightHand, pos: [-0.08, -0.012, 0.005], rot: [90, 0, 0], scale: 0.85, at: -0.12 }
-  spear: { bone: rightHand, pos: [-0.08, -0.012, 0.005], rot: [90, 0, 0], scale: 0.9, at: -0.62 }
+  # Đại kiếm: hai tay trên chuôi, tay trái ngay dưới tay phải.
+  great:
+    {
+      bone: rightHand,
+      pos: [-0.08, -0.012, 0.005],
+      rot: [90, 0, 0],
+      scale: 0.85,
+      at: -0.12,
+      tay2: { at: -0.25, rot: [0, 0, 180] },
+    }
+  # Thương: hai tay, nắm gần cuối cán, cán chéo dọc theo cẳng tay phải, mũi hướng lên trước; tay trái đỡ phía trước.
+  spear:
+    {
+      bone: rightHand,
+      pos: [-0.08, -0.02, 0.0],
+      rot: [90, 0, -35],
+      scale: 0.9,
+      at: -0.95,
+      tay2: { at: -0.45, rot: [0, 0, 180] },
+    }
+  # Cung: tay trái nắm giữa thân cung, cung dựng, dây quay về phía người.
   bow: { bone: leftHand, pos: [0.08, -0.012, 0.005], rot: [90, 0, 0], scale: 0.85, at: 0 }
-  cat: { bone: rightHand, pos: [-0.06, 0.14, 0.02], rot: [0, 0, 0], scale: 0.6, at: 0 }
+  # Sách phép: không cầm, lơ lửng mở trang trước tay trái (rot: hướng sách theo thân người).
+  cat: { bone: leftHand, pos: [0.02, 0.06, 0.22], rot: [-75, 0, 0], scale: 0.6, at: 0 }
 # Clip hoạt ảnh theo loại vũ khí (tên clip trong public/media/anim/humanoid.json, xem tools/anim/recipes.ts).
 hoatAnh:
   sword:

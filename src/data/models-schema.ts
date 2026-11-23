@@ -11,7 +11,15 @@ export const ModelsSchema = z.object({
   vuKhiMacDinh: perType(z.string()),
   /** Gắn vũ khí vào xương CHUẨN HÓA (trục trùng hệ gốc ở tư thế chữ T): pos/rot trong hệ bàn tay (m, độ), at = điểm cầm dọc trục Y của vũ khí. */
   camVuKhi: perType(
-    z.object({ bone: z.string(), pos: v3, rot: v3, scale: z.number().positive(), at: z.number().default(0) }),
+    z.object({
+      bone: z.string(),
+      pos: v3,
+      rot: v3,
+      scale: z.number().positive(),
+      at: z.number().default(0),
+      /** Tay trái đỡ vũ khí hai tay: điểm cầm dọc thân vũ khí (at) và hướng bàn tay trái so với bàn tay phải (độ). */
+      tay2: z.object({ at: z.number(), rot: v3 }).optional(),
+    }),
   ),
   hoatAnh: perType(
     z.object({
