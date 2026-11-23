@@ -83,7 +83,8 @@ function ensure() {
 export function wishKey(e: KeyboardEvent) {
   if (!cine || $("wishFx").hidden) return false;
   // Enter/Space trên nút đang được chọn (Bỏ qua, Tua nhanh) để trình duyệt bấm nút đó.
-  if ((e.key === " " || e.key === "Enter") && (e.target as HTMLElement | null)?.closest?.("#wishFx button")) return false;
+  if ((e.key === " " || e.key === "Enter") && (e.target as HTMLElement | null)?.closest?.("#wishFx button"))
+    return false;
   if (videoNow.playing) {
     if (e.key === "Escape") videoNow.skip();
     else if (e.key === " " || e.key === "Enter" || e.key === "f" || e.key === "F") videoNow.toggleFast();
