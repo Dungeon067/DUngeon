@@ -22,8 +22,8 @@ export class WeaponFx {
   clip: string | null = null;
   color = new THREE.Color("#ffffff");
   private t = 0;
-  private handPos: THREE.Vector3;
-  private handQuat: THREE.Quaternion;
+  handPos: THREE.Vector3;
+  handQuat: THREE.Quaternion;
   private handScale: THREE.Vector3;
   private hand: THREE.Object3D;
   private sock: THREE.Object3D | null;
@@ -197,10 +197,10 @@ export class WeaponFx {
   private t2 = 0;
 
   /** Đặt trạng thái mong muốn mỗi khung. standing: đang đứng yên (mới chạy clip cất). */
-  want(out: boolean, standing: boolean, scene: THREE.Object3D | null) {
+  want(out: boolean, standing: boolean, scene: THREE.Object3D | null, idle = standing) {
     if (scene && this.pts.parent !== scene) scene.add(this.pts);
     if (out) {
-      if (this.st !== "hand") this.draw();
+      if (this.st !== "hand") this.draw(idle);
       return;
     }
     if (this.st === "hand") {
@@ -222,7 +222,7 @@ export class WeaponFx {
   }
 
   /** Rút ngay về tay ở khung này, hạt sáng tụ lại quanh vũ khí. */
-  private draw() {
+  private draw(idle = false) {
     const wasVisible = this.st === "hand" || this.st === "stowing";
     this.hand.add(this.holder);
     this.holder.position.copy(this.handPos);
@@ -233,7 +233,33 @@ export class WeaponFx {
     this.clip = null;
     this.slide = 1;
     this.fpos = null;
-    if (!wasVisible) this.burst(true);
+    this.t = 0;
+    if (!wasVisible) {
+      this.burst(true);
+      if (idle && this.noi.rut) this.clip = this.noi.rut;
+    }
+  }
+
+  /** Đang phát clip rút: xoay vũ khí trong tay (xoay kiếm, quay thương). */
+  private twirl() {
+    const d = this.clipDur(this.clip!);
+    if (this.t >= d) {
+      this.clip = null;
+      if (!this.cat) this.holder.quaternion.copy(this.handQuat);
+      return;
+    }
+    const x = this.noi.xoay;
+    if (!x || this.cat) return;
+    const u = THREE.MathUtils.clamp((this.t / d - x[0]) / Math.max(1e-3, x[1] - x[0]), 0, 1);
+    const e = u * u * (3 - 2 * u);
+    const ax = new THREE.Vector3(
+      this.noi.truc === "x" ? 1 : 0,
+      this.noi.truc === "y" ? 1 : 0,
+      this.noi.truc === "z" || !this.noi.truc ? 1 : 0,
+    );
+    this.holder.quaternion
+      .copy(this.handQuat)
+      .multiply(new THREE.Quaternion().setFromAxisAngle(ax, e * x[2] * Math.PI * 2));
   }
 
   private sample(n: number) {
@@ -274,6 +300,11 @@ export class WeaponFx {
 
   update(dt: number) {
     this.t += dt;
+    if (this.st === "hand" && !this.cat && this.holder.parent === this.hand) {
+      this.holder.position.copy(this.handPos);
+      this.holder.quaternion.copy(this.handQuat);
+    }
+    if (this.st === "hand" && this.clip) this.twirl();
     if (this.cat && this.st === "hand") this.float(dt);
     if (this.cat) this.book(dt);
     if (this.st === "stowing") {

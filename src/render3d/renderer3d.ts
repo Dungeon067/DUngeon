@@ -582,7 +582,8 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     }
     if (hero && m) {
       const standing = !p.moving && !p.air && p.dashT <= 0;
-      hero.wfx?.want(weaponOut(p, G.enemies, G.time, POSES.vuKhi), standing, scene);
+      const idleDraw = standing && !(p.act && G.time - p.act.t0 < 1);
+      hero.wfx?.want(weaponOut(p, G.enemies, G.time, POSES.vuKhi), standing, scene, idleDraw);
       // Nhịp hãm khi dừng chạy, hoạt ảnh chờ ngẫu nhiên khi đứng yên tay không.
       if (p.moving) heroMoveT += dt;
       else {

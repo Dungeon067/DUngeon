@@ -90,13 +90,13 @@ giữ một nhịp rồi tan thành hạt sáng màu nguyên tố của nhân v�
 Đánh thường, kỹ năng hoặc nộ: vũ khí hiện lại trong tay ngay khung đầu, hạt sáng tụ nhanh, không làm chậm đòn.
 Renderer 2D ẩn vũ khí theo cùng luật (`src/combat/weapon-state.ts`).
 
-| Vũ khí   | Chỗ cất                 | Clip cất    |
-| -------- | ----------------------- | ----------- |
-| Kiếm     | bên hông trái           | `stowHip`   |
-| Đại kiếm | sau lưng, chuôi qua vai | `stowBackR` |
-| Thương   | sau lưng, chéo          | `stowBackR` |
-| Cung     | sau lưng, chéo          | `stowBackL` |
-| Pháp khí | tan ngay cạnh tay       | (không)     |
+| Vũ khí   | Chỗ cất                 | Clip cất |
+| -------- | ----------------------- | -------- |
+| Kiếm     | bên hông trái           | `swStow` |
+| Đại kiếm | sau lưng, chuôi qua vai | `grStow` |
+| Thương   | sau lưng, chéo          | `spStow` |
+| Cung     | sau lưng, chéo          | `bwStow` |
+| Pháp khí | tan ngay cạnh tay       | (không)  |
 
 ### Mẫu VRM nam dùng thử (không đưa vào repo)
 
@@ -116,3 +116,15 @@ Mọi khung hình đều tự dựng bằng code trong `tools/anim/s27/` (không
 - **Lướt / nhảy:** lướt đổ người tới và tỏa hạt sáng theo nguyên tố; nhảy co chân ở đỉnh.
 - **Đòn:** lấy đà ≈ 10% clip, chạm ≈ 17%, giữ tư thế kết tới ≈ 60%. Đòn 3: kiếm và thương xoay một vòng người rồi chém / quét kết bước dài; đại kiếm thân xoay trước, lưỡi trễ theo (nặng tay); pháp khí chắp ấn rồi đẩy hai tay, pháp khí bay vòng quanh người khi ra đòn. Vệt chém của đòn kết dài và rộng hơn; pháp khí có nét ấn theo đầu ngón trỏ (`src/render3d/toon/motion-fx.ts`).
 - **Cung:** kỹ năng `bowSkill` bật lùi một nhịp rồi bắn chéo lên; nộ giương cung thẳng lên trời, ngửa người kéo đầy dây rồi thả.
+
+## S27 – đánh bóng cầm, rút và cất vũ khí (mocap Mixamo + keyframe tay)
+
+Nguồn: [Mixamo](https://www.mixamo.com) (Adobe), cho phép dùng miễn phí trong game thương mại; xuất "Without Skin", FBX, 30 FPS, file gốc ở `art-src/mocap/mixamo/` (không đưa vào git). Lớp keyframe tay ở `tools/anim/s27/` (IK tay theo kiểu cầm, ngón tay, cổ tay mềm, hông). Hình mẫu thể loại chỉ xem bằng mắt qua video gameplay công khai; không tách hay dùng dữ liệu hoạt ảnh của game khác.
+
+| Vũ khí   | Clip                                   | Pack Mixamo           | File gốc                                                                                                                     |
+| -------- | -------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Kiếm     | `swReady`, `sw1–3`, `swDraw`, `swStow` | Sword and Shield Pack | `ss_sword_and_shield_*`, `ss_draw_sword_*`, `ss_sheath_sword_*`                                                              |
+| Đại kiếm | `grReady`, `gr1–3`, `grDraw`, `grStow` | Great Sword Pack      | `gs_great_sword_idle/slash/attack/high_spin_attack`, `gs_draw_a_great_sword_1/2`                                             |
+| Thương   | `spReady`, `spDraw`, `spStow`          | Great Sword Pack      | `gs_great_sword_idle (1)`, `ss_draw_sword_1`, `gs_draw_a_great_sword_1` (đòn `sp1–3` giữ bản cũ)                             |
+| Cung     | `bowReady`, `bwDraw`, `bwStow`         | Pro Longbow Pack      | `bow_standing_idle_01`, `bow_standing_equip_bow`, `bow_standing_disarm_bow`                                                  |
+| Pháp khí | `ctReady`, `ct1–3`, `ctDraw`           | Magic Pack            | `mg_Standing_Idle_03`, `mg_Standing_1H_Magic_Attack_01/03`, `mg_Standing_2H_Magic_Attack_01`, `mg_standing_1H_cast_spell_01` |

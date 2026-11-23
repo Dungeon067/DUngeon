@@ -99,6 +99,7 @@ export class VrmActor {
   weapon: THREE.Object3D | null = null;
   /** Vũ khí hai tay: tay trái bám điểm cầm thứ hai trên thân vũ khí (IK cánh tay). */
   offHand: {
+    chi?: boolean;
     limb: Limb;
     w: THREE.Object3D;
     at: number;
@@ -109,6 +110,18 @@ export class VrmActor {
   /** S27: lớp chỉnh tư thế theo dáng; poseIn do renderer đặt mỗi khung. */
   layer: PoseLayer | null = null;
   poseIn: PoseInput = { mode: "relax", freeL: true, freeR: true };
+  weaponMesh: THREE.Object3D | null = null;
+  /** Cách cầm lúc chờ (p, q, at) và lúc ra đòn (p1, q1, at1), trộn theo offW. */
+  gripCho: {
+    p: THREE.Vector3;
+    q: THREE.Quaternion;
+    at: number;
+    p1: THREE.Vector3;
+    q1: THREE.Quaternion;
+    at1: number;
+  } | null = null;
+  /** 0 = cầm kiểu chờ, 1 = cầm kiểu ra đòn (tay trái lên cán với tay2 chi: act). */
+  offW = 0;
   restHips: THREE.Vector3;
   hipsH: number;
   bow: BowRig | null = null;
@@ -218,6 +231,24 @@ export class VrmActor {
         holder.add(w);
         bone.add(holder);
         a.weapon = holder;
+        a.weaponMesh = w;
+        if (grip.cho) {
+          const r = grip.cho.rot.map((d) => (d * Math.PI) / 180) as [number, number, number];
+          const hq = new THREE.Quaternion().setFromEuler(new THREE.Euler(...r));
+          const hp = new THREE.Vector3().fromArray(grip.cho.pos).divideScalar(bs);
+          if (vrm.meta?.metaVersion === "0") {
+            hp.set(-hp.x, hp.y, -hp.z);
+            hq.premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI));
+          }
+          a.gripCho = {
+            p: hp,
+            q: hq,
+            at: grip.cho.at,
+            p1: holder.position.clone(),
+            q1: holder.quaternion.clone(),
+            at1: grip.at,
+          };
+        }
         const str = w.getObjectByName("string") as THREE.Mesh | undefined,
           gr = w.getObjectByName("grip"),
           nock =
@@ -241,6 +272,7 @@ export class VrmActor {
             limb: { a: lh[0]!, b: lh[1]!, c: lh[2]!, poleRest: new THREE.Vector3(0, 0, v0 ? 1 : -1) },
             w,
             at: grip.tay2.at,
+            chi: grip.tay2.chi === "act",
             q,
             // Cổ tay so với điểm cầm, hệ bàn tay trái (đối xứng tay phải).
             off: new THREE.Vector3(-grip.pos[0], -grip.pos[1], -grip.pos[2])
@@ -337,16 +369,31 @@ export class VrmActor {
     this.mixer.update(dt);
     this.layer?.apply(dt, this.poseIn);
     if (this.layer) this.obj.rotation.z = this.layer.bank;
+    this.offW += ((this.poseIn.mode === "act" ? 1 : 0) - this.offW) * Math.min(1, dt * 14);
+    this.gripBlend();
     this.grip2();
     this.cloth.update(dt);
     this.wfx?.update(dt);
     if (this.bow) this.bow.update(this.wfx && this.wfx.st !== "hand" ? 0 : this.strNow());
   }
 
+  /** Trộn cách cầm lúc chờ / lúc ra đòn theo offW. */
+  gripBlend() {
+    const c = this.gripCho,
+      f = this.wfx;
+    if (!c || !f || f.st !== "hand") return;
+    f.handPos.lerpVectors(c.p, c.p1, this.offW);
+    f.handQuat.slerpQuaternions(c.q, c.q1, this.offW);
+    if (this.weaponMesh) this.weaponMesh.position.y = -(c.at + (c.at1 - c.at) * this.offW);
+  }
+
   /** Tay trái đỡ vũ khí hai tay (gọi sau lớp tư thế). */
   grip2() {
     const o = this.offHand;
     if (!o || !this.weapon?.visible || (this.wfx && this.wfx.st !== "hand")) return;
+    if (o.chi && this.offW < 0.02) return;
+    const L = [o.limb.a, o.limb.b, o.limb.c],
+      old = o.chi && this.offW < 0.98 ? L.map((b) => b.quaternion.clone()) : null;
     o.w.updateWorldMatrix(true, false);
     const shaft = o.w.localToWorld(_v.set(0, o.at, 0));
     const q = o.r.getWorldQuaternion(_q).multiply(o.q);
@@ -354,6 +401,7 @@ export class VrmActor {
     const wrist = shaft.add(_s.copy(o.off).multiplyScalar(hs).applyQuaternion(q));
     const pole = _p.set(0.6, -1, -0.5).normalize().applyQuaternion(this.obj.getWorldQuaternion(_q2));
     solveLimb(o.limb, wrist, pole, q);
+    if (old) L.forEach((b, i) => b.quaternion.copy(old[i].slerp(b.quaternion, this.offW)));
   }
 
   dispose() {

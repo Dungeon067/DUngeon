@@ -80,6 +80,10 @@ const Noi = z
     clip: z.string().optional(),
     luc: z.number().min(0).max(1),
     giu: z.number().positive().optional(),
+    /** Clip rút (đứng yên, chưa ra đòn) và xoay vũ khí trong tay lúc rút: [từ, tới] (tỉ lệ clip), số vòng, trục. */
+    rut: z.string().optional(),
+    xoay: z.tuple([n(0, 1), n(0, 1), n(-4, 4)]).optional(),
+    truc: z.enum(["x", "y", "z"]).optional(),
   })
   .strict();
 export const WEAPONS = ["sword", "great", "spear", "bow", "cat"] as const;

@@ -10,12 +10,25 @@ import { MELEE, MELEE_MOVE } from "./s27/melee";
 import { MOVE_BASE, upright } from "./s27/move";
 import { SHARED_CLIPS } from "./s27/shared";
 import { bakeMocap, type MocapRecipe } from "./mocap";
+import { SW_MC, SW_POL } from "./s27/sword";
+import { GR_MC, GR_POL } from "./s27/great";
+import { CT_MC, CT_POL } from "./s27/cat";
+import { SP_MC, SP_POL } from "./s27/spear";
+import { BW_MC, BW_POL } from "./s27/bowpol";
 
 const FILE = "public/media/anim/humanoid.json";
 const lib = JSON.parse(readFileSync(FILE, "utf8"));
 const names = Object.keys(lib.clips.idle.bones);
 const ALL: Record<string, ClipDef> = { ...SHARED_CLIPS, ...UNARMED, ...BOW, ...MELEE };
-const OVER: Record<string, OverlayDef> = { ...BOW_MOVE, ...MELEE_MOVE };
+const OVER: Record<string, OverlayDef> = {
+  ...SW_POL,
+  ...GR_POL,
+  ...CT_POL,
+  ...SP_POL,
+  ...BW_POL,
+  ...BOW_MOVE,
+  ...MELEE_MOVE,
+};
 const rig = new Rig();
 for (const n of MOVE_BASE) {
   lib.clips[n] = upright(n, names, rig);
@@ -57,6 +70,11 @@ const MC: Record<string, MocapRecipe> = {
     aim: 3.3,
   },
   "mc.bowFull": { file: "79_86", from: 1.0, to: 4.9, aim: 3.3 },
+  ...SW_MC,
+  ...GR_MC,
+  ...CT_MC,
+  ...SP_MC,
+  ...BW_MC,
 };
 for (const [n, r] of Object.entries(MC)) {
   lib.clips[n] = bakeMocap(r, names, lib.clips.relax ?? lib.clips.idle, lib.fps);
@@ -69,5 +87,14 @@ for (const [n, o] of Object.entries(OVER)) {
   console.log(n, lib.clips[n].n, "khung (chồng lớp)");
 }
 for (const k of ["tRelax", "tDraw", "tStand"]) delete lib.clips[k];
-for (const k of Object.keys(lib.clips)) if (k.startsWith("t.")) delete lib.clips[k];
+for (const k of Object.keys(lib.clips))
+  if (
+    k.startsWith("t.") ||
+    k.startsWith("mc.sw") ||
+    k.startsWith("mc.gr") ||
+    k.startsWith("mc.ct") ||
+    k.startsWith("mc.sp") ||
+    k.startsWith("mc.bw")
+  )
+    delete lib.clips[k];
 writeFileSync(FILE, JSON.stringify(lib));

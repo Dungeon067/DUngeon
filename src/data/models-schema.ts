@@ -18,7 +18,9 @@ export const ModelsSchema = z.object({
       scale: z.number().positive(),
       at: z.number().default(0),
       /** Tay trái đỡ vũ khí hai tay: điểm cầm dọc thân vũ khí (at) và hướng bàn tay trái so với bàn tay phải (độ). */
-      tay2: z.object({ at: z.number(), rot: v3 }).optional(),
+      tay2: z.object({ at: z.number(), rot: v3, chi: z.literal("act").optional() }).optional(),
+      /** Cách cầm lúc chờ / di chuyển (khác lúc ra đòn), ví dụ thương nắm giữa cán một tay. */
+      cho: z.object({ pos: v3, rot: v3, at: z.number() }).optional(),
     }),
   ),
   hoatAnh: perType(

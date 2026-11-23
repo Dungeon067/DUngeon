@@ -24,17 +24,18 @@ camVuKhi:
       rot: [90, 0, 0],
       scale: 0.85,
       at: -0.12,
-      tay2: { at: -0.25, rot: [0, 0, 180] },
+      tay2: { at: -0.25, rot: [0, 0, 180], chi: act },
     }
   # Thương: hai tay, nắm gần cuối cán, cán chéo dọc theo cẳng tay phải, mũi hướng lên trước; tay trái đỡ phía trước.
-  spear:
-    {
+  spear: {
       bone: rightHand,
       pos: [-0.08, -0.02, 0.0],
       rot: [90, 0, -35],
       scale: 0.9,
       at: -0.95,
-      tay2: { at: -0.45, rot: [0, 0, 180] },
+      tay2: { at: -0.45, rot: [0, 0, 180], chi: act },
+      # Lúc chờ: một tay nắm giữa cán, cán dọc người, mũi chếch lên.
+      cho: { pos: [-0.08, -0.012, 0.005], rot: [90, 0, 0], at: -0.3 },
     }
   # Cung: tay trái nắm giữa thân cung, cung dựng, dây quay về phía người.
   bow: { bone: leftHand, pos: [0.08, -0.012, 0.005], rot: [90, 0, 0], scale: 0.85, at: 0 }

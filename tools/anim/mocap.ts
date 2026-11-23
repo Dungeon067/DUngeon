@@ -132,6 +132,8 @@ export interface MocapRecipe {
   lean?: number;
   /** Nối nhiều đoạn [từ, đến, tốc độ] (bỏ qua from/to/speed). */
   segs?: [number, number, number][];
+  /** Hệ số giữ dịch chuyển ngang của hông (1 = giữ nguyên). */
+  rootK?: number;
 }
 
 const rig = new Rig();
@@ -230,6 +232,10 @@ export function bakeMocap(r: MocapRecipe, names: string[], fill: ClipData, fps =
           .setY(0),
       );
     else p.sub(hp[0].clone().setY(0));
+    if (r.rootK !== undefined) {
+      p.x *= r.rootK;
+      p.z *= r.rootK;
+    }
     p.y -= ground + hipsH;
     p.applyQuaternion(Y).divideScalar(hipsH);
     out.hips.push(p.toArray());

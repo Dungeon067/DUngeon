@@ -28,12 +28,35 @@ vuKhi:
   hien: 0.14
   hat: { so: 48, coDo: 0.05, bay: 0.5 }
   noi:
-    sword: { bone: upperChest, pos: [-0.1, 0.1, -0.14], rot: [0, 0, -145], clip: stowBackR, luc: 0.5 }
-    great: { bone: upperChest, pos: [-0.12, 0.12, -0.15], rot: [0, 0, -150], clip: stowBackR, luc: 0.5 }
-    spear: { bone: upperChest, pos: [-0.05, 0.0, -0.15], rot: [0, 0, 35], clip: stowBackR, luc: 0.5 }
-    bow: { bone: upperChest, pos: [0.04, 0.0, -0.13], rot: [0, 0, 150], clip: stowBackL, luc: 0.5 }
+    # Kiếm: tra vào bao bên hông trái (clip cất mocap), rút từ hông rồi xoay một vòng cổ tay.
+    sword:
+      {
+        bone: hips,
+        pos: [0.17, 0.02, 0.02],
+        rot: [0, 0, 110],
+        clip: swStow,
+        luc: 0.62,
+        rut: swDraw,
+        xoay: [0.55, 0.9, 1],
+        truc: z,
+      }
+    # Đại kiếm: tay phải vung qua vai đặt chéo sau lưng; rút từ lưng kéo vòng qua đầu rồi vác vai.
+    great: { bone: upperChest, pos: [-0.12, 0.12, -0.15], rot: [0, 0, -150], clip: grStow, luc: 0.85, rut: grDraw }
+    # Thương: quay hai vòng trước người khi rút; cất thì vung qua vai đeo chéo lưng, mũi lên.
+    spear:
+      {
+        bone: upperChest,
+        pos: [-0.05, 0.0, -0.15],
+        rot: [0, 0, 35],
+        clip: spStow,
+        luc: 0.85,
+        rut: spDraw,
+        xoay: [0.15, 0.8, 2],
+        truc: x,
+      }
+    bow: { bone: upperChest, pos: [0.04, 0.0, -0.13], rot: [0, 0, 150], clip: bwStow, luc: 0.7, rut: bwDraw }
     # Sách gập lại, bay lên lơ lửng sau hông phải (ngang thắt lưng), lắc nhẹ, giu giây sau mới tan.
-    cat: { bone: hips, pos: [-0.17, 0.16, -0.17], rot: [15, -30, -12], luc: 0, giu: 1.4 }
+    cat: { bone: hips, pos: [-0.17, 0.16, -0.17], rot: [15, -30, -12], luc: 0, giu: 1.4, rut: ctDraw }
 # Gió (spring bone tóc, vải) ở runtime: src/render3d/toon/wind.ts + cloth.ts. Hướng: độ, 0 = thổi về +X thế giới, 90 = về +Z.
 #  vung: gió nền theo vùng (id trong content/terrain.yaml; mac-dinh cho vùng không khai báo), luc ~ độ cứng spring bone
 #  thoiTiet: hệ số nhân theo thời tiết (khi game có thời tiết)   doCao: lên cao hơn `tu` m thì cộng moiM mỗi m, tối đa toiDa (đỉnh núi)

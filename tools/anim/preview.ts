@@ -76,6 +76,8 @@ const act = (a as any).actions.get(clip) as THREE.AnimationAction;
   act.time = t;
   a.layer?.restore();
   a.mixer.update(0);
+  a.offW = a.poseIn.mode === "act" ? 1 : 0;
+  a.gripBlend();
   if (a.layer) {
     for (let i = 0; i < 40; i++) {
       a.layer.restore();
@@ -196,6 +198,8 @@ function sequence(src: string) {
     jump: "Nhảy",
     jumpdash: "Nhảy + lướt trên không",
     ready: "Thế chờ",
+    draw: "Rút vũ khí",
+    stow: "Cất vũ khí",
     vortex: "Bạch Vũ dùng Lốc Xoáy Lông Vũ cạnh Hạ Vy",
     vent: "Đứng trên miệng gió",
     nguoc: "Chạy ngược gió",
@@ -226,9 +230,12 @@ function sequence(src: string) {
     cur = c;
     a!.play(c, { fade: 0.12, ...o });
   };
-  (window as any).nframes = Math.round(segs.reduce((s, x) => s + x.d, 0) * 30);
+  // fps: số khung mỗi giây video; slow: hệ số tốc độ (0.5 = quay chậm một nửa).
+  const FPS = +(q.get("fps") ?? 30),
+    SLOW = +(q.get("slow") ?? 1);
+  (window as any).nframes = Math.round((segs.reduce((s, x) => s + x.d, 0) * FPS) / SLOW);
   (window as any).step = () => {
-    const dt = 1 / 30;
+    const dt = SLOW / FPS;
     if (si < 0 || segT >= segs[si].d) {
       si++;
       segT = 0;
@@ -247,10 +254,11 @@ function sequence(src: string) {
       }
     }
     const s = segs[Math.min(si, segs.length - 1)];
-    const out = T - lastAct < POSES.vuKhi.cho || s.k === "charge";
+    if (s.k === "draw") lastAct = Math.max(lastAct, T - 0.01);
+    const out = s.k !== "stow" && (T - lastAct < POSES.vuKhi.cho || s.k === "charge");
     const JUMP = s.k === "jump" || s.k === "jumpdash";
     const standing = !MOVE.has(s.k) && s.k !== "dash" && !JUMP;
-    a!.wfx?.want(out, standing, scene);
+    a!.wfx?.want(out, standing, scene, s.k === "draw");
     const armed = !a!.wfx || a!.wfx.st === "hand" || a!.wfx.st === "stowing";
     const relaxing = s.k === "idle" && (!a!.wfx || a!.wfx.st === "gone");
     const iv = a!.idleVariant(dt, relaxing);
