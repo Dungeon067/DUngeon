@@ -27,9 +27,10 @@ jobs:
           path: .git/lfs
           key: lfs-cine-${{ hashFiles('.lfs-cine') }}
           restore-keys: lfs-cine-
+      # Bản xem thử PR chỉ có video 720p cho nhẹ gh-pages; bản main thêm 1080p WebM.
       - name: Kéo video ước nguyện (Git LFS)
         if: github.event.action != 'closed'
-        run: git lfs pull -I "media/cinematic/out/audio/**,media/cinematic/out/video/*-720.*,media/cinematic/out/video/*-1080.webm"
+        run: git lfs pull -I "media/cinematic/out/audio/**,media/cinematic/out/video/*-720.*${{ github.event_name == 'push' && ',media/cinematic/out/video/*-1080.webm' || '' }}"
       - uses: pnpm/action-setup@v4
         if: github.event.action != 'closed'
       - uses: actions/setup-node@v4
