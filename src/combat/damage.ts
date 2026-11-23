@@ -1,3 +1,4 @@
+import { dir8 } from "../core/facing";
 import { GS } from "../core/state";
 import { onKill } from "../ui/menu/progress";
 import { buzz } from "../core/haptics";
@@ -42,6 +43,7 @@ export function aim() {
   } else p.ang = Math.atan2(p.dirY, p.dirX);
   if (Math.abs(Math.cos(p.ang)) > 0.2) p.fx = Math.cos(p.ang) > 0 ? 1 : -1;
   p.back = Math.sin(p.ang) < -0.75;
+  p.face8 = dir8(p.ang);
 }
 export function dealRaw(e: any, dmg: number, col: string) {
   if (e.dead) return;

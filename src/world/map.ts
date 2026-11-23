@@ -67,6 +67,11 @@ export const START_LEDGES: { dx: number; dy: number; w: number; hgt: number; h: 
   { dx: -2, dy: 3, w: 1, hgt: 1, h: 1 },
 ];
 export const START_GAP = { dx: -2, dy: 4, len: 3 };
+/** Cầu cao (deck) gần điểm xuất phát, nối bệ 2 bậc với một cột đá; đi bộ được ở dưới gầm. */
+export const START_PILLAR = { dx: 1, dy: -6, w: 1, hgt: 2, h: 2 };
+export const START_DECKS: { dx: number; dy: number; len: number; w: number; h: number; axis: "x" | "y" }[] = [
+  { dx: -4, dy: -6, len: 5, w: 2, h: 2, axis: "x" },
+];
 export function genWorld() {
   const m = new Uint8Array(MW * MH),
     cx = MW / 2,
@@ -188,7 +193,13 @@ export function genWorld() {
   const puz = placePuzzles(get, set, reach, cx, cy, allPoi);
   // độ cao, địa hình, vùng (S09; định dạng ở docs/world/dinh-dang-ban-do.md)
   const keep = (t: number) => t !== TL.PATH && t !== TL.BRIDGE;
-  for (const L of START_LEDGES)
+  for (const d of START_DECKS)
+    for (let k = 0; k < d.len; k++)
+      for (let j = 0; j < d.w; j++) {
+        const i = d.axis === "x" ? (cy + d.dy + j) * MW + cx + d.dx + k : (cy + d.dy + k) * MW + cx + d.dx + j;
+        if (keep(m[i]!)) m[i] = TL.PATH;
+      }
+  for (const L of [...START_LEDGES, START_PILLAR])
     for (let y = 0; y < L.hgt; y++)
       for (let x = 0; x < L.w; x++) {
         const i = (cy + L.dy + y) * MW + cx + L.dx + x;
@@ -202,7 +213,7 @@ export function genWorld() {
     terrain = new Uint8Array(MW * MH),
     region = new Uint8Array(MW * MH);
   for (let i = 0; i < MW * MH; i++) h[i] = TILE_H[m[i]!]!;
-  for (const L of START_LEDGES)
+  for (const L of [...START_LEDGES, START_PILLAR])
     for (let y = 0; y < L.hgt; y++)
       for (let x = 0; x < L.w; x++) {
         const i = (cy + L.dy + y) * MW + cx + L.dx + x;
@@ -211,7 +222,8 @@ export function genWorld() {
   for (let i = 0; i < MW * MH; i++) terrain[i] = terrainIndex(TILE_TERRAIN[m[i]!]!);
   const ledges = computeLedges(h, m);
   const mini = miniCanvas(m);
-  return { m, h, terrain, region, ledges, statues, tower, gate, camps, chests, mini, cx, cy, puz };
+  const decks = START_DECKS.map((d) => ({ ...d, x: cx + d.dx, y: cy + d.dy }));
+  return { m, h, terrain, region, ledges, statues, tower, gate, camps, chests, mini, cx, cy, puz, decks };
 }
 
 export interface PuzzleSpot {

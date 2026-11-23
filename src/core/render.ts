@@ -10,18 +10,27 @@ import { EL } from "../data/content";
 import { cur } from "../entities/party";
 import { Server } from "../server/server";
 import { drawCine } from "../ui/cine";
+import { renderer3d, type WorldRenderer } from "../render3d/select";
 import { drawMenuBg } from "../ui/menuBg";
 import { drawArena, drawChest, drawPortal, drawRock, drawStatue, drawTile, drawTree } from "../world/draw";
 import { MH, MW, TL, TS } from "../world/map";
 import { queuePuzzles } from "../world/draw-puzzles";
+import { groundAt } from "../world/collision";
 
 export function render() {
   const tm = performance.now() / 1000;
   ctx.setTransform(GS.DPR, 0, 0, GS.DPR, 0, 0);
   if (GS.scene !== "play") {
+    renderer3d()?.hide?.();
     drawMenuBg(tm);
     return;
   }
+  const r3 = renderer3d();
+  if (r3 && GS.G.map && r3.frame(tm)) {
+    render3dOverlay(r3, tm);
+    return;
+  }
+  r3?.hide?.();
   const sx = GS.G.shake ? rand(-GS.G.shake, GS.G.shake) : 0,
     sy = GS.G.shake ? rand(-GS.G.shake, GS.G.shake) : 0;
   ctx.fillStyle = "#1f5a8e";
@@ -333,6 +342,92 @@ export function render() {
   }
   ctx.globalAlpha = 1;
   ctx.restore();
+  drawScreenOverlays(tm);
+}
+
+/** Lớp 2D đè lên cảnh 3D: chữ sát thương theo vị trí chiếu, viền tối, băng chữ, cắt cảnh. */
+function render3dOverlay(r3: WorldRenderer, tm: number) {
+  ctx.clearRect(0, 0, GS.VW, GS.VH);
+  drawPuzzles3d(r3, tm);
+  // Vùng cảnh báo đòn và sóng xung kích: bản vẽ 2D chiếu lên mặt đất quanh điểm của nó.
+  ctx.save();
+  if (groundXf(r3, GS.G.p.x, GS.G.p.y)) drawWaves(ctx);
+  ctx.restore();
+  for (const e of GS.G.enemies) {
+    if (e.dead) continue;
+    // Neo phép chiếu tại tâm vùng cảnh báo (đích nhảy, đích phép, giữa đường đạn) cho đỡ lệch phối cảnh.
+    const tl = e.tele,
+      ax = tl?.kind === "proj" ? (e.x + GS.G.p.x) / 2 : (tl?.tx ?? tl?.x ?? e.x),
+      ay = tl?.kind === "proj" ? (e.y + GS.G.p.y) / 2 : (tl?.ty ?? tl?.y ?? e.y);
+    ctx.save();
+    if (groundXf(r3, ax, ay)) {
+      if (e.isBoss) drawBossTele(e);
+      else drawTele(e);
+    }
+    ctx.restore();
+  }
+  ctx.setTransform(GS.DPR, 0, 0, GS.DPR, 0, 0);
+  ctx.textAlign = "center";
+  for (const t of GS.G.texts) {
+    const k = t.life / t.max,
+      q = r3.project(t.x, t.y + 30, 30);
+    if (!q.vis) continue;
+    ctx.globalAlpha = Math.min(1, k * 2);
+    ctx.font = `800 ${t.size * GS.ZOOM}px 'Be Vietnam Pro',sans-serif`;
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "rgba(0,0,0,.65)";
+    ctx.strokeText(t.txt, q.x, q.y);
+    ctx.fillStyle = t.col;
+    ctx.fillText(t.txt, q.x, q.y);
+  }
+  ctx.globalAlpha = 1;
+  drawScreenOverlays(tm);
+}
+
+/** Đặt phép biến đổi affine của mặt đất quanh (x, y): vẽ tọa độ thế giới 2D lên mặt đất 3D. */
+function groundXf(r3: WorldRenderer, x: number, y: number): boolean {
+  const q0 = r3.project(x, y),
+    q1 = r3.project(x + TS, y),
+    q2 = r3.project(x, y + TS);
+  const ax = (q1.x - q0.x) / TS,
+    ay = (q1.y - q0.y) / TS,
+    bx = (q2.x - q0.x) / TS,
+    by = (q2.y - q0.y) / TS,
+    // Lề cắt đủ rộng cho vùng cảnh báo bán kính tới 4 ô, dù tâm đã ra ngoài màn hình.
+    m = 300 + Math.max(Math.hypot(ax, ay), Math.hypot(bx, by)) * TS * 4;
+  if (!q0.vis || q0.x < -m || q0.x > GS.VW + m || q0.y < -m || q0.y > GS.VH + m) return false;
+  // Chỉ bỏ khi một ô to hơn cả chiều cao màn hình (vật sát camera), không bỏ khi zoom gần.
+  if (Math.hypot(ax, ay) * TS > GS.VH) return false;
+  const D = GS.DPR;
+  ctx.setTransform(D * ax, D * ay, D * bx, D * by, D * (q0.x - ax * x - bx * y), D * (q0.y - ay * x - by * y));
+  return true;
+}
+
+/** Câu đố, NPC quest mini, cửa bí cảnh (S23) chưa có bản 3D: chiếu bản vẽ 2D lên đúng điểm chân trong cảnh 3D. */
+function drawPuzzles3d(r3: WorldRenderer, tm: number) {
+  const dr: Parameters<typeof queuePuzzles>[0] = [],
+    hw = GS.VW / GS.ZOOM,
+    hh = GS.VH / GS.ZOOM;
+  queuePuzzles(dr, (x, y) => Math.abs(x - GS.G.cam.x) < hw && Math.abs(y - GS.G.cam.y) < hh * 1.4, tm);
+  dr.sort((a, b) => a.y - b.y);
+  for (const d of dr) {
+    if (!d.at) continue;
+    const [x, y] = d.at,
+      z = groundAt(x, y),
+      q = r3.project(x, y, z),
+      q1 = r3.project(x + TS, y, z);
+    if (!q.vis || q.x < -150 || q.x > GS.VW + 150 || q.y < -150 || q.y > GS.VH + 250) continue;
+    const s = Math.hypot(q1.x - q.x, q1.y - q.y) / TS;
+    // Vật quá sát camera (một ô to hơn chiều cao màn hình) sẽ phủ kín màn hình: bỏ qua.
+    if (s * TS > GS.VH) continue;
+    ctx.save();
+    ctx.setTransform(GS.DPR * s, 0, 0, GS.DPR * s, GS.DPR * (q.x - s * x), GS.DPR * (q.y - s * y));
+    d.f();
+    ctx.restore();
+  }
+}
+
+function drawScreenOverlays(tm: number) {
   // night tint vignette
   const vg = ctx.createRadialGradient(
     GS.VW / 2,

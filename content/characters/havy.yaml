@@ -19,10 +19,16 @@ burst:
   cost: 50
   m: 0.75
 look:
-  hair: "#a8d8f0"
-  style: bob
-  outfit: "#3e5f8a"
-  accent: "#e6f9ff"
-  skin: "#f8dcc6"
-  eye: "#8fe1ff"
-  coat: false
+  hair: "#4a8ff0"
+  style: longlocks
+  outfit: "#2a3a8f"
+  accent: "#f2a227"
+  skin: "#fbe3d6"
+  eye: "#d9262e"
+  coat: true
+  pants: "#272838"
+  shoe: "#2b2230"
+  mark: "#e0383a"
+  gem: "#7fe0ff"
+  cord: "#e8503a"
+  weaponColor: "#c7e3f2"
