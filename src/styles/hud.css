@@ -133,6 +133,19 @@ body.cursor-enemy #joyZone {
   --en: 0;
   --sw: 0;
 }
+.hud-party--compact {
+  display: grid;
+  grid-template-columns: repeat(2, 48px);
+}
+.hud-party--compact .hud-slot {
+  width: 48px;
+  padding: 0;
+  justify-content: center;
+}
+.hud-party--compact .hud-slot .nm,
+.hud-party--compact .hud-slot .k {
+  display: none;
+}
 .hud-slot .tt-portrait {
   position: relative;
   /* chân dung đặt --ps trong style riêng; ô bị thu (--slot-k < 1) thì thu theo */

@@ -55,6 +55,7 @@ export function applyLayout() {
 
 /** Cỡ tự nhiên của một ô đội hình (ds.css .tt-slot: chân dung 42 px + viền). */
 const SLOT_H = 48;
+const COMPACT = 48;
 /** Đặt cột đội hình ở cạnh phải giữa màn, luôn tránh menu nhanh và cụm nút dưới phải. */
 export function layoutParty() {
   const box = document.getElementById("hudParty");
@@ -66,7 +67,13 @@ export function layoutParty() {
   const qm = document.getElementById("quickMenu")?.getBoundingClientRect();
   const top = (qm && qm.height ? qm.bottom : safeInsets().t + 44) + 8;
   const buttons = HUD_BUTTONS.filter((b) => b !== "joy" && b !== "interact").map(rectOf);
-  const f = partyFit(n, first.offsetWidth, SLOT_H, vh <= 520 ? 4 : 6, vw, vh, safeInsets(), top, buttons);
+  box.classList.remove("hud-party--compact");
+  let f = partyFit(n, first.offsetWidth, SLOT_H, vh <= 520 ? 4 : 6, vw, vh, safeInsets(), top, buttons);
+  if (!f.fits) {
+    // Màn quá thấp (iPhone ngang có thanh home): chỉ còn chân dung, xếp 2 cột cho khỏi chạm cụm nút.
+    box.classList.add("hud-party--compact");
+    f = partyFit(Math.ceil(n / 2), 2 * COMPACT + 4, COMPACT, 4, vw, vh, safeInsets(), top, buttons);
+  }
   box.style.top = f.y + "px";
   box.style.setProperty("--slot-h", f.slotH + "px");
   box.style.setProperty("--slot-gap", f.gap + "px");
