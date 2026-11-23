@@ -262,7 +262,7 @@ export function renderBaoAnBag(host: HTMLElement, params: any, tl: HTMLElement) 
       disabled: !bag.picked.size,
       onClick: () => {
         const uids = [...bag.picked],
-          hi = uids.filter((u) => (P.baoAn[u]?.r ?? 0) >= 5 || (P.baoAn[u]?.lv ?? 0) > 0);
+          hi = uids.filter((u) => (P.baoAn[u]?.r ?? 0) >= 5 || (P.baoAn[u]?.lv ?? 0) > 0 || (P.baoAn[u]?.exp ?? 0) > 0);
         const run = () => {
           const r = Server.req("dismantleBaoAn", { uids });
           if (!r.ok) return;
@@ -298,7 +298,7 @@ export function renderBaoAnBag(host: HTMLElement, params: any, tl: HTMLElement) 
           button("Chọn 3★", { variant: "ghost", onClick: pick((a) => a.r === 3) }),
           button("Chọn 4★ chưa nâng", {
             variant: "ghost",
-            onClick: pick((a) => a.r === 4 && a.lv === 0),
+            onClick: pick((a) => a.r === 4 && a.lv === 0 && a.exp === 0),
           }),
           button("Chọn tất cả trong lọc", { variant: "ghost", onClick: pick((a) => a.r < 5) }),
           button("Bỏ chọn", { variant: "ghost", onClick: () => (bag.picked.clear(), rerender()) }),
