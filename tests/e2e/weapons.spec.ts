@@ -68,8 +68,11 @@ test("nâng cấp bằng quặng, khóa, kho vũ khí lọc và sắp xếp", as
   await boot(page);
   const uid = await give(page, "suong-som-ben-song");
   await page.evaluate(() => (window as any).__tinhtu.menu.openMenu("weapons"));
-  await page.getByRole("tab", { name: "Kiếm đơn" }).click();
-  await page.getByRole("button", { name: "4★" }).click();
+  await page.getByRole("button", { name: "Lọc", exact: true }).click();
+  const dlg = page.getByRole("dialog");
+  await dlg.getByRole("button", { name: "Kiếm đơn" }).click();
+  await dlg.getByRole("button", { name: "4★" }).click();
+  await dlg.getByRole("button", { name: "Áp dụng" }).click();
   await expect(page.locator(`#weaponGrid [data-uid="${uid}"]`)).toBeVisible();
   await expect(page.locator("#weaponGrid .tt-wcell")).toHaveCount(1);
   await page.locator(`#weaponGrid [data-uid="${uid}"]`).click();
