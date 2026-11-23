@@ -389,19 +389,19 @@ bo:
     mon:
       hoa:
         ten: Hoa Lựu Trên Gạch
-        truyen: "Bông hoa lựu vẽ men đỏ trên một viên gạch vỡ ở Nhà Chưa Xong. Ostad Khesht giữ lại mảnh có hoa. Ông nói căn phòng thiếu nó sẽ không ấm."
+        truyen: "Bông hoa lựu men đỏ trên viên gạch vỡ ở Nhà Chưa Xong, viền đất nung, quanh vành là những ô cửa vòm nhỏ. Ostad Khesht gắn mảnh sao vào nhụy rồi giữ lại. Ông nói căn phòng thiếu nó sẽ không ấm."
       long:
         ten: Lông Chim Mái Vòm
-        truyen: "Chiếc lông của loài chim làm tổ trên mái vòm Minashahr. Chim tha gạch vụn về xây tổ như học theo chủ nhà. Lông có ánh men xanh, rửa mãi không trôi."
+        truyen: "Chiếc lông men lam của loài chim làm tổ trên mái vòm Minashahr. Chim tha gạch vụn và cả một mảnh sao về xây tổ, như học theo chủ nhà. Ánh men trên lông rửa mãi không trôi."
       den:
-        ten: Đèn Đất Nung Khắc Tên
-        truyen: "Ngọn đèn đất nung đặt trước mỗi phòng mới xây xong. Đèn cháy hết dầu thì phòng có người ở. Có một ngọn chưa ai châm, trước căn phòng bị khóa."
+        ten: Bình Cát Đất Nung
+        truyen: "Bình cát đất nung đặt trước mỗi phòng mới xây, đầu bình là một ô vòm men đỏ. Cát chảy hết qua eo bình, nơi gắn mảnh sao, thì phòng có người ở. Có một bình chưa ai lật, trước căn phòng bị khóa."
       chen:
         ten: Chén Men Ốc Đảo
-        truyen: "Chén ngọc tráng men xanh múc nước từ Kênh Ngầm Dài. Thợ gạch uống một chén rồi mới vào ca. Nước trong chén mát tới tận chiều."
+        truyen: "Chén men lam múc nước từ Kênh Ngầm Dài, miệng chén xếp một vòng vòm đỏ như mái nhà. Mảnh sao trên thân chén giữ nước mát tới tận chiều. Thợ gạch uống một chén rồi mới vào ca."
       mien:
         ten: Vành Vữa Đông Nhanh
-        truyen: "Vành tóc bằng vữa trộn bột men, cứng hơn cả gạch nung. Thợ xây đội nó khi trèo lên mái vòm. Có người ngã từ trên cao, vành vỡ, còn người thì không sao."
+        truyen: "Vành tóc bằng vữa trộn bột men, cứng hơn cả gạch nung, dựng thành dãy vòm đỏ. Mảnh sao giữa vành được trát vào lúc vữa còn ướt. Có người ngã từ mái vòm xuống, vành vỡ, còn người thì không sao."
   - id: dem-ram-den-trang
     ten: Đêm Rằm Đền Trăng
     vung: Hồ Gương và Đền Trăng
@@ -419,19 +419,19 @@ bo:
     mon:
       hoa:
         ten: Hoa Súng Hồ Gương
-        truyen: "Bông hoa súng bạc chỉ nở trên Hồ Gương đêm rằm. Hái lên rồi thì nó không bao giờ khép. Người Đền Trăng đặt nó cạnh người ốm cho dễ ngủ."
+        truyen: "Bông hoa súng trắng chỉ nở trên Hồ Gương đêm rằm, quanh vành là tám vầng trăng non. Giữa nhụy là mảnh sao vớt lên từ đáy hồ. Người Đền Trăng đặt nó cạnh người ốm cho dễ ngủ."
       long:
         ten: Lông Cò Đứng Bờ
-        truyen: "Chiếc lông của con cò đứng canh bờ hồ suốt đêm. Người giữ đền nói nó canh giấc ngủ của Bà Khơi. Đặt lông lên mặt nước mà nước không gợn."
+        truyen: "Chiếc lông xanh đêm của con cò đứng canh bờ hồ suốt đêm, đầu lông nở một bông súng nhỏ. Mảnh sao ở gốc lông sáng khi Bà Khơi trở mình. Đặt lông lên mặt nước mà nước không gợn."
       den:
-        ten: Đèn Trăng Mở Cửa
-        truyen: "Ngọn đèn bạc thắp lên khi Đền Trăng mở cửa trong cho khách. Ánh đèn màu trăng, soi vào vết thương thì đỡ rát. Đèn chỉ cháy tới lúc trăng lặn."
+        ten: Bình Trăng Mở Cửa
+        truyen: "Bình cát bạc lật lên khi Đền Trăng mở cửa trong cho khách, đầu bình là một vầng trăng non. Cát trong bình màu trăng, chảy qua mảnh sao thì soi vào vết thương đỡ rát. Cát chỉ chảy tới lúc trăng lặn."
       chen:
         ten: Chén Nước Chuông Bạc
-        truyen: "Chén ngọc hứng nước dưới chiếc chuông bạc của đền. Tiếng chuông làm nước dịu lại, uống vào thấy lòng nhẹ đi. Người giữ đền chưa bao giờ uống chén ấy cho mình."
+        truyen: "Chén men xanh đêm hứng nước dưới chiếc chuông bạc của đền, miệng chén viền trăng non. Tiếng chuông làm mảnh sao rung, nước dịu lại. Người giữ đền chưa bao giờ uống chén ấy cho mình."
       mien:
         ten: Vành Trăng Người Giữ
-        truyen: "Vành bạc mỏng của Người Giữ Đền Trăng, mỗi đời khắc thêm một vòng trăng. Vành đã có ba mươi mốt vòng. Vòng mới nhất khắc còn vụng."
+        truyen: "Vành bạc của Người Giữ Đền Trăng, mỗi đời gắn thêm một vầng trăng non. Mảnh sao nằm giữa vầng trăng lớn nhất, vầng của người đầu tiên. Vầng mới nhất gắn còn vụng."
   - id: lan-tuyet-ranmori
     ten: Lan Tuyết Rừng Ranmori
     vung: Ranmori

@@ -128,16 +128,16 @@ Truyện mỗi món nhắc tới mảnh sao gắn trên nó. Hai bộ mẫu (Đ�
 
 Theo [docs/writing/huong-dan-van-phong.md](../writing/huong-dan-van-phong.md): tên tối đa 6 âm tiết, truyện 2–3 câu, không ghi chỉ số, gắn địa danh có trong `docs/world`. Truyện đầy đủ nằm trong `content/bao-an.yaml`; schema kiểm tra số âm tiết, số câu, độ dài, không có chữ số.
 
-| Bộ Ấn (vì sao)         | Mảnh Hoa            | Mảnh Lông              | Mảnh Canh             | Mảnh Chén            | Mảnh Miện            |
-| ---------------------- | ------------------- | ---------------------- | --------------------- | -------------------- | -------------------- |
-| Đêm Hội Vạn Đăng       | Hoa Giấy Đèn Lồng   | Lông Cánh Pháo Hoa     | Bình Cát Chợ Đêm      | Chén Rượu Mừng Hội   | Vành Lửa Người Múa   |
-| Hồ Muối Gương Trời     | Hoa Muối Đầu Mùa    | Lông Chim Lội Muối     | Bình Muối Đo Giông    | Chén Nước Hai Trời   | Vành Muối Kết Tinh   |
-| Đình Trống Gọi Làng    | Hoa Đồng Mặt Trống  | Lông Chim Lạc Bay Xuôi | Bình Cát Hội Đồng     | Chén Nước Ba Hồi     | Vành Đồng Người Gõ   |
-| Diều Đo Hướng Gió      | Hoa Giấy Đuôi Diều  | Lông Hạc Chép Gió      | Bình Gió Tầng Chín    | Chén Ngọc Hứng Mây   | Vành Dây Diều Bạc    |
-| Vệt Cháy Đường Đua     | Hoa Cỏ Sau Sét      | Lông Bờm Ngựa Giông    | Bình Cát Đếm Vòng     | Chén Sữa Mừng Đích   | Vành Đá Sét Nóng     |
-| Gạch Men Nhà Chưa Xong | Hoa Lựu Trên Gạch   | Lông Chim Mái Vòm      | Đèn Đất Nung Khắc Tên | Chén Men Ốc Đảo      | Vành Vữa Đông Nhanh  |
-| Đêm Rằm Đền Trăng      | Hoa Súng Hồ Gương   | Lông Cò Đứng Bờ        | Đèn Trăng Mở Cửa      | Chén Nước Chuông Bạc | Vành Trăng Người Giữ |
-| Lan Tuyết Rừng Ranmori | Lan Tuyết Không Tan | Lông Cú Tuyết Tùng     | Bình Tuyết Đường Thư  | Chén Ngọc Tôi Kiếm   | Vành Tuyết Không Lời |
+| Bộ Ấn (vì sao)         | Mảnh Hoa            | Mảnh Lông              | Mảnh Canh            | Mảnh Chén            | Mảnh Miện            |
+| ---------------------- | ------------------- | ---------------------- | -------------------- | -------------------- | -------------------- |
+| Đêm Hội Vạn Đăng       | Hoa Giấy Đèn Lồng   | Lông Cánh Pháo Hoa     | Bình Cát Chợ Đêm     | Chén Rượu Mừng Hội   | Vành Lửa Người Múa   |
+| Hồ Muối Gương Trời     | Hoa Muối Đầu Mùa    | Lông Chim Lội Muối     | Bình Muối Đo Giông   | Chén Nước Hai Trời   | Vành Muối Kết Tinh   |
+| Đình Trống Gọi Làng    | Hoa Đồng Mặt Trống  | Lông Chim Lạc Bay Xuôi | Bình Cát Hội Đồng    | Chén Nước Ba Hồi     | Vành Đồng Người Gõ   |
+| Diều Đo Hướng Gió      | Hoa Giấy Đuôi Diều  | Lông Hạc Chép Gió      | Bình Gió Tầng Chín   | Chén Ngọc Hứng Mây   | Vành Dây Diều Bạc    |
+| Vệt Cháy Đường Đua     | Hoa Cỏ Sau Sét      | Lông Bờm Ngựa Giông    | Bình Cát Đếm Vòng    | Chén Sữa Mừng Đích   | Vành Đá Sét Nóng     |
+| Gạch Men Nhà Chưa Xong | Hoa Lựu Trên Gạch   | Lông Chim Mái Vòm      | Bình Cát Đất Nung    | Chén Men Ốc Đảo      | Vành Vữa Đông Nhanh  |
+| Đêm Rằm Đền Trăng      | Hoa Súng Hồ Gương   | Lông Cò Đứng Bờ        | Bình Trăng Mở Cửa    | Chén Nước Chuông Bạc | Vành Trăng Người Giữ |
+| Lan Tuyết Rừng Ranmori | Lan Tuyết Không Tan | Lông Cú Tuyết Tùng     | Bình Tuyết Đường Thư | Chén Ngọc Tôi Kiếm   | Vành Tuyết Không Lời |
 
 Ví dụ hiển thị (định dạng mục 4.1 của hướng dẫn văn phong):
 
