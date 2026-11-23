@@ -55,7 +55,7 @@ export function dealRaw(e: any, dmg: number, col: string) {
 export function hitEnemy(e: any, m: any, mult: number, el: string, o: any = {}) {
   if (e.dead) return 0;
   const crit = Math.random() < m.st.crit;
-  let dmg = m.st.atk * mult * (crit ? 1 + m.st.cdmg : 1) * rand(0.95, 1.05);
+  let dmg = m.st.atk * mult * (crit ? 1 + m.st.cdmg : 1) * (1 + (m.st.dmg ?? 0)) * rand(0.95, 1.05);
   const r = applyElement(e, el, m);
   dmg *= r.mult * (e.vuln > 0 ? 1.25 : 1) * (e.stun > 0 ? FEEL.poise.stunVuln : 1);
   if (Server.P.gm.one) dmg = Math.max(dmg, e.hp + 1);

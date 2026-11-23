@@ -21,6 +21,21 @@ describe("Bản chỉnh kinh tế từ Admin", () => {
     expect(econEdited()).toBe(true);
   });
 
+  it("bản chỉnh lưu trước S24 (thiếu mục vũ khí mới) vẫn giữ, mục mới lấy theo file", async () => {
+    const { ECON_BASE } = await load();
+    const old = structuredClone(ECON_BASE) as any;
+    for (const k of ["cap", "quang", "loRen", "macDinh", "khoiDau"]) delete old.thietKe.vuKhi[k];
+    delete old.thietKe.vuKhi.banner.gia;
+    delete old.thietKe.vuKhi.banner.noiBat;
+    old.thietKe.vuKhi.buocTinhLuyen = 0.3;
+    localStorage.setItem(KEY, JSON.stringify(old));
+    const { ECON, econEdited } = await load();
+    expect(econEdited()).toBe(true);
+    expect(ECON.thietKe.vuKhi.buocTinhLuyen).toBe(0.3);
+    expect(ECON.thietKe.vuKhi.cap).toEqual(ECON_BASE.thietKe.vuKhi.cap);
+    expect(ECON.thietKe.vuKhi.banner.noiBat).toEqual(ECON_BASE.thietKe.vuKhi.banner.noiBat);
+  });
+
   it("chỉnh chỉ số vũ khí thì giữ lại, tên và truyện vẫn theo weapons.yaml", async () => {
     const { ECON, setEcon, WEAPONS } = await load();
     const next = structuredClone(ECON) as any;

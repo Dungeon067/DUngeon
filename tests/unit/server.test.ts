@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import { ECON } from "../../src/data/economy";
 import { freshProfile, lvCost, Server } from "../../src/server/server";
 
 beforeEach(() => {
@@ -42,7 +43,11 @@ describe("Lưu trữ", () => {
   it("hồ sơ khởi đầu giống bản cũ", () => {
     const P = freshProfile();
     expect(P).toMatchObject({ v: 3, gems: 1600, coin: 30000, books: 30, party: ["suongmai", "mailinh", "bachvu"] });
-    expect(P.owned).toEqual({ suongmai: { lv: 1, cons: 0 }, mailinh: { lv: 1, cons: 0 }, bachvu: { lv: 1, cons: 0 } });
+    expect(P.owned).toMatchObject({
+      suongmai: { lv: 1, cons: 0 },
+      mailinh: { lv: 1, cons: 0 },
+      bachvu: { lv: 1, cons: 0 },
+    });
     expect(P.cfg).toEqual({ rate5: 0.6, rate4: 5.1, soft: 74, hard: 90, cost: 160, featured: "loidinh" });
   });
 
@@ -67,6 +72,12 @@ describe("Lưu trữ", () => {
       affinity: _a,
       econ: _e,
       quits: _x,
+      weapons: _w,
+      wSeq: _ws,
+      wPity: _wp,
+      wPick: _wk,
+      wHistory: _wh,
+      wcfg: _wc,
       ...base
     } = freshProfile();
     const old = { ...base, v: 2, gems: 777, owned: { lachong: { lv: 40, cons: 2 } }, party: ["lachong"] };
@@ -76,9 +87,9 @@ describe("Lưu trữ", () => {
     Server.load();
     expect(Server.P.v).toBe(3);
     expect(Server.P.gems).toBe(777);
-    expect(Server.P.owned.lachong).toEqual({ lv: 40, cons: 2 });
+    expect(Server.P.owned.lachong).toMatchObject({ lv: 40, cons: 2 });
     expect(Server.P.teams[0]).toEqual(["lachong"]);
-    expect(Server.P.bag).toEqual({});
+    expect(Server.P.bag).toEqual(ECON.thietKe.vuKhi.khoiDau);
   });
 
   it("hồ sơ cũ có banner Lạc Hồng (nay là thường trú) chuyển sang banner giới hạn mặc định", () => {
@@ -108,7 +119,8 @@ describe("Đội lưu sẵn và dữ liệu menu (S10)", () => {
   it("túi đồ, sương bản đồ, đánh dấu, bách khoa", () => {
     Server.req("addItems", { items: { "den-troi": 2 } });
     Server.req("addItems", { items: { "den-troi": 1, x: -3 } });
-    expect(Server.P.bag).toEqual({ "den-troi": 3 });
+    expect(Server.P.bag["den-troi"]).toBe(3);
+    expect(Server.P.bag.x).toBeUndefined();
     expect(Server.P.codex).toContain("vat:den-troi");
     expect(Server.req("explore", { cells: [0, 5, 5] }).data).toBe(2);
     expect(Server.P.fog[5]).toBe("1");

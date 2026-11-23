@@ -1,8 +1,12 @@
+import type { WeaponInst } from "../economy/weapons";
+import type { WeaponPity } from "../economy/core";
 import type { Config } from "../data/schema";
 
 export interface OwnedChar {
   lv: number;
   cons: number;
+  /** uid vũ khí đang trang bị (trong Profile.weapons). */
+  vk?: string;
 }
 
 export interface DailyTask {
@@ -60,6 +64,23 @@ export interface Profile {
   /** Số liệu cho Admin: Đá Sao vào và ra theo nguồn, lần rời trận giữa chừng. */
   econ: Record<string, number>;
   quits: { mode: string; t: number; at: string }[];
+  /** S24: kho vũ khí theo uid, bộ đếm uid, banner Binh Khí Tinh Tú (Bảo Hộ Vận Sao, La Bàn Sao, lịch sử riêng). */
+  weapons: Record<string, WeaponInst>;
+  wSeq: number;
+  wPity: WeaponPity;
+  /** Vũ khí La Bàn Sao đang chọn (một trong hai vũ khí nổi bật), null = chưa chọn. */
+  wPick: string | null;
+  wHistory: { n: string; r: number; t: number; id: string }[];
+  wcfg: WeaponBannerCfg;
+}
+
+export interface WeaponBannerCfg {
+  rate5: number;
+  rate4: number;
+  soft: number;
+  hard: number;
+  cost: number;
+  featured: [string, string];
 }
 
 export interface LogEntry {

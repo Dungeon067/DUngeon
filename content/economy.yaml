@@ -117,6 +117,40 @@ thietKe:
       bao4Sao: 10
       tiLeNoiBat: 0.75
       laBanSao: 1
+      # Giá một lượt (Đá Sao), bằng banner nhân vật.
+      gia: 160
+      # Đôi vũ khí nổi bật mặc định của đợt (Admin đổi được).
+      noiBat: [thien-loi-pha-tran, tuyet-lac-vo-thanh]
+    # S24: cấp vũ khí trong game. Chỉ số trong danhSach là ở cấp tối đa; cấp 1 bằng heSoCap1 lần, tăng đều.
+    # Giới hạn cấp theo số lần đột phá (0..6) khớp mốc Khai Tinh nhân vật nên số liệu cân bằng S19 giữ nguyên.
+    cap:
+      toiDa: 60
+      gioiHan: [20, 30, 40, 45, 50, 55, 60]
+      heSoCap1: 0.2
+      # Kinh nghiệm cần để lên từ cấp L lên L+1: goc + moiCap × (L − 1). Tổng 1→60 ≈ 120.000.
+      kinhNghiem: { goc: 300, moiCap: 60 }
+      # Mỗi điểm kinh nghiệm tốn chừng này Xu.
+      xuMoiKinhNghiem: 0.1
+      # Kinh nghiệm nhận khi dùng một vũ khí 3★/4★/5★ làm nguyên liệu (cộng 80% kinh nghiệm nó đã có).
+      kinhNghiemVuKhi: [1000, 3000, 8000]
+      # Mỗi lần đột phá (6 lần) tốn Quặng Tinh Luyện Sao và Xu.
+      dotPha: { quang: [1, 2, 3, 4, 5, 6], xu: [5000, 10000, 15000, 20000, 25000, 30000] }
+    # Quặng Tinh Luyện: nguyên liệu kinh nghiệm vũ khí (id trùng content/items.yaml).
+    quang:
+      - { id: quang-tinh-luyen-tho, r: 3, kinhNghiem: 400 }
+      - { id: quang-tinh-luyen, r: 4, kinhNghiem: 2000 }
+      - { id: quang-tinh-luyen-sao, r: 5, kinhNghiem: 10000 }
+    # Lò Rèn: rèn một bản vũ khí 4★ nguồn loRen bằng Phôi Lòng Sao + Xu. 5 bản ≈ loRenR5Ngay ngày.
+    loRen: { nguyenLieu: phoi-long-sao, so: 8, xu: 20000 }
+    # Vũ khí 3★ mặc định đi kèm nhân vật mới, theo loại.
+    macDinh:
+      sword: kiem-sat-lu-khach
+      great: dai-kiem-xom-mo
+      cat: vo-chep-thay-do
+      bow: cung-tre-dau-lang
+      spear: thuong-go-lim
+    # Hồ sơ mới (và save cũ khi chuyển đổi) nhận sẵn ít nguyên liệu để thử nâng cấp.
+    khoiDau: { quang-tinh-luyen-tho: 30, quang-tinh-luyen: 10, quang-tinh-luyen-sao: 3, phoi-long-sao: 8 }
     # Danh sách vũ khí (tên, bị động, truyện, chỉ số): content/weapons.yaml, ghép vào thietKe.vuKhi.danhSach khi nạp.
   # Bảo Ấn: 4 ô. Chất lượng rơi theo Thiên Tượng (0..1). Bộ Ấn thêm sát thương khi đủ 4 ô.
   baoAn:
