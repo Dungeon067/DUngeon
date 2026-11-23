@@ -10,6 +10,7 @@ import { held, moveAxis } from "../core/input";
 import { pollGamepad } from "../core/gamepad";
 import { updateAir, updateGround, updateWaves } from "../combat/jump";
 import { render } from "../core/render";
+import { renderer3d } from "../render3d/select";
 import { clamp, dist, lerpAng, rand } from "../core/util";
 import { EL } from "../data/content";
 import { updateBoss } from "../entities/boss";
@@ -45,7 +46,8 @@ export function update(dt: number) {
   const p = GS.G.p,
     m = cur();
   // movement input
-  let [mx, my] = camRelative(...moveAxis(), GS.camYaw ?? 0);
+  // Chỉ xoay theo camera khi cảnh 3D đang vẽ (đấu trường và bản 2D dùng góc nhìn cố định).
+  let [mx, my] = camRelative(...moveAxis(), renderer3d() && GS.G.map ? (GS.camYaw ?? 0) : 0);
   const ml = Math.hypot(mx, my);
   if (ml > 1) {
     mx /= ml;
