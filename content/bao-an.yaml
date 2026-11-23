@@ -329,19 +329,19 @@ bo:
     mon:
       hoa:
         ten: Hoa Giấy Đuôi Diều
-        truyen: "Bông hoa giấy buộc ở đuôi một con diều trên mái Thiên Diên Thành. Gió đổi hướng thì hoa quay trước cả diều. Dây buộc đứt đã lâu mà hoa vẫn không bay đi."
+        truyen: "Bông hoa giấy bốn cánh buộc ở đuôi một con diều trên mái Thiên Diên Thành. Quanh hoa là vòng diều nhỏ, giữa nhụy là mảnh sao mắc vào dây diều. Gió đổi hướng thì hoa quay trước cả diều."
       long:
         ten: Lông Hạc Chép Gió
-        truyen: "Chiếc lông hạc người chép sổ dùng làm ngòi để ghi hướng gió. Nét viết bằng nó tự nghiêng theo gió hôm ấy. Trang cuối còn một nét chưa nghiêng về đâu."
+        truyen: "Chiếc lông hạc xanh người chép sổ dùng làm ngòi để ghi hướng gió. Mảnh sao ở gốc lông làm nét viết tự nghiêng theo gió hôm ấy. Trang cuối còn một nét chưa nghiêng về đâu."
       den:
-        ten: Đèn Gió Tầng Chín
-        truyen: "Ngọn đèn giấy bồi treo ở tầng trên cùng Các Nghe Gió. Gió lùa qua cửa sổ làm lửa thì thầm thành tiếng. Người giữ các nói đèn đang kể lại những gì gió vừa nghe."
+        ten: Bình Gió Tầng Chín
+        truyen: "Bình cát treo ở tầng trên cùng Các Nghe Gió, đầu bình gắn một cánh diều nhỏ. Gió lùa qua thì cát chảy nhanh hơn, mảnh sao ở eo bình sáng theo. Người giữ các đọc gió bằng tiếng cát rơi."
       chen:
         ten: Chén Ngọc Hứng Mây
-        truyen: "Chén ngọc mỏng đặt ngoài mái để hứng hơi mây buổi sớm. Đầy chén là đủ mài một thỏi mực. Mực mài bằng nước mây viết không bao giờ nhòe."
+        truyen: "Chén men xanh mỏng đặt ngoài mái để hứng hơi mây buổi sớm. Miệng chén cắm một vòng diều nhỏ, mảnh sao trên thân chén giữ cho mây không bay mất. Mực mài bằng nước mây viết không bao giờ nhòe."
       mien:
         ten: Vành Dây Diều Bạc
-        truyen: "Vành tóc bện từ sợi dây diều bạc đã thả qua nghìn mùa gió. Người đội nó biết gió sắp đổi trước khi lá rung. Có một nút thắt chưa ai cởi được."
+        truyen: "Vành tóc bện từ dây diều bạc, gắn một vòng cánh diều xanh trời. Mảnh sao giữa vành mắc vào đúng nút thắt chưa ai cởi được. Người đội nó biết gió sắp đổi trước khi lá rung."
   - id: vet-chay-duong-dua
     ten: Vệt Cháy Đường Đua
     vung: Đường Đua Giông
@@ -359,19 +359,19 @@ bo:
     mon:
       hoa:
         ten: Hoa Cỏ Sau Sét
-        truyen: "Bông hoa cỏ mọc dọc vệt cháy trên Đường Đua Giông. Sét đánh xong mới nở, nở xong thì gió cuốn đi. Ai nhặt được một bông trước khi nó bay là được đua thêm vòng."
+        truyen: "Bông hoa cỏ năm cánh mọc dọc vệt cháy trên Đường Đua Giông, cánh đen như cỏ cháy, viền vàng như sét. Giữa nhụy là mảnh sao rơi ngang đường đua. Ai nhặt được bông hoa trước khi gió cuốn đi là được đua thêm vòng."
       long:
         ten: Lông Bờm Ngựa Giông
-        truyen: "Một túm bờm ngựa giông buộc lại như lông chim. Sờ vào tê tay như kiến bò. Người cưỡi cài nó sau tai để ngựa nghe lời hơn."
+        truyen: "Một túm bờm ngựa giông buộc lại như lông chim, sờ vào tê tay như kiến bò. Mảnh sao ở gốc lông nằm đúng chỗ sét đánh qua. Người cưỡi cài nó sau tai để ngựa nghe lời hơn."
       den:
-        ten: Đèn Đếm Vòng Đua
-        truyen: "Ngọn đèn đồng đặt ở vạch đích, mỗi vòng đua thắp thêm một bấc. Đèn có chín bấc mà chưa ai thắp đủ. Bấc thứ chín lại đen như đã từng cháy."
+        ten: Bình Cát Đếm Vòng
+        truyen: "Bình cát than đặt ở vạch đích, mỗi vòng đua lật một lần. Đầu bình là một tia sét vàng, eo bình gắn mảnh sao xa nhất của vệt cháy. Có lần cát chảy ngược, đúng hôm ngựa về trước người."
       chen:
         ten: Chén Sữa Mừng Đích
-        truyen: "Chén ngọc đựng sữa ngựa mời người về tới đích. Người về sau cũng được uống, chỉ là uống sau. Đáy chén khắc một vó ngựa đang nhấc lên."
+        truyen: "Chén hai quai bằng thép than viền vàng, đựng sữa ngựa mời người về tới đích. Mảnh sao trên thân chén sáng lâu hơn với người về sau cùng. Đáy chén khắc một vó ngựa đang nhấc lên."
       mien:
         ten: Vành Đá Sét Nóng
-        truyen: "Vành tóc gắn những ống đá sét nhặt trên Đồi Đá Sét. Đội lâu thì tóc dựng lên một chút. Thợ bạc nói đá còn giữ tiếng sấm của năm nó rơi."
+        truyen: "Vành tóc gắn những tia sét vàng gò từ đá sét nhặt trên Đồi Đá Sét. Mảnh sao giữa vành còn giữ tiếng sấm của năm nó rơi. Đội lâu thì tóc dựng lên một chút."
   - id: gach-men-nha-chua-xong
     ten: Gạch Men Nhà Chưa Xong
     vung: Nhà Chưa Xong
