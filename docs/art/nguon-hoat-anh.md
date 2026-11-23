@@ -128,3 +128,13 @@ Nguồn: [Mixamo](https://www.mixamo.com) (Adobe), cho phép dùng miễn phí t
 | Thương   | `spReady`, `spDraw`, `spStow`          | Great Sword Pack      | `gs_great_sword_idle (1)`, `ss_draw_sword_1`, `gs_draw_a_great_sword_1` (đòn `sp1–3` giữ bản cũ)                             |
 | Cung     | `bowReady`, `bwDraw`, `bwStow`         | Pro Longbow Pack      | `bow_standing_idle_01`, `bow_standing_equip_bow`, `bow_standing_disarm_bow`                                                  |
 | Pháp khí | `ctReady`, `ct1–3`, `ctDraw`           | Magic Pack            | `mg_Standing_Idle_03`, `mg_Standing_1H_Magic_Attack_01/03`, `mg_Standing_2H_Magic_Attack_01`, `mg_standing_1H_cast_spell_01` |
+
+## S27 – tách bộ hoạt ảnh nữ, nam và trẻ em
+
+Mocap Mixamo của các pack vũ khí là người nam (dạng chân rộng, khuỵu thấp). Nhân vật nữ dùng bản riêng, tên clip thêm hậu tố `F`; dáng trẻ em (`tre: true`) ưu tiên hậu tố `C`, không có thì dùng `F`. Nhân vật nam giữ clip gốc. Runtime tự chọn trong `VrmActor.variant()` (`src/render3d/toon/actor.ts`), không đổi tên clip trong `hoatAnh` hay nhịp gameplay.
+
+- **Lớp nữ tính hóa** (`tools/anim/s27/fem.ts`, keyframe tay trên nền Mixamo): khép hai bàn chân về giữa (khoảng cách ≤ độ rộng vai), nâng trọng tâm (bớt 60–95% độ hạ hông), mũi chân hơi khép, gối hướng trước; thế chờ thêm hông lệch (contrapposto) và kéo khuỷu về gần thân; giữ nguyên đích bàn tay và cách cầm.
+- **Cung nữ** (`tools/anim/s27/bowpol.ts`, `BW_FEM`): thế chờ `bowReadyF` dựng trên idle nữ `relax` (Mixamo Catwalk Idle), cung thả thấp chéo bên đùi, đầu hơi nghiêng; bắn `bow1–3F`, ngắm `bowAimF` khép chân, lưng thẳng, khuỷu kéo dây ngang tai.
+- **Kiếm, đại kiếm, thương, pháp khí nữ** (`tools/anim/s27/femsets.ts`, `MELEE_FEM`): `swReadyF`, `sw1–3F`… tương tự cho `gr`, `sp`, `ct`; đại kiếm giữ lực nhưng chân gọn.
+- **Trẻ em** (Mai Linh, pháp khí): `ctReadyC` dựng trên Happy Idle (Mixamo, `mx/idle_happy`), nhún nhảy hồn nhiên; đòn `ct1–3C` khép chân, gần như không khuỵu.
+- Lớp thế chờ ở runtime (`cho` trong `content/poses.yaml`) của 4 dáng nữ giảm độ hạ hông, dạng chân và cúi người.
