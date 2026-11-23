@@ -80,7 +80,7 @@ function inst(el: string) {
       const ol = (m as any).isSkinnedMesh
         ? new THREE.SkinnedMesh(m.geometry, outlineMat(0.006 * Math.max(size.x, size.y, size.z) ** 0.5))
         : new THREE.Mesh(m.geometry, outlineMat(0.006));
-      if ((ol as any).isSkinnedMesh) (ol as THREE.SkinnedMesh).bind((m as THREE.SkinnedMesh).skeleton, (m as THREE.SkinnedMesh).bindMatrix);
+      if ((ol as any).isSkinnedMesh) (ol as unknown as THREE.SkinnedMesh).bind((m as unknown as THREE.SkinnedMesh).skeleton, (m as THREE.SkinnedMesh).bindMatrix);
       m.parent!.add(ol);
       ol.position.copy(m.position);
       ol.quaternion.copy(m.quaternion);
@@ -91,8 +91,16 @@ function inst(el: string) {
   if (serpent) u.uTintK.value = 0;
   if (q.get("phase") === "2") u.uPhase.value = 1;
   const clip = THREE.AnimationClip.findByName(g.animations, q.get("clip") ?? "idle");
-  if (clip) mixer.clipAction(clip).play();
-  return { o, u, mixer };
+  let act: THREE.AnimationAction | null = null;
+  if (clip) {
+    const a = (act = mixer.clipAction(clip));
+    if (/^(tele|attack|hurt|dead|fan|rain|roar|summon)$/.test(clip.name)) {
+      a.setLoop(THREE.LoopOnce, 1);
+      a.clampWhenFinished = true;
+    }
+    a.play();
+  }
+  return { o, u, mixer, act };
 }
 
 const els = (q.get("els") ?? q.get("el") ?? "water").split(",");
@@ -120,6 +128,21 @@ if (mode === "grid") {
   const it = inst(els[0]);
   s.add(it.o);
   views.push({ s, cam: cam(+(q.get("yaw") ?? 0.6), W / H, +(q.get("pitch") ?? 0.18)), vp: [0, 0, W, H], mixer: it.mixer, u: it.u, o: it.o });
+} else if (mode === "strip") {
+  // Dải khung hình của một clip: ?mode=strip&clip=patrol&n=6 (khung cách đều, đứng yên).
+  const n = +(q.get("n") ?? 6);
+  for (let i = 0; i < n; i++) {
+    const s = stage();
+    const it = inst(els[0]);
+    s.add(it.o);
+    const a = it.act;
+    if (a) {
+      a.time = (a.getClip().duration * i) / Math.max(1, n - (q.get("once") ? 1 : 0));
+      a.paused = true;
+      it.mixer.update(0);
+    }
+    views.push({ s, cam: cam(+(q.get("yaw") ?? 0.9), W / n / H, +(q.get("pitch") ?? 0.18)), vp: [(i * W) / n, 0, W / n, H], mixer: it.mixer, u: it.u, o: it.o });
+  }
 } else {
   const yaws = [0, Math.PI / 4, Math.PI / 2, Math.PI];
   yaws.forEach((y, i) => {
