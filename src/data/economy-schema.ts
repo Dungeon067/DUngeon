@@ -1,4 +1,7 @@
 import { z } from "zod";
+import { VuKhiSchema } from "./weapons-schema";
+
+export type { Weapon } from "./weapons-schema";
 
 const n = z.number().nonnegative();
 const int = z.number().int().nonnegative();
@@ -50,21 +53,6 @@ const GameSchema = z
   })
   .strict();
 
-const WeaponSchema = z
-  .object({
-    id: z.string().min(1),
-    ten: z.string().min(1),
-    loai: z.enum(["sword", "great", "cat", "bow", "spear"]),
-    r: z.union([z.literal(3), z.literal(4), z.literal(5)]),
-    nguon: z.enum(["gioiHan", "thuongTru", "loRen", "uocNguyen"]),
-    cua: z.string().optional(),
-    tanCong: n,
-    phu: z.object({ loai: z.enum(["chiMang", "satThuongChiMang", "tanCong"]), giaTri: n }).strict(),
-    biDong: z.object({ ten: z.string().min(1), satThuong: n }).strict(),
-  })
-  .strict();
-export type Weapon = z.infer<typeof WeaponSchema>;
-
 const DesignSchema = z
   .object({
     capHoTinh: z
@@ -102,7 +90,7 @@ const DesignSchema = z
             laBanSao: int,
           })
           .strict(),
-        danhSach: z.array(WeaponSchema).min(1),
+        danhSach: z.array(VuKhiSchema).min(1),
       })
       .strict(),
     baoAn: z

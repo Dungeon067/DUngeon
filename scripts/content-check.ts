@@ -1,15 +1,17 @@
 import { validateContent } from "../src/data/schema";
 import { validateMenuContent } from "../src/data/menu-schema";
 import { validateEconomy } from "../src/data/economy-schema";
-import { loadRawContent, loadRawEconomy, loadRawMenuContent } from "./load-content";
+import { validateWeapons } from "../src/data/weapons-schema";
+import { loadRawContent, loadRawEconomy, loadRawMenuContent, loadRawWeapons } from "./load-content";
 
 try {
   const raw = loadRawContent();
   const c = validateContent(raw);
   const m = validateMenuContent(loadRawMenuContent(raw));
+  const w = validateWeapons(loadRawWeapons(), c.characters);
   const e = validateEconomy(loadRawEconomy(), c.characters);
   console.log(
-    `content/ hợp lệ: ${c.characters.length} nhân vật, ${Object.keys(c.enemies).length} loại quái, boss ${c.boss.name}; ${m.items.items.length} vật phẩm, ${m.quests.length} nhiệm vụ, ${m.codex.creatures.length + m.codex.places.length} mục Bách khoa; kinh tế: ${e.goiNap.daSao.length} gói Đá Sao, ${e.hoSo.length} hồ sơ mô phỏng.`,
+    `content/ hợp lệ: ${c.characters.length} nhân vật, ${Object.keys(c.enemies).length} loại quái, boss ${c.boss.name}; ${m.items.items.length} vật phẩm, ${m.quests.length} nhiệm vụ, ${m.codex.creatures.length + m.codex.places.length} mục Bách khoa; kinh tế: ${e.goiNap.daSao.length} gói Đá Sao, ${e.hoSo.length} hồ sơ mô phỏng; ${w.danhSach.length} vũ khí.`,
   );
 } catch (e) {
   console.error((e as Error).message);

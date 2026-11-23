@@ -28,7 +28,7 @@
 
 ## Nhân vật 5★ và đội trong truyện
 
-"Dẫn đường" là nhân vật trọng tâm về mặt truyện, không phải phần thưởng. Sáu người dẫn đường 5★ (Lạc Hồng, Thủy Nguyệt, Thạch Sơn, Phong Vân, Tuyết Lan, Lôi Đình) được đề xuất là 5★ thường trú (`thuong-tru`) và chỉ đi cùng đội tạm thời trong nhiệm vụ. Các 5★ giới hạn (`gioi-han`: Ardo, Golnar, Naraa, Nghiễn Thư, Takane) chỉ xuất hiện như NPC hoặc khách mời, không vào đội. Truyện chính không tặng nhân vật 5★; đội thật của người chơi sau Mở đầu là Sương Mai, Mai Linh, Bạch Vũ. Danh sách đề xuất ở `bang-kiem-tra.md` mục 0.
+"Dẫn đường" là nhân vật trọng tâm về mặt truyện, không phải phần thưởng. Bốn người dẫn đường 5★ thường trú (`thuong-tru`: Lạc Hồng, Thủy Nguyệt, Thạch Sơn, Phong Vân, mỗi người một nguyên tố cơ bản) chỉ đi cùng đội tạm thời trong nhiệm vụ (`temporary: true`). Lôi Đình (dẫn đường Ch.6) và Tuyết Lan (dẫn đường Ch.3) là 5★ giới hạn (`gioi-han`): họ dẫn đường ở vai NPC hoặc khách mời, đi bên cạnh đội trong cảnh truyện nhưng không `join_party`. Các 5★ giới hạn khác (Ardo, Golnar, Naraa, Nghiên Thu, Takane) cũng chỉ xuất hiện như NPC hoặc khách mời. Truyện chính không tặng nhân vật 5★; đội thật của người chơi sau Mở đầu là Sương Mai, Mai Linh, Bạch Vũ. Danh sách đã chốt (S23) ở `bang-kiem-tra.md` mục 0.
 
 ## Mở đầu: Sao Rơi Đêm Tết
 
@@ -97,7 +97,7 @@
 ## Chương 3: Shizukane, Lời Thề Im Lặng
 
 - **Vùng:** Shizukane (cảm hứng Nhật Bản). Băng. Trấn Tinh: Yukiyo, "Bà Đêm Tuyết".
-- **Dẫn đường:** Tuyết Lan.
+- **Dẫn đường:** Tuyết Lan (5★ giới hạn: NPC dẫn đường, không vào đội).
 - **Phản diện:** Hisame Rei, **Mặt Nạ Sứ**.
 
 **Xung đột.** Yukiyo đã thề im lặng từ sau một trận tuyết lở. Hisame Rei dùng Nguyện Cặn hệ Băng ép bà lên tiếng ở Vết Tuyết Lở, vì một câu nói của Trấn Tinh có thể làm cả núi chuyển mình.
@@ -151,7 +151,7 @@
 ## Chương 6: Khokhtal, Người Ước Một Câu
 
 - **Vùng:** Khokhtal (cảm hứng thảo nguyên Mông Cổ và Trung Á). Lôi. Trấn Tinh: Aianga, "Nàng Sấm".
-- **Dẫn đường:** Lôi Đình.
+- **Dẫn đường:** Lôi Đình (5★ giới hạn: NPC dẫn đường, không vào đội).
 - **Phản diện:** **Kẻ Gánh Nguyện**, thủ lĩnh Hội Bất Nguyện.
 
 **Xung đột.** Kẻ Gánh Nguyện chuẩn bị Đêm Không Sao: tắt cả bầu trời để không ai còn phải ước và không ai còn bị bỏ rơi. Lần đầu ông gặp Người Ước Nguyện.

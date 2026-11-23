@@ -5,7 +5,7 @@ import "./admin.css";
 import { CHARS, EL } from "../data/content";
 import { ADMIN_CFG } from "../data/menu-content";
 import { stringify } from "yaml";
-import { ECON, econEdited, resetEcon, setEcon } from "../data/economy";
+import { ECON, econEdited, econForYaml, resetEcon, setEcon } from "../data/economy";
 import { packValue } from "../economy/core";
 import { LOG_KEY, SAVE_KEY, Server, powerOf } from "../server/server";
 import { button, field, h, tabs, tag, toggle } from "../ui/ds";
@@ -394,7 +394,7 @@ function econConfig(): Kid[] {
     icon: "tiep",
     onClick: () => {
       const a = document.createElement("a");
-      a.href = URL.createObjectURL(new Blob([stringify(ECON)], { type: "text/yaml" }));
+      a.href = URL.createObjectURL(new Blob([stringify(econForYaml())], { type: "text/yaml" }));
       a.download = "economy.yaml";
       a.click();
       URL.revokeObjectURL(a.href);

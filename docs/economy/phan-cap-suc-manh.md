@@ -1,6 +1,6 @@
 # Phân cấp sức mạnh và Chiến Lực
 
-Số liệu lấy từ `content/economy.yaml`. Kết quả mô phỏng ở [ket-qua/tom-tat.md](ket-qua/tom-tat.md) và [ket-qua/bao-cao.html](ket-qua/bao-cao.html). Phần trăm trong bảng dưới tính trên Lạc Hồng (5★) ở cấp 60, đã đủ Khai Tinh, kỹ năng và Bảo Ấn, cầm vũ khí 4★ Lò Rèn R5, trừ khi ghi khác.
+Số liệu lấy từ `content/economy.yaml`. Kết quả mô phỏng ở [ket-qua/tom-tat.md](ket-qua/tom-tat.md) và [ket-qua/bao-cao.html](ket-qua/bao-cao.html). Phần trăm trong bảng dưới tính trên Lôi Đình (5★) ở cấp 60, đã đủ Khai Tinh, kỹ năng và Bảo Ấn, cầm vũ khí 4★ Lò Rèn R5, trừ khi ghi khác.
 
 ## 1. Các nguồn sức mạnh
 
@@ -24,15 +24,15 @@ Cấp Hộ Tinh tăng theo kinh nghiệm hoạt động mỗi ngày, không bán
 
 ## 2. Vũ khí
 
-Danh sách đầy đủ (26 vũ khí, đủ 5 loại: kiếm đơn, đại kiếm, pháp khí, cung, thương) ở `thietKe.vuKhi.danhSach`.
+Danh sách đầy đủ (26 vũ khí, đủ 5 loại: kiếm đơn, đại kiếm, pháp khí, cung, thương) ở `content/weapons.yaml`, ghép vào `thietKe.vuKhi.danhSach` khi nạp. Tên, bị động và truyện của từng vũ khí: [vu-khi.md](vu-khi.md).
 
-| Nhóm          | Số lượng                                                                                           | Lấy ở đâu                                                        | Tinh luyện                  |
-| ------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | --------------------------- |
-| 5★ giới hạn   | 6, mỗi cái là vũ khí đặc trưng của một nhân vật 5★ giới hạn (ví dụ Hồng Vũ Trường Ca của Lạc Hồng) | Banner vũ khí "Binh Khí Tinh Tú", mỗi đợt có đôi vũ khí giới hạn | Bản trùng từ banner         |
-| 5★ thường trú | 5                                                                                                  | Ra khi lệch trên banner vũ khí                                   | Bản trùng                   |
-| 4★ Lò Rèn     | 5, mỗi loại một cái                                                                                | Rèn bằng nguyên liệu Lòng Sao, đủ R5 sau khoảng 40 ngày          | Rèn thêm bản, **F2P có R5** |
-| 4★ banner     | 5                                                                                                  | Banner vũ khí và banner nhân vật                                 | Bản trùng                   |
-| 3★            | 5                                                                                                  | Banner, rương                                                    | Bản trùng                   |
+| Nhóm          | Số lượng                                                                                            | Lấy ở đâu                                                        | Tinh luyện                  |
+| ------------- | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | --------------------------- |
+| 5★ giới hạn   | 7, mỗi cái là vũ khí đặc trưng của một nhân vật 5★ giới hạn (ví dụ Thiên Lôi Phá Trận của Lôi Đình) | Banner vũ khí "Binh Khí Tinh Tú", mỗi đợt có đôi vũ khí giới hạn | Bản trùng từ banner         |
+| 5★ thường trú | 4, mỗi cái hợp với một nhân vật 5★ thường trú (ví dụ Hồng Vũ Trường Ca của Lạc Hồng)                | Ra khi lệch trên banner vũ khí                                   | Bản trùng                   |
+| 4★ Lò Rèn     | 5, mỗi loại một cái                                                                                 | Rèn bằng nguyên liệu Lòng Sao, đủ R5 sau khoảng 40 ngày          | Rèn thêm bản, **F2P có R5** |
+| 4★ banner     | 5                                                                                                   | Banner vũ khí và banner nhân vật                                 | Bản trùng                   |
+| 3★            | 5                                                                                                   | Banner, rương                                                    | Bản trùng                   |
 
 **Banner vũ khí "Binh Khí Tinh Tú"** (`thietKe.vuKhi.banner`):
 
@@ -41,10 +41,24 @@ Danh sách đầy đủ (26 vũ khí, đủ 5 loại: kiếm đơn, đại kiế
 - **La Bàn Sao**: trước khi ước, người chơi chọn 1 trong 2 vũ khí nổi bật. Mỗi lần 5★ ra không đúng vũ khí đã chọn, La Bàn tích 1 điểm. Đủ 1 điểm thì lần 5★ kế tiếp chắc chắn là vũ khí đã chọn. Như vậy tối đa 2 lần 5★ (≤ 154 lượt) là có đúng vũ khí muốn.
 - Trong game, banner vũ khí và vũ khí trong chiến đấu **chưa có**: cần ô trang bị vũ khí, túi đồ vũ khí và đổi save. Đề xuất làm ở phiên sau; công thức và số liệu đã sẵn trong `src/economy/core.ts` (`charStats`, `rollWeapon`).
 
-## 3. Nhân vật 5★: hai pool
+## 3. Nhân vật 5★: hai pool (đã chốt S23)
 
-- **5★ thường trú** (`game.nhanVat5Sao.thuongTru`): Thủy Nguyệt, Phong Vân, Lôi Đình, Thạch Sơn, Tuyết Lan. Ra khi thua 50/50 trên banner giới hạn.
-- **5★ giới hạn** (`game.nhanVat5Sao.gioiHan`): Lạc Hồng, Golnar, Takane, Naraa, Ardo, Nghiên Thu. Chỉ ra khi là nhân vật nổi bật của banner. Mỗi banner 21 ngày; một nhân vật quay lại sau 6 banner (126 ngày).
+- **5★ thường trú** (`game.nhanVat5Sao.thuongTru`): Lạc Hồng (Hỏa), Thủy Nguyệt (Thủy), Thạch Sơn (Thổ), Phong Vân (Phong), mỗi người một nguyên tố cơ bản. Ra khi thua 50/50 trên banner giới hạn. Thêm người thường trú sau này: nối id vào cuối danh sách, schema tự kiểm tra.
+- **5★ giới hạn** (`game.nhanVat5Sao.gioiHan`): Lôi Đình, Tuyết Lan, Ardo, Takane, Naraa, Golnar, Nghiên Thu. Chỉ ra khi là nhân vật nổi bật của banner. Mỗi banner 21 ngày; một nhân vật quay lại sau 7 banner (147 ngày).
+- **Thứ tự banner** (thứ tự trong `gioiHan`, `config.yaml` `gacha.featured` là banner đang mở):
+
+| Đợt | Ngày (mô phỏng) | Nhân vật nổi bật | Nguyên tố | Tên banner nhân vật  | Vũ khí giới hạn         | Lý do                                                                        |
+| --- | --------------- | ---------------- | --------- | -------------------- | ----------------------- | ---------------------------------------------------------------------------- |
+| 1   | 1–21            | Lôi Đình         | Lôi       | Ngọn Thương Gọi Sấm  | Thiên Lôi Phá Trận      | Chủ dự án chốt. Người Đảo Lạc, đã gặp trong truyện; đội khởi đầu chưa có Lôi |
+| 2   | 22–42           | Tuyết Lan        | Băng      | (đặt khi làm banner) | Tuyết Lạc Vô Thanh      | Người dẫn đường Ch.3, đã sống ở Đảo Lạc; đội khởi đầu chưa có Băng           |
+| 3   | 43–63           | Ardo             | Hỏa       |                      | Chuông Lửa Vạn Niên     | Người ngoài Đảo Lạc đầu tiên, Hỏa hợp phản ứng với Băng và Lôi vừa ra        |
+| 4   | 64–84           | Takane           | Phong     |                      | Phong Đỉnh Vô Cực       | Shizukane, nối mạch Ch.3 sau Tuyết Lan                                       |
+| 5   | 85–105          | Naraa            | Lôi       |                      | Vó Sấm Thảo Nguyên      | Khokhtal, cách Lôi Đình bốn đợt                                              |
+| 6   | 106–126         | Golnar           | Băng      |                      | Đóa Hồng Ngủ Trong Băng | Golbaran, cách Tuyết Lan bốn đợt                                             |
+| 7   | 127–147         | Nghiên Thu       | Thủy      |                      | Thủy Mặc Vấn Thiên      | Lũng Vân, vùng mở muộn                                                       |
+
+Sau đợt 7 vòng lại từ Lôi Đình (ngày 148, 295). Nguyên tố không lặp ở hai đợt liền nhau, kể cả lúc vòng lại.
+
 - Game đã áp dụng: thua 50/50 chỉ ra nhân vật thường trú; trang Admin chỉ cho chọn nhân vật giới hạn làm nhân vật nổi bật. Tỉ lệ giữ nguyên: 0,6%, Bảo Hộ Vận Sao 74/90, 50/50.
 
 ## 4. Công thức Chiến Lực
@@ -62,36 +76,36 @@ Sát thương/giây   = 2,2 × (người mạnh nhất + 0,35 × ba người cò
 
 ### Chiến Lực mẫu theo mức đầu tư
 
-| Mức đầu tư                                              | Sương Mai (4★) | Lạc Hồng (5★) |
+| Mức đầu tư                                              | Sương Mai (4★) | Lôi Đình (5★) |
 | ------------------------------------------------------- | -------------: | ------------: |
-| Mới nhận: cấp 1, N0, vũ khí 3★ R1                       |            191 |           289 |
-| Cấp 20, kỹ năng 1, vũ khí 4★ Lò Rèn R1                  |            497 |           774 |
-| Cấp 40, Khai Tinh 2, kỹ năng 4, 4★ Lò Rèn R5            |            989 |         1.549 |
-| Cấp 60, đủ Khai Tinh, kỹ năng, Bảo Ấn; N0; 4★ Lò Rèn R5 |          2.394 |         3.783 |
-| Như trên, vũ khí 5★ giới hạn R1                         |          2.614 |         4.211 |
-| N2, vũ khí 5★ giới hạn R2 (F2P chơi kỹ sau 12 tháng)    |          3.237 |         5.234 |
-| N4, vũ khí 5★ giới hạn R3                               |          3.896 |         6.315 |
-| N6, vũ khí 5★ giới hạn R5 (whale)                       |          4.721 |         7.694 |
+| Mới nhận: cấp 1, N0, vũ khí 3★ R1                       |            191 |           292 |
+| Cấp 20, kỹ năng 1, vũ khí 4★ Lò Rèn R1                  |            497 |           793 |
+| Cấp 40, Khai Tinh 2, kỹ năng 4, 4★ Lò Rèn R5            |            989 |         1.591 |
+| Cấp 60, đủ Khai Tinh, kỹ năng, Bảo Ấn; N0; 4★ Lò Rèn R5 |          2.394 |         3.835 |
+| Như trên, vũ khí 5★ giới hạn R1                         |          2.732 |         4.524 |
+| N2, vũ khí 5★ giới hạn R2 (F2P chơi kỹ sau 12 tháng)    |          3.385 |         5.627 |
+| N4, vũ khí 5★ giới hạn R3                               |          4.076 |         6.796 |
+| N6, vũ khí 5★ giới hạn R5 (whale)                       |          4.943 |         8.291 |
 
 ## 5. Bốn hồ sơ người chơi
 
-| Hồ sơ       | Chi tiêu/tháng | Mua gì                             | Cách ước                                                                                                                                                             |
-| ----------- | -------------: | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| F2P chơi kỹ |            0 đ | Không                              | Làm đủ hoạt động mỗi ngày. Dồn hết Đá Sao cho **1 nhân vật** (Lạc Hồng) và **1 vũ khí** (Hồng Vũ Trường Ca): N0 → R1 → N1 → N2 → R2 → N6 → R5. Không ước banner khác |
-| Nạp nhẹ     |    ≈ 185.000 đ | Thẻ Trăng + Hộ Chiếu Sao           | Ước mỗi nhân vật giới hạn mới (N0), dồn phần còn lại cho chủ lực. Không ước vũ khí                                                                                   |
-| Nạp khá     |  ≈ 2.185.000 đ | Như trên + 2.000.000 đ gói Đá Sao  | Chủ lực N0 → R1 → N2 → R2 → N4 → R3 → N6 → R5, kèm N0 các nhân vật giới hạn khác                                                                                     |
-| Whale       | ≈ 20.185.000 đ | Như trên + 20.000.000 đ gói Đá Sao | Chủ lực N6 rồi R5, các nhân vật giới hạn khác tới N2                                                                                                                 |
+| Hồ sơ       | Chi tiêu/tháng | Mua gì                             | Cách ước                                                                                                                                                              |
+| ----------- | -------------: | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| F2P chơi kỹ |            0 đ | Không                              | Làm đủ hoạt động mỗi ngày. Dồn hết Đá Sao cho **1 nhân vật** (Lôi Đình) và **1 vũ khí** (Thiên Lôi Phá Trận): N0 → R1 → N1 → N2 → R2 → N6 → R5. Không ước banner khác |
+| Nạp nhẹ     |    ≈ 185.000 đ | Thẻ Trăng + Hộ Chiếu Sao           | Ước mỗi nhân vật giới hạn mới (N0), dồn phần còn lại cho chủ lực. Không ước vũ khí                                                                                    |
+| Nạp khá     |  ≈ 2.185.000 đ | Như trên + 2.000.000 đ gói Đá Sao  | Chủ lực N0 → R1 → N2 → R2 → N4 → R3 → N6 → R5, kèm N0 các nhân vật giới hạn khác                                                                                      |
+| Whale       | ≈ 20.185.000 đ | Như trên + 20.000.000 đ gói Đá Sao | Chủ lực N6 rồi R5, các nhân vật giới hạn khác tới N2                                                                                                                  |
 
-Cả bốn hồ sơ có cùng thời gian chơi nên cùng cấp Hộ Tinh, cấp nhân vật, Khai Tinh, kỹ năng và Bảo Ấn (người có Hộ Chiếu Sao có thêm Sách và Xu). Đội ban đầu: Sương Mai, Mai Linh, Bạch Vũ (có sẵn) và Minh Khải (nhận trong cốt truyện). Chỉ ước khi banner đúng mục tiêu đang mở, nên F2P phải chờ Lạc Hồng quay lại (ngày 127 và 253).
+Cả bốn hồ sơ có cùng thời gian chơi nên cùng cấp Hộ Tinh, cấp nhân vật, Khai Tinh, kỹ năng và Bảo Ấn (người có Hộ Chiếu Sao có thêm Sách và Xu). Đội ban đầu: Sương Mai, Mai Linh, Bạch Vũ (có sẵn) và Minh Khải (nhận trong cốt truyện). Chỉ ước khi banner đúng mục tiêu đang mở, nên F2P phải chờ Lôi Đình quay lại (ngày 148 và 295).
 
 Kết quả 100.000 người chơi ảo mỗi hồ sơ, 365 ngày:
 
 | Hồ sơ       | Lượt ước 30 / 90 / 180 / 365 ngày (nhân vật + vũ khí) | 5★ sau 365 ngày | Chủ lực 30 / 90 / 180 / 365 ngày (trung vị) |
 | ----------- | ----------------------------------------------------- | --------------: | ------------------------------------------- |
-| F2P chơi kỹ | 48 / 48 / 269 / 490                                   |             5,0 | chưa có / chưa có / N0 R1 / **N2 R2**       |
-| Nạp nhẹ     | 91 / 252 / 403 / 695                                  |            10,8 | chưa có / chưa có / N0 / N1 (vũ khí 4★)     |
-| Nạp khá     | 147 / 399 / 625 / 1.120                               |            14,2 | N0 / N0 / N0 R1 / N3 R2                     |
-| Whale       | 525 / 1.418 / 2.276 / 2.486                           |            33,0 | N4 / N4 / N6 R3 / N6 R5                     |
+| F2P chơi kỹ | 48 / 48 / 305 / 536                                   |             5,6 | chưa có / chưa có / N1 R1 / **N2 R2**       |
+| Nạp nhẹ     | 91 / 252 / 437 / 781                                  |            12,2 | chưa có / chưa có / N0 / N1 (vũ khí 4★)     |
+| Nạp khá     | 147 / 399 / 706 / 1.231                               |            16,1 | N0 / N0 / N1 R1 / N4 R2                     |
+| Whale       | 525 / 1.418 / 2.633 / 2.766                           |            37,5 | N4 / N4 / N6 R4 / N6 R5                     |
 
 Danh sách nhân vật và Nét Sao của người chơi trung vị ở từng mốc: [ket-qua/tom-tat.md](ket-qua/tom-tat.md), mục "Người chơi trung vị".
 
@@ -108,9 +122,9 @@ Cốt truyện, khám phá, Ủy thác, boss thế giới, sự kiện thường
 | Hồ sơ       | Độ dư thấp nhất | Độ dư trung vị | Độ dễ         |
 | ----------- | --------------: | -------------: | ------------- |
 | F2P chơi kỹ |           1,10× |          1,14× | qua được      |
-| Nạp nhẹ     |           1,11× |          1,47× | vừa đủ        |
-| Nạp khá     |           1,22× |          1,57× | dễ            |
-| Whale       |           1,84× |          1,94× | rất nhẹ nhàng |
+| Nạp nhẹ     |           1,11× |          1,49× | vừa đủ        |
+| Nạp khá     |           1,22× |          1,60× | dễ            |
+| Whale       |           1,85× |          1,99× | rất nhẹ nhàng |
 
 - **F2P chơi kỹ qua 100% nội dung thường trong 120 ngày đầu**: mỗi nội dung qua được ngay ngày mở (chậm nhất 5 ngày, do mô phỏng đo mỗi 5 ngày). Nội dung cuối là boss thế giới Thiên Tượng 8 mở ngày 120. Tháp tầng 1–8 đạt 3★ từ ngày 5.
 - Đội 4★ miễn phí (N0, vũ khí 4★ Lò Rèn) cũng qua mọi nội dung thường ở ngày mở, dư 2–8%: không nội dung thường nào cần nhân vật 5★.
@@ -118,30 +132,31 @@ Cốt truyện, khám phá, Ủy thác, boss thế giới, sự kiện thường
 
 ### B. Nội dung đỉnh
 
-Tháp Tinh Tú tầng 9–12 bản Đỉnh (quái thêm 20 cấp, máu ×1,8), điểm cao, bảng xếp hạng, thử thách khó nhất. Đo bằng sát thương/giây của đội (`phanTang.dinh`):
+Tháp Tinh Tú tầng 9–12 bản Đỉnh (quái thêm 20 cấp, máu ×1,9), điểm cao, bảng xếp hạng, thử thách khó nhất. Đo bằng sát thương/giây của đội (`phanTang.dinh`):
 
-- **Chạm Đỉnh** (sao tối đa tầng 12 bản Đỉnh): 8.334 sát thương/giây.
-- **Điểm tối đa** (bảng xếp hạng): 11.501 sát thương/giây, tức 1,38× chạm Đỉnh.
+- **Chạm Đỉnh** (sao tối đa tầng 12 bản Đỉnh): 8.797 sát thương/giây.
+- **Điểm tối đa** (bảng xếp hạng): 12.139 sát thương/giây, tức 1,38× chạm Đỉnh.
 
-| Ngày | F2P chơi kỹ                             | Nạp nhẹ   | Nạp khá                    | Whale                     |
-| ---- | --------------------------------------- | --------- | -------------------------- | ------------------------- |
-| 30   | 30% ngưỡng                              | 37%       | 40%                        | 54%                       |
-| 90   | 52%                                     | 76%       | 79%                        | 102%; 64% người chạm Đỉnh |
-| 180  | 96%; 24% người chạm Đỉnh                | 94%; 7%   | 102%; 70%                  | 150%; 84% đạt điểm tối đa |
-| 365  | 112%; 100% chạm Đỉnh; 0,16% điểm tối đa | 101%; 55% | 127%; 100%; 6% điểm tối đa | 160%; 100% điểm tối đa    |
+| Ngày | F2P chơi kỹ                             | Nạp nhẹ    | Nạp khá                     | Whale                     |
+| ---- | --------------------------------------- | ---------- | --------------------------- | ------------------------- |
+| 30   | 29% ngưỡng                              | 36%        | 39%                         | 52%                       |
+| 90   | 49%                                     | 73%        | 75%                         | 99%; 30% người chạm Đỉnh  |
+| 180  | 100%; 48% người chạm Đỉnh               | 90%; 0,84% | 105%; 75%                   | 161%; 98% đạt điểm tối đa |
+| 365  | 115%; 100% chạm Đỉnh; 0,27% điểm tối đa | 98%; 39%   | 130%; 100%; 17% điểm tối đa | 165%; 100% điểm tối đa    |
 
 (Phần trăm = sát thương/giây trung vị so với ngưỡng chạm Đỉnh.)
 
-| Hồ sơ       | Chạm Đỉnh (ngày trung vị) | Điểm tối đa (ngày trung vị) |
-| ----------- | ------------------------: | --------------------------: |
-| F2P chơi kỹ |     **255** (≈ 8,5 tháng) |     chưa đạt trong 365 ngày |
-| Nạp nhẹ     |                       270 |                    chưa đạt |
-| Nạp khá     |                       135 |                    chưa đạt |
-| Whale       |                        85 |                         130 |
+| Hồ sơ       |               Chạm Đỉnh (ngày trung vị) | Điểm tối đa (ngày trung vị) |
+| ----------- | --------------------------------------: | --------------------------: |
+| F2P chơi kỹ |                    **295** (≈ 10 tháng) |     chưa đạt trong 365 ngày |
+| Nạp nhẹ     | chưa đạt trong 365 ngày (39% người đạt) |                    chưa đạt |
+| Nạp khá     |                                     150 |                    chưa đạt |
+| Whale       |                                      95 |                         155 |
 
-- F2P chạm tới nội dung đỉnh sau **6–12 tháng** (trung vị 255 ngày) nếu cày đủ và dồn hết Đá Sao cho đúng 1 nhân vật và 1 vũ khí.
+- F2P chạm tới nội dung đỉnh sau **6–12 tháng** (trung vị 295 ngày) nếu cày đủ và dồn hết Đá Sao cho đúng 1 nhân vật và 1 vũ khí.
+- **Chỉnh số ở S23:** sau khi đổi pool (4 thường trú, 7 giới hạn) và chủ lực sang Lôi Đình, F2P chạm Đỉnh ở ngày 150, ngoài khoảng 180–365 nên kiểm tra trượt. Tăng máu quái bản Đỉnh `phanTang.dinh.heSoMau` từ 1,8 lên 1,9 (ngưỡng Đỉnh 8.334 → 8.797, điểm tối đa 11.501 → 12.139 sát thương/giây) thì F2P về ngày 295 và mọi kiểm tra ĐẠT. Các mức 2,0 trở lên làm trượt kiểm tra khác nên không chọn.
 - Điểm tối đa gần như chỉ dành cho whale (N6, vũ khí giới hạn R5) và một phần nhỏ nạp khá.
-- Nạp nhẹ chạm Đỉnh chậm hơn F2P chơi kỹ vì chia Đá Sao cho nhiều nhân vật và không ước vũ khí. Đổi lại họ có đội rộng hơn nên nội dung thường dễ hơn.
+- Nạp nhẹ chạm Đỉnh chậm hơn F2P chơi kỹ (trung vị chưa tới trong 365 ngày) vì chia Đá Sao cho nhiều nhân vật và không ước vũ khí. Đổi lại họ có đội rộng hơn nên nội dung thường dễ hơn.
 - Tháp hiện tại trong game chưa có bản Đỉnh: tầng 9–12 vẫn theo độ khó cũ. Đề xuất phiên sau thêm bản Đỉnh theo số trong `phanTang.dinh`.
 
 ### Kiểm tra tự động

@@ -43,7 +43,7 @@ describe("Lưu trữ", () => {
     const P = freshProfile();
     expect(P).toMatchObject({ v: 3, gems: 1600, coin: 30000, books: 30, party: ["suongmai", "mailinh", "bachvu"] });
     expect(P.owned).toEqual({ suongmai: { lv: 1, cons: 0 }, mailinh: { lv: 1, cons: 0 }, bachvu: { lv: 1, cons: 0 } });
-    expect(P.cfg).toEqual({ rate5: 0.6, rate4: 5.1, soft: 74, hard: 90, cost: 160, featured: "lachong" });
+    expect(P.cfg).toEqual({ rate5: 0.6, rate4: 5.1, soft: 74, hard: 90, cost: 160, featured: "loidinh" });
   });
 
   it("ghi và đọc lại khóa localStorage tinhtu-v3", () => {

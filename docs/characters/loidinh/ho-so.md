@@ -1,6 +1,8 @@
 # Lôi Đình: Hồ sơ
 
-> **Loại 5★:** `thuong-tru` (5★ thường trú, có trong pool cố định, ra khi thua 50/50). Đề xuất S06, chờ chủ dự án duyệt; cơ chế pool và banner do S19 làm.
+> **Loại 5★:** `gioi-han` (5★ giới hạn, chỉ ra ở banner theo kỳ, có thể quay lại ở kỳ sau). Đã chốt (S23). Truyện chính không tặng nhân vật này, chỉ cho xuất hiện như NPC hoặc khách mời, không vào đội.
+
+> **Vũ khí ước nguyện đặc trưng:** Thiên Lôi Phá Trận (bị động: Sấm Rền Chín Tầng). Truyện và chỉ số: `content/weapons.yaml`, bảng ở `docs/economy/vu-khi.md`.
 
 > Hồ sơ nhân vật `loidinh`. Nguồn khớp: `docs/world/04-phe-phai.md` mục 5, `docs/world/03-dia-ly.md` mục 8, `docs/world/08-vat-pham-va-di-vat.md` mục 1, `content/characters/loidinh.yaml`.
 

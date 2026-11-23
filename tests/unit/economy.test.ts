@@ -47,7 +47,7 @@ describe("economy.yaml", () => {
     expect(thuongTru.filter((id) => gioiHan.includes(id))).toEqual([]);
     for (const id of gioiHan) expect(E.thietKe.vuKhi.danhSach.some((w) => w.cua === id)).toBe(true);
     const bad = structuredClone(loadRawEconomy()) as any;
-    bad.game.nhanVat5Sao.thuongTru.push("lachong");
+    bad.game.nhanVat5Sao.thuongTru.push("loidinh");
     expect(() => validateEconomy(bad, content.characters)).toThrow(/cả hai pool/);
   });
   it("có vũ khí 3★, 4★, 5★ và vũ khí 4★ Lò Rèn cho mọi loại", () => {
@@ -68,7 +68,7 @@ describe("Chiến Lực", () => {
     expect(cl({ lv: 1, cons: 6 })).toBeGreaterThan(base);
     expect(cl({ lv: 1, cons: 0, khai: 3 })).toBeGreaterThan(base);
     expect(cl({ lv: 1, cons: 0, kyNang: 10 })).toBeGreaterThan(base);
-    const w4 = { id: "kiem-thep-lang-ren", tinhLuyen: 5 },
+    const w4 = { id: "loi-the-bai-sao", tinhLuyen: 5 },
       w5 = { id: "hong-vu-truong-ca", tinhLuyen: 1 };
     expect(cl({ lv: 1, cons: 0, vuKhi: w4 })).toBeGreaterThan(cl({ lv: 1, cons: 0, vuKhi: { ...w4, tinhLuyen: 1 } }));
     expect(cl({ lv: 1, cons: 0, vuKhi: w5 })).toBeGreaterThan(cl({ lv: 1, cons: 0, vuKhi: { ...w4, tinhLuyen: 1 } }));

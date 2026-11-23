@@ -5,6 +5,7 @@ Thiết kế và mô phỏng kinh tế của Vọng Tinh Giới, sẵn sàng cho
 | Tài liệu                                     | Nội dung                                                                                                                                                           |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [phan-cap-suc-manh.md](phan-cap-suc-manh.md) | Các nguồn sức mạnh, vũ khí và banner vũ khí, hai pool 5★, công thức Chiến Lực, bốn hồ sơ người chơi, mô hình phân tầng nội dung, những gì bán và không bao giờ bán |
+| [vu-khi.md](vu-khi.md)                       | 26 vũ khí (S23): tên, bị động R1–R5, nguồn, nhân vật đặc trưng, tên cũ                                                                                             |
 | [kinh-te.md](kinh-te.md)                     | Dòng Đá Sao, Xu, Sách Kinh Nghiệm, nguyên liệu, Linh Lực theo ngày, tuần, tháng; lạm phát và chỗ tiêu                                                              |
 | [goi-nap-de-xuat.md](goi-nap-de-xuat.md)     | Gói nạp đề xuất (VND), giá trị mỗi đồng, bảo vệ người chơi, yêu cầu pháp lý ở Việt Nam                                                                             |
 | [ket-qua/](ket-qua/)                         | Kết quả lần chạy chuẩn: `tom-tat.md`, `bao-cao.html` (biểu đồ), các file CSV                                                                                       |
@@ -14,7 +15,8 @@ Thiết kế và mô phỏng kinh tế của Vọng Tinh Giới, sẵn sàng cho
 Mọi con số nằm trong [`content/economy.yaml`](../../content/economy.yaml), kiểm tra bằng schema trong `src/data/economy-schema.ts` (`pnpm content:check`).
 
 - Mục `game`: đang chạy trong game (hai pool 5★ thường trú và giới hạn, thưởng rương, Tháp, Hắc Giao, Ủy thác, chi phí lên cấp, hệ số cấp và Nét Sao, Xu khi trùng N6, Xu cho vật phẩm 3★, hệ số Chiến Lực). Server giả lập đọc từ đây.
-- Mục `thietKe`: Khai Tinh, kỹ năng, vũ khí (danh sách, banner Binh Khí Tinh Tú, La Bàn Sao, Lò Rèn), Bảo Ấn, cấp Hộ Tinh, Thiên Tượng, Linh Lực, thu nhập, phân tầng nội dung. Mới có trong tài liệu và mô phỏng.
+- Mục `thietKe`: Khai Tinh, kỹ năng, vũ khí (banner Binh Khí Tinh Tú, La Bàn Sao, Lò Rèn), Bảo Ấn, cấp Hộ Tinh, Thiên Tượng, Linh Lực, thu nhập, phân tầng nội dung. Mới có trong tài liệu và mô phỏng.
+- Danh sách vũ khí (tên, bị động, truyện, chỉ số) ở [`content/weapons.yaml`](../../content/weapons.yaml), schema `src/data/weapons-schema.ts`; khi nạp được ghép vào `thietKe.vuKhi.danhSach`.
 - Mục `goiNap`, `hoSo`, `moPhong`: gói nạp đề xuất, bốn hồ sơ người chơi (F2P chơi kỹ, nạp nhẹ, nạp khá, whale), thông số mô phỏng.
 - Tỉ lệ ước nguyện (0,6%, Bảo Hộ Vận Sao 74/90, 50/50) vẫn ở `content/config.yaml` mục `gacha`; bước tăng sau mốc mềm, bảo đảm 4★ và tỉ lệ 50/50 ở `economy.yaml` mục `game.uocNguyen`.
 

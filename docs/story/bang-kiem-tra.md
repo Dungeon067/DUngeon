@@ -6,16 +6,16 @@
 >
 > **Danh vọng Đảo Lạc:** bắt đầu ở Đom Đóm; lên **Đèn Lồng** khi xong `c1_07`. Mỗi nhiệm vụ phụ cộng điểm danh vọng (gợi ý 50 điểm mỗi nhiệm vụ, S19 chốt ngưỡng).
 
-## 0. Loại nhân vật 5★ (đề xuất S06, chờ chủ dự án duyệt)
+## 0. Loại nhân vật 5★ (Đã chốt (S23))
 
 - **`thuong-tru` (5★ thường trú, "5★ lệch"):** nằm trong pool cố định, ra khi thua 50/50. Người chơi không nạp có thể nhận qua quà sự kiện hoặc phần thưởng cột mốc.
 - **`gioi-han` (5★ giới hạn):** chỉ ra ở banner giới hạn theo kỳ, có thể quay lại ở kỳ sau.
 - **Quy tắc truyện:** truyện chính không tặng nhân vật 5★ nào (kể cả thường trú; việc tặng 5★ thường trú qua sự kiện hoặc cột mốc do S19 quyết). Nhân vật 5★ thường trú được **đi cùng tạm thời** trong nhiệm vụ (`join_party` có `temporary: true`). Nhân vật 5★ giới hạn chỉ xuất hiện như NPC hoặc khách mời, **không vào đội**, kể cả tạm thời. Lần ước miễn phí vẫn ra Bạch Vũ 4★.
 
-| Loại         | Nhân vật 5★                                                      | Lý do đề xuất                                                                                                                             |
-| ------------ | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `thuong-tru` | Lạc Hồng, Thủy Nguyệt, Thạch Sơn, Phong Vân, Tuyết Lan, Lôi Đình | Sáu 5★ hạt giống, mỗi người một nguyên tố (Hỏa, Thủy, Thổ, Phong, Băng, Lôi); là người dẫn đường của các chương nên cần lấy được lâu dài. |
-| `gioi-han`   | Ardo, Golnar, Naraa, Nghiễn Thư, Takane                          | 5★ mới của các vùng ngoài Đảo Lạc, ra theo kỳ gắn với chương hoặc sự kiện của vùng mình; chỉ làm NPC hoặc khách mời trong truyện.         |
+| Loại         | Nhân vật 5★                                                  | Lý do                                                                                                                                                                                                                                             |
+| ------------ | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `thuong-tru` | Lạc Hồng, Thủy Nguyệt, Thạch Sơn, Phong Vân                  | Bốn 5★ thường trú ban đầu, mỗi người một nguyên tố cơ bản (Hỏa, Thủy, Thổ, Phong); là người dẫn đường của các chương nên cần lấy được lâu dài. Sau này có thể thêm người thường trú.                                                              |
+| `gioi-han`   | Lôi Đình, Tuyết Lan, Ardo, Golnar, Naraa, Nghiên Thu, Takane | 5★ ra theo kỳ (thứ tự banner: `docs/economy/phan-cap-suc-manh.md` mục 3). Lôi Đình và Tuyết Lan vẫn dẫn đường Ch.6 và Ch.3 nhưng chỉ ở vai NPC hoặc khách mời; năm người còn lại là 5★ của các vùng ngoài Đảo Lạc. Không ai vào đội trong truyện. |
 
 Nhãn cũng ghi ở đầu `docs/characters/<id>/ho-so.md` của từng nhân vật.
 

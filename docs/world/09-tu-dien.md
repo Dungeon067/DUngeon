@@ -368,3 +368,36 @@ Tên riêng do S06 (cốt truyện Mở đầu, Chương 1, nhiệm vụ phụ �
 | **Trại Bắc**              | Địa danh  | Trại của Quân Trấn Thủ cạnh lối vào Hang Hắc Giao; nơi Lão Neo bị giữ sau Chương 1.   |
 | **Út Gạo**                | Nhân vật  | Ngư dân trẻ Vạn Lưới, cháu Bà Hạnh, từng đeo mặt nạ trắng của Hội Bất Nguyện.         |
 | **Yêu Rừng Lớn**          | Quái      | Biến thể to của Yêu Rừng (`goblin_lon`), nhiều máu, chậm.                             |
+
+## Bổ sung S23: vũ khí
+
+Tên 26 vũ khí ước nguyện (S23). Truyện và chỉ số ở `content/weapons.yaml`, bảng đầy đủ ở `docs/economy/vu-khi.md`.
+
+| Tên                         | Loại     | Định nghĩa                                                                              |
+| --------------------------- | -------- | --------------------------------------------------------------------------------------- |
+| **Bàn Thạch Trấn Sơn**      | Vật phẩm | Đại kiếm, vũ khí 5★ thường trú, đặc trưng của Thạch Sơn. Bị động: Vạn Thạch Quy Tông.   |
+| **Bóng Trăng Hồ Gương**     | Vật phẩm | Pháp khí, vũ khí 4★. Bị động: Mặt Hồ Không Gợn.                                         |
+| **Chuông Lửa Vạn Niên**     | Vật phẩm | Đại kiếm, vũ khí 5★ giới hạn, đặc trưng của Ardo. Bị động: Hỏa Chung Trường Minh.       |
+| **Cung Tre Đầu Làng**       | Vật phẩm | Cung, vũ khí 3★. Bị động: Mắt Người Đi Săn.                                             |
+| **Gió Bấc Trại Bắc**        | Vật phẩm | Thương, vũ khí 4★ Lò Rèn. Bị động: Đứng Vững Đầu Gió.                                   |
+| **Hồng Vũ Trường Ca**       | Vật phẩm | Kiếm đơn, vũ khí 5★ thường trú, đặc trưng của Lạc Hồng. Bị động: Cánh Lửa Trống Đồng.   |
+| **Khúc Hát Người Kéo Lưới** | Vật phẩm | Đại kiếm, vũ khí 4★. Bị động: Nhịp Chèo Về Bến.                                         |
+| **Kiếm Sắt Lữ Khách**       | Vật phẩm | Kiếm đơn, vũ khí 3★. Bị động: Đường Xa Chân Cứng.                                       |
+| **Kính Thủy Lưu Nguyệt**    | Vật phẩm | Pháp khí, vũ khí 5★ thường trú, đặc trưng của Thủy Nguyệt. Bị động: Nguyệt Ảnh Trầm Hồ. |
+| **Lời Thề Bãi Sao**         | Vật phẩm | Kiếm đơn, vũ khí 4★ Lò Rèn. Bị động: Sao Rơi Giữ Hẹn.                                   |
+| **Mạch Ngọc Lòng Chảo**     | Vật phẩm | Thương, vũ khí 4★. Bị động: Đèn Mỏ Không Tắt.                                           |
+| **Mảnh Trăng Bến Cũ**       | Vật phẩm | Cung, vũ khí 4★ Lò Rèn. Bị động: Trăng Soi Đầu Tên.                                     |
+| **Ngự Phong Truy Vân**      | Vật phẩm | Cung, vũ khí 5★ thường trú, đặc trưng của Phong Vân. Bị động: Vân Khai Kiến Nhật.       |
+| **Phong Đỉnh Vô Cực**       | Vật phẩm | Thương, vũ khí 5★ giới hạn, đặc trưng của Takane. Bị động: Nhất Phong Quá Lĩnh.         |
+| **Sương Sớm Bến Sông**      | Vật phẩm | Kiếm đơn, vũ khí 4★. Bị động: Lưỡi Kiếm Đọng Sương.                                     |
+| **Thiên Lôi Phá Trận**      | Vật phẩm | Thương, vũ khí 5★ giới hạn, đặc trưng của Lôi Đình. Bị động: Sấm Rền Chín Tầng.         |
+| **Thương Gỗ Lim**           | Vật phẩm | Thương, vũ khí 3★. Bị động: Canh Đêm Bến Đò.                                            |
+| **Thủy Mặc Vấn Thiên**      | Vật phẩm | Pháp khí, vũ khí 5★ giới hạn, đặc trưng của Nghiên Thu. Bị động: Bút Lạc Thành Hà.      |
+| **Tiếng Sấm Đầu Mùa**       | Vật phẩm | Cung, vũ khí 4★. Bị động: Mưa Rào Qua Đồng.                                             |
+| **Tiếng Trống Đình Làng**   | Vật phẩm | Đại kiếm, vũ khí 4★ Lò Rèn. Bị động: Trống Dồn Ba Hồi.                                  |
+| **Tuyết Lạc Vô Thanh**      | Vật phẩm | Kiếm đơn, vũ khí 5★ giới hạn, đặc trưng của Tuyết Lan. Bị động: Hàn Lan Tĩnh Nở.        |
+| **Vó Sấm Thảo Nguyên**      | Vật phẩm | Cung, vũ khí 5★ giới hạn, đặc trưng của Naraa. Bị động: Lôi Mã Truy Phong.              |
+| **Vở Chép Thầy Đồ**         | Vật phẩm | Pháp khí, vũ khí 3★. Bị động: Nét Chữ Nết Người.                                        |
+| **Đèn Canh Hải Đăng**       | Vật phẩm | Pháp khí, vũ khí 4★ Lò Rèn. Bị động: Ánh Đèn Gọi Thuyền.                                |
+| **Đóa Hồng Ngủ Trong Băng** | Vật phẩm | Pháp khí, vũ khí 5★ giới hạn, đặc trưng của Golnar. Bị động: Băng Tâm Ủ Hương.          |
+| **Đại Kiếm Xóm Mỏ**         | Vật phẩm | Đại kiếm, vũ khí 3★. Bị động: Tay Chai Vai Rộng.                                        |

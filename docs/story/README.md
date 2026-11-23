@@ -78,4 +78,4 @@ Một "dòng thoại" là một bước có `speaker` khác `he_thong`. Lời c�
 
 ## Nhân vật 5★ trong truyện
 
-Mỗi nhân vật 5★ có nhãn `thuong-tru` hoặc `gioi-han` (danh sách và lý do: `bang-kiem-tra.md` mục 0; nhãn ở đầu `docs/characters/<id>/ho-so.md`). Truyện chính không tặng nhân vật 5★. Nhân vật 5★ thường trú chỉ được `join_party` với `temporary: true`. Nhân vật 5★ giới hạn không được `join_party`, chỉ xuất hiện như NPC hoặc khách mời.
+Mỗi nhân vật 5★ có nhãn `thuong-tru` hoặc `gioi-han`, đã chốt ở S23: thường trú là Lạc Hồng, Thủy Nguyệt, Thạch Sơn, Phong Vân; giới hạn là Lôi Đình, Tuyết Lan, Ardo, Golnar, Naraa, Nghiên Thu, Takane (lý do: `bang-kiem-tra.md` mục 0; nhãn ở đầu `docs/characters/<id>/ho-so.md`). Truyện chính không tặng nhân vật 5★. Nhân vật 5★ thường trú chỉ được `join_party` với `temporary: true`. Nhân vật 5★ giới hạn không được `join_party`, chỉ xuất hiện như NPC hoặc khách mời.
