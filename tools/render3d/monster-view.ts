@@ -1,0 +1,148 @@
+/** Trang xem quái S29 (chỉ dùng khi dev): ?id=slime&mode=turn|grid&el=water&clip=idle */
+import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
+import { driveSpine, resamplePath, spineBones } from "../../src/render3d/toon/monsterRig";
+import { monsterMat, monsterUniforms, type MonsterUniforms } from "../../src/render3d/toon/monsterKit";
+import { outlineMat } from "../../src/render3d/toon/mat";
+import { EL } from "../../src/data/content";
+
+const q = new URLSearchParams(location.search);
+const id = q.get("id") ?? "slime";
+const mode = q.get("mode") ?? "turn";
+const W = +(q.get("w") ?? 1600),
+  H = +(q.get("h") ?? 900);
+const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+r.setSize(W, H);
+r.setPixelRatio(1);
+r.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(r.domElement);
+
+function stage() {
+  const s = new THREE.Scene();
+  s.add(new THREE.HemisphereLight(0xcfe0ff, 0x5a4a6a, 1.15));
+  const d = new THREE.DirectionalLight(0xfff1dc, 2.1);
+  d.position.set(-2, 4, 3);
+  s.add(d);
+  const f = new THREE.Mesh(
+    new THREE.CircleGeometry(3, 48),
+    new THREE.MeshBasicMaterial({ color: 0x2a2538, transparent: true, opacity: 0.55 }),
+  );
+  f.rotation.x = -Math.PI / 2;
+  f.visible = !q.get("bg");
+  s.add(f);
+  return s;
+}
+
+const g = await new GLTFLoader().loadAsync(`/media/models/monsters/${id}.glb`);
+const serpent = spineBones(g.scene).length > 0;
+/** Đường bơi chữ S, đầu ngẩng, dùng để dựng tư thế xem thử cho quái thân dài. */
+function coilPath(o: THREE.Object3D, time: number) {
+  const bones = spineBones(o);
+  o.updateMatrixWorld(true);
+  const p0 = bones[0].getWorldPosition(new THREE.Vector3());
+  const seg = p0.distanceTo(bones[1].getWorldPosition(new THREE.Vector3()));
+  const raw: THREE.Vector3[] = [];
+  for (let i = 0; i <= 400; i++) {
+    const s = i * 0.03;
+    const rise = 1.6 * (1 - THREE.MathUtils.smoothstep(s, 0, 2.6));
+    raw.push(new THREE.Vector3(Math.sin(s * 0.9 + time * 1.2) * 1.4 * Math.min(1, s * 0.45), p0.y + rise - 1.6, p0.z - s * 0.92));
+  }
+  driveSpine(bones, resamplePath(raw, seg, bones.length + 1));
+}
+if (serpent) {
+  g.scene.position.y = 1.2;
+  coilPath(g.scene, 0);
+}
+const box = new THREE.Box3().setFromObject(g.scene, true);
+const size = box.getSize(new THREE.Vector3());
+const ctr = box.getCenter(new THREE.Vector3());
+
+function inst(el: string) {
+  const u = monsterUniforms();
+  const c = new THREE.Color(EL[el]?.c ?? "#ffffff");
+  u.uTint.value.copy(c);
+  u.uGlow.value.copy(new THREE.Color(EL[el]?.c2 ?? "#ffffff")).lerp(c, 0.5);
+  const o = SkeletonUtils.clone(g.scene) as THREE.Object3D;
+  const cache = new Map<THREE.Material, THREE.Material>();
+  const meshes: THREE.Mesh[] = [];
+  o.traverse((m: any) => m.isMesh && meshes.push(m));
+  for (const m of meshes) {
+    if (/lod\d/.test(m.name) || /lod\d/.test(m.parent?.name ?? "")) {
+      m.visible = false;
+      continue;
+    }
+    const src = m.material as THREE.MeshStandardMaterial;
+    let mm = cache.get(src);
+    if (!mm) cache.set(src, (mm = monsterMat(src, u)));
+    m.material = mm;
+    if (q.get("ol") !== "0" && (mm as any).userData.part !== "jelly" && (mm as any).userData.part !== "fin" && (mm as any).userData.part !== "glow") {
+      const ol = (m as any).isSkinnedMesh
+        ? new THREE.SkinnedMesh(m.geometry, outlineMat(0.006 * Math.max(size.x, size.y, size.z) ** 0.5))
+        : new THREE.Mesh(m.geometry, outlineMat(0.006));
+      if ((ol as any).isSkinnedMesh) (ol as THREE.SkinnedMesh).bind((m as THREE.SkinnedMesh).skeleton, (m as THREE.SkinnedMesh).bindMatrix);
+      m.parent!.add(ol);
+      ol.position.copy(m.position);
+      ol.quaternion.copy(m.quaternion);
+      ol.scale.copy(m.scale);
+    }
+  }
+  const mixer = new THREE.AnimationMixer(o);
+  if (serpent) u.uTintK.value = 0;
+  if (q.get("phase") === "2") u.uPhase.value = 1;
+  const clip = THREE.AnimationClip.findByName(g.animations, q.get("clip") ?? "idle");
+  if (clip) mixer.clipAction(clip).play();
+  return { o, u, mixer };
+}
+
+const els = (q.get("els") ?? q.get("el") ?? "water").split(",");
+const views: { s: THREE.Scene; cam: THREE.Camera; vp: number[]; mixer: THREE.AnimationMixer; u: MonsterUniforms; o: THREE.Object3D }[] = [];
+const ext = Math.max(size.x, size.y, size.z);
+function cam(yaw: number, aspect: number, pitch = 0.18) {
+  const c = new THREE.PerspectiveCamera(28, aspect, 0.01, 100);
+  const fit = Math.max(size.y / (2 * Math.tan((14 * Math.PI) / 180)), Math.max(size.x, size.z) / (2 * Math.tan((14 * Math.PI) / 180) * aspect));
+  const dist = (fit * 1.25 + ext * 0.5) / +(q.get("zoom") ?? 1);
+  const tgt = ctr.clone().add(new THREE.Vector3(0, size.y * +(q.get("ty") ?? 0), 0));
+  c.position.set(tgt.x + Math.sin(yaw) * dist * Math.cos(pitch), tgt.y + dist * Math.sin(pitch), tgt.z + Math.cos(yaw) * dist * Math.cos(pitch));
+  c.lookAt(tgt);
+  return c;
+}
+if (mode === "grid") {
+  const n = els.length;
+  els.forEach((el, i) => {
+    const s = stage();
+    const it = inst(el);
+    s.add(it.o);
+    views.push({ s, cam: cam(0.5, W / n / H), vp: [(i * W) / n, 0, W / n, H], mixer: it.mixer, u: it.u, o: it.o });
+  });
+} else if (mode === "hero") {
+  const s = stage();
+  const it = inst(els[0]);
+  s.add(it.o);
+  views.push({ s, cam: cam(+(q.get("yaw") ?? 0.6), W / H, +(q.get("pitch") ?? 0.18)), vp: [0, 0, W, H], mixer: it.mixer, u: it.u, o: it.o });
+} else {
+  const yaws = [0, Math.PI / 4, Math.PI / 2, Math.PI];
+  yaws.forEach((y, i) => {
+    const s = stage();
+    const it = inst(els[0]);
+    s.add(it.o);
+    views.push({ s, cam: cam(y, W / 4 / H), vp: [(i * W) / 4, 0, W / 4, H], mixer: it.mixer, u: it.u, o: it.o });
+  });
+}
+r.setScissorTest(true);
+const clk = new THREE.Clock();
+function frame() {
+  const dt = clk.getDelta();
+  for (const v of views) {
+    v.mixer.update(dt);
+    if (serpent) coilPath(v.o, v.u.uTime.value);
+    v.u.uTime.value += dt;
+    r.setViewport(v.vp[0], v.vp[1], v.vp[2], v.vp[3]);
+    r.setScissor(v.vp[0], v.vp[1], v.vp[2], v.vp[3]);
+    r.setClearColor(q.get("bg") ? +("0x" + q.get("bg")!.replace(/^(.)(.)(.)$/, "$1$1$2$2$3$3")) : 0x1d1a29);
+    r.render(v.s, v.cam);
+  }
+  requestAnimationFrame(frame);
+}
+frame();
+(window as any).__ready = true;

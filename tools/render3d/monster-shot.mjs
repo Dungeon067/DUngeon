@@ -1,0 +1,11 @@
+import { chromium } from "@playwright/test";
+const [url, out, w = 1600, h = 900] = process.argv.slice(2);
+const b = await chromium.launch({ args: ["--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
+const pg = await b.newPage({ viewport: { width: +w, height: +h } });
+pg.on("console", (m) => m.type() === "error" && console.log("console:", m.text()));
+pg.on("pageerror", (e) => console.log("pageerror:", e.message));
+await pg.goto(url);
+await pg.waitForFunction(() => window.__ready, null, { timeout: 60000 });
+await pg.waitForTimeout(1500);
+await pg.screenshot({ path: out });
+await b.close();
