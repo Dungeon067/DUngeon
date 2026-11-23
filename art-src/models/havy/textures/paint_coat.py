@@ -4,7 +4,7 @@ random.seed(7)
 S=2048
 src=np.array(Image.open('C:/work/an/img12__12.png').convert('RGBA')).astype(np.float32)
 lum=src[...,:3].mean(-1); bright=(lum>150)&(src[...,3]>0)
-NAVY=np.array([0x2a,0x3a,0x8f],np.float32)
+NAVY=np.array([0x26,0x34,0x82],np.float32)
 yy,xx=np.mgrid[0:S,0:S].astype(np.float32)
 # shading field (multiplier)
 sh=np.ones((S,S),np.float32)
@@ -34,9 +34,10 @@ sh-=np.where(yy>420,0.08*(g(xx,400,60)+g(xx,1648,60)),0)
 sl=(yy<420)
 for base,sgn in ((0,1),(S,-1)):
     ex=base+sgn*470
-    for k,dx in enumerate((-40,-5,30)):
-        c=ex+sgn*dx+18*np.sin(yy/60+k)
-        sh+=np.where(sl,(-0.22*g(xx-c,0,9)+0.10*g(xx-c,-sgn*14,8))*g(yy,210,150),0)
+    ex=base+sgn*340
+    for k,(dx,dy) in enumerate(((-30,-60),(0,40),(28,-10))):
+        c=ex+sgn*dx+0.10*(yy-210)*(1 if k%2 else -1)
+        sh+=np.where(sl,(-0.13*g(xx-c,0,22)+0.06*g(xx-c,-sgn*30,18))*g(yy,210+dy,120),0)
     # near cuff darker
     sh-=np.where(sl,0.10*g(xx,base+sgn*230,60),0)
 sh-=np.where(sl,0.14*(g(yy,15,40)+g(yy,405,40)),0)
@@ -115,17 +116,19 @@ d.line([(380,932),(1668,932)],fill=(0x14,0x1c,0x4d,255),width=4)
 stitch_h(946,380,1668); stitch_h(918,780,1270)
 # side/shoulder seams on torso
 for x in (760,1288): stitch_v(x,430,925)
-# ice gem at collar front
-cx,cy=1024,578
-d.polygon([(cx,cy-30),(cx+24,cy),(cx,cy+30),(cx-24,cy)],fill=(0xb0,0x74,0x18,255))
-d.polygon([(cx,cy-24),(cx+18,cy),(cx,cy+24),(cx-18,cy)],fill=(0x7f,0xe0,0xff,255))
-d.polygon([(cx,cy-24),(cx+18,cy),(cx,cy)],fill=(0xc8,0xf4,0xff,255))
-d.polygon([(cx,cy+24),(cx-18,cy),(cx,cy)],fill=(0x3c,0xa8,0xd8,255))
-d.ellipse([cx-8,cy-14,cx-2,cy-8],fill=(255,255,255,255))
+# ice gem at collar front: giọt nước #7fe0ff, viền vàng
+cx,cy=1024,584
+def drop(cx,cy,r,col):
+    d.ellipse([cx-r,cy-r,cx+r,cy+r],fill=col)
+    d.polygon([(cx-r*0.93,cy-r*0.36),(cx,cy-r*2.4),(cx+r*0.93,cy-r*0.36)],fill=col)
+drop(cx,cy,24,(0xb0,0x74,0x18,255)); drop(cx,cy,19,(0x7f,0xe0,0xff,255))
+d.ellipse([cx-7,cy-6,cx+19,cy+19],fill=(0x3c,0xa8,0xd8,255)); drop(cx,cy,12,(0x7f,0xe0,0xff,255))
+d.ellipse([cx-10,cy-20,cx-3,cy-8],fill=(255,255,255,255)); d.ellipse([cx+5,cy+6,cx+9,cy+10],fill=(0xe0,0xfa,0xff,255))
 # two red X marks
 for (x,y) in ((950,700),(1098,700)):
     r=24
-    d.ellipse([x-r-6,y-r-6,x+r+6,y+r+6],fill=(0x1c,0x27,0x66,255))
+    for w2,col in ((22,(0x14,0x1c,0x4d,90)),):
+        d.line([(x-r+3,y-r+4),(x+r+3,y+r+4)],fill=col,width=w2); d.line([(x-r+3,y+r+4),(x+r+3,y-r+4)],fill=col,width=w2)
     d.line([(x-r,y-r),(x+r,y+r)],fill=(0x8a,0x1c,0x1e,255),width=16)
     d.line([(x-r,y+r),(x+r,y-r)],fill=(0x8a,0x1c,0x1e,255),width=16)
     d.line([(x-r,y-r),(x+r,y+r)],fill=(0xe0,0x38,0x3a,255),width=11)
