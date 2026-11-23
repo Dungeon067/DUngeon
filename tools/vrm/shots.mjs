@@ -14,7 +14,16 @@ const views = [
   ["6-can-mat-34", "yaw=35&face=1", 1000, 1000],
 ];
 const { mkdirSync, readFileSync } = await import("node:fs");
-const w0 = /^w:\s*(\w+)/m.exec(readFileSync(`content/characters/${id}.yaml`, "utf8"))?.[1] ?? "sword";
+const w0 =
+  /^w:\s*(\w+)/m.exec(
+    (() => {
+      try {
+        return readFileSync(`content/characters/${process.env.CHAR ?? id}.yaml`, "utf8");
+      } catch {
+        return "";
+      }
+    })(),
+  )?.[1] ?? "sword";
 mkdirSync(out, { recursive: true });
 for (const [name, qs, w, h] of views) {
   const pg = await b.newPage({ viewport: { width: w, height: h } });
