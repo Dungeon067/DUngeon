@@ -185,7 +185,8 @@ if (mode === "video") {
     await tod(pg, 0.93);
     await fillBurst(pg);
     await pg.keyboard.press("KeyQ");
-    await sleep(2700);
+    await pg.waitForFunction(() => !window.__tinhtu.S.G.cine, null, { timeout: 20000 });
+    await sleep(300);
     await pg.keyboard.down("KeyS");
     await pg.keyboard.down("KeyA");
     await pg.keyboard.press("KeyJ");
