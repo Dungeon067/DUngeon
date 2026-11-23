@@ -53,6 +53,38 @@ export function holders(P: Profile) {
  * phiên bản khác (kể cả của S23): thiếu kho thì tạo kèm nguyên liệu khởi đầu, nhân vật thiếu vũ khí hợp lệ thì
  * trang bị vũ khí 3★ mặc định theo loại.
  */
+/** Trần tài nguyên: cộng dồn vẫn xa Number.MAX_SAFE_INTEGER (khoảng 9×10^15), mọi phép tính giữ chính xác. */
+export const RES_CAP = 999_999_999_999;
+/** Mức "Cấp tối đa để thử" của Admin. */
+export const TEST_MAX = 9_000_000_000;
+export const capRes = (n: number) => (Number.isFinite(n) ? Math.min(RES_CAP, Math.max(0, Math.floor(n))) : 0);
+/** Vật phẩm Admin cấp được: Quặng Tinh Luyện và Phôi Lồng Sao. Chưa có vé ước trong game. */
+export const grantItems = () => [...vk().quang.map((q) => q.id), vk().loRen.nguyenLieu];
+
+const DAY_MS = 86_400_000;
+/** Linh Lực hiện có: hồi hoiMoiNgay mỗi ngày tới toiDa. */
+export function linhLucNow(P: Profile, now = Date.now()) {
+  const L = ECON.thietKe.linhLuc;
+  if (P.ll.v >= L.toiDa) return P.ll.v;
+  return Math.min(L.toiDa, P.ll.v + (Math.max(0, now - P.ll.t) * L.hoiMoiNgay) / DAY_MS);
+}
+/** Khóa tuần theo ngày thứ Hai đầu tuần (giờ máy). */
+export function weekKey(d = new Date()) {
+  const m = new Date(d.getFullYear(), d.getMonth(), d.getDate() - ((d.getDay() + 6) % 7));
+  return `${m.getFullYear()}-${m.getMonth() + 1}-${m.getDate()}`;
+}
+export function shopLeft(P: Profile, id: string) {
+  const it = vk().nguon.cuaHang.find((x) => x.id === id);
+  if (!it) return 0;
+  const used = P.wShop.week === weekKey() ? (P.wShop.bought[id] ?? 0) : 0;
+  return Math.max(0, it.moiTuan - used);
+}
+export function achState(P: Profile, a: { id: string; loai: string; can: number }) {
+  const have = P.wStat[a.loai] ?? 0;
+  return { have, done: have >= a.can, claimed: P.wAch.includes(a.id) };
+}
+const bump = (P: Profile, k: string) => (P.wStat[k] = (P.wStat[k] ?? 0) + 1);
+
 export function ensureWeapons(P: Profile): Profile {
   if (!P.weapons || typeof P.weapons !== "object") {
     P.weapons = {};
@@ -64,6 +96,12 @@ export function ensureWeapons(P: Profile): Profile {
   P.wPick = P.wPick ?? null;
   P.wHistory = Array.isArray(P.wHistory) ? P.wHistory : [];
   P.wcfg = { ...defaultWcfg(), ...P.wcfg };
+  P.ll = typeof P.ll?.v === "number" ? P.ll : { v: ECON.thietKe.linhLuc.toiDa, t: Date.now() };
+  P.wStat = { ...P.wStat };
+  P.wAch = Array.isArray(P.wAch) ? P.wAch : [];
+  P.wShop = P.wShop?.bought ? P.wShop : { week: "", bought: {} };
+  for (const k of ["gems", "coin", "books"] as const) P[k] = capRes(P[k]);
+  for (const k of Object.keys(P.bag)) P.bag[k] = capRes(P.bag[k]!);
   const used = new Set<string>();
   for (const [cid, o] of Object.entries(P.owned)) {
     const c = byId[cid];
@@ -388,6 +426,7 @@ export const Server = {
       P.bag[c.quangId] -= c.quang;
       P.coin -= c.xu;
       w.khai++;
+      bump(this.P, "dotPha");
       return { khai: w.khai, cap: lvCapOf(w, ECON) };
     },
     /** Tinh luyện bằng một bản trùng của cùng vũ khí. */
@@ -398,6 +437,7 @@ export const Server = {
       if (m.id !== w.id) throw new Error("Cần bản trùng của cùng vũ khí");
       delete this.P.weapons[mat];
       w.tl = Math.min(5, w.tl + m.tl);
+      bump(this.P, "tinhLuyen");
       return { tl: w.tl };
     },
     forgeWeapon(this: any, { id }: any) {
@@ -409,6 +449,7 @@ export const Server = {
       if (P.coin < F.xu) throw new Error(`Không đủ Xu: cần ${fmt(F.xu)}`);
       P.bag[F.nguyenLieu] -= F.so;
       P.coin -= F.xu;
+      bump(P, "ren");
       return addWeapon(P, id);
     },
     setParty(this: any, { party }: any) {
@@ -595,7 +636,49 @@ export const Server = {
       this.P.gems += daSao;
       this.econ("vao:uy-thac", daSao);
       this.P.books += sach;
-      return { gems: daSao, books: sach };
+      const ores = vk().nguon.uyThac;
+      for (const [k, n] of Object.entries(ores)) this.P.bag[k] = (this.P.bag[k] ?? 0) + n;
+      return { gems: daSao, books: sach, ores };
+    },
+    // ---- nguồn nguyên liệu vũ khí ----
+    biCanh(this: any) {
+      const P: Profile = this.P,
+        B = vk().nguon.biCanh,
+        now = Date.now(),
+        cur = linhLucNow(P, now);
+      if (cur < B.linhLuc) throw new Error(`Cần ${B.linhLuc} Linh Lực`);
+      P.ll = { v: cur - B.linhLuc, t: now };
+      for (const [k, n] of Object.entries(B.roi)) P.bag[k] = (P.bag[k] ?? 0) + n;
+      P.coin += B.xu;
+      bump(P, "biCanh");
+      return { roi: B.roi, coin: B.xu, ll: Math.floor(P.ll.v) };
+    },
+    buyOre(this: any, { id, n = 1 }: any) {
+      const P: Profile = this.P,
+        it = vk().nguon.cuaHang.find((x) => x.id === id);
+      if (!it) throw new Error("Cửa hàng không đổi vật phẩm này");
+      const k = Math.floor(Number(n));
+      if (!(k >= 1)) throw new Error("Số lượng không hợp lệ");
+      if (shopLeft(P, id) < k) throw new Error("Đã hết lượt đổi tuần này");
+      if (P.coin < it.xu * k) throw new Error("Không đủ Xu");
+      const wk = weekKey();
+      if (P.wShop.week !== wk) P.wShop = { week: wk, bought: {} };
+      P.wShop.bought[id] = (P.wShop.bought[id] ?? 0) + k;
+      P.coin -= it.xu * k;
+      P.bag[id] = (P.bag[id] ?? 0) + k;
+      return { left: shopLeft(P, id) };
+    },
+    claimWAch(this: any, { id }: any) {
+      const P: Profile = this.P,
+        a = vk().nguon.phoi.thanhTuu.find((x) => x.id === id);
+      if (!a) throw new Error("Không có thành tựu này");
+      const s = achState(P, a);
+      if (s.claimed) throw new Error("Đã nhận thưởng");
+      if (!s.done) throw new Error("Chưa hoàn thành");
+      P.wAch.push(a.id);
+      const k = vk().loRen.nguyenLieu;
+      P.bag[k] = (P.bag[k] ?? 0) + a.phoi;
+      return { phoi: a.phoi };
     },
     // ---- admin ----
     setConfig(this: any, c: any) {
@@ -620,9 +703,26 @@ export const Server = {
       if (!isFinite(a)) throw new Error("Số lượng không hợp lệ");
       const k = ({ gem: "gems", coin: "coin", book: "books" } as Record<string, string>)[kind];
       if (!k) throw new Error("Loại không hợp lệ");
-      this.P[k] = Math.max(0, this.P[k] + a);
-      if (k === "gems") this.econ("vao:admin", a);
+      const before = this.P[k];
+      this.P[k] = capRes(before + a);
+      if (k === "gems") this.econ("vao:admin", this.P[k] - before);
       return this.P[k];
+    },
+    giveItem(this: any, { id, amount }: any) {
+      const P: Profile = this.P,
+        a = Math.floor(Number(amount));
+      if (!isFinite(a)) throw new Error("Số lượng không hợp lệ");
+      if (!grantItems().includes(id)) throw new Error("Vật phẩm không cấp được");
+      P.bag[id] = capRes((P.bag[id] ?? 0) + a);
+      return P.bag[id];
+    },
+    giveMax(this: any) {
+      const P: Profile = this.P,
+        before = P.gems;
+      for (const k of ["gems", "coin", "books"] as const) P[k] = Math.max(P[k], TEST_MAX);
+      for (const id of grantItems()) P.bag[id] = Math.max(P.bag[id] ?? 0, TEST_MAX);
+      this.econ("vao:admin", P.gems - before);
+      return { gems: P.gems, coin: P.coin };
     },
     setWConfig(this: any, c: any) {
       const P = this.P,

@@ -35,6 +35,20 @@ Số liệu theo S19 (`docs/economy/`, `content/economy.yaml: thietKe.vuKhi`). T
 
 Banner nhân vật: lượt 3★ giờ cho một vũ khí 3★ ngẫu nhiên (vẫn +500 Xu); lượt 4★ không đổi nên `economy:sim` không đổi.
 
+### Nguồn nguyên liệu
+
+- **Bí Cảnh Binh Khí** (nút ở Kho vũ khí, màn `bicanh`): quét một lượt tốn Linh Lực, rơi Quặng Tinh Luyện và Xu. Linh Lực lưu ở `P.ll`, hồi theo thời gian thực. Hệ bí cảnh của S23 chưa có trong game nên đây là hoạt động độc lập; khi S23 có bí cảnh đánh thật thì gộp route `biCanh` vào đó, giữ nguyên số liệu `nguon.biCanh`.
+- **Ủy thác:** thưởng đủ bốn việc có thêm Quặng Thô (`nguon.uyThac`).
+- **Cửa hàng quặng** (cùng màn): đổi Xu lấy quặng, giới hạn theo tuần (`P.wShop`, khóa tuần theo thứ Hai).
+- **Thành tựu Binh Khí:** đếm lượt Bí Cảnh, đột phá, tinh luyện, rèn (`P.wStat`); nhận Phôi Lồng Sao một lần (`P.wAch`). Cửa hàng sự kiện đổi Phôi sẽ thêm khi hệ sự kiện vào game.
+- Số liệu và kết quả mô phỏng: [docs/economy/kinh-te.md](../economy/kinh-te.md).
+
+### Admin trong game
+
+Bản PWA trên màn hình chính iPad có kho lưu trữ riêng và không có thanh địa chỉ. Vào Cài đặt › Ứng dụng, chạm 7 lần vào dòng "Phiên bản" để hiện nút **Bảng quản trị**. Nút này mở `admin/index.html` trong cùng cửa sổ (cùng origin, cùng localStorage) và vẫn đòi mật khẩu. Admin có nút **Quay lại game** về đúng trang đã mở. Service worker precache cả Admin nên mở được khi mất mạng. Cách này chạy trên PWA iOS/Android, Capacitor và Tauri vì không cần mở cửa sổ mới.
+
+Mục Cấp tài nguyên cấp được Quặng Tinh Luyện, Phôi Lồng Sao, và có nút **Cấp tối đa để thử** (9.000.000.000 Đá Sao, Xu, Sách và nguyên liệu). Game chưa có vé ước. Mọi tài nguyên bị kẹp ở 999.999.999.999 khi cộng và khi đọc save, nên cộng dồn không vượt `Number.MAX_SAFE_INTEGER`.
+
 ## 3. Màn hình
 
 | Màn         | Nội dung                                                                                                                                                     |

@@ -151,6 +151,32 @@ thietKe:
       spear: thuong-go-lim
     # Hồ sơ mới (và save cũ khi chuyển đổi) nhận sẵn ít nguyên liệu để thử nâng cấp.
     khoiDau: { quang-tinh-luyen-tho: 30, quang-tinh-luyen: 10, quang-tinh-luyen-sao: 3, phoi-long-sao: 8 }
+    # Nguồn nguyên liệu vũ khí lặp lại cho người không nạp. Mục tiêu: một vũ khí 4★ lên cấp tối đa sau 30–45 ngày
+    # (Quặng Tinh Luyện Sao để đột phá là điểm nghẽn), đủ 5 bản Lò Rèn (R5) sau khoảng loRenR5Ngay ngày.
+    nguon:
+      # Bí Cảnh Binh Khí: mỗi lượt tốn Linh Lực, rơi Quặng Tinh Luyện. Mô phỏng giả định luotMoiNgay lượt mỗi ngày,
+      # phần Linh Lực còn lại dành cho thưởng Lòng Sao. Tạm là hoạt động độc lập trong menu, chờ gộp vào hệ bí cảnh S23.
+      biCanh:
+        linhLuc: 20
+        xu: 1200
+        roi: { quang-tinh-luyen-tho: 3, quang-tinh-luyen: 1 }
+        luotMoiNgay: 2
+      # Ủy thác: cộng thêm vào thưởng hoàn thành ngày.
+      uyThac: { quang-tinh-luyen-tho: 2 }
+      # Cửa hàng đổi Xu lấy quặng, giới hạn mỗi tuần (làm mới thứ Hai).
+      cuaHang:
+        - { id: quang-tinh-luyen, xu: 1500, moiTuan: 7 }
+        - { id: quang-tinh-luyen-sao, xu: 8000, moiTuan: 3 }
+      # Phôi Lòng Sao: thành tựu Binh Khí (một lần) và cửa hàng sự kiện mỗi tháng.
+      # Hệ sự kiện chưa có trong game: suKienMoiThang hiện chỉ dùng cho mô phỏng.
+      phoi:
+        suKienMoiThang: 12
+        thanhTuu:
+          - { id: bi-canh-10, ten: Khách quen bí cảnh, loai: biCanh, can: 10, phoi: 4 }
+          - { id: bi-canh-30, ten: Thợ mỏ sao, loai: biCanh, can: 30, phoi: 4 }
+          - { id: bi-canh-60, ten: Người giữ lò, loai: biCanh, can: 60, phoi: 4 }
+          - { id: dot-pha-1, ten: Lần đầu đột phá, loai: dotPha, can: 1, phoi: 2 }
+          - { id: tinh-luyen-1, ten: Lần đầu tinh luyện, loai: tinhLuyen, can: 1, phoi: 2 }
     # Danh sách vũ khí (tên, bị động, truyện, chỉ số): content/weapons.yaml, ghép vào thietKe.vuKhi.danhSach khi nạp.
   # Bảo Ấn: 4 ô. Chất lượng rơi theo Thiên Tượng (0..1). Bộ Ấn thêm sát thương khi đủ 4 ô.
   baoAn:

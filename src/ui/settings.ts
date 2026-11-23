@@ -13,6 +13,7 @@ import {
   type Quality,
 } from "../core/settings";
 import { captureNextKey } from "../core/input";
+import { Server } from "../server/server";
 import { resize } from "../core/canvas";
 import { applyVolumes } from "../core/audio";
 import { padLabelFor, padState } from "../core/gamepad";
@@ -131,6 +132,40 @@ function panelGeneral() {
 }
 
 /* S22: toàn màn hình, cài PWA, tải bản cài đặt. */
+const ADMIN_UNLOCK = "tinhtu-admin-mo",
+  ADMIN_BACK = "tinhtu-admin-ve";
+/** Dòng số phiên bản; chạm 7 lần liền hiện nút Bảng quản trị. Admin mở trong cùng cửa sổ (cùng origin, cùng localStorage)
+   nên dùng được cả ở PWA màn hình chính không có thanh địa chỉ, Capacitor và Tauri. */
+function adminEntry() {
+  const adm = button("Bảng quản trị", {
+    icon: "mo-khoa",
+    onClick: () => {
+      Server.save();
+      sessionStorage.setItem(ADMIN_BACK, location.href);
+      location.assign(new URL("admin/index.html#cap-phat", document.baseURI).href);
+    },
+  });
+  adm.id = "stAdmin";
+  adm.hidden = sessionStorage.getItem(ADMIN_UNLOCK) !== "1";
+  let taps = 0,
+    last = 0;
+  const ver = button(`Phiên bản ${__APP_VERSION__}`, {
+    variant: "ghost",
+    onClick: () => {
+      const now = performance.now();
+      taps = now - last < 1500 ? taps + 1 : 1;
+      last = now;
+      if (taps < 7 || !adm.hidden) return;
+      adm.hidden = false;
+      sessionStorage.setItem(ADMIN_UNLOCK, "1");
+      toast("Đã hiện Bảng quản trị");
+      adm.focus();
+    },
+  });
+  ver.id = "stVersion";
+  return [h("div", { class: "st-row" }, [ver, adm])];
+}
+
 function panelApp() {
   const rows: (Node | string)[] = [];
   if (fullscreenSupported()) {
@@ -178,6 +213,7 @@ function panelApp() {
         ? "Bạn đang dùng bản cài đặt. Bản mới nằm ở trang Tải bản cài đặt (GitHub Releases)."
         : "Bản Android (APK), Windows, macOS và Linux nằm ở trang Tải bản cài đặt (GitHub Releases), miễn phí.",
     ]),
+    ...adminEntry(),
   );
   return h("div", { class: "st-grid" }, rows);
 }

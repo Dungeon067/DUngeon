@@ -12,6 +12,11 @@
 
 Kết luận: **ĐẠT**
 
+## Nguyên liệu vũ khí (người không nạp)
+
+- Một vũ khí 4★ lên cấp 60: ngày 36 (mục tiêu 30–45).
+- Vũ khí 4★ Lò Rèn R5: ngày 40 (mục tiêu khoảng 40).
+
 ## Bốn hồ sơ
 
 | Hồ sơ                              | Chi tiêu/tháng | Đá Sao/tháng | Lượt ước 30 ngày (NV + VK) | Lượt ước 90 ngày (NV + VK) | Lượt ước 180 ngày (NV + VK) | Lượt ước 365 ngày (NV + VK) | 5★ (365 ngày) | 5★ giới hạn | Ngày có 5★ giới hạn đầu |
@@ -40,8 +45,8 @@ F2P chơi kỹ (trung vị) qua 100% nội dung thường từ ngày **120** (y�
 
 | Nội dung                               | Ngày mở | Chiến Lực cần | Đội 4★ miễn phí | F2P chơi kỹ    | Nạp nhẹ (thẻ tháng + Hộ Chiếu Sao) | Nạp khá        | Whale               | F2P qua từ ngày |
 | -------------------------------------- | ------- | ------------- | --------------- | -------------- | ---------------------------------- | -------------- | ------------------- | --------------- |
-| Cốt truyện chương 1                    | 1       | 1.400         | 1.435 (1,02×)   | 1,57× dễ       | 1,59× dễ                           | 1,75× dễ       | 2,68× rất nhẹ nhàng | 5               |
-| Cốt truyện chương 2                    | 4       | 2.000         | 2.157 (1,08×)   | 1,10× qua được | 1,11× qua được                     | 1,22× qua được | 1,87× rất nhẹ nhàng | 5               |
+| Cốt truyện chương 1                    | 1       | 1.400         | 1.435 (1,02×)   | 1,60× dễ       | 1,61× dễ                           | 1,77× dễ       | 2,72× rất nhẹ nhàng | 5               |
+| Cốt truyện chương 2                    | 4       | 2.000         | 2.092 (1,05×)   | 1,12× qua được | 1,13× qua được                     | 1,24× qua được | 1,90× rất nhẹ nhàng | 5               |
 | Cốt truyện chương 3                    | 10      | 2.900         | 3.078 (1,06×)   | 1,10× qua được | 1,13× qua được                     | 1,32× vừa đủ   | 1,85× rất nhẹ nhàng | 10              |
 | Cốt truyện chương 4                    | 20      | 4.200         | 4.389 (1,04×)   | 1,13× qua được | 1,17× qua được                     | 1,33× vừa đủ   | 1,85× rất nhẹ nhàng | 20              |
 | Sự kiện thường                         | 21      | 4.200         | 4.403 (1,05×)   | 1,13× qua được | 1,17× qua được                     | 1,33× vừa đủ   | 1,85× rất nhẹ nhàng | 25              |
@@ -71,8 +76,8 @@ F2P chơi kỹ (trung vị) qua 100% nội dung thường từ ngày **120** (y�
 | Hồ sơ                              | Độ dư thấp nhất | Độ dư trung vị | Độ dễ         |
 | ---------------------------------- | --------------- | -------------- | ------------- |
 | F2P chơi kỹ                        | 1,10×           | 1,14×          | qua được      |
-| Nạp nhẹ (thẻ tháng + Hộ Chiếu Sao) | 1,11×           | 1,49×          | vừa đủ        |
-| Nạp khá                            | 1,22×           | 1,60×          | dễ            |
+| Nạp nhẹ (thẻ tháng + Hộ Chiếu Sao) | 1,13×           | 1,49×          | vừa đủ        |
+| Nạp khá                            | 1,24×           | 1,60×          | dễ            |
 | Whale                              | 1,85×           | 1,99×          | rất nhẹ nhàng |
 
 ## B. Nội dung đỉnh

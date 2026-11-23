@@ -3,11 +3,11 @@
 import "../ui/ds/ds.css";
 import "./admin.css";
 import { CHARS, EL } from "../data/content";
-import { ADMIN_CFG } from "../data/menu-content";
+import { ADMIN_CFG, ITEMS } from "../data/menu-content";
 import { stringify } from "yaml";
 import { ECON, econEdited, econForYaml, resetEcon, setEcon } from "../data/economy";
 import { packValue } from "../economy/core";
-import { LOG_KEY, SAVE_KEY, Server, powerOf, weaponList } from "../server/server";
+import { LOG_KEY, SAVE_KEY, Server, TEST_MAX, grantItems, powerOf, weaponList } from "../server/server";
 import { button, field, h, tabs, tag, toggle } from "../ui/ds";
 import { icon } from "../ui/icons/icons";
 import { filterHistory } from "../ui/menu/logic";
@@ -70,6 +70,20 @@ function sectionFromHash(): SecId {
 }
 
 /* ---------- đăng nhập ---------- */
+/** Quay lại game trong cùng cửa sổ: về đúng trang game đã mở Admin (lưu ở sessionStorage), không có thì về trang chính. */
+function backToGame() {
+  const b = button("Quay lại game", {
+    icon: "quay-lai",
+    onClick: () => {
+      const saved = sessionStorage.getItem("tinhtu-admin-ve");
+      const ok = saved && new URL(saved).origin === location.origin && !/\/admin\//.test(new URL(saved).pathname);
+      location.assign(ok ? saved! : new URL("../index.html", location.href).href);
+    },
+  });
+  b.classList.add("tt-admin-back");
+  return b;
+}
+
 function renderLogin(err = "") {
   const pw = field("Mật khẩu", {
     type: "password",
@@ -84,6 +98,7 @@ function renderLogin(err = "") {
     ]),
     pw,
     go,
+    backToGame(),
   ]);
   go.type = "submit";
   form.addEventListener("submit", async (e) => {
@@ -259,13 +274,44 @@ function grants() {
       if (Server.req("wipe").ok) done("Đã xóa dữ liệu");
     },
   });
+  const P = Server.P,
+    itemName = (id: string) => ITEMS.find((i) => i.id === id)?.name ?? id;
+  const itemSel = h("select", { class: "tt-input", id: "admItem" });
+  for (const id of grantItems()) itemSel.add(new Option(`${itemName(id)} · đang có ${fmt(P.bag[id] ?? 0)}`, id));
+  const max = button(`Cấp tối đa để thử (${fmt(TEST_MAX)})`, {
+    variant: "primary",
+    icon: "ruong",
+    onClick: () => {
+      if (Server.req("giveMax").ok) done("Đã cấp tối đa để thử");
+    },
+  });
+  max.id = "admMax";
   return [
     card("Tài nguyên", [
+      h("div", { class: "tt-admin-stats" }, [
+        stat("Đá Sao", fmt(P.gems)),
+        stat("Xu", fmt(P.coin)),
+        stat("Sách Kinh Nghiệm", fmt(P.books)),
+      ]),
       amt,
       h("div", { class: "tt-admin-row" }, [
         give("gem", "Đá Sao"),
         give("coin", "Xu"),
         give("book", "Sách Kinh Nghiệm"),
+      ]),
+      h("div", { class: "tt-field" }, [h("label", { for: "admItem" }, ["Nguyên liệu vũ khí"]), itemSel]),
+      h("div", { class: "tt-admin-row" }, [
+        button("Cấp nguyên liệu", {
+          icon: "them",
+          onClick: () => {
+            if (Server.req("giveItem", { id: itemSel.value, amount: input(amt).value }).ok)
+              done("Đã cấp " + itemName(itemSel.value));
+          },
+        }),
+      ]),
+      h("div", { class: "tt-admin-row" }, [max]),
+      h("p", { class: "tt-admin-note" }, [
+        `Mỗi loại tài nguyên giữ tối đa ${fmt(999_999_999_999)}, cộng dồn không vượt giới hạn số an toàn. Game chưa có vé ước.`,
       ]),
     ]),
     card("Nhân vật", [
@@ -583,6 +629,7 @@ function render() {
           h("small", {}, ["Admin · bản thử nghiệm"]),
         ]),
         nav,
+        backToGame(),
         h("p", { class: "tt-admin-note" }, [
           "Chặn tạm bằng mật khẩu trên trình duyệt. Có server thật thì xác thực chuyển lên server.",
         ]),

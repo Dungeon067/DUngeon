@@ -29,7 +29,8 @@ function withContent(o: unknown) {
   const v = e?.thietKe?.vuKhi,
     b = ECON_BASE.thietKe.vuKhi as any;
   if (v && typeof v === "object") {
-    for (const k of ["cap", "quang", "loRen", "macDinh", "khoiDau"]) if (v[k] === undefined) v[k] = clone(b[k]);
+    for (const k of ["cap", "quang", "loRen", "macDinh", "khoiDau", "nguon"])
+      if (v[k] === undefined) v[k] = clone(b[k]);
     if (v.banner && typeof v.banner === "object")
       for (const k of ["gia", "noiBat"]) if (v.banner[k] === undefined) v.banner[k] = clone(b.banner[k]);
   }
