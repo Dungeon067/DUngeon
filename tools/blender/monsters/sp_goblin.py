@@ -101,7 +101,7 @@ def mask_zb(x):
     return -0.3 + 0.5 * abs(x) ** 1.15
 
 
-def mask(J, k, outline=0.0):
+def mask(J, k, outline=0.0, hug=None):
     """Mặt nạ vỏ cây: lưới bám mặt cầu phía trước đầu, viền hình lá có hai mấu, hốc mắt lõm."""
     c = J["head"]
     R = V((0.135, 0.13, 0.122)) * k
@@ -125,6 +125,8 @@ def mask(J, k, outline=0.0):
         for i in range(nx):
             bm.faces.new((r0[i], r1[i], r1[i + 1], r0[i + 1]))
     o = M.from_bm(bm, "gob_mask")
+    if hug:
+        hug.pull(o, 0.0025 * k)
     m = o.modifiers.new("sol", "SOLIDIFY")
     m.thickness = 0.008 * k
     m.offset = 1
@@ -133,12 +135,18 @@ def mask(J, k, outline=0.0):
     hi = M.dup(o, "gob_mask_hi")
     M.subsurf(hi, 2)
     M.noise_verts(hi, 0.0012 * k, 120 / k, 7, (8, 1, 1))
-    beak = M.cone("gob_beak", 0.02 * k, 0.002 * k, 0.055 * k, 8, c + V((0, -0.128, -0.028)) * k, V((0, -0.75, -0.65)))
+    bp = c + V((0, -0.128, -0.028)) * k
+    if hug:
+        bp = hug.on(bp, 0.004 * k)
+    beak = M.cone("gob_beak", 0.02 * k, 0.002 * k, 0.055 * k, 8, bp, V((0, -0.75, -0.65)))
     pupils = []
     for sd in (-1, 1):
         x, z = EYE[0] * sd, EYE[1]
         y = -math.sqrt(1 - x * x - z * z) + 0.07
-        pupils.append(M.uv_sphere(f"pupil{sd}", 1.0, 10, 8, c + V((x * R.x, y * R.y - 0.004 * k, z * R.z + 0.004 * k)),
+        pc = c + V((x * R.x, y * R.y - 0.004 * k, z * R.z + 0.004 * k))
+        if hug:
+            pc = hug.on(pc, 0.004 * k)
+        pupils.append(M.uv_sphere(f"pupil{sd}", 1.0, 10, 8, pc,
                                   (0.014 * k, 0.008 * k, 0.017 * k)))
     return (o, hi), beak, pupils
 
@@ -302,7 +310,7 @@ def cloth_strip(name, top_c, down, side, width, length, jag=5, seg=4, thick=0.00
 
 
 def leaf_ring(prefix, center, rx, ry, n, length, width, down, out, phase=0.0, curl=0.2, skip_front=0.0, seed=1,
-              notch=0.0, seg=3, thick=0.003):
+              notch=0.0, seg=3, thick=0.003, hug=None):
     rng = M.rnd(seed)
     res = []
     for i in range(n):
@@ -311,6 +319,8 @@ def leaf_ring(prefix, center, rx, ry, n, length, width, down, out, phase=0.0, cu
             continue
         dirv = V((math.cos(a) * out, math.sin(a) * out, -down)).normalized()
         loc = V(center) + V((math.cos(a) * rx, math.sin(a) * ry, 0))
+        if hug:
+            loc = hug.on(loc, thick * 0.5)
         L = length * rng.uniform(0.85, 1.15)
         o = M.leaf(f"{prefix}{i}", L, width * rng.uniform(0.85, 1.15), loc, dirv,
                    up=(math.cos(a), math.sin(a), 0.0), curl=-curl * rng.uniform(0.6, 1.3), seg=seg, thick=thick,
@@ -319,34 +329,60 @@ def leaf_ring(prefix, center, rx, ry, n, length, width, down, out, phase=0.0, cu
     return res
 
 
-def hand(S, J, k, claw_mat, skin):
-    k = k * 1.3
-    sd = 1 if S == "L" else -1
+def grip_point(J, S, k, fwd=0.026, down=0.03):
+    """Tâm nắm tay: trước cổ tay, hơi thấp theo hướng cẳng tay."""
     w = J[f"wrist{S}"]
     d = (w - J[f"elbow{S}"]).normalized()
-    palm = M.uv_sphere(f"palm{S}", 1.0, 10, 7, w + d * 0.022 * k, (0.024 * k, 0.018 * k, 0.026 * k))
-    parts = [B.Piece(palm, skin, "skin", bone=f"hand{S}")]
-    side = V((1, 0, 0)) * sd
-    fwd = V((0, -1, 0))
-    for i, off in enumerate((-0.012, 0.0, 0.012)):
-        base = w + d * 0.038 * k + fwd * off * k * 1.2 + side * 0.002
-        pts = [base, base + d * 0.022 * k + fwd * 0.004 * k, base + d * 0.038 * k + fwd * -0.006 * k - side * 0.008 * k]
-        f = M.tube(f"fing{S}{i}", pts, [0.0085 * k, 0.007 * k, 0.005 * k], 6)
-        parts.append(B.Piece(f, skin, "skin", bone=f"hand{S}"))
-        cl = M.cone(f"claw{S}{i}", 0.005 * k, 0.0005 * k, 0.014 * k, 5, pts[-1], (pts[-1] - pts[-2]).normalized())
-        parts.append(B.Piece(cl, claw_mat, "skin", bone=f"hand{S}"))
-    th = w + d * 0.02 * k - side * 0.016 * k - fwd * 0.004
-    t = M.tube(f"thumb{S}", [th, th + d * 0.012 * k - side * 0.012 * k + fwd * 0.012 * k], [0.008 * k, 0.006 * k], 6)
-    parts.append(B.Piece(t, skin, "skin", bone=f"hand{S}"))
-    return parts
+    return w + d * down * k * 1.3 + V((0, -fwd * k * 1.3, 0))
 
 
-def feet_claws(S, J, k, claw_mat):
+def fist(S, J, k, g, axis=V((0, 0, 1)), r_in=0.006, spin=1):
+    """Bàn tay nắm quanh trục `axis` qua tâm `g` (cán gậy, thân cung): lòng bàn tay nối cổ tay, bốn ngón
+    cuộn quanh cán và chạm lại lòng bàn tay, ngón cái ốp ngoài. Trả về (các khối để hàn, đầu móng [(p, dir)])."""
+    kk = k * 1.3
+    w = J[f"wrist{S}"]
+    a = V(axis).normalized()
+    e1 = w - g
+    e1 = (e1 - a * e1.dot(a)).normalized()
+    e2 = a.cross(e1) * spin
+    rf = 0.0078 * kk
+    R = r_in + rf * 0.95
+    pc = g + e1 * (R + 0.004 * kk)
+    objs = [M.tube(f"palm{S}", [w + (pc - w) * 0.1, (w + pc) / 2, pc], [0.021 * kk, 0.023 * kk, 0.021 * kk], 10)]
+    tips = []
+    for i, h in enumerate((-1.5, -0.5, 0.5, 1.5)):
+        z = a * (h * rf * 1.85)
+        sweep = math.radians(285 - 12 * abs(h))
+        pts, rad = [], []
+        for j in range(9):
+            th = sweep * j / 8
+            pts.append(g + z + (e1 * math.cos(th) + e2 * math.sin(th)) * R * (1 - 0.06 * j / 8))
+            rad.append(rf * (1.05 - 0.25 * j / 8) * (0.88 if abs(h) > 1 else 1.0))
+        objs.append(M.tube(f"fing{S}{i}", pts, rad, 7))
+        tips.append((pts[-1], (pts[-1] - pts[-2]).normalized()))
+    zt = a * (2.3 * rf * 1.85 * 0.8)
+    th_pts = [g + zt + e1 * R * 0.9 + e2 * -0.2 * R]
+    for j in range(1, 6):
+        th = -math.radians(150) * j / 5
+        th_pts.append(g + zt * (1 - 0.35 * j / 5) + (e1 * math.cos(th) + e2 * math.sin(th)) * (R + rf * 0.7))
+    objs.append(M.tube(f"thumb{S}", th_pts, [rf * 1.25, rf * 1.15, rf, rf * 0.95, rf * 0.85, rf * 0.75], 7))
+    tips.append((th_pts[-1], (th_pts[-1] - th_pts[-2]).normalized()))
+    return objs, tips
+
+
+def claws(S, tips, k, claw_mat):
+    return [B.Piece(M.cone(f"claw{S}{i}", 0.0045 * k * 1.3, 0.0005 * k, 0.011 * k * 1.3, 5, p - d * 0.002 * k, d),
+                    claw_mat, "skin", bone=f"hand{S}") for i, (p, d) in enumerate(tips)]
+
+
+def feet_claws(S, J, k, claw_mat, hug=None):
     sd = 1 if S == "L" else -1
     t = J[f"toe{S}"]
     out = []
     for i, dx in enumerate((-0.016, 0.0, 0.016)):
         p = t + V((dx * sd * k, -0.012 * k, -0.004 * k))
+        if hug:
+            p = hug.on(p, -0.003 * k)
         out.append(B.Piece(M.cone(f"tclaw{S}{i}", 0.006 * k, 0.0005 * k, 0.018 * k, 5, p, V((dx * sd, -1, -0.25))),
                            claw_mat, "skin", bone=f"foot{S}"))
     return out
@@ -354,8 +390,11 @@ def feet_claws(S, J, k, claw_mat):
 
 def staff(k, grip, top_z=0.98, bottom_z=0.02, mat_name="gob_bamboo", x_lean=0.0):
     nodes = [bottom_z + (top_z - bottom_z) * f for f in (0.18, 0.4, 0.62, 0.82)]
-    a = V((grip.x + x_lean, grip.y - 0.01, bottom_z * k))
-    b = V((grip.x - x_lean * 0.3, grip.y + 0.012, top_z * k))
+    a = V((grip.x + x_lean, grip.y, bottom_z * k))
+    b = V((grip.x - x_lean * 0.3, grip.y, top_z * k))
+    u = (b - a).normalized()
+    sh = grip - (a + u * (grip - a).dot(u))
+    a, b = a + sh, b + sh
     pts, rad = [], []
     for i in range(25):
         t = i / 24
@@ -377,16 +416,20 @@ def staff(k, grip, top_z=0.98, bottom_z=0.02, mat_name="gob_bamboo", x_lean=0.0)
     return o, m, cord, a, b
 
 
-def necklace(J, k, rope_mat, bead_mat):
+def necklace(J, k, rope_mat, bead_mat, hug=None):
     c = J["neck"] + V((0, -0.006, -0.03)) * k
     pts = [c + V((math.cos(a) * 0.058 * k, math.sin(a) * 0.05 * k - 0.008 * k * max(0, -math.sin(a)),
                   -0.022 * k * max(0, -math.sin(a)))) for a in [i / 24 * math.tau for i in range(25)]]
-    out = [B.Piece(M.tube("neck_rope", pts, 0.0035 * k, 5), rope_mat, "cloth", bone="chest")]
+    if hug:
+        pts = hug.path(pts, 0.0035 * k)
+    out = [B.Piece(M.tube("neck_rope", pts, 0.0035 * k, 4), rope_mat, "cloth", bone="chest")]
     for i in range(7):
         a = -math.pi / 2 + (i - 3) * 0.32
         p = c + V((math.cos(a) * 0.058 * k, math.sin(a) * 0.05 * k - 0.008 * k * max(0, -math.sin(a)),
                    -0.022 * k * max(0, -math.sin(a)) - 0.012 * k))
         L = (0.028 if i % 2 == 0 else 0.02) * k
+        if hug:
+            p = hug.on(p, 0.0085 * k)
         bd = M.cone(f"bead{i}", 0.0075 * k, 0.0075 * k, L, 8, p + V((0, 0, 0.006 * k)), V((0, -0.25, -1)))
         out.append(B.Piece(bd, bead_mat, "cloth", bone="chest"))
     return out
@@ -396,6 +439,11 @@ CFG = {
     "goblin": dict(k=1.0, hunch=0.0, leaf_green=(0.45, 0.55, 0.2), cloth=((0.55, 0.25, 0.17), (0.3, 0.12, 0.1)),
                    skin=((0.36, 0.46, 0.22), (0.17, 0.24, 0.15), (0.62, 0.66, 0.38))),
 }
+
+
+def collar(name, c, rx, ry, n=28, wob=0.0):
+    return [c + V((math.cos(a) * rx, math.sin(a) * ry, wob * math.sin(3 * a))) for a in
+            [i / n * math.tau for i in range(n + 1)]]
 
 
 def build_common(sid, args, cfg, extra=None):
@@ -410,77 +458,107 @@ def build_common(sid, args, cfg, extra=None):
     skin = mat_skin(f"{sid}_skin", *cfg["skin"], k=k)
     claw = mat_flat(f"{sid}_claw", (0.86, 0.8, 0.64), (0, 0.2, 0))
     pieces = []
-    lo, hi = body(J, k)
-    pieces.append(B.Piece(lo, skin, "skin", hi))
-    ho, hh = head(J, k)
-    pieces.append(B.Piece(ho, mat_head(J, sid, cfg["skin"], k), "skin", hh, bone="head"))
-    (mo, mh), beak, pupils = mask(J, k)
+    # Thân liền một khối: thân + đầu + hai bàn tay nắm, hàn voxel rồi bo mịn mối nối.
+    gR = grip_point(J, "R", k)
+    gL = grip_point(J, "L", k)
+    so, sm, cords, sa, sb = None, None, None, None, None
+    grips = extra.grips(J, k) if extra and hasattr(extra, "grips") else None
+    if grips is None:
+        so, sm, cords, sa, sb = staff(k, gR)
+        grips = {"R": (gR, (sb - sa).normalized(), 0.0135 * k, 1), "L": (gL, V((0, -1, 0.25)), 0.006 * k, -1)}
+    _, bhi = body(J, k)
+    _, hhi = head(J, k)
+    parts, tips = [bhi, hhi], {}
+    for S, (g, ax, rin, spin) in grips.items():
+        fo, tp = fist(S, J, k, g, ax, rin, spin)
+        parts += fo
+        tips[S] = tp
+    hi = M.weld(parts, f"{sid}_body_hi", 0.0032 * k, 5, 0.5)
+    for o in parts:
+        o.hide_set(True)
+        o.hide_render = True
+    M.displace_noise(hi, 0.0012 * k, 0.022 * k)
+    hug = M.Hug(hi)
+    lo = M.dup(hi, f"{sid}_body")
+    M.decimate(lo, cfg.get("body_tris", 1700))
+    M.smooth(lo)
+    pieces.append(B.Piece(lo, mat_head(J, sid, cfg["skin"], k), "skin", hi))
+    (mo, mh), beak, pupils = mask(J, k, hug=hug)
     bark = mat_bark(J["head"], k)
     pieces.append(B.Piece(mo, bark, "skin", mh, bone="head"))
     pieces.append(B.Piece(beak, bark, "skin", bone="head"))
+    rope = mat_flat(f"{sid}_rope", (0.62, 0.5, 0.3), (0, 0.05, 0))
+    # Quai buộc mặt nạ: dây vòng ra sau gáy, hai đinh tán ở mép mặt nạ.
+    hc = J["head"]
+    sp = [hc + V((math.cos(a) * 0.2 * k, math.sin(a) * 0.2 * k, 0.035 * k)) for a in
+          [-math.pi / 2 + 0.95 + i / 20 * (math.tau - 1.9) for i in range(21)]]
+    pieces.append(B.Piece(M.tube("mask_strap", hug.path(sp, 0.0035 * k), 0.0035 * k, 4), rope, "cloth", bone="head"))
+    for sd in (-1, 1):
+        rv = hug.on(hc + V((0.112 * sd * k, -0.06 * k, 0.035 * k)), 0.0125 * k)
+        pieces.append(B.Piece(M.uv_sphere(f"rivet{sd}", 0.0055 * k, 8, 6, rv), claw, "skin", bone="head"))
     pm_p = M.pm(f"{sid}_pupil")
     pm_p.done((1.0, 0.9, 0.55), (1.0, 0.0, 0.6), None, emit=(1, 0.9, 0.5), emit_strength=3)
     for pu in pupils:
         pieces.append(B.Piece(pu, pm_p, "glow", bone="head"))
     for S, sd in (("L", 1), ("R", -1)):
-        c = J["head"]
-        e = M.leaf(f"ear{S}", 0.21 * k, 0.055 * k, c + V((0.095 * sd, 0.015, 0.015)) * 1, V((sd, 0.35, 0.12)),
+        e = M.leaf(f"ear{S}", 0.21 * k, 0.055 * k, hc + V((0.085 * sd, 0.015, 0.015)) * 1, V((sd, 0.35, 0.12)),
                    up=(0, -0.3, 1), curl=0.28, seg=4, thick=0.008 * k, notch=0.25)
         pieces.append(B.Piece(e, skin, "skin", bone=f"ear{S}"))
-        pieces += hand(S, J, k, claw, skin)
-        pieces += feet_claws(S, J, k, claw)
+        pieces += claws(S, tips[S], k, claw)
+        pieces += feet_claws(S, J, k, claw, hug)
     for i, sd in enumerate((-1, 1)):
-        tooth = M.cone(f"fang{i}", 0.007 * k, 0.0008 * k, 0.018 * k, 5,
-                       J["head"] + V((0.03 * sd, -0.128, -0.052)) * k, V((0, -0.2, -1)))
+        tp = hug.on(hc + V((0.03 * sd, -0.128, -0.052)) * k, -0.002 * k)
+        tooth = M.cone(f"fang{i}", 0.007 * k, 0.0008 * k, 0.018 * k, 5, tp, V((0, -0.2, -1)))
         pieces.append(B.Piece(tooth, claw, "skin", bone="head"))
     leaf_m = mat_leaf(f"{sid}_leaf", cfg["leaf_green"])
     if cfg.get("crown", True):
-        hc = J["head"]
         for i, (ang, up, L) in enumerate(((-0.5, 0.9, 0.17), (0.0, 1.0, 0.2), (0.5, 0.9, 0.17), (-0.9, 0.55, 0.13),
                                           (0.9, 0.55, 0.13), (0.0, 0.5, 0.15))):
             d = V((math.sin(ang) * 0.6, 0.55 + 0.3 * (i == 5), up))
-            base = hc + V((math.sin(ang) * 0.05, 0.03 + 0.03 * (i == 5), 0.085)) * k
+            base = hug.on(hc + V((math.sin(ang) * 0.05, 0.03 + 0.03 * (i == 5), 0.085)) * k, -0.006 * k)
             o = M.leaf(f"crown{i}", L * k, 0.03 * k, base, d, up=(0, -1, 0.3), curl=0.35, seg=4, thick=0.004 * k)
             pieces.append(B.Piece(o, leaf_m, "cloth", bone="head"))
+        band = hug.path(collar("cb", hc + V((0, 0.03 * k, 0.07 * k)), 0.1 * k, 0.1 * k, 24), 0.003 * k)
+        pieces.append(B.Piece(M.tube("crownband", band, 0.004 * k, 4), rope, "cloth", bone="head"))
     lm = mat_leaf(f"{sid}_leaf2", tuple(x * 0.85 for x in cfg["leaf_green"]), (0.72, 0.56, 0.26))
     ch = J["chest"]
     mantle = leaf_ring("mant", ch + V((0, 0.0, 0.045)) * 1, 0.07 * k, 0.06 * k, 13, 0.16 * k, 0.034 * k, 0.8, 0.75,
-                       phase=0.1, curl=0.25, seed=3, notch=0.2)
+                       phase=0.1, curl=0.25, seed=3, notch=0.2, hug=hug)
     mantle += leaf_ring("mant2", ch + V((0, 0.0, 0.0)), 0.082 * k, 0.07 * k, 11, 0.15 * k, 0.032 * k, 0.9, 0.62,
-                        phase=0.4, curl=0.3, seed=4, skip_front=0.55)
+                        phase=0.4, curl=0.3, seed=4, skip_front=0.55, hug=hug)
     for o in mantle:
         pieces.append(B.Piece(o, leaf_m, "cloth", bone="chest"))
+    # Dây thừng buộc áo lá vào cổ: gốc lá kẹp dưới dây.
+    cl = hug.path(collar("col", ch + V((0, 0, 0.05 * k)), 0.09 * k, 0.08 * k), 0.004 * k)
+    pieces.append(B.Piece(M.tube("collar", cl, 0.0045 * k, 4), rope, "cloth", bone="chest"))
     pel = J["pelvis"]
     skirt = leaf_ring("skirt", pel + V((0, 0.005, 0.03 * k)), 0.075 * k, 0.062 * k, 18, 0.17 * k, 0.018 * k, 1.0, 0.32,
-                      phase=0.05, curl=0.12, seed=7, skip_front=0.4, seg=3)
+                      phase=0.05, curl=0.12, seed=7, skip_front=0.4, seg=3, hug=hug)
     for o in skirt:
         pieces.append(B.Piece(o, lm, "cloth"))
     clo = mat_cloth(f"{sid}_cloth", *cfg["cloth"])
-    front = cloth_strip("loin_f", pel + V((0, -0.07, 0.03)) * 1, (0, -0.12, -1), (1, 0, 0), 0.07 * k, 0.17 * k,
-                        bulge=V((0, -0.01, 0)))
-    back = cloth_strip("loin_b", pel + V((0, 0.068, 0.03)) * 1, (0, 0.1, -1), (1, 0, 0), 0.08 * k, 0.15 * k)
-    sash = cloth_strip("sash", ch + V((0.06, -0.06, 0.03)) * 1, (-0.7, -0.08, -0.7), (0.5, 0.0, -0.5), 0.03 * k,
-                       0.16 * k, jag=2, flare=1.0)
+    front = cloth_strip("loin_f", hug.on(pel + V((0, -0.07, 0.03)) * 1, 0.004 * k), (0, -0.12, -1), (1, 0, 0),
+                        0.07 * k, 0.17 * k, bulge=V((0, -0.01, 0)))
+    back = cloth_strip("loin_b", hug.on(pel + V((0, 0.068, 0.03)) * 1, 0.004 * k), (0, 0.1, -1), (1, 0, 0),
+                       0.08 * k, 0.15 * k)
+    sash = cloth_strip("sash", hug.on(ch + V((0.06, -0.06, 0.03)) * 1, 0.003 * k), (-0.7, -0.08, -0.7),
+                       (0.5, 0.0, -0.5), 0.03 * k, 0.16 * k, jag=2, flare=1.0)
     for o in (front, back, sash):
         pieces.append(B.Piece(o, clo, "cloth"))
-    rope = mat_flat(f"{sid}_rope", (0.62, 0.5, 0.3), (0, 0.05, 0))
-    belt = [pel + V((math.cos(a) * 0.08 * k, math.sin(a) * 0.066 * k, 0.03 * k + 0.004 * math.sin(3 * a)))
-            for a in [i / 28 * math.tau for i in range(29)]]
-    pieces.append(B.Piece(M.tube("belt", belt, 0.0075 * k, 6), rope, "cloth", bone="hips"))
+    belt = hug.path(collar("belt", pel + V((0, 0, 0.03 * k)), 0.08 * k, 0.066 * k, 28, 0.004), 0.0075 * k)
+    pieces.append(B.Piece(M.tube("belt", belt, 0.0075 * k, 4), rope, "cloth", bone="hips"))
     bead = mat_bamboo(f"{sid}_bead", (0.75, 0.65, 0.34))
-    pieces += necklace(J, k, rope, bead)
+    pieces += necklace(J, k, rope, bead, hug)
     if extra:
-        pieces += extra.pieces(J, k, sid, rope, bones)
+        pieces += extra.pieces(J, k, sid, rope, bones, hug)
     else:
-        so, sm, cords, a, b = staff(k, J["wristR"] + V((0, -0.035, 0)))
         pieces.append(B.Piece(so, sm, "cloth", bone="weapon"))
         for j, cp in enumerate(cords):
             pieces.append(B.Piece(M.tube(f"cord{j}", cp, 0.0032 * k, 5), rope, "cloth", bone="weapon"))
-        tas = M.leaf("tassel", 0.09 * k, 0.016 * k, b - V((0, 0, 0.14 * k)), V((0.3, 0.4, -1)), curl=0.2, seg=3)
+        tas = M.leaf("tassel", 0.09 * k, 0.016 * k, sb - V((0, 0, 0.14 * k)), V((0.3, 0.4, -1)), curl=0.2, seg=3)
         pieces.append(B.Piece(tas, leaf_m, "cloth", bone="weapon"))
     if "weapon" not in bones:
-        hR = J["wristR"]
-        bl.append(("weapon", hR + V((0, -0.035, 0)), hR + V((0, -0.035, 0.12)), "handR"))
+        bl.append(("weapon", gR, gR + V((0, 0, 0.12)), "handR"))
         bones.append("weapon")
     low, highs, maps = B.assemble(sid, pieces, 1024, {"skin": 1.3}, extrusion=0.006 * k, ray=0.015 * k, ao=True,
                                   bones=bones)
@@ -489,13 +567,21 @@ def build_common(sid, args, cfg, extra=None):
     arm = M.armature(f"{sid}_rig", bl)
     arm.data.bones["root"].use_deform = False
     battr = low.data.attributes["bone"]
-    body_bones = [b for b in bones if b not in ("root", "weapon") and not b.startswith("ear")]
+    body_bones = [b for b in bones if b not in ("root", "weapon") and not b.startswith(("ear", "bow", "bstr", "nock"))]
+    fists = {f"hand{S}": g for S, (g, *_r) in grips.items()}
 
     def rigid(i, co):
         v = battr.data[i].value
-        return bones[v - 1] if v else None
+        if v:
+            return bones[v - 1]
+        for hb, g in fists.items():
+            if (co - g).length < 0.04 * k:
+                return hb
+        return None
 
     M.weight_by_distance(low, arm, allow=lambda co, i: body_bones, rigid=rigid, power=5.0)
+    if extra and hasattr(extra, "post"):
+        extra.post(low, arm, bones)
     M.split_materials(low, maps)
     l1 = B.lod(low, 0.35, f"{sid}_lod1")
     import importlib

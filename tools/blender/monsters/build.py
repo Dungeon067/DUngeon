@@ -36,6 +36,8 @@ def assemble(sid, pieces, size=1024, uv_weights=None, bake=True, extrusion=0.02,
     for p in pieces:
         for h in [p.high] + p.high_extra:
             M.apply_tf(h)
+    tri = sorted(((sum(len(f.vertices) - 2 for f in o.data.polygons), o.name) for o in lows), reverse=True)
+    print(f"[s29] {sid} top pieces", tri[:14])
     low = M.join(lows, sid)
     M.triangulate(low)
     M.unwrap(low)

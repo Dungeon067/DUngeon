@@ -72,12 +72,12 @@ def build(args):
     for n, d in robe_dirs.items():
         a = hp + d * 0.08 * k
         bl.append((n, a, a + (d * 0.1 + V((0, 0, -1))).normalized() * 0.3 * k, "hips"))
-    grip = J["wristR"] + V((0, -0.03 * k, 0))
+    grip = G.grip_point(J, "R", k * 0.85)
     bl.append(("weapon", grip, grip + V((0, 0, 0.15 * k)), "handR"))
     so, sm, cords, sa, sb = G.staff(k, grip, top_z=1.12, bottom_z=0.02, mat_name=f"{sid}_wood", x_lean=0.02)
     orb_c = sb + V((0, 0, 0.1 * k))
     bl.append(("orb", orb_c, orb_c + V((0, 0, 0.08 * k)), "weapon"))
-    bones = [b[0] for b in bl]
+    bones = [b[0] for b in bl] + ["orbfx"]
 
     skin = mat_robe(f"{sid}_under", (0.24, 0.23, 0.27), (0.12, 0.11, 0.14), k)
     robe = mat_robe(f"{sid}_robe", (0.56, 0.56, 0.58), (0.3, 0.3, 0.34), k)
@@ -90,10 +90,23 @@ def build(args):
     glow = mat_glow(f"{sid}_flame")
     pieces = []
 
-    lo, hi = G.body(J, k, thin=0.85)
+    # Thân liền: thân lót + đầu + hai bàn tay nắm (phải nắm cán trượng, trái nắm chuỗi hạt), hàn voxel.
+    _, bhi = G.body(J, k, thin=0.85)
+    hc = J["head"]
+    headb = M.uv_sphere("headb", 0.07 * k, 24, 16, hc)
+    gL = G.grip_point(J, "L", k * 0.85)
+    fR, tR = G.fist("R", J, k * 0.85, grip, (sb - sa).normalized(), 0.0135 * k, 1)
+    fL, tL = G.fist("L", J, k * 0.85, gL, V((0, -1, 0.25)), 0.006 * k, -1)
+    parts = [bhi, headb] + fR + fL
+    hi = M.weld(parts, f"{sid}_body_hi", 0.0024 * k, 5, 0.5)
+    for o in parts:
+        o.hide_set(True)
+        o.hide_render = True
+    hug = M.Hug(hi)
+    lo = M.dup(hi, f"{sid}_body")
+    M.decimate(lo, 900)
+    M.smooth(lo)
     pieces.append(B.Piece(lo, skin, "cloth", hi))
-    for S in "LR":
-        pieces += G.hand(S, J, k * 0.85, glove, glove)
     # Thân áo: ống vải từ hông lên cổ, phồng ở ngực, vạt chéo.
     cs = [("pelvis", 0.1, 0.085), ("spine", 0.092, 0.075), ("chest", 0.11, 0.085), ("neck", 0.062, 0.058)]
     rings = [M.ring(J[n] + V((0, 0.004 * k, 0)), (X, Y), rx * k, ry * k, 18) for n, rx, ry in cs]
@@ -132,8 +145,9 @@ def build(args):
                           0.025 * k, 0.2 * k, jag=2, seg=3, thick=0.003 * k)
         pieces.append(B.Piece(t, sash, "cloth", bone="robeF"))
     # Đầu, mũ trùm, mặt nạ gốm.
-    hc = J["head"]
-    pieces.append(B.Piece(M.uv_sphere("headb", 0.07 * k, 14, 10, hc), skin, "cloth", bone="head"))
+    for sd in (-1, 1):
+        rv = hug.on(hc + V((0.062 * sd * k, -0.03 * k, 0.0)), 0.004 * k)
+        pieces.append(B.Piece(M.uv_sphere(f"maskpin{sd}", 0.007 * k, 8, 6, rv), bead, "skin", bone="head"))
     hood = M.uv_sphere("hood", 0.092 * k, 18, 12, hc + V((0, 0.018 * k, 0.012 * k)), (1.0, 1.08, 1.1))
     M.noise_verts(hood, 0.006 * k, 9, 3)
     pieces.append(B.Piece(hood, robe, "cloth", bone="head"))
@@ -144,12 +158,14 @@ def build(args):
     rim = [hc + V((math.cos(a) * 0.072 * k, -0.06 * k + 0.02 * k * math.sin(a) ** 2, math.sin(a) * 0.09 * k))
            for a in [i / 24 * math.tau for i in range(25)]]
     pieces.append(B.Piece(M.tube("hoodrim", rim, 0.012 * k, 5), robe2, "cloth", bone="head"))
-    # Chuỗi hạt đen trên tay trái.
-    w = J["wristL"]
-    for i in range(9):
-        a = i / 8 * math.pi
-        c = w + V((0.012 * k * math.sin(a * 2), -0.02 * k, -0.025 * k - math.sin(a) * 0.12 * k))
-        pieces.append(B.Piece(M.uv_sphere(f"bead{i}", 0.011 * k * (1.5 if i == 4 else 1), 7, 5, c), bead, "skin",
+    # Chuỗi hạt đen: tay trái nắm hai đầu chuỗi, vòng hạt xâu trên dây buông xuống trước đùi.
+    loop = [gL + V((0.006 * k * math.sin(a * 2), -0.004 * k * math.sin(a), -math.sin(a / 2) ** 1.2 * 0.13 * k))
+            for a in [i / 24 * math.tau for i in range(25)]]
+    loop = [gL + (q - gL) * 1.0 + V((0.012 * k * math.sin(i / 24 * math.tau), 0, 0)) for i, q in enumerate(loop)]
+    pieces.append(B.Piece(M.tube("beadcord", loop, 0.0022 * k, 4), rope, "skin", bone="handL"))
+    for i in range(2, 23, 2):
+        q = loop[i]
+        pieces.append(B.Piece(M.uv_sphere(f"bead{i}", 0.0105 * k * (1.5 if i == 12 else 1), 8, 6, q), bead, "skin",
                               bone="handL"))
     # Trượng và ngọn lửa nguyên tố lơ lửng.
     pieces.append(B.Piece(so, sm, "cloth", bone="weapon"))
@@ -162,6 +178,27 @@ def build(args):
         pieces.append(B.Piece(M.tube(f"prong{i}", prong, [0.008 * k, 0.006 * k, 0.003 * k], 5), sm, "cloth",
                               bone="weapon"))
     pieces.append(B.Piece(M.ico("orb", 0.042 * k, 2, orb_c), glow, "glow", bone="orb"))
+    # Luồng năng lượng: ba dải sáng xoắn từ đầu chạc trượng lên ôm lấy ngọn lửa, cho thấy trượng giữ lửa.
+    for i in range(3):
+        a0 = i / 3 * math.tau
+        st = sb + V((math.cos(a0) * 0.028 * k, math.sin(a0) * 0.028 * k, 0.13 * k))
+        pts = []
+        for j in range(13):
+            t = j / 12
+            a = a0 + t * 2.4
+            r = (0.028 + 0.035 * math.sin(t * math.pi)) * k
+            pts.append(V((sb.x, sb.y, st.z + (orb_c.z - st.z + 0.03 * k) * t)) + V((math.cos(a) * r, math.sin(a) * r, 0)))
+        pieces.append(B.Piece(M.tube(f"stream{i}", pts, [0.0035 * k * (1 - 0.6 * j / 12) for j in range(13)], 4), glow,
+                              "glow", bone="orbfx"))
+    # Vệt sáng từ nắm tay phải chạy dọc cán lên chạc: pháp lực truyền từ tay lên trượng.
+    for i in range(2):
+        a0 = i * math.pi
+        u = (sb - grip).normalized()
+        e1 = u.orthogonal().normalized()
+        e2 = u.cross(e1)
+        pts = [grip + u * ((sb - grip).length * j / 20) + (e1 * math.cos(a0 + j * 0.9) + e2 * math.sin(a0 + j * 0.9))
+               * 0.017 * k for j in range(1, 21)]
+        pieces.append(B.Piece(M.tube(f"rune{i}", pts, 0.0018 * k, 3), glow, "glow", bone="weapon"))
     for i in range(4):
         a = i / 4 * math.tau
         fl = M.leaf(f"flame{i}", 0.11 * k, 0.03 * k, orb_c + V((math.cos(a) * 0.02 * k, math.sin(a) * 0.02 * k, 0)),
@@ -178,11 +215,27 @@ def build(args):
     battr = low.data.attributes["bone"]
     body_bones = [b for b in bones if b not in ("root", "weapon", "orb") and not b.startswith(("ear", "robe"))]
 
+    fists = {"handR": grip, "handL": gL}
+    fx = set()
+
     def rigid(i, co):
         v = battr.data[i].value
-        return bones[v - 1] if v else None
+        if v and bones[v - 1] == "orbfx":
+            fx.add(i)
+            return "weapon"
+        if v:
+            return bones[v - 1]
+        for hb, g in fists.items():
+            if (co - g).length < 0.04 * k:
+                return hb
+        return None
 
     M.weight_by_distance(low, arm, allow=lambda co, i: body_bones, rigid=rigid, power=5.0)
+    z0, z1 = sb.z + 0.13 * k, orb_c.z
+    for i in fx:
+        w = min(1.0, max(0.0, (low.data.vertices[i].co.z - z0) / (z1 - z0)))
+        low.vertex_groups["weapon"].add([i], 1 - w, "REPLACE")
+        low.vertex_groups["orb"].add([i], w, "REPLACE")
     M.split_materials(low, maps)
     l1 = B.lod(low, 0.35, f"{sid}_lod1")
     import anim_shaman

@@ -308,6 +308,18 @@ def noise_verts(obj, amp, freq=3.0, seed=0, axis_scale=(1, 1, 1)):
     me.update()
 
 
+def displace_noise(obj, amp, size):
+    """Gợn da bằng modifier Displace (texture Clouds) — nhanh với lưới voxel dày."""
+    tx = bpy.data.textures.new(obj.name + "_n", "CLOUDS")
+    tx.noise_scale = size
+    m = obj.modifiers.new("dn", "DISPLACE")
+    m.texture = tx
+    m.texture_coords = "GLOBAL"
+    m.strength = amp * 2
+    m.mid_level = 0.5
+    apply_mods(obj)
+
+
 # ---------------------------------------------------------------- UV và bake
 
 def unwrap(obj, margin=0.004, angle=66.0):
@@ -859,3 +871,55 @@ def split_materials(obj, maps, alpha_parts=("jelly", "fin")):
 
 def rnd(seed):
     return random.Random(seed)
+
+
+# ---------------------------------------------------------------- hàn thân, bám bề mặt
+
+def weld(objs, name, voxel, smooth_iter=6, factor=0.5):
+    """Hàn nhiều khối (thân, đầu, tay) thành một lưới liền bằng voxel remesh, rồi làm mịn để mối nối bo tròn."""
+    cp = [dup(o, o.name + "_w") for o in objs]
+    for o in cp:
+        apply_tf(o)
+    o = join(cp, name)
+    m = o.modifiers.new("rm", "REMESH")
+    m.mode = "VOXEL"
+    m.voxel_size = voxel
+    m.adaptivity = 0.0
+    m.use_smooth_shade = True
+    s = o.modifiers.new("sm", "SMOOTH")
+    s.iterations = smooth_iter
+    s.factor = factor
+    apply_mods(o)
+    smooth(o)
+    return o
+
+
+class Hug:
+    """Đặt phụ kiện sát bề mặt thân: điểm gần nhất trên lưới + pháp tuyến × khoảng hở."""
+
+    def __init__(self, obj):
+        from mathutils.bvhtree import BVHTree
+        self.t = BVHTree.FromObject(obj, bpy.context.evaluated_depsgraph_get())
+
+    def near(self, p):
+        loc, n, _, _ = self.t.find_nearest(Vector(p))
+        return loc, n
+
+    def on(self, p, off=0.0):
+        loc, n = self.near(p)
+        return loc + n * off
+
+    def path(self, pts, off=0.0):
+        return [self.on(p, off) for p in pts]
+
+    def pull(self, obj, off=0.0):
+        """Kéo đỉnh nằm xa bề mặt vào sát (giữ hốc lõm vào trong)."""
+        for v in obj.data.vertices:
+            loc, n = self.near(v.co)
+            d = (v.co - loc).dot(n)
+            if d > off:
+                v.co = v.co - n * (d - off)
+
+    def ray(self, o, d):
+        loc, *_ = self.t.ray_cast(Vector(o), Vector(d).normalized())
+        return loc
