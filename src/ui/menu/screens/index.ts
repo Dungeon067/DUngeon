@@ -10,3 +10,4 @@ import "./quests";
 import "./map";
 import "./codex";
 import "./modes";
+import "./home";
