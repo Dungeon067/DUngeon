@@ -43,7 +43,11 @@ function funnel(
   c: [string, string, string],
 ) {
   for (let i = 0; i < n; i++) {
-    const e = X.use("bv-helix", () => SH.helix(1.8, 0.35, 1, 1, 0.22), { soft: [0.1, 0.1, 0.25, 0.25] });
+    const e = X.use("bv-helix", () => SH.helix(1.8, 0.35, 1, 1, 0.22), {
+      soft: [0.15, 0.15, 0.5, 0.5],
+      fres: 2,
+      fresAlpha: true,
+    });
     if (!e) break;
     e.m.position.set(x, gy + 0.05, z);
     e.m.rotation.set(0, X.V.t * (5 + i * 0.7) + (i * TAU) / n, 0);
@@ -54,7 +58,8 @@ function funnel(
     e.u.uA.value = al * (0.28 + 0.14 * (i % 2));
     e.u.uWin.value.set(-0.2, ease(k) * 1.25);
     e.u.uScroll.value.set(-2.5, 0);
-    e.u.uNs.value.set(6, 3);
+    e.u.uNs.value.set(12, 1.5);
+    e.u.uNA.value = 1;
   }
 }
 /** Lưỡi gió cong nằm ngang quay quanh tâm ở các độ cao khác nhau. */

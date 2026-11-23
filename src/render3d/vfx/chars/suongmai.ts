@@ -32,7 +32,7 @@ function crescent(
 ) {
   const layers: [string, [string, string, string], number, number][] = [
     [`${key}-o`, WATER, 1, 1],
-    [`${key}-i`, SILVER, 0.4, 0.75],
+    [`${key}-i`, SILVER, 0.4, 0.55],
   ];
   for (const [k, cols, ws, aa] of layers) {
     const e = X.use(k, () => SH.blade(arc, w * ws), { soft: [0.05, 0.05, 0.25, 0.25] });
@@ -41,8 +41,8 @@ function crescent(
     e.m.rotation.set(tilt, yaw, 0, "YXZ");
     e.m.scale.set(R, 1, R);
     setCols(e.u, ...cols);
-    e.u.uAge.value = Math.min(0.9, dis + 0.2);
-    e.u.uA.value = al * aa;
+    e.u.uAge.value = Math.min(0.9, dis + 0.42);
+    e.u.uA.value = al * aa * 0.7;
     e.u.uDis.value = dis;
     e.u.uWin.value.set(sweep - 0.6, sweep + 0.05);
     e.u.uNs.value.set(10, 2);
@@ -240,7 +240,7 @@ export const SUONGMAI: Painters = {
         R = (f.r ?? 220) / V.TS,
         sweep = ease(a * 2.2) * 1.3;
       for (let i = 0; i < 3; i++) {
-        const r = R * 0.8 * (0.55 + ease(a * 2) * 0.45) * (1 - i * 0.12);
+        const r = R * 0.7 * (0.55 + ease(a * 2) * 0.45) * (1 - i * 0.12);
         crescent(
           X,
           `sm-song${i}`,
@@ -257,11 +257,11 @@ export const SUONGMAI: Painters = {
           Math.max(0, a - 0.5) * 2,
         );
       }
-      X.rune("water", x, gy, z, R * 0.9, a, WATER, 1 - a, 0.6);
-      X.shock(x, gy, z, R * 1.1, a, SILVER, 0.9, 0.85);
+      X.rune("water", x, gy, z, R * 0.9, a, ["#7fc4f0", "#3f8fd8", "#1f5fb8"], (1 - a) * 0.3, 0.6);
+      X.shock(x, gy, z, R * 0.95, a, ["#9fd4ff", "#5fa8e8", "#2f6fc8"], 0.4, 0.2);
       if (X.every(f, 0.03) && a < 0.6) {
         const t = yaw + (Math.random() - 0.5) * 2.9,
-          r = R * 0.8 * (0.55 + ease(a * 2) * 0.45);
+          r = R * 0.7 * (0.55 + ease(a * 2) * 0.45);
         droplets(X, x + Math.sin(t) * r, gy + 1.4, z + Math.cos(t) * r, 3, 1.2);
       }
       if (X.first(f)) {

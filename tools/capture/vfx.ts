@@ -37,7 +37,6 @@ const step = (n: number, dt: number) =>
   `new Promise((r) => requestAnimationFrame(() => { const T = window.__tinhtu; ${PIN} T.capStep(${n}, ${dt}); requestAnimationFrame(() => r(0)); }))`;
 const atk = `${C}.press("atk")`;
 const hold = (on: boolean) => `window.__tinhtu.S.holdAtk = ${on}`;
-const full = `(() => { const G = window.__tinhtu.S.G; const m = G.party[G.act]; m.energy = m.c.burst.cost; m.skCd = 0; })()`;
 
 const SHOTS: Shot[] = [
   {

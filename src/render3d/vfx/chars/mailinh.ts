@@ -119,8 +119,8 @@ function flames(X: Vfx, x: number, gy: number, z: number, R: number, n: number, 
     e.m.rotation.set(Math.sin(a) * 0.4, 0, -Math.cos(a) * 0.4);
     e.m.scale.set(0.8, h * ease(k * 2) * (0.8 + 0.3 * Math.sin(i * 7.1 + X.V.t * 9)), 0.8);
     setCols(e.u, ...FIRE);
-    e.u.uAge.value = 0.3 + k * 0.6;
-    e.u.uA.value = al * 0.55;
+    e.u.uAge.value = 0.5 + k * 0.45;
+    e.u.uA.value = al * 0.3;
     e.u.uDis.value = k * 0.8;
     e.u.uScroll.value.set(0, 3);
     e.u.uNs.value.set(5, 5);
@@ -240,12 +240,12 @@ export const MAILINH: Painters = {
         z = f.y / V.TS,
         gy = V.ground(f.x, f.y),
         R = (f.r ?? 80) / V.TS;
-      plum(X, x, gy + 0.08, z, R * 1.1, a * 3, 0.3, 1 - a, -Math.PI / 2 + 0.15, Math.max(0, a - 0.4) * 1.5);
-      flames(X, x, gy, z, R * 0.55, 6, a, 1.2 * (1 - a * 0.5), 1 - a);
+      plum(X, x, gy + 0.08, z, R * 1.1, a * 3, 0.3, (1 - a) * 0.6, -0.2, Math.max(0, a - 0.4) * 1.5);
+      flames(X, x, gy, z, R * 0.7, 5, a, 0.9 * (1 - a * 0.5), 1 - a);
       X.rune("fire", x, gy, z, R * 1.2, a, FIRE, 1 - a, 0.8);
       X.shock(x, gy, z, R * 1.4, a, FIRE, 0.6);
       if (X.first(f)) {
-        X.flash(x, gy + 0.6, z, FIRE[1], 3.5, 1.4);
+        X.flash(x, gy + 0.6, z, FIRE[1], 2, 1);
         embers(X, x, gy + 0.4, z, 22, 3.5, 3);
       }
     },
