@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 # Hậu kỳ ảnh render: thêm quầng sáng từ <id>-glow.png, xuất bản lớn + icon có khung độ hiếm + bản nhỏ.
-# Dùng: hau-ky.sh <thư mục render> <thư mục ra> <danh-sach.json>
+# Dùng: hau-ky.sh <thư mục render> <thư mục ra> <danh-sach.json> [thư mục public]
+# Thư mục ra (media/weapons): <id>.png 1024 nền trong suốt, <id>-icon.png có khung, bản 256/128 PNG + WebP.
+# Thư mục public (public/weapons): chỉ WebP 512/256/128 nền trong suốt mà game tải.
 # Cần ImageMagick (convert) và cwebp hoặc ImageMagick có WebP.
 set -euo pipefail
-src=$1 out=$2 list=$3
+src=$1 out=$2 list=$3 pub=${4:-}
 mkdir -p "$out"
+[ -n "$pub" ] && mkdir -p "$pub"
 frame_colors() {
   case $1 in
     5) echo "#5a3a12 #c8903a #ffd98a" ;;
@@ -37,5 +40,12 @@ node -e 'for (const w of require(process.argv[1])) console.log(w.id + " " + w.r)
     convert "$big" -filter Lanczos -resize ${s}x${s} "$out/$id-$s.png"
     webp "$out/$id-$s.png" "$out/$id-$s.webp"
   done
+  if [ -n "$pub" ]; then
+    for s in 512 256 128; do
+      convert "$big" -filter Lanczos -resize ${s}x${s} "$pub/$id-$s.png"
+      webp "$pub/$id-$s.png" "$pub/$id-$s.webp"
+      rm "$pub/$id-$s.png"
+    done
+  fi
   echo "[hau ky] $id"
 done

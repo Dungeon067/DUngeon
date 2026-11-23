@@ -6,21 +6,25 @@ import { MENU } from "../../../data/menu-content";
 import { affinityLevel, affinityNext, hasProfile, loadProfile, sectionLevel } from "../../../data/profiles";
 import { ECON } from "../../../data/economy";
 import { Server, lvCost, powerOf, statsOf } from "../../../server/server";
-import { button, charCard, elementBadge, h, progress, stars, tabs, tag } from "../../ds";
+import { sfx } from "../../../core/audio";
+import { button, elementBadge, h, progress, stars, tabs, tag } from "../../ds";
+import { icon } from "../../icons/icons";
 import { blocksEl, sectionsEl, typewriter } from "../md";
-import { registerScreen, rerender } from "../shell";
+import { openMenu, registerScreen, rerender } from "../shell";
+import { weaponCard } from "../weapon-ui";
 
-/* Màn Nhân vật (S10): danh sách đọc thẳng từ content/characters (S05B thêm người là tự có),
-   hồ sơ đọc từ docs/characters/<id>/. Đổi nhân vật bằng ←/→ hoặc vuốt; Q/E đổi tab. */
+/* Màn Nhân vật (S10, bố cục S24): thanh chọn nhanh bên trái, nhân vật lớn ở giữa, cột thẻ dọc bên phải.
+   Danh sách đọc thẳng từ content/characters, hồ sơ từ docs/characters/<id>/. ←/→ hoặc vuốt đổi người; Q/E đổi thẻ. */
 const TABS = [
-  { id: "info", label: "Thông tin", icon: "thong-tin" },
-  { id: "stats", label: "Chỉ số", icon: "nang-cap" },
-  { id: "skills", label: "Kỹ năng", icon: "ky-nang" },
+  { id: "attr", label: "Thuộc Tính", icon: "nang-cap" },
+  { id: "weapon", label: "Vũ Khí", icon: "danh" },
+  { id: "baoan", label: "Bảo Ấn", icon: "bao-an" },
   { id: "cons", label: "Nét Sao", icon: "net-sao" },
-  { id: "profile", label: "Hồ sơ", icon: "huong-dan" },
+  { id: "skills", label: "Kỹ Năng", icon: "ky-nang" },
+  { id: "profile", label: "Hồ Sơ", icon: "huong-dan" },
 ];
 let sel: string | null = null;
-let tab = "info";
+let tab = "attr";
 let say: ReturnType<typeof typewriter> | null = null;
 
 /** Thứ tự: đã có trước, rồi độ hiếm, rồi thứ tự trong content. */
@@ -64,26 +68,31 @@ async function render(host: HTMLElement, params: any) {
   const c = byId[sel]!;
   host.classList.add("tt-menu-chars");
 
-  const roster = h("div", { class: "tt-roster", role: "listbox", "aria-label": "Danh sách nhân vật" });
+  const roster = h("div", { class: "tt-roster tt-qroster", role: "listbox", "aria-label": "Danh sách nhân vật" });
   for (const id of ids) {
     const x = byId[id]!,
       own = P.owned[id];
-    const card = charCard({
-      name: x.name,
-      rarity: x.r as 4 | 5,
-      el: x.el,
-      elName: EL[x.el]?.vi ?? x.el,
-      level: own?.lv,
-      netSao: own?.cons,
-      art: art(id, 96, 96, "head"),
-      locked: !own,
-      selected: id === sel,
-    });
-    card.dataset.id = id;
-    card.setAttribute("role", "option");
-    card.setAttribute("aria-selected", String(id === sel));
+    const card = h(
+      "button",
+      {
+        type: "button",
+        class: "tt-qchar" + (own ? "" : " is-locked"),
+        "data-r": x.r,
+        "data-id": id,
+        role: "option",
+        "aria-selected": String(id === sel),
+        "aria-label": `${x.name}${own ? `, cấp ${own.lv}` : ", chưa có"}`,
+      },
+      [
+        art(id, 64, 64, "head"),
+        own ? h("span", { class: "lv" }, [String(own.lv)]) : null,
+        elementBadge(x.el, { size: 14 }),
+      ],
+    );
     card.addEventListener("click", () => {
+      if (sel === id) return;
       sel = id;
+      sfx("react");
       rerender();
     });
     roster.append(card);
@@ -94,8 +103,8 @@ async function render(host: HTMLElement, params: any) {
   const pts = P.affinity[c.id] ?? 0,
     alv = affinityLevel(pts),
     next = affinityNext(pts);
-  const head = h("div", { class: "tt-char-head" }, [
-    h("div", { class: "splash", "data-r": c.r }, [art(c.id, 300, 400, "splash")]),
+  const head = h("div", { class: "tt-char-head tt-stage", "data-el": c.el }, [
+    h("div", { class: "splash", "data-r": c.r }, [art(c.id, 420, 560, "splash")]),
     h("div", { class: "who" }, [
       h("div", { class: "eyebrow" }, [
         stars(c.r as 4 | 5, 14),
@@ -103,25 +112,10 @@ async function render(host: HTMLElement, params: any) {
         " ",
         WEAP[c.w]?.vi ?? "",
       ]),
-      h("h3", { class: "tt-h2 name" }, [c.name]),
+      h("h3", { class: "tt-h1 name" }, [c.name]),
       h("p", { class: "tt-dim" }, [c.title]),
       own
-        ? h("div", { class: "aff" }, [
-            h("span", {}, [`Thân thiết cấp ${alv}`]),
-            progress(
-              next === null
-                ? 1
-                : (pts - (MENU.affinity.levels[alv - 2] ?? 0)) /
-                    ((MENU.affinity.levels[alv - 1] ?? 1) - (MENU.affinity.levels[alv - 2] ?? 0)),
-              {
-                kind: "thin",
-                label: "Độ thân thiết",
-              },
-            ),
-            h("small", { class: "tt-dim" }, [
-              next === null ? "Đã thân thiết tối đa" : `Còn ${Math.ceil(next)} điểm tới cấp sau`,
-            ]),
-          ])
+        ? h("p", { class: "power" }, [`Cấp ${own.lv} · N${own.cons} · Chiến Lực `, h("b", {}, [fmt(powerOf(c.id))])])
         : tag("Chưa có", "warn"),
       h("div", { class: "nav" }, [
         button("Người trước", { variant: "ghost", icon: "quay-lai", iconOnly: true, onClick: () => step(-1) }),
@@ -130,14 +124,17 @@ async function render(host: HTMLElement, params: any) {
       ]),
     ]),
   ]);
-  const panel = h("div", { class: "tt-tabpanel", role: "tabpanel" });
+  const panel = h("div", { class: "tt-tabpanel is-enter", role: "tabpanel" });
   const tl = tabs(TABS, tab, (id) => {
     if (id === tab) return;
     tab = id;
+    sfx("react");
     rerender();
   });
-  detail.append(head, tl, panel);
-  host.append(roster, detail);
+  tl.classList.add("tt-tabs--vert");
+  tl.setAttribute("aria-orientation", "vertical");
+  detail.append(panel, tl);
+  host.append(roster, head, detail);
 
   // vuốt ngang trên khung chi tiết để đổi nhân vật
   let sx = 0,
@@ -149,8 +146,26 @@ async function render(host: HTMLElement, params: any) {
   });
 
   const st = statsOf(c.id);
-  if (tab === "info") {
-    panel.append(h("p", {}, [c.desc]));
+  if (tab === "attr") {
+    const rows: [string, string][] = [
+      ["Chiến Lực", fmt(powerOf(c.id))],
+      ["Cấp", `${st.lv}/${ECON.game.capNhanVat.toiDa}`],
+      ["Máu", fmt(st.hp)],
+      ["Tấn công", fmt(st.atk)],
+      ["Tỉ lệ chí mạng", `${Math.round(st.crit * 100)}%`],
+      ["Sát thương chí mạng", `${Math.round(st.cdmg * 100)}%`],
+      ["Tăng sát thương", `${(st.dmg * 100).toFixed(1).replace(/\.0$/, "")}%`],
+      ["Nét Sao", `N${st.cons} (+${Math.round(st.cons * ECON.game.netSao.tangMoiNet * 100)}% máu và tấn công)`],
+      ["Nguyên tố", EL[c.el]?.vi ?? c.el],
+      ["Vũ khí", WEAP[c.w]?.vi ?? c.w],
+    ];
+    panel.append(
+      h(
+        "dl",
+        { class: "tt-stats" },
+        rows.flatMap(([k, v]) => [h("dt", {}, [k]), h("dd", {}, [v])]),
+      ),
+    );
     if (own) {
       const cost = lvCost(own.lv);
       const row = h("div", { class: "tt-row" });
@@ -164,35 +179,36 @@ async function render(host: HTMLElement, params: any) {
           button("Lên 10 cấp", { onClick: () => lvUp(c.id, 10) }),
         );
       } else row.append(tag("Đã đạt cấp tối đa", "ok"));
-      panel.append(
-        h("p", { class: "tt-dim" }, [
-          `Cấp ${own.lv}/${ECON.game.capNhanVat.toiDa} · Nét Sao N${own.cons} · Chiến Lực ${fmt(powerOf(c.id))}`,
-        ]),
-        row,
-      );
+      panel.append(row);
     } else panel.append(h("p", { class: "tt-dim" }, ["Chưa sở hữu. Ước nguyện để gặp nhân vật này."]));
-    const doc = hasProfile(c.id) ? (await loadProfile(c.id))["ho-so"] : null;
-    const basic = doc?.sections[0];
-    if (basic)
-      panel.append(h("h4", { class: "tt-h4" }, [basic.title.replace(/^\d+\.\s*/, "")]), blocksEl(basic.blocks));
-  } else if (tab === "stats") {
-    const rows: [string, string][] = [
-      ["Chiến Lực", fmt(powerOf(c.id))],
-      ["Cấp", `${st.lv}/${ECON.game.capNhanVat.toiDa}`],
-      ["Máu", fmt(st.hp)],
-      ["Tấn công", fmt(st.atk)],
-      ["Tỉ lệ chí mạng", `${Math.round(st.crit * 100)}%`],
-      ["Sát thương chí mạng", `${Math.round(st.cdmg * 100)}%`],
-      ["Nét Sao", `N${st.cons} (+${Math.round(st.cons * ECON.game.netSao.tangMoiNet * 100)}% máu và tấn công)`],
-      ["Nguyên tố", EL[c.el]?.vi ?? c.el],
-      ["Vũ khí", WEAP[c.w]?.vi ?? c.w],
-    ];
+    panel.append(h("p", {}, [c.desc]));
+  } else if (tab === "weapon") {
+    const w = own?.vk ? P.weapons[own.vk] : null;
+    if (!own || !w) panel.append(h("p", { class: "tt-dim" }, ["Chưa sở hữu. Nhân vật mới luôn đi kèm một vũ khí 3★."]));
+    else {
+      const swap = button("Thay", { icon: "doi-nguoi", onClick: () => openMenu("wswap", { char: c.id }) });
+      swap.id = "charWeaponSwap";
+      const upg = button("Nâng Cấp", {
+        variant: "primary",
+        icon: "nang-cap",
+        onClick: () => openMenu("wupgrade", { uid: w.uid, mode: "lv" }),
+      });
+      upg.id = "charWeaponUp";
+      const ref = button("Tinh Luyện", {
+        icon: "net-sao",
+        onClick: () => openMenu("wupgrade", { uid: w.uid, mode: "tl" }),
+      });
+      ref.id = "charWeaponRefine";
+      panel.append(weaponCard(w, [swap, upg, ref]));
+    }
+  } else if (tab === "baoan") {
     panel.append(
-      h(
-        "dl",
-        { class: "tt-stats" },
-        rows.flatMap(([k, v]) => [h("dt", {}, [k]), h("dd", {}, [v])]),
-      ),
+      h("div", { class: "tt-soon" }, [
+        icon("bao-an", { size: 48 }),
+        h("h4", { class: "tt-h3" }, ["Bảo Ấn"]),
+        tag("Sắp có", "warn"),
+        h("p", { class: "tt-dim" }, ["Bốn ô Bảo Ấn sẽ mở ở bản sau."]),
+      ]),
     );
   } else if (tab === "skills") {
     const sk = c.skill as any,
@@ -237,6 +253,22 @@ async function render(host: HTMLElement, params: any) {
     }
     panel.append(list);
   } else if (tab === "profile") {
+    if (own)
+      panel.append(
+        h("div", { class: "aff" }, [
+          h("span", {}, [`Thân thiết cấp ${alv}`]),
+          progress(
+            next === null
+              ? 1
+              : (pts - (MENU.affinity.levels[alv - 2] ?? 0)) /
+                  ((MENU.affinity.levels[alv - 1] ?? 1) - (MENU.affinity.levels[alv - 2] ?? 0)),
+            { kind: "thin", label: "Độ thân thiết" },
+          ),
+          h("small", { class: "tt-dim" }, [
+            next === null ? "Đã thân thiết tối đa" : `Còn ${Math.ceil(next)} điểm tới cấp sau`,
+          ]),
+        ]),
+      );
     if (!hasProfile(c.id)) panel.append(h("p", { class: "tt-dim" }, ["Hồ sơ của nhân vật này đang được biên soạn."]));
     else {
       const docs = await loadProfile(c.id);
