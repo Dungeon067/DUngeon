@@ -21,6 +21,8 @@ export interface FemOpt {
   elbow?: number;
   /** Hông lệch (contrapposto, độ), vai bù ngược. */
   hip?: number;
+  /** Ngả hông ra sau (độ) để bớt đổ người tới; chân giải IK lại. */
+  pitch?: number;
 }
 const Y = new THREE.Vector3(0, 1, 0);
 export function femLegs(r: Rig, o: FemOpt = {}) {
@@ -34,6 +36,7 @@ export function femLegs(r: Rig, o: FemOpt = {}) {
     qr = r.quat("rightFoot");
   const H = r.bones.hips;
   if (H.position.y < 0) H.position.y *= 1 - up;
+  if (o.pitch) rot(r, "hips", [-o.pitch, 0, 0]);
   if (o.hip) {
     rot(r, "hips", [0, 0, o.hip]);
     rot(r, "spine", [0, 0, -o.hip * 0.7]);
