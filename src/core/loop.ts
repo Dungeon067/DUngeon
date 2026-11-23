@@ -186,7 +186,7 @@ export function update(dt: number) {
           break;
         }
       }
-    } else if (dist(pr.x, pr.y, p.x, p.y - 14) < pr.r + 10) {
+    } else if (pr.own !== "p" && dist(pr.x, pr.y, p.x, p.y - 14) < pr.r + 10) {
       hurtPlayer(pr.dmg, pr.el ? EL[pr.el].c : "#ff7070");
       pr.life = 0;
     }
