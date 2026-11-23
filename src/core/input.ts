@@ -1,4 +1,5 @@
 import { renderer3d } from "../render3d/select";
+import { skillDown, skillUp, skipCine } from "../combat/kits/run";
 import { GS } from "../core/state";
 import { press } from "../combat/actions";
 import { cv } from "../core/canvas";
@@ -80,8 +81,10 @@ export function actionDown(a: Action) {
   }
   held[a] = true;
   if (!playing()) return;
+  // Cảnh nộ (S30): bấm nút chiến đấu để bỏ qua.
+  if ((a === "attack" || a === "skill" || a === "burst" || a === "jump") && skipCine()) return;
   if (a === "attack") press("atk");
-  else if (a === "skill") press("skill");
+  else if (a === "skill") skillDown(() => press("skill"));
   else if (a === "burst") press("burst");
   else if (a === "jump") press("jump");
   else if (a === "dash") {
@@ -94,6 +97,7 @@ export function actionDown(a: Action) {
 export function actionUp(a: Action) {
   held[a] = false;
   if (a === "dash") GS.holdDash = false;
+  if (a === "skill") skillUp();
 }
 export function releaseAll() {
   joy.x = joy.y = 0;
@@ -322,7 +326,11 @@ export function init(): void {
     },
     () => (GS.holdAtk = false),
   );
-  holdBtn($("bSkill"), () => press("skill"));
+  holdBtn(
+    $("bSkill"),
+    () => skipCine() || skillDown(() => press("skill")),
+    () => skillUp(),
+  );
   holdBtn($("bBurst"), () => press("burst"));
   holdBtn($("bJump"), () => press("jump"));
   holdBtn(

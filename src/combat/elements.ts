@@ -5,9 +5,13 @@ import { dist, rand } from "../core/util";
 import { EL } from "../data/content";
 import { shake } from "../combat/feel";
 import { fxBurst, fxRing, fxText, later } from "../entities/fx";
+import { addStatus, emTrans, hasStatus, ttOf } from "./status";
+import { hooksOf } from "./kits/hooks";
 
-export function applyElement(e: any, el: string, m: any) {
+export function applyElement(e: any, el: string | null, m: any) {
   if (!el) return { mult: 1 };
+  // Phản ứng biến đổi được tinh thông nhân thêm (S30).
+  const tr = 1 + emTrans(ttOf(m));
   const a = e.aura;
   const react = (name: string, col: string) => {
     GS.G.pending.react++;
@@ -56,7 +60,7 @@ export function applyElement(e: any, el: string, m: any) {
         if (o.dead) continue;
         const d = dist(e.x, e.y, o.x, o.y);
         if (d < 90 + o.r) {
-          dealRaw(o, m.st.atk * 1.8, EL.fire.c);
+          dealRaw(o, m.st.atk * 1.8 * tr, EL.fire.c);
           if (!o.isBoss) {
             const k = (1 - d / 120) * 260;
             const an = Math.atan2(o.y - e.y, o.x - e.x);
@@ -70,23 +74,26 @@ export function applyElement(e: any, el: string, m: any) {
   }
   if (has("water", "bolt")) {
     react("Điện Cảm", EL.bolt.c2);
-    e.ec = { t: 0.5, n: 4, dmg: m.st.atk * 0.55 };
+    e.ec = { t: 0.5, n: 4, dmg: m.st.atk * 0.55 * tr, m };
     return { mult: 1 };
   }
   if (has("water", "ice")) {
     react("Đóng Băng", EL.ice.c2);
-    e.frozen = e.isBoss ? 1.2 : 3;
+    e.frozen = (e.isBoss ? 1.2 : 3) + (hasStatus(e, "khauBang") ? 1 : 0);
+    addStatus(e, "dongBang", { t: e.frozen });
     return { mult: 1 };
   }
   if (has("bolt", "ice")) {
     react("Siêu Dẫn", "#c9b8ff");
     e.vuln = 8;
+    addStatus(e, "sieuDan", { t: 8 });
     later(0, () => {
       fxRing(e.x, e.y - 10, 80, "#c9b8ff", 0.35, 6);
       for (const o of GS.G.enemies) {
         if (!o.dead && dist(e.x, e.y, o.x, o.y) < 80 + o.r) {
-          dealRaw(o, m.st.atk * 0.7, "#c9b8ff");
+          dealRaw(o, m.st.atk * 0.7 * tr, "#c9b8ff");
           o.vuln = 8;
+          addStatus(o, "sieuDan", { t: 8 });
         }
       }
     });
@@ -103,7 +110,8 @@ export function swirl(e: any, el: string, m: any) {
     for (const o of GS.G.enemies) {
       if (o.dead) continue;
       if (dist(e.x, e.y, o.x, o.y) < 110 + o.r) {
-        hitEnemy(o, m, 0.9, el, { noEnergy: true, noKb: true });
+        hitEnemy(o, m, 0.9 * (1 + emTrans(ttOf(m))), el, { noEnergy: true, noKb: true });
+        hooksOf(m).onSwirl?.(m, o, el);
       }
     }
   });

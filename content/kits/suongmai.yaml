@@ -1,0 +1,63 @@
+# Bộ chiêu Sương Mai (S30). Thiết kế: docs/characters/suongmai/bo-chieu.md
+id: suongmai
+vaiTro: [chinh, baoVe]
+dacTrung: [uotSuong, songChe]
+mau: { c: "#9fd8ff", c2: "#e8f4ff" }
+thuong:
+  - { m: 0.8 }
+  - { m: 0.95 }
+  - { m: 1.1 }
+  - m: 1.75
+    el: true
+    kb: 120
+    khoi: [{ k: buff, sts: [{ id: giotSuong, t: 12, doi: banThan }] }]
+trongKich:
+  ten: Giọt Sương Kiếm
+  mo: Thu kiếm rồi rút chém một đường rộng. Mỗi Giọt Sương cộng 60% hệ số, có Giọt Sương thì gắn Ướt Sương.
+  theLuc: 20
+  muc:
+    - giay: 0.35
+      clip: suongmai.charge
+      khoi: [{ k: dac, ham: rutKiem, m: 1.6, r: 100, el: water, sts: [{ id: uotSuong, v: 0.15, t: 8 }] }]
+kyNang:
+  ten: Vệt Sương
+  cd: 7
+  bam:
+    ten: Lướt Sương
+    mo: Lướt chém xuyên hàng, để lại Vệt Sương 3 giây gây Thủy theo nhịp và gắn Ướt Sương. Nhận 1 Giọt Sương.
+    clip: suongmai.skillTap
+    khoi:
+      - { k: lao, quang: 170, t: 0.2, r: 55, m: 1.5, el: water, sts: [{ id: uotSuong, v: 0.15, t: 8 }] }
+      - {
+          k: vung,
+          tre: 0.2,
+          r: 70,
+          t: 3,
+          ti: 0.75,
+          m: 0.25,
+          el: water,
+          sts: [{ id: uotSuong, v: 0.15, t: 8 }],
+          fx: vetSuong,
+        }
+      - { k: buff, sts: [{ id: giotSuong, t: 12, doi: banThan }] }
+  giu:
+    ten: Thế Đứng Gác
+    mo: Thủ thế 0,9 giây. Trúng đòn trong lúc thủ thì không mất máu và phản công 240% Thủy quanh mình.
+    clip: suongmai.guard
+    khoi: [{ k: phanDon, t: 0.9, r: 110, m: 2.4, el: water, kb: 220, sts: [{ id: uotSuong, v: 0.15, t: 8 }] }]
+no:
+  ten: Sóng Bạc
+  mo: Quét một con sóng bạc 340% Thủy. Sau đó 8 giây đòn thường mang Thủy (+15% sát thương Thủy), cả đội giảm 15% sát thương nhận vào 12 giây.
+  clip: suongmai.burst
+  cost: 50
+  cine: 1.2
+  khoi:
+    - { k: chem, r: 220, goc: 170, m: 3.4, el: water, kb: 300, fx: songBac, sts: [{ id: uotSuong, v: 0.15, t: 8 }] }
+    - {
+        k: buff,
+        sts: [{ id: songBac, v: 0.15, t: 8, doi: banThan, el: water }, { id: songChe, v: 0.15, t: 12, doi: doi }],
+      }
+biDong:
+  - { ten: Mặt Sông Phẳng, mo: "Phản công thành công hồi 4 năng lượng nộ cho Sương Mai." }
+  - { ten: Sương Đọng Lưỡi Kiếm, mo: "Đòn đánh thường lên quái đang Ướt Sương gây thêm 10% sát thương." }
+khamPha: { ten: Bước Sương Sớm, mo: "Chạy nhanh hơn 10% khi ngoài trận.", chay: 1.1 }

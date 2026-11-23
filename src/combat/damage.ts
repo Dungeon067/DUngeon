@@ -18,6 +18,9 @@ import { Server } from "../server/server";
 import { ECON } from "../data/economy";
 import { stackDelta, weaponOf } from "../economy/core";
 import { buildHudParty } from "../ui/hud";
+import { hasStatus, hnOf, statSum, takenMult, ttOf, emAmp } from "./status";
+import { hooksOf } from "./kits/hooks";
+import { counter } from "./kits/blocks";
 
 /* =========================================================
    COMBAT
@@ -51,19 +54,30 @@ export function aim() {
 export function dealRaw(e: any, dmg: number, col: string) {
   if (e.dead) return;
   if (Server.P.gm.one) dmg = e.hp + 1;
-  dmg *= (e.vuln > 0 ? 1.25 : 1) * (e.stun > 0 ? FEEL.poise.stunVuln : 1);
+  dmg *= takenMult(e, null) * (e.stun > 0 ? FEEL.poise.stunVuln : 1);
   e.hp -= dmg;
   e.flash = Math.max(e.flash, FEEL.hit.flash * 0.7);
   fxText(e.x, e.y - (e.isBoss ? 70 : 34), fmt(dmg), col, 14);
   if (e.hp <= 0) killEnemy(e);
 }
-export function hitEnemy(e: any, m: any, mult: number, el: string, o: any = {}) {
+export function hitEnemy(e: any, m: any, mult: number, el: string | null, o: any = {}) {
   if (e.dead) return 0;
-  const crit = Math.random() < m.st.crit;
+  // Buff của người đánh (S30): tấn công cộng thẳng, chí mạng, tăng sát thương theo nguyên tố.
+  const crit = Math.random() < Math.min(1, m.st.crit + statSum(m, "tiLeChiMang"));
+  const cdmg = m.st.cdmg + statSum(m, "satThuongChiMang");
   const sd = m.stack ? stackDelta(weaponOf(m.stack.id, ECON), m.stack.tl, m.stack.tang, ECON) : 0;
-  let dmg = m.st.atk * mult * (crit ? 1 + m.st.cdmg : 1) * (1 + (m.st.dmg ?? 0) + sd) * rand(0.95, 1.05);
+  const bonus =
+    (m.st.dmg ?? 0) +
+    sd +
+    statSum(m, "satThuong") +
+    (el ? statSum(m, "satThuongNguyenTo", el) : 0) +
+    (hooksOf(m).dmgBonus?.(e, m, o, el) ?? 0);
+  const atk = m.st.atk + statSum(m, "tanCong");
+  let dmg = atk * mult * (crit ? 1 + cdmg : 1) * (1 + bonus) * rand(0.95, 1.05);
   const r = applyElement(e, el, m);
-  dmg *= r.mult * (e.vuln > 0 ? 1.25 : 1) * (e.stun > 0 ? FEEL.poise.stunVuln : 1);
+  // Phản ứng khuếch đại được tinh thông nhân thêm; debuff của quái (kháng, phòng thủ, đánh dấu).
+  const amp = r.mult > 1 ? r.mult * (1 + emAmp(ttOf(m))) : r.mult;
+  dmg *= amp * takenMult(e, el) * (e.stun > 0 ? FEEL.poise.stunVuln : 1);
   // Vùng tăng hoặc giảm nhẹ sát thương theo nguyên tố (S12), tính theo chỗ người chơi đứng.
   if (el && GS.G?.map) dmg *= effectAt(GS.G.map, GS.G.p.x, GS.G.p.y, `${el}Dmg`);
   if (Server.P.gm.one) dmg = Math.max(dmg, e.hp + 1);
@@ -103,11 +117,12 @@ export function hitEnemy(e: any, m: any, mult: number, el: string, o: any = {}) 
         gainEnergy(o.cast.amount || 12, e.x, e.y, m);
       }
     } else {
-      m.energy = Math.min(m.c.burst.cost, m.energy + 1.2);
+      m.energy = Math.min(m.c.burst.cost, m.energy + 1.2 * hnOf(m));
     }
   }
   sfx("hit_" + m.c.w);
   if (crit || o.heavy) sfx("crit");
+  if (o.normal) hooksOf(m).onNormalHit?.(m, e);
   if (e.hp <= 0) killEnemy(e);
   if (e.state === "idle" && !e.isBoss) e.state = "chase";
   return dmg;
@@ -136,7 +151,7 @@ export function damagePoise(e: any, n: number) {
 export function gainEnergy(n: number, x: number, y: number, m: any) {
   for (const pm of GS.G.party) {
     if (!pm.alive) continue;
-    const add = pm === cur() ? n : n * 0.35;
+    const add = (pm === cur() ? n : n * 0.35) * hnOf(pm);
     pm.energy = Math.min(pm.c.burst.cost, pm.energy + add);
   }
   for (let i = 0; i < 3; i++)
@@ -181,6 +196,8 @@ export function hurtPlayer(dmg: number, col = "#ff7070") {
     p.iframes = 0.25;
     return;
   }
+  if (p.guard) return counter(p);
+  dmg *= 1 - statSum(m, "giamSatThuongNhan");
   if (p.shield > 0) {
     const ab = Math.min(p.shield, dmg);
     p.shield -= ab;
@@ -196,7 +213,11 @@ export function hurtPlayer(dmg: number, col = "#ff7070") {
     m.stack.tang = Math.max(0, m.stack.tang - 1);
     m.stack.t = 0;
   }
-  p.hurt = 0.25;
+  // Khiên kháng gián đoạn (Áo Buồm): không bị ngắt chiêu, tụ lực vẫn giữ.
+  if (!hasStatus(m, "aoBuom")) {
+    p.hurt = 0.25;
+    p.charge = null;
+  }
   p.iframes = 0.45;
   shake("hurt");
   buzz("hurt");

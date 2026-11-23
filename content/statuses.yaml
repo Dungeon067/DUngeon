@@ -1,0 +1,203 @@
+# Danh mục buff và debuff (S30). Luật cộng ở docs/combat/he-trang-thai.md.
+#   cong: lamMoi = gắn lại chỉ làm mới thời gian, lấy giá trị lớn hơn; tang = cộng tầng tới toiDa.
+#   nhom: các trạng thái chung nhóm không cộng với nhau, chỉ tính cái mạnh nhất.
+#   tran: trần tổng của mỗi chỉ số sau khi cộng các nhóm.
+tran:
+  tanCong: 400
+  satThuong: 0.8
+  satThuongNguyenTo: 0.8
+  tiLeChiMang: 0.4
+  satThuongChiMang: 0.8
+  tinhThong: 300
+  hoiNang: 0.6
+  giamSatThuongNhan: 0.4
+  giamKhang: 0.6
+  giamPhongThu: 0.5
+  lamCham: 0.6
+  danhDau: 0.4
+trangThai:
+  # ---------- Sương Mai ----------
+  - {
+      id: uotSuong,
+      ten: Ướt Sương,
+      icon: db-giam-khang,
+      loai: debuff,
+      chiSo: giamKhang,
+      nhom: giamKhangNguyenTo,
+      cong: lamMoi,
+      mo: "Giảm kháng Thủy của quái.",
+    }
+  - {
+      id: songBac,
+      ten: Sóng Bạc,
+      icon: bf-nguyen-to,
+      loai: buff,
+      chiSo: satThuongNguyenTo,
+      cong: lamMoi,
+      gan: water,
+      mo: "Đòn đánh thường mang Thủy và tăng sát thương Thủy.",
+    }
+  - {
+      id: songChe,
+      ten: Sông Che,
+      icon: bf-giam-st,
+      loai: buff,
+      chiSo: giamSatThuongNhan,
+      nhom: giamSatThuongNhan,
+      cong: lamMoi,
+      mo: "Cả đội giảm sát thương nhận vào.",
+    }
+  - {
+      id: giotSuong,
+      ten: Giọt Sương,
+      icon: bf-tang,
+      loai: buff,
+      chiSo: dem,
+      cong: tang,
+      toiDa: 3,
+      mo: "Mỗi giọt tăng sát thương trọng kích rút kiếm.",
+    }
+  # ---------- Mai Linh ----------
+  - {
+      id: denCanh,
+      ten: Đèn Canh,
+      icon: bf-tan-cong,
+      loai: buff,
+      chiSo: tanCong,
+      nhom: tanCongPhang,
+      cong: lamMoi,
+      mo: "Đứng gần đèn hoa mai được cộng tấn công theo tấn công của Mai Linh.",
+    }
+  - {
+      id: tanPhao,
+      ten: Tàn Pháo,
+      icon: db-giam-khang,
+      loai: debuff,
+      chiSo: giamKhang,
+      nhom: giamKhangNguyenTo,
+      cong: lamMoi,
+      mo: "Giảm kháng Hỏa của quái.",
+    }
+  # ---------- Bạch Vũ ----------
+  - {
+      id: gioDocTen,
+      ten: Gió Đọc Tên,
+      icon: db-giam-khang,
+      loai: debuff,
+      chiSo: giamKhang,
+      nhom: giamKhangNguyenTo,
+      cong: lamMoi,
+      mo: "Giảm kháng của nguyên tố vừa bị Khuếch Tán.",
+    }
+  - {
+      id: baoTrang,
+      ten: Bão Trắng,
+      icon: bf-nguyen-to,
+      loai: buff,
+      chiSo: satThuongNguyenTo,
+      cong: lamMoi,
+      mo: "Cả đội tăng sát thương của nguyên tố Bão Trắng đã hút.",
+    }
+  - {
+      id: longHac,
+      ten: Lông Hạc,
+      icon: bf-tinh-thong,
+      loai: buff,
+      chiSo: tinhThong,
+      nhom: tinhThong,
+      cong: lamMoi,
+      mo: "Cả đội tăng tinh thông nguyên tố.",
+    }
+  # ---------- Hạ Vy ----------
+  - {
+      id: khauBang,
+      ten: Khâu Băng,
+      icon: db-dau,
+      loai: debuff,
+      chiSo: danhDau,
+      nhom: danhDau,
+      cong: lamMoi,
+      mo: "Quái bị khâu chỉ băng nhận thêm sát thương.",
+    }
+  - {
+      id: hamBang,
+      ten: Hầm Băng,
+      icon: db-cham,
+      loai: debuff,
+      chiSo: lamCham,
+      nhom: lamCham,
+      cong: lamMoi,
+      mo: "Làm chậm quái.",
+    }
+  - {
+      id: gioDauMua,
+      ten: Gió Đầu Mùa,
+      icon: bf-chi-mang,
+      loai: buff,
+      chiSo: tiLeChiMang,
+      nhom: tiLeChiMang,
+      cong: lamMoi,
+      mo: "Cả đội tăng tỉ lệ chí mạng.",
+    }
+  - {
+      id: aoBuom,
+      ten: Áo Buồm,
+      icon: bf-khien,
+      loai: buff,
+      chiSo: khangGianDoan,
+      cong: lamMoi,
+      mo: "Khiên vá buồm, không bị ngắt chiêu khi trúng đòn.",
+    }
+  # ---------- Lôi Đình ----------
+  - {
+      id: nhipVo,
+      ten: Nhịp Vó,
+      icon: bf-tang,
+      loai: buff,
+      chiSo: dem,
+      cong: tang,
+      toiDa: 5,
+      mo: "Tích từ đòn đánh, trọng kích tiêu hết để phi thương.",
+    }
+  - {
+      id: xeGiap,
+      ten: Sấm Xé Giáp,
+      icon: db-giam-giap,
+      loai: debuff,
+      chiSo: giamPhongThu,
+      nhom: giamPhongThu,
+      cong: lamMoi,
+      mo: "Giảm phòng thủ của quái.",
+    }
+  - {
+      id: thienLoi,
+      ten: Thiên Lôi,
+      icon: bf-chi-mang,
+      loai: buff,
+      chiSo: satThuongChiMang,
+      cong: lamMoi,
+      gan: bolt,
+      mo: "Đòn đánh mang Lôi, tăng sát thương chí mạng.",
+    }
+  - {
+      id: loiHieu,
+      ten: Lôi Hiệu,
+      icon: bf-nang-luong,
+      loai: buff,
+      chiSo: hoiNang,
+      nhom: hoiNang,
+      cong: lamMoi,
+      mo: "Đồng đội tăng hồi năng lượng.",
+    }
+  # ---------- Chung (phản ứng, khống chế) ----------
+  - { id: dongBang, ten: Đóng Băng, icon: db-bang, loai: debuff, chiSo: dongBang, cong: lamMoi, mo: "Quái đứng yên." }
+  - { id: biGom, ten: Bị gom, icon: db-gom, loai: debuff, chiSo: gom, cong: lamMoi, mo: "Quái bị hút về một điểm." }
+  - {
+      id: sieuDan,
+      ten: Siêu Dẫn,
+      icon: db-giam-giap,
+      loai: debuff,
+      chiSo: dem,
+      cong: lamMoi,
+      mo: "Phản ứng Siêu Dẫn, quái nhận thêm 25% sát thương.",
+    }

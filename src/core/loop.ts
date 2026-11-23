@@ -1,4 +1,8 @@
 import { effectAt } from "../world/regions";
+import { kitOf } from "../data/kits";
+import { updateKits } from "../combat/kits/run";
+import { applyBuffs } from "../combat/kits/blocks";
+import { addStatus } from "../combat/status";
 import { tickStack } from "../combat/damage";
 import { GS } from "../core/state";
 import { camRelative, dir8 } from "./facing";
@@ -106,7 +110,10 @@ export function update(dt: number) {
   }
   updateBuffer(dt);
   updateWaves(dt);
-  if (GS.holdAtk || held.attack) tryAttack();
+  const atkHeld = !!(GS.holdAtk || held.attack);
+  updateKits(dt, atkHeld);
+  // Nhân vật có bộ chiêu riêng: giữ nút đánh là tụ trọng kích, không tự đánh liên tục.
+  if (atkHeld && !kitOf(m)) tryAttack();
   // later
   for (let i = GS.G.later.length - 1; i >= 0; i--) {
     const l = GS.G.later[i];
@@ -189,7 +196,34 @@ export function update(dt: number) {
       for (const e of GS.G.enemies) {
         if (e.dead) continue;
         if (dist(pr.x, pr.y, e.x, e.y - (e.isBoss ? 24 : 12)) < pr.r + e.r) {
-          hitEnemy(e, pr.m, pr.mult, pr.el, { ang: Math.atan2(pr.vy, pr.vx), cast: pr.cast, noEnergy: pr.noEnergy });
+          if (pr.xuyen?.has(e)) continue;
+          hitEnemy(e, pr.m, pr.mult, pr.el, {
+            ang: Math.atan2(pr.vy, pr.vx),
+            cast: pr.cast,
+            noEnergy: pr.noEnergy,
+            normal: pr.normal,
+          });
+          pr.onHit?.(e, pr.x, pr.y);
+          if (pr.xuyen) {
+            pr.xuyen.add(e);
+            break;
+          }
+          if (pr.nay > 0) {
+            // Đốm lửa nảy sang quái gần nhất chưa trúng.
+            const nx = GS.G.enemies.find((o: any) => o !== e && !o.dead && dist(o.x, o.y, e.x, e.y) < 160);
+            if (nx) {
+              pr.nay--;
+              const a = Math.atan2(nx.y - e.y, nx.x - e.x),
+                sp = Math.hypot(pr.vx, pr.vy);
+              pr.vx = Math.cos(a) * sp;
+              pr.vy = Math.sin(a) * sp;
+              pr.x = e.x;
+              pr.y = e.y - 12;
+              pr.life = Math.max(pr.life, 0.4);
+              pr.mult *= 0.6;
+              break;
+            }
+          }
           pr.life = 0;
           break;
         }
@@ -221,24 +255,28 @@ export function update(dt: number) {
     if (t.cd <= 0) {
       const e = nearestEnemy(t.x, t.y, 340);
       if (e) {
-        t.cd = 1;
+        t.cd = t.rate ?? 1;
         const a = Math.atan2(e.y - 14 - (t.y - 30), e.x - t.x);
+        const oil = t.oil > 0 ? (t.oil--, 1.5) : 1;
         GS.G.projs.push({
           own: "p",
           x: t.x,
           y: t.y - 30,
           vx: Math.cos(a) * 520,
           vy: Math.sin(a) * 520,
-          r: 7,
           life: 0.9,
           m: t.m,
-          mult: t.mult,
+          mult: t.mult * oil,
+          r: oil > 1 ? 11 : 7,
           el: t.el,
           kind: "tbolt",
+          skin: t.tag,
           cast: t.cast,
         });
       } else t.cd = 0.3;
     }
+    if (t.hao && dist(t.x, t.y, p.x, p.y) < t.hao.r)
+      applyBuffs(t.hao.sts, t, { m: t.m, x: t.x, y: t.y, ang: 0, cast: null });
   }
   GS.G.turrets = GS.G.turrets.filter((t: any) => t.life > 0);
   // fields
@@ -248,6 +286,10 @@ export function update(dt: number) {
       f.x = p.x;
       f.y = p.y;
     }
+    if (f.vx || f.vy) {
+      f.x += f.vx * dt;
+      f.y += f.vy * dt;
+    }
     f.tick -= dt;
     if (f.pull) {
       for (const e of GS.G.enemies) {
@@ -256,6 +298,7 @@ export function update(dt: number) {
         if (d < f.r && d > 8) {
           const a = Math.atan2(f.y - e.y, f.x - e.x);
           moveC(e, Math.cos(a) * f.pull * dt, Math.sin(a) * f.pull * dt, e.r * 0.6);
+          addStatus(e, "biGom", { t: 0.3 });
         }
       }
     }
@@ -263,8 +306,10 @@ export function update(dt: number) {
       f.tick = f.ti;
       if (f.el && f.own !== "e") pulseElement(f.x, f.y, f.r, f.el);
       for (const e of GS.G.enemies) {
-        if (!e.dead && dist(f.x, f.y, e.x, e.y) < f.r + e.r)
+        if (!e.dead && dist(f.x, f.y, e.x, e.y) < f.r + e.r) {
           hitEnemy(e, f.m, f.mult, f.el, { cast: f.cast, noKb: true });
+          f.onHit?.(f, e);
+        }
       }
     }
     if (Math.random() < 0.7)
@@ -412,9 +457,10 @@ function dashHitStep(p: any) {
     pulseElement(p.x, p.y, 50, p.dashHit.el);
     for (const e of GS.G.enemies) {
       if (e.dead || p.dashHit.set.has(e)) continue;
-      if (dist(p.x, p.y, e.x, e.y) < 50 + e.r) {
+      if (dist(p.x, p.y, e.x, e.y) < (p.dashHit.r ?? 50) + e.r) {
         p.dashHit.set.add(e);
         hitEnemy(e, p.dashHit.m, p.dashHit.mult, p.dashHit.el, { cast: p.dashHit.cast, kb: 140 });
+        p.dashHit.onHit?.(e);
       }
     }
     GS.G.fx.push({

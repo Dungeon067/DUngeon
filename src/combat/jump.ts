@@ -1,4 +1,5 @@
 import { GS } from "../core/state";
+import { kitPlunge } from "./kits/run";
 import { sfx } from "../core/audio";
 import { dist } from "../core/util";
 import { EL } from "../data/content";
@@ -157,6 +158,7 @@ function land(p: any, ground: number) {
       hitEnemy(e, m, mult, m.c.el, { kb: 160 });
       hit = true;
     }
+    kitPlunge(m);
     fxRing(p.x, p.y, P.radius, EL[m.c.el].c, 0.35, 6);
     fxBurst(p.x, p.y, EL[m.c.el].c, 14, 170);
     shake("heavy", 1 + levels * 0.3);

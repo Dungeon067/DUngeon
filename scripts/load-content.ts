@@ -46,3 +46,5 @@ export const loadRawWeapons = () => read("content/weapons.yaml");
 export const loadRawModels = () => read("content/models.yaml");
 /** economy.yaml cộng danh sách vũ khí từ weapons.yaml (thietKe.vuKhi.danhSach). */
 export const loadRawEconomy = () => withWeapons(read("content/economy.yaml"), loadRawWeapons());
+/** Bộ chiêu riêng (S30) và danh mục buff/debuff. */
+export const loadRawKits = () => ({ kits: readDir("content/kits"), statuses: read("content/statuses.yaml") });

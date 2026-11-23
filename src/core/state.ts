@@ -20,6 +20,8 @@ export const GS = {
   scene: "menu",
   paused: false,
   holdAtk: false,
+  /** Đang giữ nút kỹ năng (S30): t giây. */
+  skHold: null as { t: number } | null,
   holdDash: false,
   lastSync: 0,
   hudCache: {} as Record<string, any>,

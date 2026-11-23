@@ -39,6 +39,15 @@ export const CharacterSchema = z
         m: z.number().positive(),
       })
       .strict(),
+    /** Chỉ số phụ (S30): tinh thông nguyên tố, hồi năng lượng cộng thêm, giá trị hỗ trợ đội tính vào Chiến Lực. */
+    chiSoPhu: z
+      .object({
+        tinhThong: z.number().min(0).max(400),
+        hoiNang: z.number().min(0).max(1),
+        hoTro: z.number().min(0).max(0.3),
+      })
+      .strict()
+      .optional(),
     look: z
       .object({
         hair: hex,

@@ -1,0 +1,67 @@
+# Bộ chiêu Lôi Đình (S30). Thiết kế: docs/characters/loidinh/bo-chieu.md
+id: loidinh
+vaiTro: [chinh]
+dacTrung: [xeGiap, loiHieu]
+mau: { c: "#b98cff", c2: "#ffe27a" }
+thuong:
+  - { m: 0.7 }
+  - { m: 0.8 }
+  - m: 0.9
+    khoi: [{ k: buff, sts: [{ id: nhipVo, t: 15, doi: banThan }] }]
+  - { m: 1.0 }
+  - m: 1.45
+    el: true
+    khoi: [{ k: buff, sts: [{ id: nhipVo, t: 15, doi: banThan }] }]
+trongKich:
+  ten: Vó Sấm Phi Thương
+  mo: Xoay thương rồi phi tới 220, 150% Lôi cộng 35% mỗi Nhịp Vó. Từ 3 Nhịp Vó trở lên gắn Sấm Xé Giáp (-20% phòng thủ, 8 giây).
+  theLuc: 25
+  muc:
+    - giay: 0.35
+      clip: loidinh.charge
+      khoi: [{ k: dac, ham: phiThuong, m: 1.5, r: 220, el: bolt, sts: [{ id: xeGiap, v: 0.2, t: 8 }] }]
+khong:
+  ten: Vó Sấm Đạp Đất
+  mo: Đòn lao xuống nổ thêm vòng sét 100% và cho 1 Nhịp Vó.
+  khoi:
+    - { k: chem, r: 110, goc: 360, m: 1, el: bolt, fx: voSam }
+    - { k: buff, sts: [{ id: nhipVo, t: 15, doi: banThan }] }
+kyNang:
+  ten: Lôi Thương Đột Kích
+  cd: 6
+  cdGiu: 12
+  bam:
+    ten: Lao Kép
+    mo: Lao xuyên hàng 140% Lôi. Trong 3 giây bấm lại được lao lần hai 100% không tốn thời gian hồi.
+    clip: loidinh.skillTap
+    khoi: [{ k: dac, ham: laoKep, m: 1.4, r: 200, el: bolt }]
+  giu:
+    ten: Cọc Sấm
+    mo: Ném thương thành Cọc Sấm 8 giây, mỗi giây 50% Lôi. Trong lúc đó đánh tay không nhanh, mỗi đòn gọi cọc giáng sét ngay.
+    clip: loidinh.throw
+    khoi:
+      - k: ban
+        kind: spear
+        toc: 900
+        song: 0.4
+        r: 8
+        m: 1.2
+        el: bolt
+        no: [{ k: trieu, tag: cocSam, toiDa: 1, t: 8, cd: 1, m: 0.5, el: bolt, xa: 0, fx: cocSam }]
+      - { k: dac, ham: tayKhong }
+no:
+  ten: Thiên Lôi Giáng Thế
+  mo: Ba loạt sét theo nhịp vó, mỗi loạt 260% Lôi. Sau đó 10 giây đòn đánh mang Lôi và +40% sát thương chí mạng; đồng đội +25% hồi năng lượng (Lôi Hiệu).
+  clip: loidinh.burst
+  cost: 60
+  cine: 1.5
+  khoi:
+    - { k: chem, r: 210, goc: 360, m: 2.6, el: bolt, kb: 120, lap: 3, cach: 0.4, fx: thienLoi }
+    - {
+        k: buff,
+        sts: [{ id: thienLoi, v: 0.4, t: 10, doi: banThan, el: bolt }, { id: loiHieu, v: 0.25, t: 10, doi: dongDoi }],
+      }
+biDong:
+  - { ten: Ngọn Thương Gọi Sấm, mo: "Mỗi tia Điện Cảm trên quái cũng cho 1 Nhịp Vó." }
+  - { ten: Giông Đi Trước, mo: "Đủ 5 Nhịp Vó thì tốc độ đánh thường tăng 15%." }
+khamPha: { ten: Vó Ngựa Đồng Bằng, mo: "Chạy nhanh hơn 15% khi ngoài trận.", chay: 1.15 }
