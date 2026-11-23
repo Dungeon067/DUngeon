@@ -4,6 +4,7 @@
  */
 import type { Vfx } from "./system";
 import { HAVY } from "./chars/havy";
+import { SUONGMAI } from "./chars/suongmai";
 import type { Cell } from "./tex";
 import { catBurst } from "./weapons";
 
@@ -18,7 +19,7 @@ export interface Painters {
   /** Trạng thái kéo dài trên người đang điều khiển. */
   aura?: (m: any, X: Vfx) => void;
 }
-export const PAINTERS: Record<string, Painters> = { havy: HAVY };
+export const PAINTERS: Record<string, Painters> = { havy: HAVY, suongmai: SUONGMAI };
 
 export const paintFx = (f: any, X: Vfx) => {
   const p = PAINTERS[f.who]?.fx?.[f.id];
