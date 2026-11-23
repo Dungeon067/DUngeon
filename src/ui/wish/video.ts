@@ -157,8 +157,14 @@ export interface VideoEls {
   ff: HTMLButtonElement;
 }
 
-/** Trạng thái lượt video đang phát, để phím tắt và nút điều khiển dùng chung. */
-export const videoNow = { playing: false, skip: () => {}, toggleFast: () => {} };
+/** Trạng thái lượt video đang phát, để phím tắt và nút điều khiển dùng chung; drift: âm thanh lệch video (giây). */
+export const videoNow = {
+  playing: false,
+  variant: "",
+  skip: () => {},
+  toggleFast: () => {},
+  drift: (): number | null => null,
+};
 let wishes = 0;
 let fives = 0;
 let track: Track | null = null;
@@ -229,6 +235,7 @@ export async function playWishVideo(best: number, multi: boolean, els: VideoEls)
       v.load();
       URL.revokeObjectURL(src);
       videoNow.playing = false;
+      videoNow.drift = () => null;
       skip.onclick = null;
       ff.onclick = null;
       if (!ok) stopVideoAudio();
@@ -246,6 +253,8 @@ export async function playWishVideo(best: number, multi: boolean, els: VideoEls)
       ff.setAttribute("aria-pressed", String(fast));
     };
     videoNow.playing = true;
+    videoNow.variant = variant;
+    videoNow.drift = () => (track && started && !v.paused ? track.pos() - v.currentTime : null);
     videoNow.skip = doSkip;
     videoNow.toggleFast = toggleFast;
     skip.onclick = (e) => {

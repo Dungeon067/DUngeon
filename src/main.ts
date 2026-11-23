@@ -19,6 +19,7 @@ import { initRotate } from "./ui/hud/rotate";
 import { initHints } from "./ui/hud/hints";
 import { applyDocumentSettings, saveSettings, settings } from "./core/settings";
 import { initPwa } from "./ui/pwa";
+import { videoNow } from "./ui/wish/video";
 
 /* =========================================================
    BOOT
@@ -75,6 +76,7 @@ if (new URLSearchParams(location.search).has("e2e"))
       saveSettings,
       r3: renderer3d,
       menu: { openMenu, closeMenu, currentScreen },
+      wishVideo: videoNow,
       pz: { pulse: pulseElement, startDomain, exitDomain, data: { DOMAINS, MINI, PZ } },
     },
   });
