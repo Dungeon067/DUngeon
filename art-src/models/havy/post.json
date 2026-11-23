@@ -1,1 +1,8 @@
-{"pins":[{"side":1,"ray":[80,0.07],"turn":35,"size":0.034,"lift":0.45},{"side":-1,"ray":[80,0.07],"turn":35,"size":0.034,"lift":0.45}],"springRename":{"TopsUpperArm":"CoatSkirt"},"skirtColliders":true}
+{
+  "pins": [
+    { "side": 1, "ray": [80, 0.07], "turn": 35, "size": 0.034, "lift": 0.45 },
+    { "side": -1, "ray": [80, 0.07], "turn": 35, "size": 0.034, "lift": 0.45 }
+  ],
+  "springRename": { "TopsUpperArm": "CoatSkirt" },
+  "skirtColliders": true
+}

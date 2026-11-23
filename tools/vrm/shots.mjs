@@ -12,6 +12,7 @@ const views = [
   ["4-sau", "yaw=180", 1000, 1400],
   ["5-can-mat", "yaw=0&face=1", 1000, 1000],
   ["6-can-mat-34", "yaw=35&face=1", 1000, 1000],
+  ["7-can-mat-nghieng", "yaw=90&face=1", 1000, 1000],
 ];
 const { mkdirSync, readFileSync } = await import("node:fs");
 const w0 =
@@ -25,7 +26,9 @@ const w0 =
     })(),
   )?.[1] ?? "sword";
 mkdirSync(out, { recursive: true });
-for (const [name, qs, w, h] of views) {
+for (const [name, qs, w, h] of views.filter(
+  ([n]) => !process.env.VIEWS || process.env.VIEWS.split(",").some((v) => n.startsWith(v)),
+)) {
   const pg = await b.newPage({ viewport: { width: w, height: h } });
   pg.on("pageerror", (e) => console.log("[err]", e.message));
   await pg.goto(`${URL0}tools/vrm/sheet.html?id=${id}&w=${w0}&${qs}${process.env.QS ?? ""}`);

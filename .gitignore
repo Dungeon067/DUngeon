@@ -12,3 +12,5 @@ blob-report/
 src-tauri/target/
 src-tauri/gen/
 __pycache__/
+*.blend1
+.lfs-cine

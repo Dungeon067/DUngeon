@@ -19,9 +19,15 @@ document.body.appendChild(gl.domElement);
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xf4f1ea);
 const cam = new THREE.PerspectiveCamera(face ? 20 : 26, innerWidth / innerHeight, 0.05, 50);
-scene.add(new THREE.HemisphereLight(0xffffff, 0xb8b8c8, 2.2));
-const sun = new THREE.DirectionalLight(0xffffff, 2);
-sun.position.set(1.5, 4, 3);
+// light=game: ánh sáng giữa trưa của renderer3d (nắng/trời như trong game, đặt theo hướng camera mặc định).
+const gameLight = q.get("light") === "game";
+const hemi = gameLight
+  ? new THREE.HemisphereLight(new THREE.Color(0x3d8fe6).lerp(new THREE.Color(0xffffff), 0.55), 0x6a5a9a, 0.78 * 1.4)
+  : new THREE.HemisphereLight(0xffffff, 0xb8b8c8, 2.2);
+scene.add(hemi);
+const sun = new THREE.DirectionalLight(gameLight ? 0xfff0d6 : 0xffffff, gameLight ? 2.4 : 2);
+if (gameLight) sun.position.set(-8.5, 15.9, -7).applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+else sun.position.set(1.5, 4, 3);
 scene.add(sun);
 const floor = new THREE.Mesh(new THREE.CircleGeometry(0.8, 48), new THREE.MeshBasicMaterial({ color: 0xdcd6ca }));
 floor.rotation.x = -Math.PI / 2;

@@ -17,6 +17,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # Video ước nguyện S20 nằm trong Git LFS: chỉ kéo các file game dùng, cache theo mã file để đỡ tốn băng thông LFS.
+      - name: Danh sách file video ước nguyện
+        if: github.event.action != 'closed'
+        run: git lfs ls-files -l -I "media/cinematic/out/audio/**,media/cinematic/out/video/**" | cut -d' ' -f1 > .lfs-cine
+      - uses: actions/cache@v4
+        if: github.event.action != 'closed'
+        with:
+          path: .git/lfs
+          key: lfs-cine-${{ hashFiles('.lfs-cine') }}
+          restore-keys: lfs-cine-
+      # Bản xem thử PR chỉ có video 720p cho nhẹ gh-pages; bản main thêm 1080p WebM.
+      - name: Kéo video ước nguyện (Git LFS)
+        if: github.event.action != 'closed'
+        run: git lfs pull -I "media/cinematic/out/audio/**,media/cinematic/out/video/*-720.*${{ github.event_name == 'push' && ',media/cinematic/out/video/*-1080.webm' || '' }}"
       - uses: pnpm/action-setup@v4
         if: github.event.action != 'closed'
       - uses: actions/setup-node@v4

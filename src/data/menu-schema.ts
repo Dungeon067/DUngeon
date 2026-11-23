@@ -105,7 +105,7 @@ export const CinematicSchema = z.object({
     s4: z.number().positive(),
   }),
   slowMo: z.number().positive().max(1),
-  videos: z.record(z.string()),
+  video: z.boolean(),
   videoTimeoutMs: z.number().int().positive(),
 });
 

@@ -155,6 +155,18 @@ export class VrmActor {
     const look = { ...MODELS.macDinh, ...(MODELS.nhanVat[id] ?? {}) };
     const box = new THREE.Box3().setFromObject(vrm.scene);
     const s = look.height / Math.max(0.1, box.max.y - box.min.y);
+    // Hướng nghỉ của xương tay thô khác nhau giữa các bản xuất (VRoid, Blender): quy `camVuKhi` về
+    // trục của mô hình để cùng một cấu hình cầm vũ khí đúng cho mọi file.
+    const grip = MODELS.camVuKhi[wtype];
+    const bone = vrm.humanoid.getRawBoneNode(grip.bone as any);
+    vrm.scene.updateMatrixWorld(true);
+    const restInv = bone
+      ? vrm.scene
+          .getWorldQuaternion(new THREE.Quaternion())
+          .invert()
+          .multiply(bone.getWorldQuaternion(new THREE.Quaternion()))
+          .invert()
+      : new THREE.Quaternion();
     const a = new VrmActor(vrm, wtype, A.clips, A.fps, url);
     a.obj.scale.setScalar(s);
     a.obj.updateMatrixWorld(true);
@@ -162,13 +174,13 @@ export class VrmActor {
     const wid = weaponId ?? MODELS.vuKhiMacDinh[wtype];
     if (wid) {
       const w = await loadWeapon(wid);
-      const grip = MODELS.camVuKhi[wtype];
-      const bone = vrm.humanoid.getRawBoneNode(grip.bone as any);
       if (w && bone) {
         const holder = new THREE.Group();
         const bs = bone.getWorldScale(new THREE.Vector3()).x || 1;
-        holder.position.fromArray(grip.pos).divideScalar(bs);
-        holder.rotation.set(...(grip.rot.map((d) => (d * Math.PI) / 180) as [number, number, number]));
+        holder.position.fromArray(grip.pos).applyQuaternion(restInv).divideScalar(bs);
+        holder.quaternion
+          .setFromEuler(new THREE.Euler(...(grip.rot.map((d) => (d * Math.PI) / 180) as [number, number, number])))
+          .premultiply(restInv);
         holder.scale.setScalar(grip.scale / bs);
         holder.add(w);
         bone.add(holder);

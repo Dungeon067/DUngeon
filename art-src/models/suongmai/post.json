@@ -1,0 +1,45 @@
+{
+  "rings": [
+    {
+      "bone": "J_Bip_C_Head",
+      "pos": [0, -0.11, 0.19],
+      "axis": [0, -0.6, 0.8],
+      "major": 0.026,
+      "minor": 0.009,
+      "color": "#3aa6f5",
+      "shade": "#1f6fb0"
+    },
+    {
+      "bone": "J_Bip_C_Head",
+      "pos": [0, -0.115, 0.175],
+      "axis": [0, -0.6, 0.8],
+      "major": 0.024,
+      "minor": 0.008,
+      "color": "#3aa6f5",
+      "shade": "#1f6fb0"
+    }
+  ],
+  "ribbons": [
+    {
+      "bone": "J_Bip_C_Head",
+      "start": [0.018, -0.135, 0.175],
+      "dir": [0.25, -0.35, -1],
+      "length": 0.2,
+      "width": 0.022,
+      "color": "#3aa6f5",
+      "shade": "#1f6fb0"
+    },
+    {
+      "bone": "J_Bip_C_Head",
+      "start": [-0.018, -0.135, 0.175],
+      "dir": [-0.15, -0.4, -1],
+      "length": 0.24,
+      "width": 0.022,
+      "color": "#3aa6f5",
+      "shade": "#1f6fb0"
+    }
+  ],
+  "hooks": [{ "bone": "J_Bip_C_Neck", "pos": [0, 0.125, -0.06], "size": 0.032, "wire": 0.0026 }],
+  "springRename": { "TopsUpperArm": "TopHem" },
+  "skirtColliders": true
+}
