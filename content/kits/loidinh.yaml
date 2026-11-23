@@ -42,6 +42,7 @@ kyNang:
     khoi:
       - k: ban
         kind: spear
+        cam: true
         toc: 900
         song: 0.4
         r: 8

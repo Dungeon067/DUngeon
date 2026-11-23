@@ -1,5 +1,7 @@
 import { effectAt } from "../world/regions";
 import { kitOf } from "../data/kits";
+import { inCombat } from "../ui/menu/logic";
+import { MENU } from "../data/menu-content";
 import { updateKits } from "../combat/kits/run";
 import { applyBuffs } from "../combat/kits/blocks";
 import { addStatus } from "../combat/status";
@@ -37,6 +39,12 @@ import { MH, MW, TL, TS } from "../world/map";
 /* =========================================================
    MAIN UPDATE
    ========================================================= */
+
+/** Thiên phú khám phá: chạy nhanh hơn khi ngoài trận ở thế giới mở. */
+function exploreSpeed() {
+  const k = kitOf(cur())?.khamPha?.chay ?? 1;
+  return k > 1 && GS.G.mode === "world" && !inCombat(GS.G, MENU.combatLock.radius) ? k : 1;
+}
 
 export function update(dt: number) {
   if (GS.G.cine) {
@@ -76,7 +84,8 @@ export function update(dt: number) {
     if (p.dashT <= 0) p.dashHit = null;
   } else if (p.moving) {
     const sprint = GS.holdDash && p.dashHeld > 0.25 && p.stamina > 0;
-    const sp = (sprint ? 225 : 155) * (p.atkAnim > 0 ? 0.45 : 1) * effectAt(GS.G.map, p.x, p.y, "moveSpeed");
+    const sp =
+      (sprint ? 225 : 155) * (p.atkAnim > 0 ? 0.45 : 1) * effectAt(GS.G.map, p.x, p.y, "moveSpeed") * exploreSpeed();
     if (sprint) p.stamina = Math.max(0, p.stamina - 22 * dt);
     moveC(p, mx * sp * dt, my * sp * dt, 9);
     p.walk += dt * (sprint ? 14 : 10);
@@ -196,7 +205,7 @@ export function update(dt: number) {
       for (const e of GS.G.enemies) {
         if (e.dead) continue;
         if (dist(pr.x, pr.y, e.x, e.y - (e.isBoss ? 24 : 12)) < pr.r + e.r) {
-          if (pr.xuyen?.has(e)) continue;
+          if (pr.xuyen?.has(e) || pr.trung?.has(e)) continue;
           hitEnemy(e, pr.m, pr.mult, pr.el, {
             ang: Math.atan2(pr.vy, pr.vx),
             cast: pr.cast,
@@ -204,21 +213,22 @@ export function update(dt: number) {
             normal: pr.normal,
           });
           pr.onHit?.(e, pr.x, pr.y);
+          (pr.trung ??= new Set()).add(e);
           if (pr.xuyen) {
             pr.xuyen.add(e);
             break;
           }
           if (pr.nay > 0) {
             // Đốm lửa nảy sang quái gần nhất chưa trúng.
-            const nx = GS.G.enemies.find((o: any) => o !== e && !o.dead && dist(o.x, o.y, e.x, e.y) < 160);
+            const nx = GS.G.enemies.find((o: any) => !pr.trung.has(o) && !o.dead && dist(o.x, o.y, e.x, e.y) < 160);
             if (nx) {
               pr.nay--;
               const a = Math.atan2(nx.y - e.y, nx.x - e.x),
                 sp = Math.hypot(pr.vx, pr.vy);
               pr.vx = Math.cos(a) * sp;
               pr.vy = Math.sin(a) * sp;
-              pr.x = e.x;
-              pr.y = e.y - 12;
+              pr.x = e.x + Math.cos(a) * (e.r + pr.r + 2);
+              pr.y = e.y - 12 + Math.sin(a) * (e.r + pr.r + 2);
               pr.life = Math.max(pr.life, 0.4);
               pr.mult *= 0.6;
               break;
@@ -246,6 +256,7 @@ export function update(dt: number) {
           size: pr.r * 0.5,
         });
   }
+  for (const pr of GS.G.projs) if (pr.life <= 0 && !pr.trung?.size) pr.onMiss?.(pr.x, pr.y);
   GS.G.projs = GS.G.projs.filter((x: any) => x.life > 0);
   // turrets
   for (const t of GS.G.turrets) {
@@ -307,8 +318,9 @@ export function update(dt: number) {
       if (f.el && f.own !== "e") pulseElement(f.x, f.y, f.r, f.el);
       for (const e of GS.G.enemies) {
         if (!e.dead && dist(f.x, f.y, e.x, e.y) < f.r + e.r) {
+          const au = e.aura;
           hitEnemy(e, f.m, f.mult, f.el, { cast: f.cast, noKb: true });
-          f.onHit?.(f, e);
+          f.onHit?.(f, e, au);
         }
       }
     }

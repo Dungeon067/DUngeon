@@ -269,6 +269,32 @@ describe("kỹ năng bấm / giữ, nộ, cơ chế riêng", () => {
   });
 });
 
+describe("sửa lỗi sau review", () => {
+  it("Thiên Lôi chỉ tăng sát thương chí mạng cho đòn Lôi", () => {
+    session(["loidinh"]);
+    const m = GS.G.party[0];
+    addStatus(m, "thienLoi", { v: 0.4, t: 10, el: "bolt" });
+    expect(statSum(m, "satThuongChiMang", "bolt")).toBeCloseTo(0.4);
+    expect(statSum(m, "satThuongChiMang", "fire")).toBe(0);
+  });
+  it("thương ném trượt vẫn cắm Cọc Sấm", () => {
+    session(["loidinh"]);
+    expect(castKitSkill("giu")).toBe(true);
+    const pr = GS.G.projs.at(-1);
+    expect(pr.onMiss).toBeTypeOf("function");
+    pr.onMiss(pr.x, pr.y);
+    expect(GS.G.turrets.some((t: any) => t.tag === "cocSam")).toBe(true);
+  });
+  it("Bạch Vũ giữ kỹ năng chỉ bị hất cao vừa phải", () => {
+    session(["bachvu"]);
+    expect(castKitSkill("giu")).toBe(true);
+    const p = GS.G.p;
+    expect(p.air).toBe(true);
+    expect(p.vz).toBeGreaterThan(9);
+    expect(p.vz).toBeLessThan(12);
+  });
+});
+
 describe("Chiến Lực với chỉ số phụ", () => {
   it("giá trị hỗ trợ và hồi năng lượng tăng Chiến Lực, không đổi nhân vật chưa khai báo", () => {
     const inv = { lv: 50, cons: 0 };

@@ -63,8 +63,8 @@ export function dealRaw(e: any, dmg: number, col: string) {
 export function hitEnemy(e: any, m: any, mult: number, el: string | null, o: any = {}) {
   if (e.dead) return 0;
   // Buff của người đánh (S30): tấn công cộng thẳng, chí mạng, tăng sát thương theo nguyên tố.
-  const crit = Math.random() < Math.min(1, m.st.crit + statSum(m, "tiLeChiMang"));
-  const cdmg = m.st.cdmg + statSum(m, "satThuongChiMang");
+  const crit = Math.random() < Math.min(1, m.st.crit + statSum(m, "tiLeChiMang", el));
+  const cdmg = m.st.cdmg + statSum(m, "satThuongChiMang", el);
   const sd = m.stack ? stackDelta(weaponOf(m.stack.id, ECON), m.stack.tl, m.stack.tang, ECON) : 0;
   const bonus =
     (m.st.dmg ?? 0) +

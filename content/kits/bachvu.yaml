@@ -35,7 +35,7 @@ kyNang:
     clip: bachvu.skillHold
     khoi:
       - { k: vung, r: 130, t: 3, ti: 0.5, keo: 180, troi: 140, xa: 60, hut: true, m: 0.5, el: wind, fx: locLongVu }
-      - { k: nhay, vz: 520 }
+      - { k: nhay, cao: 1.5 }
       - { k: buff, sts: [{ id: longHac, v: 80, t: 10, doi: doi }] }
 no:
   ten: Bão Trắng

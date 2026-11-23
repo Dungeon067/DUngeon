@@ -7,6 +7,7 @@ import { fxBurst, fxParticles, fxRing, fxSlash, fxText, later } from "../../enti
 import { cur } from "../../entities/party";
 import { charFx, shake } from "../feel";
 import { hitEnemy } from "../damage";
+import { jumpPhysics } from "../jump";
 import { addStatus, hnOf, ttOf } from "../status";
 import { moveC } from "../../world/collision";
 import { pulseElement } from "../../world/puzzles";
@@ -164,6 +165,9 @@ export function runBlock(b: Block, c: Ctx) {
             applyDebuffs(e, b, c);
             runBlocks(b.no as Block[] | undefined, { ...c, x, y: y + 16 });
           },
+          onMiss: b.cam
+            ? (x: number, y: number) => runBlocks(b.no as Block[] | undefined, { ...c, x, y: y + 16 })
+            : null,
         });
       }
       return;
@@ -214,12 +218,12 @@ export function runBlock(b: Block, c: Ctx) {
         vy: Math.sin(c.ang) * b.troi,
         hut: b.hut,
         hutEl: null,
-        onHit: (f: any, e: any) => {
-          if (f.hut && !f.hutEl && e.aura && e.aura !== "wind" && e.aura !== "earth") {
-            f.hutEl = e.aura;
-            f.col = EL[e.aura]!.c;
-            fxText(f.x, f.y - 60, `Hút ${EL[e.aura]!.vi ?? ""}`.trim(), EL[e.aura]!.c, 14);
-            applyBuffs(b.sts, b, { ...c, hut: e.aura });
+        onHit: (f: any, e: any, au: string | null = e.aura) => {
+          if (f.hut && !f.hutEl && au && au !== "wind" && au !== "earth") {
+            f.hutEl = au;
+            f.col = EL[au]!.c;
+            fxText(f.x, f.y - 60, `Hút ${EL[au]!.vi ?? ""}`.trim(), EL[au]!.c, 14);
+            applyBuffs(b.sts, b, { ...c, hut: au });
           }
           applyDebuffs(e, b, { ...c, hut: f.hutEl });
           hooksOf(m).onVungHit?.(f, e);
@@ -302,7 +306,16 @@ export function runBlock(b: Block, c: Ctx) {
       return;
     }
     case "nhay": {
-      Object.assign(p, { air: true, vz: b.vz, jvx: 0, jvy: 0, peak: p.zh, airDash: false, plunge: false, long: false });
+      Object.assign(p, {
+        air: true,
+        vz: jumpPhysics().v0 * Math.sqrt(b.cao),
+        jvx: 0,
+        jvy: 0,
+        peak: p.zh,
+        airDash: false,
+        plunge: false,
+        long: false,
+      });
       fxBurst(p.x, p.y, F.c2, 10, 120, 2);
       return;
     }

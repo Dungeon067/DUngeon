@@ -110,6 +110,8 @@ export const BlockSchema = z.discriminatedUnion("k", [
       song: pos.default(0.8),
       xuyen: z.boolean().default(false),
       nay: z.number().int().min(0).max(4).default(0),
+      /** Trượt mục tiêu thì vẫn chạy `no` ở điểm rơi (thương cắm đất). */
+      cam: z.boolean().default(false),
       duoi: z.boolean().default(false),
       kind: z.enum(["arrow", "orb", "spear", "lantern", "flower"]).default("orb"),
       /** Bắn lên trời rồi rơi xuống điểm đích sau `song` giây (đèn trời, tên nộ). */
@@ -176,7 +178,8 @@ export const BlockSchema = z.discriminatedUnion("k", [
   z.object({ k: z.literal("hoiNang"), n: pos, doi: z.enum(["doi", "dongDoi"]).default("dongDoi"), ...common }).strict(),
   z.object({ k: z.literal("keo"), r: pos, luc: pos, xa: n.default(0), ...common }).strict(),
   z.object({ k: z.literal("phanDon"), t: pos, r: pos, ...common }).strict(),
-  z.object({ k: z.literal("nhay"), vz: pos, ...common }).strict(),
+  /** Bị hất lên cao: `cao` là bội số độ cao cú nhảy thường. */
+  z.object({ k: z.literal("nhay"), cao: z.number().min(1).max(2), ...common }).strict(),
   /** Phần riêng của nhân vật, cài trong src/combat/kits/<id>.ts. */
   z.object({ k: z.literal("dac"), ham: z.string().min(1), r: n.default(0), ...common }).strict(),
 ]);

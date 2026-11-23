@@ -176,7 +176,9 @@ export function init(): void {
 
   /* ---------- chuột ---------- */
   cv.addEventListener("pointerdown", (e: PointerEvent) => {
-    if (GS.scene === "play" && e.pointerType === "mouse" && e.button === 0) GS.holdAtk = true;
+    if (GS.scene !== "play" || e.pointerType !== "mouse" || e.button !== 0) return;
+    GS.holdAtk = true;
+    if (playing() && !skipCine()) press("atk");
   });
   addEventListener("pointerup", (e) => {
     if (e.pointerType === "mouse") GS.holdAtk = false;
