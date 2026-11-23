@@ -1,0 +1,276 @@
+/* Tủ Đồ (S24b): nền ảnh chòm sao mờ tối, lưới thẻ đồ trái + thanh dưới, bảng chi tiết phải. */
+.tt-menu-screen.tt-tudo {
+  padding: var(--tt-sp-2) var(--tt-sp-4) var(--tt-sp-3);
+  gap: var(--tt-sp-2);
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgb(6 9 24 / 0.35), rgb(6 9 24 / 0.6)),
+    url("/ui/nen-tu-do.webp") center / cover no-repeat;
+}
+.tt-tudo-tabs {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tt-tudo-tabs .tt-tab {
+  min-height: 44px;
+  white-space: nowrap;
+}
+.tt-tudo-main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(300px, 34%, 460px);
+  gap: var(--tt-sp-3);
+}
+.tt-tudo-left {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: var(--tt-sp-2);
+}
+.tt-tudo-grid {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(72px, 7.2vw, 108px), 1fr));
+  gap: clamp(8px, 1vw, 14px);
+  align-content: start;
+  align-items: start;
+  padding: 6px 6px 10px;
+  scrollbar-width: thin;
+}
+.tt-tudo-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--tt-sp-2);
+  padding: 4px var(--tt-sp-2);
+  border-radius: var(--tt-radius-md);
+  background: rgb(8 12 30 / 0.7);
+  border: 1px solid rgb(255 255 255 / 0.08);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tt-tudo-bar .tt-btn {
+  min-height: 44px;
+  white-space: nowrap;
+}
+.tt-tudo-bar .cap {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  color: var(--tt-text-dim);
+  font: var(--tt-fw-medium) var(--tt-fs-sm) / 1 var(--tt-font-num);
+  font-variant-numeric: tabular-nums;
+}
+.tt-tudo-bar .cap b {
+  display: none;
+}
+
+/* Bảng chi tiết */
+.tt-tudo-detail {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  border-radius: 14px 14px 6px 6px;
+  overflow: hidden;
+  background: rgb(14 18 40 / 0.86);
+  border: 1px solid rgb(255 255 255 / 0.08);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.45);
+}
+.tt-tudo-detail.tt-empty {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: var(--tt-sp-2);
+  color: var(--tt-text-dim);
+  padding: var(--tt-sp-4);
+  text-align: center;
+}
+.tt-tudo-head {
+  display: grid;
+  grid-template-columns: 1fr 48%;
+  min-height: clamp(120px, 36vh, 380px);
+  border: 0;
+  border-radius: 0;
+  border-bottom: 2px solid var(--rc);
+}
+.tt-tudo-head .txt {
+  position: relative;
+  z-index: 1;
+  padding: var(--tt-sp-3);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.6);
+}
+.tt-tudo-head .name {
+  margin: 0 0 2px;
+  font: var(--tt-fw-bold) var(--tt-fs-xl) / var(--tt-lh-tight) var(--tt-font-display);
+  color: #fff6e4;
+}
+.tt-tudo-head .kind,
+.tt-tudo-head .mk {
+  margin: 0;
+  font-size: var(--tt-fs-sm);
+  color: rgb(255 248 235 / 0.82);
+}
+.tt-tudo-head .mk {
+  margin-top: auto;
+}
+.tt-tudo-head .mv {
+  margin: 0 0 4px;
+  font: var(--tt-fw-bold) var(--tt-fs-2xl) / 1.1 var(--tt-font-num);
+  color: #fff;
+}
+.tt-tudo-head .tt-stars {
+  color: var(--tt-loot-star);
+  filter: drop-shadow(0 1px 0 rgb(40 24 0 / 0.75));
+}
+.tt-tudo-head .art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  color: #fff6e4;
+}
+.tt-tudo-head .art > img {
+  position: absolute;
+  inset: -6% -10% -6% -14%;
+  width: 124%;
+  height: 112%;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 14px rgb(0 0 0 / 0.45));
+}
+.tt-tudo-detail .body {
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--tt-sp-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--tt-sp-2);
+  font-size: var(--tt-fs-sm);
+}
+.tt-tudo-detail .body p,
+.tt-tudo-detail .body h4,
+.tt-tudo-detail .body dl {
+  margin: 0;
+}
+.tt-tudo-detail .meta {
+  gap: var(--tt-sp-3);
+  align-items: baseline;
+}
+.tt-tudo-detail .lvl {
+  font: var(--tt-fw-bold) var(--tt-fs-lg) / 1 var(--tt-font-num);
+}
+.tt-tudo-detail .lvl small {
+  color: var(--tt-text-dim);
+  font-weight: var(--tt-fw-medium);
+}
+.tt-tudo-detail .ref {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgb(255 226 163 / 0.14);
+  color: #ffe2a3;
+  font: var(--tt-fw-semibold) var(--tt-fs-xs) / 1.4 var(--tt-font-num);
+}
+.tt-tudo-detail .pname {
+  color: var(--rc, var(--tt-bronze-hi));
+  font-size: var(--tt-fs-md);
+}
+.tt-tudo-detail[data-r="5"] {
+  --rc: var(--tt-r5);
+}
+.tt-tudo-detail[data-r="4"] {
+  --rc: var(--tt-r4);
+}
+.tt-tudo-detail[data-r="3"] {
+  --rc: var(--tt-r3);
+}
+.tt-tudo-detail .ptext b {
+  color: var(--rc);
+}
+.tt-tudo-detail .who {
+  color: var(--tt-ok);
+}
+.tt-tudo-detail .acts {
+  display: flex;
+  gap: var(--tt-sp-2);
+  padding: var(--tt-sp-2) var(--tt-sp-3);
+  border-top: 1px solid rgb(255 255 255 / 0.08);
+  background: rgb(8 12 30 / 0.6);
+}
+.tt-tudo-detail .acts .tt-btn {
+  min-height: 44px;
+  flex: 1;
+}
+.tt-tudo-detail .acts #weaponLock {
+  flex: none;
+}
+.tt-tudo-soon {
+  flex: 1;
+  align-content: center;
+}
+.tt-tudo-filter {
+  display: grid;
+  gap: var(--tt-sp-2);
+}
+
+/* Màn ngang thấp (điện thoại): thu gọn chữ đầu bảng, cột chi tiết hẹp hơn */
+@media (max-height: 480px) {
+  .tt-menu-screen.tt-tudo {
+    padding: 4px var(--tt-sp-3) 6px;
+  }
+  .tt-tudo-main {
+    grid-template-columns: minmax(0, 1fr) clamp(270px, 40%, 360px);
+  }
+  .tt-tudo-head {
+    min-height: 104px;
+    grid-template-columns: 1fr 44%;
+  }
+  .tt-tudo-head .txt {
+    padding: 8px 10px;
+  }
+  .tt-tudo-head .name {
+    font-size: var(--tt-fs-lg);
+  }
+  .tt-tudo-head .mv {
+    font-size: var(--tt-fs-xl);
+  }
+  .tt-tudo-detail .body {
+    padding: 8px 10px;
+  }
+  .tt-tudo-detail .acts {
+    padding: 4px 8px;
+  }
+  .tt-tudo-bar .tt-tudo-ext .tt-btn-label {
+    display: none;
+  }
+  .tt-tudo-bar .tt-btn {
+    padding-inline: 10px;
+  }
+  .tt-tudo-tabs .tt-tab {
+    padding-inline: 10px;
+  }
+  .tt-tudo-head {
+    min-height: 92px;
+  }
+  .tt-tudo-head .kind {
+    display: none;
+  }
+  .tt-tudo-detail .acts .tt-btn-label {
+    white-space: nowrap;
+  }
+  .tt-tudo-detail .acts .tt-btn {
+    padding-inline: 8px;
+  }
+  .tt-tudo-detail .acts #weaponLock .tt-btn-label {
+    display: none;
+  }
+  .tt-tudo-grid {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  }
+}

@@ -49,9 +49,16 @@ DESIGNS = {
     "ngu-phong-truy-van": dict(r=5, type="bow", limb="#a8b878", limb_dark="#4a5a2a", glow="#bfe8ff", gold="#e0e6f0",
                                wrap="#3a5a8a", string_glow=1.8, glow_strength=6),
     # ---------------- 4★ Lò Rèn
-    "loi-the-bai-sao": dict(r=4, type="sword", builder="sword_ornate", steel="#55585f", edge="#e4e2dc", glow="#ffcf7a",
-                            gold="#c4c8d0", fuller_glow=1.6, guard_span=0.17, wrap="#3a2418", gem="#ffb347",
-                            core_glow=5, glow_strength=3),
+    "loi-the-bai-sao": dict(r=4, type="sword", builder="sword_ornate", steel="#55585f", edge="#e4e2dc", glow="#ff8a3a",
+                            gold="#c4c8d0", fuller_glow=2.6, guard_span=0.17, wrap="#6a2416", gem="#ff7a2a",
+                            core_glow=6, glow_strength=4),
+    # ---------------- 4★ mới (S24c, mẫu duyệt)
+    "than-hong-lo-khuya": dict(r=4, type="great", steel="#4a4440", edge="#e8d8c0", glow="#ff7a2a", gold="#9a7a5a",
+                               cavity="#2a1a10", blade_motif="veins", motif_col="#ff9a4a", motif_glow=2.2,
+                               guard="bar", guard_span=0.18, gem="#ff6a1f", wrap="#3a2014", width=0.14),
+    "mat-bao-ngu-yen": dict(r=4, type="cat", builder="orb_ornate", orb="#0c2a1e", core=3.5, glow="#4cf0a0",
+                            gold="#b8c0c8", cavity="#1a2228", gem="#c8ffe0", glow_strength=3, rune_glow=0.9,
+                            mote_glow=2, motes=14, core_glow=4, angle=12, yaw=30, roll=10),
     "tieng-trong-dinh-lang": dict(r=4, type="great", steel="#7a5a3a", edge="#e0c8a0", glow="#ffb060", gold="#a86a30",
                                   guard="sun", guard_span=0.17, wrap="#2a1a10", glow_strength=2),
     "den-canh-hai-dang": dict(r=4, type="cat", form="lantern", paper="#ffd27a", paper_glow=3.0, glow="#ffd27a",
@@ -75,16 +82,17 @@ DESIGNS = {
                                 shaft_col="#3a2a1a", shaft_col2="#5a4024", crack_glow=0.0, fuller_glow=2.0,
                                 tassel="#2a6a50"),
     # ---------------- 3★ (thép trơn, không phát sáng)
-    "kiem-sat-lu-khach": dict(r=3, type="sword", steel="#7a7e84", edge="#d8d8d8", gold="#7a6a58", cavity="#2a2420",
-                              guard="bar", wrap="#8a7a5a", width=0.065, **PLAIN),
+    "kiem-sat-lu-khach": dict(r=3, type="sword", builder="sword_rustic", steel="#6e7176", edge="#cfd0d0",
+                              iron="#4e4c4a", gold="#8a6a44", cavity="#2a2420", wrap="#8a7a5a", width=0.062, **PLAIN),
     "dai-kiem-xom-mo": dict(r=3, type="great", steel="#6a6a68", edge="#c8c8c0", gold="#5a5048", guard="bar",
                             guard_span=0.15, wrap="#30281e", width=0.15, **PLAIN),
     "vo-chep-thay-do": dict(r=3, type="cat", form="book", cover="#b89a6a", gold="#6a5a40", points=4, angle=10,
                             glow="#ffe2a0", glow_strength=0.5),
-    "cung-tre-dau-lang": dict(r=3, type="bow", limb="#c0a868", limb_dark="#6a5428", gold="#6a5a48", wrap="#8a7a5a",
-                              string_glow=0.0, recurve=0.0, half=0.5, **PLAIN),
-    "thuong-go-lim": dict(r=3, type="spear", steel="#767880", edge="#d0d0d0", gold="#6a6058", shaft_col="#3a2a1a",
-                          shaft_col2="#4a3824", crack_glow=0.0, **PLAIN),
+    "cung-tre-dau-lang": dict(r=3, type="bow", builder="bow_rustic", limb="#c8b070", limb_dark="#7a6230",
+                              wrap="#5a3a24", string="#b8a880", rag="#8a2a20", half=0.55, **PLAIN),
+    "thuong-go-lim": dict(r=3, type="spear", builder="spear_rustic", steel="#6a6c70", edge="#c8c8c4", iron="#4a4846",
+                          gold="#8a6a40", shaft_col="#5a2e1a", shaft_col2="#2a140a", wrap="#a08a62", cloth="#4a4238",
+                          **PLAIN),
 }
 
 # Id trước S23 (content/economy.yaml cũ) → id S23 cùng vai trò, để pipeline chạy được trên cả hai.

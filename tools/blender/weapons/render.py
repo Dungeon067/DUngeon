@@ -13,8 +13,9 @@ import lib  # noqa: E402
 from designs import design_for  # noqa: E402
 from models import BUILDERS  # noqa: E402
 from ornate import BUILDERS_ORNATE  # noqa: E402
+from rustic import BUILDERS_RUSTIC  # noqa: E402
 
-BUILDERS = {**BUILDERS, **BUILDERS_ORNATE}
+BUILDERS = {**BUILDERS, **BUILDERS_ORNATE, **BUILDERS_RUSTIC}
 
 argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 ap = argparse.ArgumentParser()
@@ -23,6 +24,7 @@ ap.add_argument("--out", required=True)
 ap.add_argument("--ids", default="")
 ap.add_argument("--samples", type=int, default=160)
 ap.add_argument("--res", type=int, default=1024)
+ap.add_argument("--icon", action="store_true", help="bản icon nhỏ: ít hạt sáng, vòng ma pháp mờ; ra <id>-sm.png")
 a = ap.parse_args(argv)
 
 weapons = json.load(open(a.list, encoding="utf8"))
@@ -32,6 +34,8 @@ for w in weapons:
     if ids and w["id"] not in ids:
         continue
     d = design_for(w)
+    d["icon"] = a.icon
+    suffix = "-sm" if a.icon else ""
     kind = d.get("builder", d["type"])
     if kind not in BUILDERS:
         print(f"[bo qua] {w['id']}: chua co bo dung cho loai {d['type']}")
@@ -42,6 +46,6 @@ for w in weapons:
     root = BUILDERS[kind](d)
     center, size = lib.frame(root, d.get("angle", 45), d.get("yaw", 18), d.get("roll", 8))
     lib.studio(center, size, lib.hexc(d["glow"]))
-    lib.render(os.path.join(a.out, f"{w['id']}.png"), a.samples)
-    lib.render_glow_mask(os.path.join(a.out, f"{w['id']}-glow.png"))
+    lib.render(os.path.join(a.out, f"{w['id']}{suffix}.png"), a.samples)
+    lib.render_glow_mask(os.path.join(a.out, f"{w['id']}{suffix}-glow.png"))
     print(f"[xong] {w['id']} {time.time() - t0:.0f}s")

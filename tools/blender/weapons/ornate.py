@@ -25,6 +25,8 @@ def sphere(name, loc, r, mats, parent, seg=20):
 
 def motes(root, path, n, d, seed=11, r=(0.004, 0.011), spread=0.06):
     """Hạt sáng theo nguyên tố bay quanh đường `path(t)` (t trong 0..1)."""
+    if d.get("icon"):
+        n = n // 6
     R = rng(seed)
     me = mat_emit("mote", hexc(d["glow"]), d.get("mote_glow", 6))
     for i in range(n):
@@ -88,7 +90,7 @@ def filigree_blade(root, L, hw, th, d, mt, me, z0=0.0, t0=0.04, t1=0.55, n=7):
 def rune_ring(root, center, r, d, me, tilt=(0.0, 0.0), n=18, seed=5, name="rune"):
     """Vòng ma pháp: hai vòng tròn và các ký hiệu tự sinh (không phải chữ có thật) phát sáng."""
     R = rng(seed)
-    me = mat_emit(f"{name}_glow", hexc(d["glow"]), d.get("rune_glow", 3.0))
+    me = mat_emit(f"{name}_glow", hexc(d["glow"]), d.get("rune_glow", 3.0) * (0.35 if d.get("icon") else 1.0))
     cx, cy, cz = center
     ax, ay = tilt
 
@@ -110,7 +112,8 @@ def rune_ring(root, center, r, d, me, tilt=(0.0, 0.0), n=18, seed=5, name="rune"
             p0 = (rm * ca + g * (u0 * -sa + v0 * ca), rm * sa + g * (u0 * ca + v0 * sa))
             p1 = (rm * ca + g * (u1 * -sa + v1 * ca), rm * sa + g * (u1 * ca + v1 * sa))
             glyphs.append([P(*p0), P(*p1)])
-    curve_obj(f"{name}_glyphs", glyphs, r * 0.008, me, root)
+    if not d.get("icon"):
+        curve_obj(f"{name}_glyphs", glyphs, r * 0.008, me, root)
 
 
 # ---------------------------------------------------------------- kiếm
@@ -273,7 +276,7 @@ def build_orb_ornate(d):
         curve_obj(f"armil{k}", [pts], 0.0055, mt, root, cyclic=True)
         curve_obj(f"armil_tick{k}", ticks, 0.0018, me, root)
     # vòng ma pháp phẳng bên dưới và mảnh tinh thể bay quanh
-    rune_ring(root, (0, 0, -0.24), 0.17, d, me, tilt=(math.radians(82), 0.0), n=20, seed=9)
+    rune_ring(root, (0, 0, -0.165), 0.12, d, me, tilt=(math.radians(82), 0.0), n=20, seed=9)
     shard = mat_gem("shard", hexc(d.get("gem", "#bffff0")), hexc(d["glow"]), 5, 0.03)
     for k in range(5):
         a = TAU * k / 5 + 0.4

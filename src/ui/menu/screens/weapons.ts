@@ -9,6 +9,7 @@ import { Server, powerOf, statsOf, vk, wDef, weaponList } from "../../../server/
 import { button, h, openDialog, stars, tabs, tag } from "../../ds";
 import { icon } from "../../icons/icons";
 import { weaponImg } from "../../weapon-art";
+import { renderTuDo } from "./bag";
 import { refreshWallets, openMenu, back, registerScreen, rerender } from "../shell";
 import {
   SUB_NAME,
@@ -21,6 +22,8 @@ import {
   statRows,
   weaponCard,
   weaponCell,
+  sortWeapons,
+  filterWeapons,
 } from "../weapon-ui";
 
 /* S24: Kho vũ khí, Nâng cấp / Tinh luyện, Thay vũ khí, Lò Rèn. Mọi thay đổi đi qua Server.req. */
@@ -39,29 +42,9 @@ const itemName = (id: string) => ITEMS.find((i) => i.id === id)?.name ?? id;
 const bagOf = (id: string) => Server.P.bag[id] ?? 0;
 const weapons = () => Object.values(Server.P.weapons) as WeaponInst[];
 
-export function sortWeapons(list: WeaponInst[], sort: Sort) {
-  const key = (w: WeaponInst) => {
-    const d = wDef(w.id)!;
-    return sort === "lv" ? [w.lv, d.r, w.tl] : sort === "tl" ? [w.tl, d.r, w.lv] : [d.r, w.lv, w.tl];
-  };
-  return [...list].sort((a, b) => {
-    const ka = key(a),
-      kb = key(b);
-    for (let i = 0; i < 3; i++) if (ka[i] !== kb[i]) return kb[i]! - ka[i]!;
-    return a.id.localeCompare(b.id) || a.uid.localeCompare(b.uid);
-  });
-}
-export function filterWeapons(list: WeaponInst[], f: { type: string; r: number; eq: "all" | "on" | "off" }) {
-  return list.filter((w) => {
-    const d = wDef(w.id)!,
-      on = !!holderOf(w.uid);
-    return (
-      (f.type === "all" || d.loai === f.type) && (!f.r || d.r === f.r) && (f.eq === "all" || (f.eq === "on") === on)
-    );
-  });
-}
+export { sortWeapons, filterWeapons };
 
-function chipGroup<T extends string | number>(label: string, opts: [T, string][], cur: T, set: (v: T) => void) {
+export function chipGroup<T extends string | number>(label: string, opts: [T, string][], cur: T, set: (v: T) => void) {
   return h("div", { class: "tt-row tt-chips", role: "group", "aria-label": label }, [
     h("span", { class: "tt-dim" }, [label]),
     ...opts.map(([v, l]) => {
@@ -185,7 +168,7 @@ function renderInventory(host: HTMLElement, params: any) {
   );
 }
 
-function lockBtn(w: WeaponInst) {
+export function lockBtn(w: WeaponInst) {
   const b = button(w.lock ? "Mở khóa" : "Khóa", {
     variant: "ghost",
     icon: w.lock ? "mo-khoa" : "khoa",
@@ -555,15 +538,9 @@ function renderForge(host: HTMLElement) {
 }
 
 registerScreen("weapons", {
-  title: "Kho vũ khí",
-  icon: "danh",
-  render: renderInventory,
-  onKey(e) {
-    if (e.key !== "q" && e.key !== "e") return false;
-    inv.type = TYPES[(TYPES.indexOf(inv.type as any) + (e.key === "e" ? 1 : TYPES.length - 1)) % TYPES.length]!;
-    rerender();
-    return true;
-  },
+  title: "Tủ Đồ",
+  icon: "tui-do",
+  render: (host, params) => renderTuDo(host, { ...params, tab: "vu-khi" }),
 });
 registerScreen("wupgrade", { title: "Vũ khí", icon: "nang-cap", render: renderUpgrade });
 registerScreen("wswap", { title: "Thay vũ khí", icon: "danh", render: renderSwap });

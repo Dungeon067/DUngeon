@@ -1,0 +1,264 @@
+/* Thẻ đồ (S24b): thẻ dọc bo góc trên, nền chuyển màu chéo theo độ hiếm có họa tiết chòm sao chìm,
+   hàng sao đè mép ảnh và dải nhãn sáng. Dùng chung cho vũ khí, nguyên liệu, kết quả ước, cửa hàng, Lò Rèn, rương. */
+:root {
+  --tt-star-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Ccircle cx='112.3' cy='131.6' r='0.6' fill='#fff' opacity='0.43'/%3E%3Ccircle cx='29.4' cy='29.7' r='0.5' fill='#fff' opacity='0.60'/%3E%3Ccircle cx='155.8' cy='126.6' r='0.7' fill='#fff' opacity='0.60'/%3E%3Ccircle cx='120.4' cy='71.1' r='0.5' fill='#fff' opacity='0.36'/%3E%3Ccircle cx='29.6' cy='78.7' r='0.9' fill='#fff' opacity='0.59'/%3E%3Ccircle cx='80.0' cy='155.3' r='0.7' fill='#fff' opacity='0.65'/%3E%3Ccircle cx='28.0' cy='53.7' r='0.7' fill='#fff' opacity='0.38'/%3E%3Ccircle cx='102.6' cy='104.4' r='0.5' fill='#fff' opacity='0.67'/%3E%3Ccircle cx='52.1' cy='140.0' r='0.5' fill='#fff' opacity='0.46'/%3E%3Ccircle cx='41.4' cy='94.7' r='0.6' fill='#fff' opacity='0.64'/%3E%3Ccircle cx='154.8' cy='134.7' r='0.7' fill='#fff' opacity='0.55'/%3E%3Ccircle cx='45.6' cy='34.1' r='1.1' fill='#fff' opacity='0.52'/%3E%3Ccircle cx='27.5' cy='25.8' r='0.9' fill='#fff' opacity='0.42'/%3E%3Ccircle cx='95.9' cy='123.1' r='0.9' fill='#fff' opacity='0.53'/%3E%3Ccircle cx='155.6' cy='120.3' r='1.1' fill='#fff' opacity='0.63'/%3E%3Ccircle cx='16.8' cy='24.8' r='0.7' fill='#fff' opacity='0.58'/%3E%3Cpath d='M22 30L46 18L70 34L62 60L92 72' fill='none' stroke='#fff' stroke-width='.5' opacity='.35'/%3E%3Ccircle cx='22' cy='30' r='1.2' fill='#fff' opacity='.75'/%3E%3Ccircle cx='46' cy='18' r='1.2' fill='#fff' opacity='.75'/%3E%3Ccircle cx='70' cy='34' r='1.2' fill='#fff' opacity='.75'/%3E%3Ccircle cx='62' cy='60' r='1.2' fill='#fff' opacity='.75'/%3E%3Ccircle cx='92' cy='72' r='1.2' fill='#fff' opacity='.75'/%3E%3Cpath d='M112 120L132 104L150 128L128 146Z' fill='none' stroke='#fff' stroke-width='.45' opacity='.28'/%3E%3Ccircle cx='112' cy='120' r='1' fill='#fff' opacity='.65'/%3E%3Ccircle cx='132' cy='104' r='1' fill='#fff' opacity='.65'/%3E%3Ccircle cx='150' cy='128' r='1' fill='#fff' opacity='.65'/%3E%3Ccircle cx='128' cy='146' r='1' fill='#fff' opacity='.65'/%3E%3Ccircle cx='160' cy='0' r='118' fill='none' stroke='#fff' stroke-width='.6' opacity='.14'/%3E%3Ccircle cx='0' cy='160' r='70' fill='none' stroke='#fff' stroke-width='.5' stroke-dasharray='2 5' opacity='.18'/%3E%3Cpath d='M92 66v12M86 72h12' stroke='#fff' stroke-width='.6' opacity='.55'/%3E%3C/svg%3E");
+  --tt-loot-label: #efe6d3;
+  --tt-loot-label-ink: #3b3124;
+  --tt-loot-star: #ffd36a;
+}
+.tt-loot {
+  --rc: var(--tt-r3);
+  --ra: var(--tt-r3-a);
+  --rb: var(--tt-r3-b);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 64px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--rc) 75%, #000);
+  border-radius: 12px 12px 4px 4px;
+  background: var(--tt-loot-label);
+  color: var(--tt-loot-label-ink);
+  font: inherit;
+  cursor: pointer;
+  isolation: isolate;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.35);
+  transition:
+    transform var(--tt-dur-fast) var(--tt-ease-out),
+    box-shadow var(--tt-dur-fast) var(--tt-ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+.tt-loot[data-r="1"] {
+  --rc: var(--tt-r1);
+  --ra: var(--tt-r1-a);
+  --rb: var(--tt-r1-b);
+}
+.tt-loot[data-r="2"] {
+  --rc: var(--tt-r2);
+  --ra: var(--tt-r2-a);
+  --rb: var(--tt-r2-b);
+}
+.tt-loot[data-r="4"] {
+  --rc: var(--tt-r4);
+  --ra: var(--tt-r4-a);
+  --rb: var(--tt-r4-b);
+}
+.tt-loot[data-r="5"] {
+  --rc: var(--tt-r5);
+  --ra: var(--tt-r5-a);
+  --rb: var(--tt-r5-b);
+}
+.tt-loot__art {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1.04;
+  flex: none;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 11px 11px 0 0;
+  background:
+    var(--tt-star-pattern) 0 0 / 96px 96px,
+    linear-gradient(155deg, var(--ra) 8%, var(--rb) 100%);
+}
+/* vòng tinh văn mảnh ở góc dưới phải */
+.tt-loot__art::before {
+  content: "";
+  position: absolute;
+  right: -46%;
+  bottom: -52%;
+  width: 115%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  box-shadow: inset 0 0 0 9px rgb(255 255 255 / 0.035);
+  pointer-events: none;
+}
+.tt-loot__art::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 26%;
+  background: linear-gradient(0deg, rgb(0 0 0 / 0.22), transparent);
+  pointer-events: none;
+}
+.tt-loot__art > img,
+.tt-loot__art > svg {
+  position: absolute;
+  inset: 5% 5% 9%;
+  width: 90%;
+  height: 86%;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 4px rgb(0 0 0 / 0.45));
+  z-index: 1;
+}
+.tt-loot__art > svg {
+  color: var(--tt-text);
+  inset: 22%;
+  width: 56%;
+  height: 56%;
+}
+.tt-loot__stars {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--tt-loot-lh, 20px) - 6px);
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  color: var(--tt-loot-star);
+  filter: drop-shadow(0 1px 0 rgb(40 24 0 / 0.75));
+  white-space: nowrap;
+  line-height: 0;
+}
+.tt-loot .tt-loot__label {
+  display: flex;
+  justify-content: center;
+  min-height: var(--tt-loot-lh, 20px);
+  padding: 5px 4px 3px;
+  font: var(--tt-fw-semibold) var(--tt-fs-xs) / 1.1 var(--tt-font-num);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+}
+.tt-loot__ref {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  padding: 2px 6px 3px 7px;
+  border-radius: 11px 0 9px 0;
+  background: rgb(18 14 28 / 0.72);
+  color: #ffe2a3;
+  font: var(--tt-fw-bold) 11px / 1.2 var(--tt-font-num);
+  letter-spacing: 0.02em;
+}
+.tt-loot__tr {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  z-index: 2;
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+.tt-loot__lock {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgb(18 14 28 / 0.72);
+  color: #ffd9a0;
+}
+.tt-loot__who {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1.5px solid #f5ecd8;
+  background: var(--tt-surface-2);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.5);
+}
+.tt-loot__who > canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.tt-loot:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgb(0 0 0 / 0.45);
+}
+.tt-loot:active {
+  transform: scale(0.97);
+}
+.tt-loot:focus-visible {
+  outline: 2px solid var(--tt-focus);
+  outline-offset: 2px;
+}
+.tt-loot.is-sel,
+.tt-loot[aria-pressed="true"]:not(.is-picked) {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 2px #fff4d8,
+    0 0 0 5px color-mix(in srgb, var(--rc) 45%, transparent),
+    0 8px 18px rgb(0 0 0 / 0.5);
+}
+.tt-loot.is-picked .tt-loot__art::after {
+  height: 100%;
+  background: rgb(10 14 30 / 0.45);
+}
+.tt-loot.is-picked::after {
+  content: "";
+  position: absolute;
+  top: 34%;
+  left: 50%;
+  width: 26px;
+  height: 14px;
+  border: solid #8ff0b4;
+  border-width: 0 0 3px 3px;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  z-index: 3;
+}
+.tt-loot:disabled {
+  cursor: default;
+  filter: grayscale(0.6) brightness(0.7);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tt-loot {
+    transition: none;
+  }
+}
+
+/* Ảnh lớn ở bảng chi tiết: cùng nền với thẻ */
+.tt-loot-hero {
+  --rc: var(--tt-r3);
+  --ra: var(--tt-r3-a);
+  --rb: var(--tt-r3-b);
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px 14px 4px 4px;
+  border: 1px solid color-mix(in srgb, var(--rc) 70%, #000);
+  background:
+    var(--tt-star-pattern) 0 0 / 140px 140px,
+    linear-gradient(155deg, var(--ra) 8%, var(--rb) 100%);
+}
+.tt-loot-hero[data-r="1"] {
+  --rc: var(--tt-r1);
+  --ra: var(--tt-r1-a);
+  --rb: var(--tt-r1-b);
+}
+.tt-loot-hero[data-r="2"] {
+  --rc: var(--tt-r2);
+  --ra: var(--tt-r2-a);
+  --rb: var(--tt-r2-b);
+}
+.tt-loot-hero[data-r="4"] {
+  --rc: var(--tt-r4);
+  --ra: var(--tt-r4-a);
+  --rb: var(--tt-r4-b);
+}
+.tt-loot-hero[data-r="5"] {
+  --rc: var(--tt-r5);
+  --ra: var(--tt-r5-a);
+  --rb: var(--tt-r5-b);
+}
+.tt-loot-hero::before {
+  content: "";
+  position: absolute;
+  right: -30%;
+  bottom: -40%;
+  width: 90%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  box-shadow: inset 0 0 0 14px rgb(255 255 255 / 0.03);
+}
+.tt-loot-hero > img {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 14px rgb(0 0 0 / 0.45));
+}
