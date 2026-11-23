@@ -91,9 +91,43 @@ const VuKhi = z
   .strict();
 export type VuKhiCfg = z.infer<typeof VuKhi>;
 
+/** S27: gió ở runtime cho spring bone (tóc, vải). Mô hình (S26) lo collider và quần trong; ở đây chỉ là lực và giới hạn góc. */
+export const VAI = ["toc", "dai", "choang", "tay", "vay", "nguc", "khac"] as const;
+export type Vai = (typeof VAI)[number];
+const Xung = z.object({ luc: n(0, 4), banKinh: n(0.5, 20), song: n(0.1, 10), len: n(0, 1), xoay: n(0, 1) }).strict();
+const GioiHan = z.object({ goc: n(5, 90), con: n(5, 60), tong: n(10, 150) }).strict();
+const Gio = z
+  .object({
+    vung: z.record(z.object({ luc: n(0, 2), huong: n(-360, 360) }).strict()),
+    thoiTiet: z.record(n(0, 3)),
+    doCao: z.object({ tu: n(0, 200), moiM: n(0, 1), toiDa: n(0, 2) }).strict(),
+    nhieu: z.object({ bien: n(0, 1), goc: n(0, 60), nhip: n(0.05, 5) }).strict(),
+    mieng: z.object({ luc: n(0, 4), banKinh: n(0.2, 5) }).strict(),
+    xung: z.record(Xung),
+    trongSo: z
+      .object({ ...(Object.fromEntries(VAI.map((k) => [k, n(0, 2)])) as Record<Vai, z.ZodNumber>), nguc: n(0, 0) })
+      .strict(),
+    // Váy, vạt trước / sau: lệch tối đa 45–55° kể cả khi gió mạnh nhất (tong = cả chuỗi từ gốc tới mép).
+    gioiHan: z
+      .object({
+        vay: GioiHan.extend({ goc: n(5, 55), tong: n(10, 55) }),
+        tay: GioiHan.optional(),
+        choang: GioiHan.optional(),
+        dai: GioiHan.optional(),
+        toc: GioiHan.optional(),
+        khac: GioiHan.optional(),
+      })
+      .strict(),
+    lucToiDa: n(0.1, 4),
+  })
+  .strict()
+  .refine((g) => !!g.vung["mac-dinh"], { message: "gio.vung cần mục mac-dinh" });
+export type GioCfg = z.infer<typeof Gio>;
+
 export const PosesSchema = z
   .object({
     vuKhi: VuKhi,
+    gio: Gio,
     dang: z.object(Object.fromEntries(DANG_IDS.map((k) => [k, Dang])) as Record<DangId, typeof Dang>).strict(),
   })
   .strict();

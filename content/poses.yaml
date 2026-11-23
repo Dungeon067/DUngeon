@@ -32,6 +32,39 @@ vuKhi:
     spear: { bone: upperChest, pos: [-0.05, 0.02, -0.15], rot: [0, 0, -140], clip: stowBackR, luc: 0.5 }
     bow: { bone: upperChest, pos: [0.04, 0.0, -0.13], rot: [0, 0, 150], clip: stowBackL, luc: 0.5 }
     cat: { bone: rightHand, pos: [-0.06, 0.14, 0.02], rot: [0, 0, 0], luc: 0 }
+# Gió (spring bone tóc, vải) ở runtime: src/render3d/toon/wind.ts + cloth.ts. Hướng: độ, 0 = thổi về +X thế giới, 90 = về +Z.
+#  vung: gió nền theo vùng (id trong content/terrain.yaml; mac-dinh cho vùng không khai báo), luc ~ độ cứng spring bone
+#  thoiTiet: hệ số nhân theo thời tiết (khi game có thời tiết)   doCao: lên cao hơn `tu` m thì cộng moiM mỗi m, tối đa toiDa (đỉnh núi)
+#  nhieu: gió giật (bien: ±tỉ lệ lực, goc: ±độ lệch hướng, nhip: lần/giây)   mieng: miệng gió `luongGio` (S23) đã mở: đẩy vải lên
+#  xung: xung gió từ chiêu hệ Phong (khóa = loại field / sự kiện): luc, banKinh (m), song (giây), len (đẩy lên), xoay (thành phần xoáy)
+#  trongSo: hệ số gió theo loại vải (tóc, dải / tua rua, áo choàng, tay áo, váy và vạt áo, ngực luôn 0, khác)
+#  gioiHan: góc lệch tối đa so với tư thế nghỉ (độ): goc = khớp gốc, con = mỗi khớp sau, tong = cả chuỗi. Luôn áp dụng.
+gio:
+  vung:
+    mac-dinh: { luc: 0.1, huong: 35 }
+    pho-van-dang: { luc: 0.08, huong: 35 }
+    bai-sao-roi: { luc: 0.4, huong: 200 }
+    lang-van-luoi: { luc: 0.3, huong: 210 }
+    ho-guong: { luc: 0.15, huong: 120 }
+    rung-truc-may: { luc: 0.6, huong: 60 }
+    mo-ngoc: { luc: 0, huong: 0 }
+    trai-bac: { luc: 0.45, huong: 290 }
+  thoiTiet: { lang: 0.4, gio: 1.5, giong: 1.9 }
+  doCao: { tu: 6, moiM: 0.04, toiDa: 0.45 }
+  nhieu: { bien: 0.35, goc: 18, nhip: 0.7 }
+  mieng: { luc: 0.9, banKinh: 1.1 }
+  xung:
+    vortex: { luc: 1.6, banKinh: 5, song: 2.5, len: 0.25, xoay: 0.6 }
+    storm: { luc: 1.3, banKinh: 5.5, song: 6, len: 0.2, xoay: 0.8 }
+    swirl: { luc: 1.2, banKinh: 4, song: 0.9, len: 0.15, xoay: 0.3 }
+    skill: { luc: 0.8, banKinh: 3.5, song: 0.6, len: 0.1, xoay: 0.2 }
+    burst: { luc: 1.4, banKinh: 6, song: 1.2, len: 0.3, xoay: 0.4 }
+  trongSo: { toc: 1.0, dai: 1.2, choang: 1.0, tay: 0.5, vay: 0.3, nguc: 0, khac: 0.4 }
+  gioiHan:
+    vay: { goc: 45, con: 20, tong: 55 }
+    tay: { goc: 50, con: 30, tong: 70 }
+    choang: { goc: 85, con: 45, tong: 120 }
+  lucToiDa: 2.2
 dang:
   nu-nho:
     ten: Nữ nhỏ (dáng trẻ em)

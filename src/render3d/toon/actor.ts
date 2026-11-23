@@ -11,6 +11,7 @@ import type { DangParams } from "../../data/poses-schema";
 import { WeaponFx } from "./weapon-fx";
 import { PoseLayer, type PoseInput } from "./pose-layer";
 import { BowRig } from "./bow-rig";
+import { ClothGuard } from "./cloth";
 import { validateModels, type WeaponType } from "../../data/models-schema";
 import { outlineMat, toonMat } from "./mat";
 
@@ -98,6 +99,8 @@ export class VrmActor {
   wfx: WeaponFx | null = null;
   private strs = new Map<string, number[]>();
   private fps: number;
+  /** Spring bone có kẹp dt, hông làm mượt, chặn góc váy. */
+  cloth: ClothGuard;
   constructor(
     public vrm: VRM,
     public wtype: WeaponType,
@@ -134,6 +137,7 @@ export class VrmActor {
       if (c.str) this.strs.set(name, c.str);
     }
     this.obj.add(vrm.scene);
+    this.cloth = new ClothGuard(vrm, POSES.gio);
   }
 
   static async load(
@@ -226,7 +230,10 @@ export class VrmActor {
     a.enabled = true;
     a.setEffectiveWeight(1);
     a.play();
-    if (this.cur && this.cur !== a) this.cur.crossFadeTo(a, o.fade ?? 0.15, false);
+    if (this.cur && this.cur !== a) {
+      this.cur.crossFadeTo(a, o.fade ?? 0.15, false);
+      if ((o.fade ?? 0.15) < 0.12) this.cloth.jolt();
+    }
     this.cur = a;
     this.curName = name;
   }
@@ -289,7 +296,7 @@ export class VrmActor {
     this.mixer.update(dt);
     this.layer?.apply(dt, this.poseIn);
     if (this.layer) this.obj.rotation.z = this.layer.bank;
-    this.vrm.update(dt);
+    this.cloth.update(dt);
     this.wfx?.update(dt);
     if (this.bow) this.bow.update(this.wfx && this.wfx.st !== "hand" ? 0 : this.strNow());
   }

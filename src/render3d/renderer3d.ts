@@ -24,6 +24,8 @@ import { MODELS, POSES, VrmActor } from "./toon/actor";
 import { weaponOut } from "../combat/weapon-state";
 import { jumpPhysics } from "../combat/jump";
 import { HeroFx } from "./toon/motion-fx";
+import { WindField, type WindSrc } from "./toon/wind";
+import { REGIONS, cellAt } from "../world/regions";
 import { ELEMENTS } from "../ui/tokens";
 import { FADE, fadeOccluder, toonMat } from "./toon/mat";
 import { animateMonster, buildMonster, type MonsterView } from "./toon/monsters";
@@ -201,6 +203,28 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   scene.add(heroFx.group);
   let heroMoveT = 0,
     heroStopT = -9;
+  // Gió cho tóc, vải (S27): gió nền theo vùng và độ cao, field hệ Phong (lốc xoáy, bão), xung chiêu, miệng gió đã mở.
+  const wind = new WindField(POSES.gio),
+    fieldLife = new WeakMap<object, number>();
+  const heroWind = (h: VrmActor, at: THREE.Vector3, dt: number) => {
+    const G = GS.G,
+      W = G.map;
+    wind.tick(dt);
+    for (const g of G.gusts ?? []) wind.pulse(g.k, g.x / TS, g.y / TS);
+    if (G.gusts) G.gusts.length = 0;
+    const nguon: WindSrc[] = [];
+    for (const fl of G.fields as any[]) {
+      if (fl.el !== "wind" || !POSES.gio.xung[fl.k]) continue;
+      if (!fieldLife.has(fl)) fieldLife.set(fl, fl.life);
+      const L = fieldLife.get(fl)!;
+      nguon.push({ k: fl.k, x: fl.x / TS, z: fl.y / TS, age: L - fl.life, life: L });
+    }
+    const mieng: { x: number; z: number }[] = [];
+    for (const st of W?.puzzles ?? [])
+      for (const o of st.objs) if (o.def.nang && o.done) mieng.push({ x: o.x / TS, z: o.y / TS });
+    const vung = REGIONS[cellAt(W, G.p.x, G.p.y).r]?.id;
+    wind.sample(h.cloth.wind, at, G.time, { vung, cao: at.y, nguon, mieng });
+  };
 
   // Quái: mô hình toon tạm. Vật thể câu đố: renderable (bản 2D dựng thành tấm phẳng nếu chưa có bản 3D).
   const monsters = new Map<any, MonsterView>();
@@ -602,6 +626,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         dash: p.dashT > 0,
       };
       if (hero.wfx) hero.wfx.orbit = acting && m.c.w === "cat";
+      heroWind(hero, pos, dt);
       hero.update(dt);
       const fin = !!p.act && (p.act.k === "atk3" || p.act.k === "skill" || p.act.k === "burst");
       heroFx.color(EL[m.c.el]?.c ?? "#ffffff", EL[m.c.el]?.c2 ?? "#ffffff");

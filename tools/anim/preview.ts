@@ -6,6 +6,7 @@
 import * as THREE from "three";
 import { VrmActor, POSES, MODELS } from "../../src/render3d/toon/actor";
 import { HeroFx } from "../../src/render3d/toon/motion-fx";
+import { WindField, type WindEnv, type WindSrc } from "../../src/render3d/toon/wind";
 
 const q = new URLSearchParams(location.search);
 const id = q.get("id") ?? "havy",
@@ -30,10 +31,15 @@ scene.add(new THREE.HemisphereLight(0xffffff, 0x8888aa, 2.2));
 const sun = new THREE.DirectionalLight(0xffffff, 2);
 sun.position.set(2, 5, 3);
 scene.add(sun);
-const floor = new THREE.Mesh(new THREE.CircleGeometry(1.6, 32), new THREE.MeshBasicMaterial({ color: 0xa9b6c9 }));
+const floor = new THREE.Mesh(
+  new THREE.CircleGeometry(+(q.get("san") ?? 1.6), 48),
+  new THREE.MeshBasicMaterial({ color: 0xa9b6c9 }),
+);
 floor.rotation.x = -Math.PI / 2;
 scene.add(floor);
 const a = await VrmActor.load(id, w, null);
+if (q.get("cloth") === "0" && a) a.cloth.off = true;
+(window as any).__a = a;
 if (!a) throw new Error("không tải được VRM");
 scene.add(a.obj);
 if (dang) a.setDang((POSES.dang as any)[dang]);
@@ -73,6 +79,83 @@ const act = (a as any).actions.get(clip) as THREE.AnimationAction;
   return true;
 };
 if (q.get("seq")) sequence(q.get("seq")!);
+// Gió (video duyệt S27): vùng gió (vung, huong), bạn đồng hành dùng lốc xoáy (ban, bw, bdang, bpos), miệng gió.
+const wind = new WindField(POSES.gio);
+const env: WindEnv = { vung: q.get("vung") ?? "mo-ngoc", huong: q.get("huong") ? +q.get("huong")! : undefined };
+const bw = (q.get("bw") ?? "sword") as keyof typeof MODELS.hoatAnh,
+  bp = (q.get("bpos") ?? "-1.5,0.4").split(",").map(Number);
+const ban = q.get("ban") ? await VrmActor.load(q.get("ban")!, bw as any, null) : null;
+if (ban) {
+  scene.add(ban.obj);
+  ban.obj.position.set(bp[0], ban.obj.userData.yOff ?? 0, bp[1]);
+  ban.obj.rotation.y = Math.atan2(-bp[0], -bp[1]) + 0.6;
+  if (q.get("bdang")) ban.setDang((POSES.dang as any)[q.get("bdang")!]);
+  ban.poseIn = { mode: "ready", freeL: true, freeR: false };
+  ban.play(MODELS.hoatAnh[bw].ready ?? MODELS.hoatAnh[bw].stand, { fade: 0 });
+}
+/** Vệt gió: đoạn thẳng trôi theo gió tại chỗ (thấy hướng gió nền, xung lốc xoáy, gió đẩy lên). */
+const NS = 110,
+  sp = new Float32Array(NS * 6),
+  sv = Array.from({ length: NS }, () => ({ p: new THREE.Vector3(), age: 9, life: 1 }));
+const sg = new THREE.BufferGeometry();
+sg.setAttribute("position", new THREE.BufferAttribute(sp, 3));
+const streaks = new THREE.LineSegments(
+  sg,
+  new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.75, depthWrite: false }),
+);
+streaks.frustumCulled = false;
+scene.add(streaks);
+const sw = new THREE.Vector3();
+const blowStreaks = (dt: number, e: WindEnv, t: number) => {
+  sv.forEach((o, i) => {
+    o.age += dt;
+    if (o.age > o.life || Math.abs(o.p.x) > 3 || Math.abs(o.p.z) > 3 || o.p.y > 2.6) {
+      o.p.set((Math.random() - 0.5) * 5, 0.1 + Math.random() * 2, (Math.random() - 0.5) * 5);
+      o.age = 0;
+      o.life = 0.6 + Math.random() * 0.8;
+    }
+    wind.sample(sw, o.p, t, e);
+    const L = sw.length();
+    o.p.addScaledVector(sw, dt * 3.2);
+    const k = L < 0.06 ? 0 : Math.min(1, L * 0.9) * Math.sin((Math.PI * o.age) / o.life);
+    sp.set([o.p.x, o.p.y, o.p.z, o.p.x - sw.x * 0.35 * k, o.p.y - sw.y * 0.35 * k, o.p.z - sw.z * 0.35 * k], i * 6);
+  });
+  sg.attributes.position.needsUpdate = true;
+};
+/** Lốc xoáy và miệng gió (hình đơn giản). */
+const mint = (o: number) =>
+  new THREE.MeshBasicMaterial({
+    color: 0xbdf6e4,
+    transparent: true,
+    opacity: o,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  });
+const vortex = new THREE.Group();
+for (let i = 0; i < 4; i++) {
+  const r = new THREE.Mesh(new THREE.TorusGeometry(0.35 + i * 0.12, 0.02, 6, 28, Math.PI * 1.4), mint(0.7));
+  r.rotation.x = Math.PI / 2;
+  r.position.y = 0.2 + i * 0.45;
+  vortex.add(r);
+}
+vortex.visible = false;
+scene.add(vortex);
+const vent = new THREE.Group();
+vent.add(
+  new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.5, 0.06, 20), new THREE.MeshBasicMaterial({ color: 0x6a8a7a })),
+);
+const ventIn = new THREE.Mesh(new THREE.CircleGeometry(0.34, 20), new THREE.MeshBasicMaterial({ color: 0x2a3a34 }));
+ventIn.rotation.x = -Math.PI / 2;
+ventIn.position.y = 0.035;
+vent.add(ventIn);
+const ventR = [0, 1, 2].map(() => {
+  const r = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.02, 6, 24), mint(0.8));
+  r.rotation.x = Math.PI / 2;
+  vent.add(r);
+  return r;
+});
+vent.visible = false;
+scene.add(vent);
 (window as any).ready = true;
 
 /**
@@ -96,12 +179,16 @@ function sequence(src: string) {
     dash: "Lướt",
     jump: "Nhảy",
     ready: "Thế chờ",
+    vortex: "Bạch Vũ dùng Lốc Xoáy Lông Vũ cạnh Hạ Vy",
+    vent: "Đứng trên miệng gió",
+    nguoc: "Chạy ngược gió",
   };
   const A = MODELS.hoatAnh[w as keyof typeof MODELS.hoatAnh];
   const segs = src.split(",").map((x) => {
     const [k, d] = x.split(":");
     return { k, d: d ? +d : WIN[k] / (k.startsWith("atk") ? A.speed : 1) };
   });
+  let vAge = 9;
   let T = 0,
     lastAct = q.get("nov") ? -99 : 0,
     si = -1,
@@ -114,7 +201,7 @@ function sequence(src: string) {
   const fx = new HeroFx();
   fx.color(q.get("col") ?? "#7fd0ff", q.get("col2") ?? q.get("col") ?? "#bfe8ff");
   scene.add(fx.group);
-  const MOVE = new Set(["run", "sprint", "turn"]);
+  const MOVE = new Set(["run", "sprint", "turn", "nguoc"]);
   const play = (c: string, o: { once?: boolean; speed?: number; fade?: number; restart?: boolean } = {}) => {
     if (c === cur && !o.restart) return;
     cur = c;
@@ -133,6 +220,12 @@ function sequence(src: string) {
         const c = s.k.startsWith("atk") ? A.atk[+s.k.slice(3) - 1] : s.k === "skill" ? A.skill : A.burst;
         play(c, { once: true, speed: a!.duration(c) / s.d, fade: 0.08, restart: true });
       }
+      if (s.k === "vortex" && ban) {
+        vAge = 0;
+        ban.play(MODELS.hoatAnh[bw].skill, { once: true, fade: 0.08, restart: true });
+        ban.poseIn = { mode: "act", freeL: true, freeR: false };
+        wind.pulse("skill", bp[0], bp[1]);
+      }
     }
     const s = segs[Math.min(si, segs.length - 1)];
     const out = T - lastAct < POSES.vuKhi.cho || s.k === "charge";
@@ -150,7 +243,7 @@ function sequence(src: string) {
     else a!.obj.rotation.y *= 1 - Math.min(1, dt * 3);
     if (!WIN[s.k]) {
       if (s.k === "charge") play(A.charge);
-      else if (s.k === "run" || s.k === "turn") play(armed ? (A.move?.run ?? "run") : "run");
+      else if (s.k === "run" || s.k === "turn" || s.k === "nguoc") play(armed ? (A.move?.run ?? "run") : "run");
       else if (s.k === "sprint") play(armed ? (A.move?.sprint ?? "sprint") : "sprint");
       else if (s.k === "stop") play(armed ? (A.move?.stop ?? "runStop") : "runStop", { once: true, fade: 0.1 });
       else if (s.k === "dash") play("dash", { once: true, speed: 1.3, fade: 0.06 });
@@ -196,7 +289,44 @@ function sequence(src: string) {
         : WIN[s.k] && segT < 0.2 && T - lastAct < 0.2
           ? ""
           : "");
+    // Gió: nền theo vùng; chạy ngược gió = gió thổi ngược hướng mặt (-Z); lốc xoáy giữa hai người; miệng gió dưới chân.
+    vAge += dt;
+    const vc = { x: bp[0] * 0.45, z: bp[1] * 0.45 };
+    const nguon: WindSrc[] = vAge < 2.5 ? [{ k: "vortex", x: vc.x, z: vc.z, age: vAge, life: 2.5 }] : [];
+    const e: WindEnv = {
+      ...env,
+      huong: s.k === "nguoc" ? -90 : env.huong,
+      nguon,
+      mieng: s.k === "vent" ? [{ x: 0, z: 0 }] : [],
+    };
+    wind.tick(dt);
+    wind.sample(a!.cloth.wind, a!.obj.position, T, e);
+    blowStreaks(dt, e, T);
+    vortex.visible = vAge < 2.5;
+    vortex.position.set(vc.x, 0, vc.z);
+    vortex.rotation.y += dt * 7;
+    vortex.scale.setScalar(Math.min(1, vAge / 0.2) * Math.min(1, (2.5 - vAge) / 0.4));
+    vent.visible = s.k === "vent";
+    ventR.forEach((r, i) => {
+      const k = (T * 0.9 + i / 3) % 1;
+      r.position.y = 0.1 + k * 1.8;
+      r.scale.setScalar(1 + k * 0.6);
+      (r.material as THREE.MeshBasicMaterial).opacity = 0.8 * (1 - k);
+    });
+    if (ban) {
+      wind.sample(ban.cloth.wind, ban.obj.position, T, e);
+      if (ban.poseIn.mode === "act" && vAge > 1.1) {
+        ban.play(MODELS.hoatAnh[bw].ready ?? MODELS.hoatAnh[bw].stand, { fade: 0.3 });
+        ban.poseIn = { mode: "ready", freeL: true, freeR: false };
+      }
+      ban.update(dt);
+    }
+    const wl = a!.cloth.wind.length();
+    lab.textContent += ` · gió ${wl.toFixed(2)} · váy lệch tối đa ${Math.round(a!.cloth.maxDev)}°`;
     a!.update(dt);
+    (window as any).clothMax = Math.max((window as any).clothMax ?? 0, a!.cloth.maxDev);
+    (window as any).clothDev = a!.cloth.maxDev;
+    (window as any).segK = s.k;
     const fin = s.k === "atk3" || s.k === "skill" || s.k === "burst";
     fx.update(a!, { acting: !!WIN[s.k], fin, dash: s.k === "dash" }, dt);
     gl.render(scene, cam);
