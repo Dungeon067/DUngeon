@@ -33,7 +33,8 @@ pb = arm.data.bones
 hip = (A @ pb[bone("left_upper_leg")].head_local).z
 ank = (A @ pb[bone("left_foot")].head_local).z
 waist = (A @ pb[bone("spine")].head_local)
-crown = max((o.matrix_world @ v.co).z for o in meshes if not o.name.startswith("Hair") for v in o.data.vertices)
+# đỉnh đầu lấy từ mặt/thân, bỏ tóc và phụ kiện (kẹp, đèn trên búi...) để không làm lệch tỉ lệ chân
+crown = max((o.matrix_world @ v.co).z for o in meshes if o.name in ("Face", "Body") for v in o.data.vertices)
 foot = min((o.matrix_world @ v.co).z for o in meshes for v in o.data.vertices)
 leg0 = (hip - foot) / (crown - foot)
 k = 1.0
@@ -88,6 +89,14 @@ pos = {eb.name: (Ai @ move(A @ eb.head, True), Ai @ move(A @ eb.tail, True)) for
 for eb in arm.data.edit_bones:
     eb.head, eb.tail = pos[eb.name]
 bpy.ops.object.mode_set(mode="OBJECT")
+# collider gắn trên đùi/cẳng chân: offset tính theo trục xương, kéo giãn cùng hệ số k để vẫn phủ hết chân
+legb = {bone(n) for n in ("left_upper_leg", "right_upper_leg", "left_lower_leg", "right_lower_leg")}
+for col in arm.data.vrm_addon_extension.spring_bone1.colliders:
+    if col.node.bone_name in legb:
+        sh = col.shape.capsule if col.shape_type == "Capsule" else col.shape.sphere
+        sh.offset = [x * k for x in sh.offset]
+        if col.shape_type == "Capsule":
+            sh.tail = [x * k for x in sh.tail]
 crown2 = crown + d
 print("HERO leg %.3f -> %.3f  k=%.3f  H %.3f -> %.3f" % (leg0, (hip + d - foot) / (crown2 - foot), k, crown - foot, crown2 - foot))
 if a.blend:
