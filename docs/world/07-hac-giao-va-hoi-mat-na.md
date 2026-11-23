@@ -12,7 +12,7 @@ Nguyên tắc chung: **không ác vô cớ**. Người chơi phải hiểu đư�
 
 | Mục               | Nội dung                                                                                             |
 | ----------------- | ---------------------------------------------------------------------------------------------------- |
-| Loài              | Giao, rồng nước không sừng, thân dài                                                                 |
+| Loài              | Giao, rồng nước thân dài. Giao vốn không sừng; Hắc Giao mọc đôi sừng cong sau khi hút Nguyện Cặn     |
 | Thành phần        | Nguyện Cặn đông đặc: hàng triệu lời ước không ai nghe trong sáu trăm năm                             |
 | Nơi ở             | Hang Hắc Giao dưới núi phía bắc Đảo Lạc, nối xuống Biển Lặng                                         |
 | Xuất hiện lần đầu | NS 1046, Vịnh Khơi [Công khai]                                                                       |

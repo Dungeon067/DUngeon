@@ -1,0 +1,9 @@
+{
+  "reshape": "python tools/vrm/reshape_face.py suongmai_raw.vrm suongmai_vroid.vrm short=0.15 p=2.2",
+  "blush": "python tools/vrm/paint_blush.py textures/suongmai_face_blush.png size=1024 a=0.5 rx=0.065 ry=0.034 v=0.65 skin=<texture da mat goc>",
+  "short": 0.15,
+  "p": 2.2,
+  "alpha": 0.75,
+  "cheek": 0.04,
+  "back": 0.003
+}
