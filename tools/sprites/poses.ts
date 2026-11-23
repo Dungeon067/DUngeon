@@ -32,7 +32,13 @@ const run = range(8).map((i) => {
   );
 });
 
-const shot = (draw: number, extra: Pose = {}): Pose => ({ bow: "aim", draw, arrow: draw > 0.05, eyes: "focus", ...extra });
+const shot = (draw: number, extra: Pose = {}): Pose => ({
+  bow: "aim",
+  draw,
+  arrow: draw > 0.05,
+  eyes: "focus",
+  ...extra,
+});
 
 export const BOW_ANIMS: Record<string, AnimDef> = {
   idle: {
@@ -137,15 +143,26 @@ export const BOW_ANIMS: Record<string, AnimDef> = {
   },
   jumpAir: {
     loop: true,
-    frames: [f({ by: -2, liftA: 1, liftB: 0.6, flare: 2, sway: -1, swing: 0.5 }, 120), f({ by: -2, liftA: 0.8, liftB: 1, flare: 3, sway: -2, swing: -0.5 }, 120)],
+    frames: [
+      f({ by: -2, liftA: 1, liftB: 0.6, flare: 2, sway: -1, swing: 0.5 }, 120),
+      f({ by: -2, liftA: 0.8, liftB: 1, flare: 3, sway: -2, swing: -0.5 }, 120),
+    ],
   },
   jumpLand: {
     loop: false,
-    frames: [f({ crouch: 3, flare: 3, sway: 2 }, 50), f({ crouch: 2, flare: 2, sway: 1 }, 60), f({ crouch: 1, flare: 1 }, 70)],
+    frames: [
+      f({ crouch: 3, flare: 3, sway: 2 }, 50),
+      f({ crouch: 2, flare: 2, sway: 1 }, 60),
+      f({ crouch: 1, flare: 1 }, 70),
+    ],
   },
   hurt: {
     loop: false,
-    frames: [f({ lean: -3, by: 1, eyes: "hurt", flare: 2, sway: 2 }, 60), f({ lean: -2, by: 1, eyes: "hurt", flare: 1, sway: 1 }, 80), f({ lean: -1, eyes: "closed" }, 100)],
+    frames: [
+      f({ lean: -3, by: 1, eyes: "hurt", flare: 2, sway: 2 }, 60),
+      f({ lean: -2, by: 1, eyes: "hurt", flare: 1, sway: 1 }, 80),
+      f({ lean: -1, eyes: "closed" }, 100),
+    ],
   },
   die: {
     loop: false,

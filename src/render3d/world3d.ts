@@ -18,9 +18,29 @@ const hash = (x: number, y: number, s = 0) => {
 };
 
 /** Ô texture trong atlas (8 cột × 2 hàng, mỗi ô 16×16 px). */
-export const TEX = { grass: 0, path: 1, sand: 2, flower: 3, stone: 4, cliff: 5, plank: 6, ledge: 7, bed: 8, cliffSand: 9, dark: 10, roof: 11 };
+export const TEX = {
+  grass: 0,
+  path: 1,
+  sand: 2,
+  flower: 3,
+  stone: 4,
+  cliff: 5,
+  plank: 6,
+  ledge: 7,
+  bed: 8,
+  cliffSand: 9,
+  dark: 10,
+  roof: 11,
+};
 
-function paint(c: CanvasRenderingContext2D, k: number, base: string, dots: [string, number][], seed: number, fn?: (x: number, y: number) => string | null) {
+function paint(
+  c: CanvasRenderingContext2D,
+  k: number,
+  base: string,
+  dots: [string, number][],
+  seed: number,
+  fn?: (x: number, y: number) => string | null,
+) {
   const ox = (k % 8) * T,
     oy = Math.floor(k / 8) * T;
   c.fillStyle = base;
@@ -51,22 +71,115 @@ export function makeAtlas(): THREE.Texture {
   cv.width = T * 8;
   cv.height = T * 2;
   const c = cv.getContext("2d")!;
-  paint(c, TEX.grass, "#5fae4e", [["#4e9842", 0.18], ["#77c25a", 0.12], ["#8fd468", 0.03]], 1, (x, y) =>
-    hash(x, y, 9) < 0.05 && y > 0 ? "#3f8a3a" : null,
+  paint(
+    c,
+    TEX.grass,
+    "#5fae4e",
+    [
+      ["#4e9842", 0.18],
+      ["#77c25a", 0.12],
+      ["#8fd468", 0.03],
+    ],
+    1,
+    (x, y) => (hash(x, y, 9) < 0.05 && y > 0 ? "#3f8a3a" : null),
   );
-  paint(c, TEX.path, "#c9a46a", [["#b48e58", 0.2], ["#dcbb82", 0.12], ["#9c7a4a", 0.04]], 2);
-  paint(c, TEX.sand, "#e8d39a", [["#d6be84", 0.2], ["#f4e4b4", 0.12]], 3);
-  paint(c, TEX.flower, "#5fae4e", [["#4e9842", 0.16], ["#f7f0f2", 0.04], ["#f28cb0", 0.04], ["#ffd65a", 0.03]], 4);
-  paint(c, TEX.stone, "#8e95a3", [["#7a8190", 0.22], ["#a7aebb", 0.14], ["#666c7a", 0.05]], 5);
-  paint(c, TEX.cliff, "#8a6a4c", [["#76583e", 0.24], ["#9c7b5a", 0.12]], 6, (x, y) =>
-    y < 2 ? (y === 0 ? "#77c25a" : "#4e9842") : y % 5 === 4 && hash(x, y, 7) < 0.7 ? "#654a34" : null,
+  paint(
+    c,
+    TEX.path,
+    "#c9a46a",
+    [
+      ["#b48e58", 0.2],
+      ["#dcbb82", 0.12],
+      ["#9c7a4a", 0.04],
+    ],
+    2,
   );
-  paint(c, TEX.plank, "#a8743f", [["#94632f", 0.18], ["#bb8650", 0.1]], 7, (x, y) =>
-    y % 4 === 3 ? "#6e4823" : x === (y < 8 ? 5 : 11) && y % 4 !== 3 ? "#7c5229" : null,
+  paint(
+    c,
+    TEX.sand,
+    "#e8d39a",
+    [
+      ["#d6be84", 0.2],
+      ["#f4e4b4", 0.12],
+    ],
+    3,
   );
-  paint(c, TEX.ledge, "#7fa05a", [["#6c8e4c", 0.2], ["#98b86c", 0.12], ["#8e95a3", 0.05]], 8);
-  paint(c, TEX.bed, "#3e7d8a", [["#356d78", 0.25], ["#4a8e98", 0.12]], 9);
-  paint(c, TEX.cliffSand, "#c8b07a", [["#b39b68", 0.25], ["#d8c48e", 0.1]], 10);
+  paint(
+    c,
+    TEX.flower,
+    "#5fae4e",
+    [
+      ["#4e9842", 0.16],
+      ["#f7f0f2", 0.04],
+      ["#f28cb0", 0.04],
+      ["#ffd65a", 0.03],
+    ],
+    4,
+  );
+  paint(
+    c,
+    TEX.stone,
+    "#8e95a3",
+    [
+      ["#7a8190", 0.22],
+      ["#a7aebb", 0.14],
+      ["#666c7a", 0.05],
+    ],
+    5,
+  );
+  paint(
+    c,
+    TEX.cliff,
+    "#8a6a4c",
+    [
+      ["#76583e", 0.24],
+      ["#9c7b5a", 0.12],
+    ],
+    6,
+    (x, y) => (y < 2 ? (y === 0 ? "#77c25a" : "#4e9842") : y % 5 === 4 && hash(x, y, 7) < 0.7 ? "#654a34" : null),
+  );
+  paint(
+    c,
+    TEX.plank,
+    "#a8743f",
+    [
+      ["#94632f", 0.18],
+      ["#bb8650", 0.1],
+    ],
+    7,
+    (x, y) => (y % 4 === 3 ? "#6e4823" : x === (y < 8 ? 5 : 11) && y % 4 !== 3 ? "#7c5229" : null),
+  );
+  paint(
+    c,
+    TEX.ledge,
+    "#7fa05a",
+    [
+      ["#6c8e4c", 0.2],
+      ["#98b86c", 0.12],
+      ["#8e95a3", 0.05],
+    ],
+    8,
+  );
+  paint(
+    c,
+    TEX.bed,
+    "#3e7d8a",
+    [
+      ["#356d78", 0.25],
+      ["#4a8e98", 0.12],
+    ],
+    9,
+  );
+  paint(
+    c,
+    TEX.cliffSand,
+    "#c8b07a",
+    [
+      ["#b39b68", 0.25],
+      ["#d8c48e", 0.1],
+    ],
+    10,
+  );
   paint(c, TEX.dark, "#3b3440", [["#2e2833", 0.3]], 11);
   paint(c, TEX.roof, "#b0503e", [["#983f30", 0.2]], 12, (x, y) => (y % 4 === 3 ? "#7a3024" : null));
   const t = new THREE.CanvasTexture(cv);
@@ -131,7 +244,17 @@ class Geo {
 }
 
 /** Vách đứng chia theo từng bậc để texture vách không bị kéo giãn. */
-function wall(G: Geo, ax: number, az: number, bx: number, bz: number, y0: number, y1: number, nrm: number[], tex: number) {
+function wall(
+  G: Geo,
+  ax: number,
+  az: number,
+  bx: number,
+  bz: number,
+  y0: number,
+  y1: number,
+  nrm: number[],
+  tex: number,
+) {
   let y = y1;
   while (y > y0 + 0.001) {
     const lo = Math.max(y0, y - LV * 2);
@@ -196,7 +319,13 @@ export function buildWater(): { mesh: THREE.Mesh; tick(t: number): void } {
   tex.colorSpace = THREE.SRGBColorSpace;
   const S = 400;
   tex.repeat.set(S / 2, S / 2);
-  const mat = new THREE.MeshPhongMaterial({ map: tex, transparent: true, opacity: 0.86, shininess: 60, specular: 0x9fd8ff });
+  const mat = new THREE.MeshPhongMaterial({
+    map: tex,
+    transparent: true,
+    opacity: 0.86,
+    shininess: 60,
+    specular: 0x9fd8ff,
+  });
   const mesh = new THREE.Mesh(new THREE.PlaneGeometry(S, S), mat);
   mesh.rotation.x = -Math.PI / 2;
   mesh.position.set(MW / 2, WATER_Y, MH / 2);
@@ -235,9 +364,13 @@ export function buildProps(W: any, q: { shadows: boolean }, opened: (i: number) 
       oz = (hash(x, y, 5) - 0.5) * 0.2;
     m4.makeScale(s, s, s).setPosition(x + 0.5 + ox, 0, y + 0.5 + oz);
     trunk.setMatrixAt(i, m4);
-    m4.makeRotationY(hash(x, y, 6) * 6).multiply(new THREE.Matrix4().makeScale(s, s * 1.05, s)).setPosition(x + 0.5 + ox, 0.95 * s, y + 0.5 + oz);
+    m4.makeRotationY(hash(x, y, 6) * 6)
+      .multiply(new THREE.Matrix4().makeScale(s, s * 1.05, s))
+      .setPosition(x + 0.5 + ox, 0.95 * s, y + 0.5 + oz);
     leaf.setMatrixAt(i, m4);
-    m4.makeRotationY(hash(x, y, 7) * 6).multiply(new THREE.Matrix4().makeScale(s, s, s)).setPosition(x + 0.5 + ox, 1.38 * s, y + 0.5 + oz);
+    m4.makeRotationY(hash(x, y, 7) * 6)
+      .multiply(new THREE.Matrix4().makeScale(s, s, s))
+      .setPosition(x + 0.5 + ox, 1.38 * s, y + 0.5 + oz);
     leaf2.setMatrixAt(i, m4);
     col.setHSL(0.27 + hash(x, y, 8) * 0.06, 0.55, 0.34 + hash(x, y, 9) * 0.08);
     leaf.setColorAt(i, col);
@@ -274,11 +407,17 @@ export function buildProps(W: any, q: { shadows: boolean }, opened: (i: number) 
   }
   const portal = (p: any, c: number) => {
     if (!p) return;
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.12, 4, 10), new THREE.MeshLambertMaterial({ color: 0x8d8698, flatShading: true }));
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(0.55, 0.12, 4, 10),
+      new THREE.MeshLambertMaterial({ color: 0x8d8698, flatShading: true }),
+    );
     ring.position.set(p.x + 0.5, 0.65, p.y + 0.8);
     ring.castShadow = q.shadows;
     grp.add(ring);
-    const core = new THREE.Mesh(new THREE.CircleGeometry(0.45, 8), new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.8 }));
+    const core = new THREE.Mesh(
+      new THREE.CircleGeometry(0.45, 8),
+      new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.8 }),
+    );
     core.position.copy(ring.position);
     grp.add(core);
     lamps.push({ x: p.x + 0.5, y: 0.8, z: p.y + 1.1, c });
@@ -311,7 +450,11 @@ export function buildProps(W: any, q: { shadows: boolean }, opened: (i: number) 
     grp.add(deck);
     for (const side of [0, 1]) {
       const rail = new THREE.Mesh(new THREE.BoxGeometry(along ? w : 0.06, 0.22, along ? 0.06 : dz), flat(0x7c5229));
-      rail.position.set(d.x + (along ? w / 2 : side ? w - 0.03 : 0.03), y + 0.11, d.y + (along ? (side ? dz - 0.03 : 0.03) : dz / 2));
+      rail.position.set(
+        d.x + (along ? w / 2 : side ? w - 0.03 : 0.03),
+        y + 0.11,
+        d.y + (along ? (side ? dz - 0.03 : 0.03) : dz / 2),
+      );
       rail.castShadow = q.shadows;
       grp.add(rail);
     }

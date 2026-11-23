@@ -38,6 +38,16 @@ quests:
     steps:
       - { text: "Hạ quái quanh đảo ({n}/{max})", kind: kills, count: 30, target: camp }
     reward: Xu và tiếng thơm ở chợ đêm
+  - id: ham-bang-biet-cuoi
+    type: phu
+    name: Hầm Băng Biết Cười
+    giver: Bà Tám Lụa
+    desc: Hầm cá của bến Vạn Lưới nóng như lò, cá sắp hỏng cả mẻ. Bà Tám Lụa nhờ cậu tìm Hạ Vy, cô gái mùa hè mà lại mang sức mạnh băng giá. Cô bảo sẽ làm lạnh hầm nếu cậu dọn giúp lũ quái đang rình mùi cá.
+    steps:
+      - { text: Chạm Bia Đá gần nơi xuất phát, kind: objective, id: bia-da, target: statue }
+      - { text: "Dọn quái quanh hầm cá ({n}/{max})", kind: kills, count: 8, target: camp }
+    reward: Hạ Vy (4★ Băng) nhập đội
+    unlock: havy
   - id: hai-nguyen-to
     type: phu
     name: Khi hai ngôi sao gặp nhau

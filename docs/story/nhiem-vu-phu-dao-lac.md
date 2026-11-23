@@ -898,3 +898,21 @@
   emotion: binh_thuong
   text: "Từ hôm ấy, cứ chiều nào gió thổi về phía bắc, trên Bãi Sao Rơi lại có một con diều cá. Ở Trại Bắc, có một người già đứng ở cửa sổ."
 ```
+
+---
+
+## Hầm Băng Biết Cười (S25, id `ham-bang-biet-cuoi`)
+
+- **Loại:** nhận nhân vật. **Địa điểm:** bến Làng Vạn Lưới, gần Hồ Gương.
+- **Mục tiêu:** chạm Bia Đá, rồi dọn 8 con quái quanh hầm cá để Hạ Vy làm lạnh hầm.
+- **Phần thưởng:** **Hạ Vy (4★ Băng) nhập đội miễn phí** (`unlock: havy` trong `content/quests.yaml`). Hạ Vy là nguồn Băng miễn phí cho câu đố Băng của S23. Hạ Vy vẫn ở pool 4★ gacha; ra trùng thì thành Nét Sao.
+- **Ghi chú phối hợp:** S23 chưa merge hệ quest mini nên nhiệm vụ này dùng hệ quest hiện có (S10). Khi S23 merge, chuyển sang hệ của S23 và giữ id.
+
+```yaml
+- speaker: npc_tam_lua
+  emotion: binh_thuong
+  text: "Hầm cá nóng như lò rồi cậu ơi. Đi tìm con bé Hạ Vy giúp bà. Mùa hè mà nó lạnh như đá."
+- speaker: havy
+  emotion: vui
+  text: "Làm lạnh cả hầm à? Được. Nhưng cậu dọn lũ quái rình mùi cá trước, không thì băng tan mất công."
+```

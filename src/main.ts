@@ -1,7 +1,7 @@
 import { DOMAINS, MINI, PZ } from "./data/puzzles";
 import { exitDomain, startDomain } from "./modes/domain";
 import { pulseElement } from "./world/puzzles";
-import { applyRenderer } from "./render3d/select";
+import { applyRenderer, renderer3d } from "./render3d/select";
 import { GS } from "./core/state";
 import { portraitCache } from "./art/chibi";
 import { frame } from "./core/loop";
@@ -71,6 +71,7 @@ if (new URLSearchParams(location.search).has("e2e"))
     __tinhtu: {
       S: GS,
       Server,
+      r3: renderer3d,
       menu: { openMenu, closeMenu, currentScreen },
       pz: { pulse: pulseElement, startDomain, exitDomain, data: { DOMAINS, MINI, PZ } },
     },

@@ -68,9 +68,9 @@ export const START_LEDGES: { dx: number; dy: number; w: number; hgt: number; h: 
 ];
 export const START_GAP = { dx: -2, dy: 4, len: 3 };
 /** Cầu cao (deck) gần điểm xuất phát, nối bệ 2 bậc với một cột đá; đi bộ được ở dưới gầm. */
-export const START_PILLAR = { dx: 0, dy: -6, w: 1, hgt: 2, h: 2 };
+export const START_PILLAR = { dx: 1, dy: -6, w: 1, hgt: 2, h: 2 };
 export const START_DECKS: { dx: number; dy: number; len: number; w: number; h: number; axis: "x" | "y" }[] = [
-  { dx: -4, dy: -6, len: 4, w: 2, h: 2, axis: "x" },
+  { dx: -4, dy: -6, len: 5, w: 2, h: 2, axis: "x" },
 ];
 export function genWorld() {
   const m = new Uint8Array(MW * MH),

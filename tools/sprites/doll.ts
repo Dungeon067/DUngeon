@@ -194,7 +194,10 @@ export function drawDoll(L: Look, d: number, P: Pose, swap = false): Grid {
       px = -ay,
       py = ax;
     const bend = bow === "hang" ? 3 : 4 + draw * 2;
-    const pt = (t: number) => ({ x: bowC.x + px * 12 * t - ax * bend * t * t, y: bowC.y + py * 12 * t - ay * bend * t * t });
+    const pt = (t: number) => ({
+      x: bowC.x + px * 12 * t - ax * bend * t * t,
+      y: bowC.y + py * 12 * t - ay * bend * t * t,
+    });
     let prev = pt(-1);
     for (let i = 1; i <= 12; i++) {
       const q = pt(-1 + i / 6);
@@ -249,8 +252,14 @@ export function drawDoll(L: Look, d: number, P: Pose, swap = false): Grid {
     const foot = 61;
     const k = 1 - s,
       st = stride;
-    const fA = { x: cx - 4 + Math.round(st * 4 * s) + Math.round(s * 2), y: foot - Math.round((P.liftA ?? 0) * 3) + Math.round(st * 1.5 * k) };
-    const fB = { x: cx + 1 - Math.round(st * 4 * s) - Math.round(s * 1), y: foot - Math.round((P.liftB ?? 0) * 3) - Math.round(st * 1.5 * k) };
+    const fA = {
+      x: cx - 4 + Math.round(st * 4 * s) + Math.round(s * 2),
+      y: foot - Math.round((P.liftA ?? 0) * 3) + Math.round(st * 1.5 * k),
+    };
+    const fB = {
+      x: cx + 1 - Math.round(st * 4 * s) - Math.round(s * 1),
+      y: foot - Math.round((P.liftB ?? 0) * 3) - Math.round(st * 1.5 * k),
+    };
     const order = s > 0.5 ? [fB, fA] : [fA, fB];
     for (const f of order) {
       const lx = f.x;
@@ -305,7 +314,8 @@ export function drawDoll(L: Look, d: number, P: Pose, swap = false): Grid {
       ],
       M.hair,
     );
-    for (const x of [cx - 7, cx - 1, cx + 5]) g.line(x - sw, top + 24, x - sw - Math.round(sw / 2), top + 42, M.hair, 1, 0);
+    for (const x of [cx - 7, cx - 1, cx + 5])
+      g.line(x - sw, top + 24, x - sw - Math.round(sw / 2), top + 42, M.hair, 1, 0);
   };
 
   const coat = () => {
