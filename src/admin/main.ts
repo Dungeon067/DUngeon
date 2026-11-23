@@ -11,6 +11,7 @@ import { LOG_KEY, SAVE_KEY, Server, powerOf, weaponList } from "../server/server
 import { button, field, h, tabs, tag, toggle } from "../ui/ds";
 import { icon } from "../ui/icons/icons";
 import { filterHistory } from "../ui/menu/logic";
+import { DOMAINS, MINI, PUZZLES } from "../data/puzzles";
 import { checkPassword, endSession, hasSession, startSession } from "./auth";
 
 type Kid = Node | string | null;
@@ -21,6 +22,7 @@ const SECTIONS = [
   { id: "gm", name: "Chế độ GM", icon: "cai-dat" },
   { id: "uy-thac", name: "Ủy thác", icon: "uy-thac" },
   { id: "kinh-te", name: "Kinh tế", icon: "da-sao" },
+  { id: "cau-do", name: "Câu đố, bí cảnh", icon: "ban-do" },
   { id: "bo-cuoc", name: "Điểm bỏ cuộc", icon: "canh-bao" },
   { id: "nhat-ky", name: "Nhật ký request", icon: "lich-su" },
 ] as const;
@@ -343,6 +345,78 @@ function daily() {
   ];
 }
 
+/* S23: xem và đặt lại trạng thái câu đố, quest mini, bí cảnh để thử. Thưởng và nhân vật đã nhận không bị thu hồi. */
+function puzzles() {
+  const S = Server.P.puz;
+  const reset = (id: string | undefined, label: string) => {
+    const b = button("Đặt lại", {
+      variant: "ghost",
+      icon: "lam-moi",
+      onClick: () => {
+        if (Server.req("resetPuzzles", { id }).ok) done(`Đã đặt lại ${label}. Tải lại game để thấy thay đổi.`);
+      },
+    });
+    b.dataset.reset = id ?? "all";
+    return b;
+  };
+  const EL_VI = (e: string) => EL[e as keyof typeof EL]?.vi ?? e;
+  return [
+    card("Tổng quan", [
+      h("div", { class: "tt-admin-stats" }, [
+        stat("Câu đố đã giải", `${S.solved.length}/${PUZZLES.cauDo.length}`),
+        stat("Quest mini xong", `${S.mini.length}/${MINI.length}`),
+        stat("Bí cảnh xong", `${DOMAINS.filter((d) => S.domains[d.id]?.done).length}/${DOMAINS.length}`),
+      ]),
+      h("p", { class: "tt-admin-note" }, [
+        "Đặt lại chỉ xóa tiến độ, không thu hồi Đá Sao, rương hay nhân vật đã nhận. Game đang mở cần tải lại.",
+      ]),
+      h("div", { id: "admPuzResetAll" }, [reset(undefined, "toàn bộ câu đố, quest mini, bí cảnh")]),
+    ]),
+    card("Bí cảnh", [
+      table(
+        ["Bí cảnh", "Nguyên tố", "Phòng đã qua", "Trạng thái", ""],
+        DOMAINS.map((d) => {
+          const D = S.domains[d.id];
+          return [
+            d.ten,
+            EL_VI(d.nguyenTo),
+            `${D?.room ?? 0}/${d.phong.length + 2}`,
+            tag(D?.done ? "Đã xong" : D ? "Đang làm" : "Chưa vào", D?.done ? "ok" : undefined),
+            reset(d.id, d.ten),
+          ];
+        }),
+        [2],
+      ),
+    ]),
+    card("Quest mini", [
+      table(
+        ["Quest", "NPC", "Trạng thái", ""],
+        MINI.map((m) => [
+          m.ten,
+          m.npc,
+          tag(
+            S.mini.includes(m.id) ? "Đã xong" : S.talked.includes(m.id) ? "Đã nhận" : "Chưa nhận",
+            S.mini.includes(m.id) ? "ok" : undefined,
+          ),
+          reset(m.id, m.ten),
+        ]),
+      ),
+    ]),
+    card("Câu đố", [
+      table(
+        ["Câu đố", "Vùng", "Loại", "Trạng thái", ""],
+        PUZZLES.cauDo.map((p) => [
+          p.ten,
+          p.vung,
+          p.batBuoc ? "Bắt buộc" : "Tùy chọn",
+          tag(S.solved.includes(p.id) ? "Đã giải" : "Chưa giải", S.solved.includes(p.id) ? "ok" : undefined),
+          reset(p.id, p.ten),
+        ]),
+      ),
+    ]),
+  ];
+}
+
 const ECON_NAME: Record<string, string> = {
   "ra:uoc": "Ước nguyện",
   "vao:thuong": "Thưởng chung",
@@ -351,6 +425,9 @@ const ECON_NAME: Record<string, string> = {
   "vao:boss": "Hắc Giao",
   "vao:uy-thac": "Ủy thác",
   "vao:admin": "Admin cấp",
+  "vao:cau-do": "Câu đố nguyên tố",
+  "vao:quest-mini": "Quest mini",
+  "vao:bi-canh": "Bí cảnh",
 };
 function econ() {
   const e = Server.P.econ;
@@ -536,6 +613,7 @@ const RENDER: Record<SecId, () => Kid[]> = {
   gm,
   "uy-thac": daily,
   "kinh-te": econ,
+  "cau-do": puzzles,
   "bo-cuoc": quits,
   "nhat-ky": logs,
 };

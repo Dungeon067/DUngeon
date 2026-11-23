@@ -3,6 +3,7 @@ import { TAU, clamp } from "../../../core/util";
 import { MENU } from "../../../data/menu-content";
 import { FOG, FOG_N, Server } from "../../../server/server";
 import { MH, MW, TS } from "../../../world/map";
+import { MARK_COL, isMiniTarget, miniTargetXY, puzzleMarks } from "../../../world/puzzle-marks";
 import { button, h, toast } from "../../ds";
 import { anchorXY, seen } from "../anchor";
 import { inCombat } from "../logic";
@@ -12,12 +13,13 @@ import { closeMenu, registerScreen, rerender } from "../shell";
 /* Bản đồ lớn (S10): thu phóng, kéo, sương bản đồ theo ô đã đi qua, biểu tượng, dịch chuyển nhanh tới
    Bia Đá đã mở (Bia Đá nằm trong vùng đã tan sương), đánh dấu tự do. */
 interface Poi {
-  kind: "statue" | "chest" | "tower" | "gate" | "npc" | "mark" | "you" | "point";
+  kind: "statue" | "chest" | "tower" | "gate" | "npc" | "mark" | "you" | "point" | "puzzle" | "domain" | "quest";
   x: number;
   y: number;
   name: string;
   info?: string;
   i?: number;
+  col?: string;
 }
 const COL: Record<string, string> = {
   statue: "#9fe8ff",
@@ -27,6 +29,9 @@ const COL: Record<string, string> = {
   npc: "#ff9ad5",
   mark: "#7dffb2",
   you: "#ffffff",
+  puzzle: MARK_COL.puzzle,
+  domain: MARK_COL.domain,
+  quest: MARK_COL.quest,
 };
 const LEGEND: [string, string][] = [
   ["statue", "Bia Đá (chạm vào để dịch chuyển)"],
@@ -35,6 +40,9 @@ const LEGEND: [string, string][] = [
   ["gate", "Hang Hắc Giao"],
   ["npc", "Nhân vật quan trọng"],
   ["mark", "Điểm bạn đánh dấu"],
+  ["puzzle", "Câu đố nguyên tố (xám: đã giải)"],
+  ["domain", "Cửa bí cảnh (xám: đã xong)"],
+  ["quest", "Quest mini"],
 ];
 
 const V = { z: 1, x: MW / 2, y: MH / 2 };
@@ -44,8 +52,10 @@ let cv: HTMLCanvasElement | null = null;
 export const statueOpen = (i: number, P: any = Server.P, M: any = GS.WORLD) =>
   i === 0 || (!!M?.statues[i] && seen(P.fog, M.statues[i].x, M.statues[i].y));
 
+const islandMap = () => (GS.G?.map && !GS.G.map.domain ? GS.G.map : GS.WORLD);
+
 function pois(): Poi[] {
-  const M = GS.G?.map ?? GS.WORLD,
+  const M = islandMap(),
     P = Server.P,
     out: Poi[] = [];
   if (!M) return out;
@@ -64,6 +74,9 @@ function pois(): Poi[] {
     if (!P.chests.includes(i) && seen(P.fog, c.x, c.y))
       out.push({ kind: "chest", x: c.x + 0.5, y: c.y + 0.5, name: "Rương báu", info: "Đã thấy nhưng chưa mở.", i });
   });
+  for (const k of puzzleMarks(M))
+    if (seen(P.fog, k.x, k.y) || k.kind === "quest")
+      out.push({ kind: k.kind, x: k.x, y: k.y, name: k.name, info: k.info, col: k.col });
   if (seen(P.fog, M.tower.x, M.tower.y))
     out.push({
       kind: "tower",
@@ -87,13 +100,15 @@ function pois(): Poi[] {
   P.marks.forEach((m: any, i: number) =>
     out.push({ kind: "mark", x: m.x, y: m.y, name: m.label, info: "Điểm đánh dấu của bạn.", i }),
   );
-  if (GS.G?.p) out.push({ kind: "you", x: GS.G.p.x / TS, y: GS.G.p.y / TS, name: "Vị trí của bạn" });
+  if (GS.G?.p && !GS.G.map?.domain)
+    out.push({ kind: "you", x: GS.G.p.x / TS, y: GS.G.p.y / TS, name: "Vị trí của bạn" });
   return out;
 }
 
 function targetXY(t: string): [number, number] | null {
-  const M = GS.G?.map ?? GS.WORLD;
+  const M = islandMap();
   if (!M) return null;
+  if (isMiniTarget(t)) return miniTargetXY(t, M);
   if (t === "tower" || t === "gate") return anchorXY(t, M);
   const p = GS.G?.p ? [GS.G.p.x / TS, GS.G.p.y / TS] : [M.cx, M.cy];
   const list: any[] =
@@ -130,7 +145,7 @@ function clampView() {
 function draw() {
   if (!cv || !cv.isConnected) return;
   const c = cv.getContext("2d")!,
-    M = GS.G?.map ?? GS.WORLD,
+    M = islandMap(),
     s = scale(),
     W = cv.width,
     H = cv.height;
@@ -162,7 +177,7 @@ function draw() {
     c.beginPath();
     c.arc(X(p.x), Y(p.y), r + 2, 0, TAU);
     c.fill();
-    c.fillStyle = COL[p.kind]!;
+    c.fillStyle = p.col ?? COL[p.kind]!;
     c.beginPath();
     if (p.kind === "mark") {
       c.moveTo(X(p.x), Y(p.y) - r - 3);

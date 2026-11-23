@@ -33,6 +33,12 @@ function withContent(o: unknown) {
     if (v.banner && typeof v.banner === "object")
       for (const k of ["gia", "noiBat"]) if (v.banner[k] === undefined) v.banner[k] = clone(b.banner[k]);
   }
+  // Bản chỉnh lưu trước S23 thiếu rương câu đố và nguồn thu câu đố: lấy từ file.
+  const th = e?.game?.thuong,
+    tn = e?.thietKe?.thuNhap;
+  if (th && typeof th === "object" && th.ruongCauDo === undefined)
+    th.ruongCauDo = clone(ECON_BASE.game.thuong.ruongCauDo);
+  if (tn && typeof tn === "object" && tn.cauDo === undefined) tn.cauDo = clone(ECON_BASE.thietKe.thuNhap.cauDo);
   return e;
 }
 

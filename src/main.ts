@@ -1,3 +1,6 @@
+import { DOMAINS, MINI, PZ } from "./data/puzzles";
+import { exitDomain, startDomain } from "./modes/domain";
+import { pulseElement } from "./world/puzzles";
 import { GS } from "./core/state";
 import { portraitCache } from "./art/chibi";
 import { frame } from "./core/loop";
@@ -62,4 +65,11 @@ window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude
 
 // Móc kiểm thử: chỉ bật khi URL có ?e2e, để Playwright đọc trạng thái game. Người chơi không bị ảnh hưởng.
 if (new URLSearchParams(location.search).has("e2e"))
-  Object.assign(window, { __tinhtu: { S: GS, Server, menu: { openMenu, closeMenu, currentScreen } } });
+  Object.assign(window, {
+    __tinhtu: {
+      S: GS,
+      Server,
+      menu: { openMenu, closeMenu, currentScreen },
+      pz: { pulse: pulseElement, startDomain, exitDomain, data: { DOMAINS, MINI, PZ } },
+    },
+  });

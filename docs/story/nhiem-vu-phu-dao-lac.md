@@ -632,6 +632,8 @@
 
 ## np_08: Đèn Mỏ Thứ Bảy
 
+> **Trong game (S23):** đã làm thành quest mini `np_08` trong `content/puzzles.yaml`. Người chơi thắp bảy đèn mỏ bằng Hỏa và Ngọc Thạch nhập đội thật, là nguồn Thổ miễn phí. Vì game chưa chạy theo chương, quest mở ngay từ đầu. Xem [docs/world/cau-do-bi-canh.md](../world/cau-do-bi-canh.md).
+
 - **Loại:** giải đố. **Địa điểm:** Mỏ Ngọc, làng thợ mỏ.
 - **Mục tiêu:** thắp bảy đèn mỏ dọc đường hầm cũ theo đúng thứ tự trong bài vè của thợ mỏ để mở lại lối vào gian ngọc đã đóng từ năm xảy ra sập hầm.
 - **Lời giải:** bài vè "Một đèn cửa gió, hai đèn giọt nước, ba đèn đá đỏ, bốn đèn cột chống, năm đèn ngã ba, sáu đèn vết búa, bảy đèn tên người". Đèn thứ bảy đặt dưới tấm đá khắc tên những thợ mỏ cũ.

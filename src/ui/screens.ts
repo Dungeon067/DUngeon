@@ -25,7 +25,12 @@ export function exitToMenu(screen?: string) {
     if (!GS.G._ended)
       Server.req("logQuit", {
         mode: GS.G.mode,
-        at: GS.G.mode === "tower" ? `tầng ${GS.G.tower.floor}` : `cấp ${GS.G.opt?.lv}`,
+        at:
+          GS.G.mode === "tower"
+            ? `tầng ${GS.G.tower.floor}`
+            : GS.G.mode === "domain"
+              ? GS.G.dom.d.ten
+              : `cấp ${GS.G.opt?.lv}`,
       });
   }
   closeModal();

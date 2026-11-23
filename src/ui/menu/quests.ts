@@ -1,3 +1,5 @@
+import { MINI } from "../../data/puzzles";
+import { miniState } from "../../world/puzzle-marks";
 import { GS } from "../../core/state";
 import { OBJECTIVES } from "../../data/content";
 import { CODEX, QUESTS } from "../../data/menu-content";
@@ -62,6 +64,13 @@ export const stepText = (s: Step & { n: number; max: number }) =>
 /** Nhiệm vụ đang theo dõi (cho HUD): chữ của bước hiện tại và điểm chỉ đường. */
 export function trackedObjective(): { text: string; target: string | null } | null {
   const id = Server.P.quests?.tracked;
+  const mq = id && MINI.find((x) => x.id === id);
+  if (mq) {
+    const st = miniState(mq);
+    if (st.done) return null;
+    const s = st.steps[st.cur]!;
+    return { text: `${mq.ten}: ${s.text}`, target: s.target };
+  }
   const q = id && QUESTS.find((x) => x.id === id);
   if (!q) return null;
   const st = questState(q);

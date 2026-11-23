@@ -57,6 +57,11 @@ game:
       xuMoiCap: 3000
       sachGoc: 6
       sachMoiCap: 3
+    # Rương câu đố nguyên tố và bí cảnh (S23), mỗi câu đố nhận một lần.
+    ruongCauDo:
+      thuong: { daSao: 5, xu: 800, sach: 1 }
+      quy: { daSao: 10, xu: 1500, sach: 2 }
+      tinhXao: { daSao: 20, xu: 3000, sach: 4 }
     uyThac:
       moiViec: { daSao: 30, xu: 3000 }
       duBon: { daSao: 60, sach: 5 }
@@ -177,6 +182,11 @@ thietKe:
     motLan:
       daSao: 7800
       trongSoNgay: 45
+    # Một lần, S23: rương câu đố + rương bí cảnh + thưởng quest mini (content/puzzles.yaml).
+    # content:check kiểm tra số này bằng tổng tính từ puzzles.yaml.
+    cauDo:
+      daSao: 325
+      trongSoNgay: 60
   # Tháp Tinh Tú và cốt truyện: Chiến Lực đội yêu cầu, ước tính từ máu quái và thời gian 3★.
   # Sát thương đội mỗi giây ≈ heSoSatThuong × (người đang ra trận + chiaSeNgoaiSan × ba người kia) × thoiGianDanh.
   moHinhTran:

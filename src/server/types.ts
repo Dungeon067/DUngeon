@@ -64,6 +64,8 @@ export interface Profile {
   /** Số liệu cho Admin: Đá Sao vào và ra theo nguồn, lần rời trận giữa chừng. */
   econ: Record<string, number>;
   quits: { mode: string; t: number; at: string }[];
+  /** S23: câu đố đã giải, quest mini đã nhận/xong, tiến độ bí cảnh (room = số phòng đã qua). */
+  puz: PuzzleSave;
   /** S24: kho vũ khí theo uid, bộ đếm uid, banner Binh Khí Tinh Tú (Bảo Hộ Vận Sao, La Bàn Sao, lịch sử riêng). */
   weapons: Record<string, WeaponInst>;
   wSeq: number;
@@ -72,6 +74,12 @@ export interface Profile {
   wPick: string | null;
   wHistory: { n: string; r: number; t: number; id: string }[];
   wcfg: WeaponBannerCfg;
+}
+export interface PuzzleSave {
+  solved: string[];
+  talked: string[];
+  mini: string[];
+  domains: Record<string, { room: number; done: boolean }>;
 }
 
 export interface WeaponBannerCfg {

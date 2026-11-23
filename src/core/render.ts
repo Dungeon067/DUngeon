@@ -13,6 +13,7 @@ import { drawCine } from "../ui/cine";
 import { drawMenuBg } from "../ui/menuBg";
 import { drawArena, drawChest, drawPortal, drawRock, drawStatue, drawTile, drawTree } from "../world/draw";
 import { MH, MW, TL, TS } from "../world/map";
+import { queuePuzzles } from "../world/draw-puzzles";
 
 export function render() {
   const tm = performance.now() / 1000;
@@ -57,16 +58,17 @@ export function render() {
         Y = (c.y + 0.6) * TS;
       if (vis(X, Y)) dr.push({ y: Y, f: () => drawChest(X, Y, false) });
     });
-    {
+    if (W.tower) {
       const X = (W.tower.x + 0.5) * TS,
         Y = (W.tower.y + 0.8) * TS;
       if (vis(X, Y)) dr.push({ y: Y, f: () => drawPortal(X, Y, tm, "#f0c060", "Tháp Tinh Tú") });
     }
-    {
+    if (W.gate) {
       const X = (W.gate.x + 0.5) * TS,
         Y = (W.gate.y + 0.8) * TS;
       if (vis(X, Y)) dr.push({ y: Y, f: () => drawPortal(X, Y, tm, "#5aa0ff", "Hang Hắc Giao") });
     }
+    queuePuzzles(dr, vis, tm);
   } else drawArena(tm);
   // fields under
   for (const f of GS.G.fields) {

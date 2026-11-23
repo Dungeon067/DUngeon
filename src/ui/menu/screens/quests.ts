@@ -3,18 +3,44 @@ import { Server } from "../../../server/server";
 import { button, h, progress, tabs, tag, toast } from "../../ds";
 import { icon } from "../../icons/icons";
 import { questState, stepText, syncQuests } from "../quests";
+import { byId } from "../../../data/content";
+import { MINI } from "../../../data/puzzles";
+import { miniState } from "../../../world/puzzle-marks";
 import { openMenu, registerScreen, rerender } from "../shell";
 
 /* Nhật ký nhiệm vụ (S10): Đang làm, Đã xong, theo dõi, chỉ đường (đánh dấu trên bản đồ nhỏ và bản đồ lớn). */
 let tab = "active";
 let sel: string | null = null;
-const TYPE: Record<string, string> = { chinh: "Cốt truyện", phu: "Phụ", "hang-ngay": "Hằng ngày" };
+const TYPE: Record<string, string> = { chinh: "Cốt truyện", phu: "Phụ", "hang-ngay": "Hằng ngày", mini: "Quest mini" };
+
+interface Entry {
+  q: { id: string; name: string; type: string; giver: string; desc: string; reward: string };
+  st: { done: boolean; cur: number; steps: { text: string; n: number; max: number; target?: string | null }[] };
+}
+/** Nhiệm vụ trong menu-content cộng quest mini S23 (content/puzzles.yaml), cùng một dạng để hiển thị. */
+function entries(): Entry[] {
+  const a: Entry[] = QUESTS.map((q) => {
+    const st = questState(q);
+    return {
+      q,
+      st: { done: st.done, cur: st.cur, steps: st.steps.map((s) => ({ ...s, text: stepText(s) })) },
+    };
+  });
+  for (const m of MINI) {
+    const reward = `${m.thuong.daSao} Đá Sao, ${m.thuong.xu} Xu${m.tang ? `, ${byId[m.tang]?.name} nhập đội` : ""}`;
+    a.push({
+      q: { id: m.id, name: m.ten, type: "mini", giver: m.npc, desc: `${m.vung}. ${m.moTa}`, reward },
+      st: miniState(m),
+    });
+  }
+  return a;
+}
 
 function render(host: HTMLElement) {
   syncQuests();
   host.classList.add("tt-menu-quests");
   const P = Server.P;
-  const all = QUESTS.map((q) => ({ q, st: questState(q) }));
+  const all = entries();
   const list = all.filter((x) => (tab === "done" ? x.st.done : !x.st.done));
   const tl = tabs(
     [
@@ -69,7 +95,7 @@ function render(host: HTMLElement) {
       st.steps.map((s, i) =>
         h("li", { class: s.n >= s.max ? "is-done" : i === st.cur ? "is-cur" : "" }, [
           icon(s.n >= s.max ? "xac-nhan" : "nhiem-vu", { size: 16 }),
-          h("span", {}, [stepText(s)]),
+          h("span", {}, [s.text]),
           s.max > 1 ? progress(s.n / s.max, { label: `${s.n}/${s.max}` }) : "",
         ]),
       ),

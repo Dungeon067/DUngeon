@@ -401,3 +401,25 @@ Tên 26 vũ khí ước nguyện (S23). Truyện và chỉ số ở `content/wea
 | **Đèn Canh Hải Đăng**       | Vật phẩm | Pháp khí, vũ khí 4★ Lò Rèn. Bị động: Ánh Đèn Gọi Thuyền.                                |
 | **Đóa Hồng Ngủ Trong Băng** | Vật phẩm | Pháp khí, vũ khí 5★ giới hạn, đặc trưng của Golnar. Bị động: Băng Tâm Ủ Hương.          |
 | **Đại Kiếm Xóm Mỏ**         | Vật phẩm | Đại kiếm, vũ khí 3★. Bị động: Tay Chai Vai Rộng.                                        |
+
+## Bổ sung S23: bí cảnh và quest mini
+
+| Tên                        | Loại     | Giải thích                                                                                                                                    |
+| -------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Lò Đèn Phố Cũ**          | Địa danh | Bí cảnh Hỏa ở Phố Vạn Đăng. Lò nung đèn lồng bỏ hoang dưới hàng đèn Phố Cũ. Thợ đèn xưa nung men ở đây, giờ chỉ còn băng đọng và dây leo khô. |
+| **Giếng Đền Trăng**        | Địa danh | Bí cảnh Thủy ở Hồ Gương và Đền Trăng. Giếng đá sau Đền Trăng, nối ngầm với Hồ Gương. Hội Đền Trăng đóng giếng từ khi mặt hồ thôi phẳng lặng.  |
+| **Hầm Ngọc Cũ**            | Địa danh | Bí cảnh Thổ ở Mỏ Ngọc Lòng Chảo. Đường hầm phía tây Mỏ Ngọc, đóng từ năm sập hầm. Vách đá còn vết búa của thợ mỏ đời trước.                   |
+| **Hang Gió Trúc Mây**      | Địa danh | Bí cảnh Phong ở Rừng Trúc Mây. Khe núi giữa Rừng Trúc Mây, gió lùa qua thành tiếng sáo. Người trong làng bảo Yêu Rừng giữ cửa hang.           |
+| **Bốn Đèn Canh Ven Biển**  | Nhiệm vụ | Quest mini của Bà Hạnh ở Làng Vạn Lưới.                                                                                                       |
+| **Ruộng Khô Đầu Làng**     | Nhiệm vụ | Quest mini của Út Gạo ở Làng Vạn Lưới.                                                                                                        |
+| **Bậc Đá Lên Đài Đếm Sao** | Nhiệm vụ | Quest mini của Đầu Sổ Kỳ Lam ở Đỉnh Vọng Vân.                                                                                                 |
+| **Cối Gió Bơm Nước**       | Nhiệm vụ | Quest mini của Hai Khoác ở Bến Sông Sương.                                                                                                    |
+| **Đèn Mỏ Thứ Bảy**         | Nhiệm vụ | Quest mini của Ông Đinh Bảo ở Mỏ Ngọc Lòng Chảo.                                                                                              |
+| **Lối Gai Rừng Trúc**      | Nhiệm vụ | Quest mini của Bé Sen ở Rừng Trúc Mây.                                                                                                        |
+| **Lửa Chắn Hàng Đèn**      | Nhiệm vụ | Quest mini của Bà Ngoan ở Phố Vạn Đăng.                                                                                                       |
+| **Cầu Gãy Sông Sương**     | Nhiệm vụ | Quest mini của Ông Sáo ở Bến Sông Sương.                                                                                                      |
+| **Sương Độc Vịnh Khơi**    | Nhiệm vụ | Quest mini của Lão Neo ở Vịnh Khơi và Làng Chìm.                                                                                              |
+| **Hơi Nóng Nâng Bệ**       | Nhiệm vụ | Quest mini của Bà Cả Thu Vọng ở Hồ Gương và Đền Trăng.                                                                                        |
+| **Gió Lan Lửa Đình**       | Nhiệm vụ | Quest mini của Thầy Đồ Khiêm ở Đình Trống Đồng.                                                                                               |
+| **Mây Chắn Tường Nứt**     | Nhiệm vụ | Quest mini của Cai Tôn ở Trại Bắc.                                                                                                            |
+| **Sương Giá Bờ Hồ**        | Nhiệm vụ | Quest mini của Bà Tám Lụa ở Hồ Gương và Đền Trăng.                                                                                            |
