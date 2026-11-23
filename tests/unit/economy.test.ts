@@ -44,7 +44,9 @@ describe("Chiến Lực", () => {
     expect(cl({ lv: 1, cons: 6 })).toBeGreaterThan(base);
     expect(cl({ lv: 1, cons: 0, khai: 3 })).toBeGreaterThan(base);
     expect(cl({ lv: 1, cons: 0, kyNang: 10 })).toBeGreaterThan(base);
-    expect(cl({ lv: 1, cons: 0, vuKhi: { r: 4, tinhLuyen: 5 } })).toBeGreaterThan(cl({ lv: 1, cons: 0, vuKhi: { r: 4, tinhLuyen: 1 } }));
+    expect(cl({ lv: 1, cons: 0, vuKhi: { r: 4, tinhLuyen: 5 } })).toBeGreaterThan(
+      cl({ lv: 1, cons: 0, vuKhi: { r: 4, tinhLuyen: 1 } }),
+    );
     expect(cl({ lv: 1, cons: 0, baoAn: 1 })).toBeGreaterThan(base);
   });
   it("chỉ số trong game giữ nguyên công thức cũ", () => {

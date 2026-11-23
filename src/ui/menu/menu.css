@@ -834,15 +834,15 @@
   }
 }
 .tt-tslot .tt-power {
-  color: var(--tt-gold, #ffd36a);
+  color: var(--tt-r5);
   font-variant-numeric: tabular-nums;
 }
 .tt-team-power {
   margin: 0 0 var(--tt-sp-2);
-  color: var(--tt-dim, #aab4dd);
+  color: var(--tt-text-dim);
 }
 .tt-team-power b {
-  color: var(--tt-gold, #ffd36a);
+  color: var(--tt-r5);
   font-size: 1.15em;
   font-variant-numeric: tabular-nums;
 }

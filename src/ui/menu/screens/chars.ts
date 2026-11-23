@@ -164,7 +164,12 @@ async function render(host: HTMLElement, params: any) {
           button("Lên 10 cấp", { onClick: () => lvUp(c.id, 10) }),
         );
       } else row.append(tag("Đã đạt cấp tối đa", "ok"));
-      panel.append(h("p", { class: "tt-dim" }, [`Cấp ${own.lv}/${ECON.game.capNhanVat.toiDa} · Nét Sao N${own.cons} · Chiến Lực ${fmt(powerOf(c.id))}`]), row);
+      panel.append(
+        h("p", { class: "tt-dim" }, [
+          `Cấp ${own.lv}/${ECON.game.capNhanVat.toiDa} · Nét Sao N${own.cons} · Chiến Lực ${fmt(powerOf(c.id))}`,
+        ]),
+        row,
+      );
     } else panel.append(h("p", { class: "tt-dim" }, ["Chưa sở hữu. Ước nguyện để gặp nhân vật này."]));
     const doc = hasProfile(c.id) ? (await loadProfile(c.id))["ho-so"] : null;
     const basic = doc?.sections[0];

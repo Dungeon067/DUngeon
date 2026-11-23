@@ -275,7 +275,8 @@ export const Server = {
         o.lv++;
         n++;
       }
-      if (!n) throw new Error(o.lv >= ECON.game.capNhanVat.toiDa ? "Đã đạt cấp tối đa" : "Không đủ Sách Kinh Nghiệm hoặc Xu");
+      if (!n)
+        throw new Error(o.lv >= ECON.game.capNhanVat.toiDa ? "Đã đạt cấp tối đa" : "Không đủ Sách Kinh Nghiệm hoặc Xu");
       return o.lv;
     },
     reward(this: any, { gems = 0, coin = 0, books = 0 }) {

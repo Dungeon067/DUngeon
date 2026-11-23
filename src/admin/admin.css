@@ -202,7 +202,7 @@ select.tt-input {
 }
 .tt-admin-econ {
   margin: var(--tt-sp-3) 0;
-  border: 1px solid var(--tt-line, rgba(255, 255, 255, 0.12));
+  border: 1px solid var(--tt-line);
   border-radius: 10px;
   padding: var(--tt-sp-2) var(--tt-sp-3);
 }

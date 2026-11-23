@@ -158,8 +158,7 @@ goiNap:
     - { id: ds6, gia: 2000000, daSao: 5000, thuong: 1000 }
   napLanDauNhanDoi: true
   theThang: { id: the-trang, gia: 79000, ngay: 30, daSaoNgay: 300, daSaoMoiNgay: 90 }
-  hanhTrinhMua:
-    { id: hanh-trinh, gia: 149000, ngay: 42, daSao: 680, sach: 120, xu: 300000, vuKhi4: 1, trangPhuc: 1 }
+  hanhTrinhMua: { id: hanh-trinh, gia: 149000, ngay: 42, daSao: 680, sach: 120, xu: 300000, vuKhi4: 1, trangPhuc: 1 }
   trangPhuc: { giaTu: 99000, giaDen: 299000 }
   # Hạn mức nạp tối đa mỗi tài khoản mỗi tháng (bảo vệ người chơi và giữ trần chênh lệch).
   hanMucThang: 10000000

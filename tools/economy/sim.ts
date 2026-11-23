@@ -21,6 +21,7 @@ import {
 
 export interface SimChar extends BaseChar {
   id: string;
+  name?: string;
 }
 export interface Gacha {
   rate5: number;
@@ -121,7 +122,13 @@ export function simulateProfile(p: Profile, chars: SimChar[], G: Gacha, E: Econo
     free = E.thietKe.congBang.doiMienPhi;
   const idx = new Map(chars.map((c, i) => [c.id, i]));
   const step = 5,
-    checkpoints = [...new Set([...Array.from({ length: Math.floor(o.days / step) }, (_, i) => (i + 1) * step), ...E.moPhong.mocNgay.filter((d) => d <= o.days), o.days])].sort((a, b) => a - b);
+    checkpoints = [
+      ...new Set([
+        ...Array.from({ length: Math.floor(o.days / step) }, (_, i) => (i + 1) * step),
+        ...E.moPhong.mocNgay.filter((d) => d <= o.days),
+        o.days,
+      ]),
+    ].sort((a, b) => a - b);
   // Bảng Chiến Lực [checkpoint][nhân vật][Nét Sao] (đầu tư cố định theo ngày).
   const tables = checkpoints.map((d) => {
     const { inv } = investOnDay(d, p, E);
@@ -153,7 +160,9 @@ export function simulateProfile(p: Profile, chars: SimChar[], G: Gacha, E: Econo
       ci = 0;
     for (let d = 1; d <= o.days; d++) {
       let g = freeGemsOnDay(d, E);
-      if (p.theThang) g += E.goiNap.theThang.daSaoMoiNgay + ((d - 1) % E.goiNap.theThang.ngay === 0 ? E.goiNap.theThang.daSaoNgay : 0);
+      if (p.theThang)
+        g +=
+          E.goiNap.theThang.daSaoMoiNgay + ((d - 1) % E.goiNap.theThang.ngay === 0 ? E.goiNap.theThang.daSaoNgay : 0);
       if (p.hanhTrinh && (d - 1) % E.goiNap.hanhTrinhMua.ngay === 0) g += E.goiNap.hanhTrinhMua.daSao;
       if (p.vndThang && (d - 1) % 30 === 0) g += paidGemsForMonth(Math.floor((d - 1) / 30), p, E, usedFirst);
       gems += g;
@@ -242,14 +251,33 @@ export function theoreticalMax(day: number, chars: SimChar[], E: Economy) {
 /** Đội 4★ miễn phí (N0, vũ khí 4★ rèn): Chiến Lực và DPS ước tính theo ngày. */
 export function freeTeam(day: number, chars: SimChar[], E: Economy) {
   const { inv, hoTinh } = investOnDay(day, null, E);
-  const team = E.thietKe.congBang.doiMienPhi.map((id) => charStats(chars.find((c) => c.id === id)!, { ...inv, cons: 0 }, E));
+  const team = E.thietKe.congBang.doiMienPhi.map((id) =>
+    charStats(
+      chars.find((c) => c.id === id)!,
+      { ...inv, cons: 0 },
+      E,
+    ),
+  );
   return { hoTinh, lv: inv.lv, cl: teamChienLuc(team.map((s) => chienLuc(s, E))), dps: teamDps(team, E) };
 }
 
 export interface Fairness {
   story: { chuong: number; ngay: number; can: number; co: number; ok: boolean }[];
   tower: { tang: number; dpsCan: number; ngayDat: number | null; ok: boolean }[];
-  ratio: { ngay: number; khongNap: number; napIt: number; napNhieu: number; napNhieuP99: number; napNhieuMax: number; tran: number; tiLe: number; tiLeP99: number; tiLeMax: number; tiLeTran: number; ok: boolean }[];
+  ratio: {
+    ngay: number;
+    khongNap: number;
+    napIt: number;
+    napNhieu: number;
+    napNhieuP99: number;
+    napNhieuMax: number;
+    tran: number;
+    tiLe: number;
+    tiLeP99: number;
+    tiLeMax: number;
+    tiLeTran: number;
+    ok: boolean;
+  }[];
   ok: boolean;
 }
 
@@ -277,7 +305,20 @@ export function fairness(res: ProfileResult[], chars: SimChar[], E: Economy, day
         c99 = quantile(high.cl[i]!, 0.99),
         cMax = high.cl[i]!.reduce((m, x) => Math.max(m, x), 0),
         t = theoreticalMax(d, chars, E);
-      return { ngay: d, khongNap: a, napIt: b, napNhieu: c, napNhieuP99: c99, napNhieuMax: cMax, tran: t, tiLe: c / a, tiLeP99: c99 / a, tiLeMax: cMax / a, tiLeTran: t / a, ok: cMax / a <= tranCfg };
+      return {
+        ngay: d,
+        khongNap: a,
+        napIt: b,
+        napNhieu: c,
+        napNhieuP99: c99,
+        napNhieuMax: cMax,
+        tran: t,
+        tiLe: c / a,
+        tiLeP99: c99 / a,
+        tiLeMax: cMax / a,
+        tiLeTran: t / a,
+        ok: cMax / a <= tranCfg,
+      };
     });
   return { story, tower, ratio, ok: story.every((s) => s.ok) && tower.every((t) => t.ok) && ratio.every((r) => r.ok) };
 }

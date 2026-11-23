@@ -19,7 +19,7 @@ const opts = {
   seed: Number(arg("seed") ?? E.moPhong.seed),
 };
 const out = arg("out") ?? "docs/economy/ket-qua";
-const chars = content.characters.map((c) => ({ id: c.id, r: c.r, hp: c.hp, atk: c.atk }));
+const chars = content.characters.map((c) => ({ id: c.id, name: c.name, r: c.r, hp: c.hp, atk: c.atk }));
 const G = content.config.gacha;
 const t0 = Date.now();
 const res = E.hoSo.map((p) => simulateProfile(p, chars, G, E, opts));
@@ -28,5 +28,7 @@ mkdirSync(out, { recursive: true });
 const files = renderReport(res, fair, chars, E, opts);
 for (const [name, body] of Object.entries(files.files)) writeFileSync(join(out, name), body);
 console.log(files.terminal);
-console.log(`\n${opts.players.toLocaleString("vi-VN")} người chơi ảo × ${res.length} hồ sơ × ${opts.days} ngày, seed ${opts.seed}, ${((Date.now() - t0) / 1000).toFixed(1)} giây. Kết quả: ${out}/`);
+console.log(
+  `\n${opts.players.toLocaleString("vi-VN")} người chơi ảo × ${res.length} hồ sơ × ${opts.days} ngày, seed ${opts.seed}, ${((Date.now() - t0) / 1000).toFixed(1)} giây. Kết quả: ${out}/`,
+);
 if (!fair.ok) process.exit(1);
