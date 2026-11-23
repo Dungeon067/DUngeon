@@ -16,6 +16,7 @@ Kết luận: **ĐẠT**
 
 - Một vũ khí 4★ lên cấp 60: ngày 36 (mục tiêu 30–45).
 - Vũ khí 4★ Lò Rèn R5: ngày 40 (mục tiêu khoảng 40).
+- Xu cho vũ khí (cửa hàng quặng, kinh nghiệm, đột phá, Lò Rèn) tới ngày 40: 424.036. Mô hình nuôi nhân vật chưa trừ khoản này.
 
 ## Bốn hồ sơ
 

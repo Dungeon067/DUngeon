@@ -267,7 +267,7 @@ Kết luận: **${ok(fair.ok)}**
 
 ${(() => {
   const f = weaponFlow(E);
-  return `- Một vũ khí 4★ lên cấp ${E.thietKe.vuKhi.cap.toiDa}: ngày ${f.lvDay ?? "chưa kịp"} (mục tiêu 30–45).\n- Vũ khí 4★ Lò Rèn R5: ngày ${f.r5Day ?? "chưa kịp"} (mục tiêu khoảng ${E.thietKe.vuKhi.loRenR5Ngay}).`;
+  return `- Một vũ khí 4★ lên cấp ${E.thietKe.vuKhi.cap.toiDa}: ngày ${f.lvDay ?? "chưa kịp"} (mục tiêu 30–45).\n- Vũ khí 4★ Lò Rèn R5: ngày ${f.r5Day ?? "chưa kịp"} (mục tiêu khoảng ${E.thietKe.vuKhi.loRenR5Ngay}).\n- Xu cho vũ khí (cửa hàng quặng, kinh nghiệm, đột phá, Lò Rèn) tới ngày ${E.thietKe.vuKhi.loRenR5Ngay}: ${f0(f.xu[E.thietKe.vuKhi.loRenR5Ngay]!)}. Mô hình nuôi nhân vật chưa trừ khoản này.`;
 })()}
 
 ## Bốn hồ sơ
