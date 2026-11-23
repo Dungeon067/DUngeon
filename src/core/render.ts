@@ -379,8 +379,10 @@ function drawPuzzles3d(r3: WorldRenderer, tm: number) {
       z = groundAt(x, y),
       q = r3.project(x, y, z),
       q1 = r3.project(x + TS, y, z);
-    if (!q.vis) continue;
+    if (!q.vis || q.x < -150 || q.x > GS.VW + 150 || q.y < -150 || q.y > GS.VH + 250) continue;
     const s = Math.hypot(q1.x - q.x, q1.y - q.y) / TS;
+    // Vật quá sát camera (phóng to quá mức) sẽ phủ kín màn hình: bỏ qua.
+    if (s > 3) continue;
     ctx.save();
     ctx.setTransform(GS.DPR * s, 0, 0, GS.DPR * s, GS.DPR * (q.x - s * x), GS.DPR * (q.y - s * y));
     d.f();

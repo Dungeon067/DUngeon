@@ -189,10 +189,11 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     composer = null;
     tilt = null;
     if (!Q.bloom && !Q.dof) return;
-    const rt = new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: Q.msaa });
+    // Đích vẽ 8 bit: giá trị HDR quá lớn (đèn sát mặt, NaN) không làm bloom loang trắng cả màn hình.
+    const rt = new THREE.WebGLRenderTarget(4, 4, { samples: Q.msaa });
     composer = new EffectComposer(gl, rt);
     composer.addPass(new RenderPass(scene, camera));
-    if (Q.bloom) composer.addPass(new UnrealBloomPass(new THREE.Vector2(256, 256), 0.3, 0.4, 1.25));
+    if (Q.bloom) composer.addPass(new UnrealBloomPass(new THREE.Vector2(256, 256), 0.22, 0.35, 0.93));
     if (Q.dof) {
       tilt = new ShaderPass(TiltShift);
       composer.addPass(tilt);
