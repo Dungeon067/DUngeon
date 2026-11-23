@@ -66,9 +66,9 @@ Kết quả 100.000 người chơi ảo mỗi hồ sơ (người chơi trung v�
 | Nạp ít    | 30   |            98 |                    5.416 | 1 nhân vật, N0                 |
 | Nạp ít    | 90   |           245 |                   10.988 | 3 nhân vật, N0–N1              |
 | Nạp ít    | 180  |           442 |                   14.149 | 4 nhân vật, N0–N2              |
-| Nạp nhiều | 30   |           334 |                    6.812 | 4 nhân vật, N0–N1              |
-| Nạp nhiều | 90   |           854 |                   13.171 | 8 nhân vật, N0–N4              |
-| Nạp nhiều | 180  |         1.606 |                   17.462 | 11 nhân vật, N0–N4             |
+| Nạp nhiều | 30   |           333 |                    6.810 | 2 nhân vật, N0–N2              |
+| Nạp nhiều | 90   |           852 |                   13.161 | 7 nhân vật, N0–N3              |
+| Nạp nhiều | 180  |         1.605 |                   17.459 | 10 nhân vật, N0–N3             |
 
 Biểu đồ Chiến Lực theo thời gian, số lượt ước và phân phối số 5★: [ket-qua/bao-cao.html](ket-qua/bao-cao.html).
 
