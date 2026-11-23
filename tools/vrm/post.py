@@ -61,6 +61,10 @@ def square_frame(size, inner, depth, bevel):
     return me
 
 
+# Nhập VRM xong các đối tượng vẫn được chọn; bỏ chọn để transform_apply chỉ áp lên kẹp tóc
+# (nếu không, empty của collider bị đưa về gốc tọa độ).
+for o in bpy.context.selected_objects:
+    o.select_set(False)
 head = arm.data.bones["J_Bip_C_Head"]
 head_pos = arm.matrix_world @ head.head_local
 eye = arm.matrix_world @ arm.data.bones["J_Adj_L_FaceEye"].head_local
@@ -145,6 +149,7 @@ if cfg.get("skirtColliders"):
         col.node.bone_name = bone
         col.shape_type = "Sphere"
         col.shape.sphere.radius = r
+        col.shape.sphere.offset = (0.0, 0.0, 0.0)
         gi = list(sb.collider_groups).index(grp)
         bpy.ops.vrm.add_spring_bone1_collider_group_collider(armature_object_name=arm.name, collider_group_index=gi)
         grp.colliders[-1].collider_uuid = col.uuid
