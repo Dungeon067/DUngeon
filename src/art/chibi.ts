@@ -6,7 +6,7 @@ import { EL, byId } from "../data/content";
    ========================================================= */
 export function drawBackHair(ctx: CanvasRenderingContext2D, L: any) {
   ctx.fillStyle = shade(L.hair, -0.12);
-  if (L.style === "long") {
+  if (L.style === "long" || L.style === "longlocks") {
     rr(ctx, -11.5, -36, 23, 27, 8);
     ctx.fill();
   } else if (L.style === "pony") {
@@ -191,7 +191,7 @@ export function drawChibi(ctx: CanvasRenderingContext2D, c: any, x: number, y: n
     ctx.beginPath();
     ctx.arc(0, -29.5, 11.2, 0, TAU);
     ctx.fill();
-    if (L.style === "long") {
+    if (L.style === "long" || L.style === "longlocks") {
       rr(ctx, -11.5, -34, 23, 24, 8);
       ctx.fill();
     }
@@ -225,7 +225,7 @@ export function drawChibi(ctx: CanvasRenderingContext2D, c: any, x: number, y: n
     ctx.lineTo(-8.5, -26);
     ctx.closePath();
     ctx.fill();
-    if (L.style === "long" || L.style === "bob") {
+    if (L.style === "long" || L.style === "longlocks" || L.style === "bob") {
       ctx.beginPath();
       ctx.moveTo(11, -30);
       ctx.quadraticCurveTo(12.5, -23, 9.5, -18);

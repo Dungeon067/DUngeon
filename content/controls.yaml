@@ -66,6 +66,7 @@ defaults:
   music: 0.55
   sfx: 0.9
   quality: high # high | medium | low
+  renderer: auto # auto | 3d | 2d (S25)
   shake: true
   vibrate: true
   fontScale: 1 # 0,9 | 1 | 1,15 | 1,3

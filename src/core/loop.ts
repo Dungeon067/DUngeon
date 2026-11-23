@@ -1,5 +1,6 @@
 import { tickStack } from "../combat/damage";
 import { GS } from "../core/state";
+import { camRelative, dir8 } from "./facing";
 import { tryAttack, updateBuffer } from "../combat/actions";
 import { FEEL, charFx, gameDt } from "../combat/feel";
 import { cameraTarget, updateZoom } from "../core/camera";
@@ -10,6 +11,7 @@ import { held, moveAxis } from "../core/input";
 import { pollGamepad } from "../core/gamepad";
 import { updateAir, updateGround, updateWaves } from "../combat/jump";
 import { render } from "../core/render";
+import { renderer3d } from "../render3d/select";
 import { clamp, dist, lerpAng, rand } from "../core/util";
 import { EL } from "../data/content";
 import { updateBoss } from "../entities/boss";
@@ -45,7 +47,8 @@ export function update(dt: number) {
   const p = GS.G.p,
     m = cur();
   // movement input
-  let [mx, my] = moveAxis();
+  // Chỉ xoay theo camera khi cảnh 3D đang vẽ (đấu trường và bản 2D dùng góc nhìn cố định).
+  let [mx, my] = camRelative(...moveAxis(), renderer3d() && GS.G.map ? (GS.camYaw ?? 0) : 0);
   const ml = Math.hypot(mx, my);
   if (ml > 1) {
     mx /= ml;
@@ -55,6 +58,7 @@ export function update(dt: number) {
   if (p.moving) {
     p.dirX = mx;
     p.dirY = my;
+    if (p.atkCd <= 0) p.face8 = dir8(Math.atan2(my, mx), p.face8);
   }
   if (p.air) {
     updateAir(p, dt, GS.G.over ? 0 : mx, GS.G.over ? 0 : my);

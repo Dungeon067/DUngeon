@@ -841,13 +841,16 @@ body.hud-editing .hud-qm {
 }
 
 /* ---------- chế độ màu cho người mù màu: lọc canvas game (bộ lọc ở index.html) ---------- */
-html[data-color-mode="protan"] #game {
+html[data-color-mode="protan"] #game,
+html[data-color-mode="protan"] #game3d {
   filter: url(#cb-protan);
 }
-html[data-color-mode="deutan"] #game {
+html[data-color-mode="deutan"] #game,
+html[data-color-mode="deutan"] #game3d {
   filter: url(#cb-deutan);
 }
-html[data-color-mode="tritan"] #game {
+html[data-color-mode="tritan"] #game,
+html[data-color-mode="tritan"] #game3d {
   filter: url(#cb-tritan);
 }
 
