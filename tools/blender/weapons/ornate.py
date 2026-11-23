@@ -4,8 +4,8 @@ Chọn bằng `builder` trong designs.py. Hình khối và hoa văn tự sinh, k
 import math
 
 from lib import TAU, blade, crystal, curve_obj, empty, extrude_poly, hexc, lathe, mat_aged, mat_cloth, mat_emit, mat_gem
-from lib import mat_metal, new_mat, rng
-from models import SEC_DOUBLE, grip, mat_blade, tassel
+from lib import mat_metal, new_mat, rng, star_poly
+from models import SEC_DOUBLE, build_bow, build_sword, grip, mat_blade, tassel
 
 
 def trim(d):
@@ -211,7 +211,41 @@ def build_spear_ornate(d):
 
     th = lambda t: 0.028 * (1 - 0.7 * t)
     blade("head", head, hw, th, SEC_DOUBLE, None, mats=[mb], parent=root, z0=0.02, smooth=False)
+    r5 = d["r"] >= 5
+    if not r5:
+        # 4★: một rãnh sáng màu nguyên tố giữa mũi, một viên đá ở họng, không chạm nhiều lớp
+        for side in (-1, 1):
+            fz = [(0.0, side * 0.5 * th(t), 0.02 + t * head) for t in [0.05 + 0.55 * i / 40 for i in range(41)]]
+            curve_obj(f"fuller_core{side}", [fz], 0.0024, me, root)
+        if d.get("prongs") == "torch":  # chén đồng giữ lửa dưới mũi, lưỡi lửa nhỏ phát sáng
+            lathe("torch_cup", [(0.034, -0.02), (0.05, 0.0), (0.06, 0.035), (0.054, 0.04), (0.04, 0.012)], 32, [mt], root)
+            for k in range(5):
+                a = TAU * k / 5
+                crystal(f"flame{k}", (0.03 * math.cos(a), 0.03 * math.sin(a), 0.03), (0.35 * math.cos(a), 0.35 * math.sin(a), 1),
+                        0.06 + 0.02 * (k % 2), 0.012, 5, [me], root, twist=0.6)
+        core_gem(root, (0.0, -0.034, -0.06), 0.02, d, mt)
+        if d.get("tassel"):
+            tassel(root, (0.0, 0.0, -0.17), 0.24, 80, d["tassel"], seed=5, spread=0.3, r_strand=0.002)
+        return root
     filigree_blade(root, head, hw, th, d, mt, me, z0=0.02, t0=0.08, t1=0.5, n=4)
+    if d.get("prongs") == "wing":
+        # hai cánh gió lưỡi liềm hất ngược, viền kim loại, lõi phát sáng
+        for sx in (-1, 1):
+            outer = [(sx * (0.04 + 0.2 * math.sin(math.pi * u * 0.5)), -0.02 + 0.22 * u ** 1.6) for u in [i / 20 for i in range(21)]]
+            inner = [(sx * (0.04 + 0.12 * math.sin(math.pi * u * 0.5)), 0.01 + 0.17 * u ** 1.3) for u in [i / 20 for i in range(20, -1, -1)]]
+            pts = outer + inner
+            if sx < 0:
+                pts = list(reversed(pts))
+            extrude_poly(f"wing{sx}", pts, 0.014, [mt], root, bevel_w=0.002, smooth=True)
+            core = [(x * 0.92, z) for x, z in [(sx * (0.05 + 0.15 * math.sin(math.pi * u * 0.5)), 0.0 + 0.19 * u ** 1.45)
+                                                for u in [i / 20 for i in range(1, 20)]]]
+            curve_obj(f"wing_core{sx}", [[(x, 0.0, z) for x, z in core]], 0.004, me, root)
+        core_gem(root, (0.0, -0.04, -0.03), 0.026, d, mt)
+        rune_ring(root, (0.0, 0.0, -0.08), 0.1, d, me, tilt=(math.radians(78), math.radians(8)), n=16)
+        motes(root, lambda t: (0.0, 0.0, -0.25 + 0.7 * t), d.get("motes", 40), d, spread=0.12)
+        if d.get("tassel"):
+            tassel(root, (0.0, 0.0, -0.17), 0.26, 90, d["tassel"], seed=5, spread=0.3, r_strand=0.002)
+        return root
     # chạc sét: hai nhánh zíc zắc hất lên, viền kim loại, lõi phát sáng
     k = d.get("bolt_scale", 1.35)
     bolt = [(k * x, k * z) for x, z in ((0.03, 0.0), (0.1, -0.02), (0.085, 0.03), (0.17, 0.02), (0.13, 0.08),
@@ -344,5 +378,227 @@ def build_wind_compass(d):
     return root
 
 
+# ---------------------------------------------------------------- đại kiếm
+
+def build_great_ornate(d):
+    root = empty()
+    r5 = d["r"] >= 5
+    L, bw = d.get("length", 1.15), d.get("width", 0.13)
+    mb, mt = mat_blade(d), trim(d)
+    me = mat_emit("glow", hexc(d["glow"]), d.get("glow_strength", 6 if r5 else 3))
+
+    def hw(t):
+        s = 1 - 0.12 * t
+        if r5 and t < 0.12:
+            s *= 1 + 0.25 * (1 - t / 0.12) ** 2
+        w = bw * s if t < 0.86 else bw * s * max(0.0, 1 - ((t - 0.86) / 0.14) ** 1.6) ** 0.7
+        return (w, w)
+
+    th = lambda t: 0.04 * (1 - 0.5 * t)
+    blade("blade", L, hw, th, SEC_DOUBLE, None, mats=[mb], parent=root, smooth=False)
+    if r5:
+        filigree_blade(root, L, hw, th, d, mt, me, t1=0.6, n=8)
+    else:
+        for side in (-1, 1):
+            fz = [(0.0, side * 0.52 * th(t), t * L) for t in [0.04 + 0.6 * i / 60 for i in range(61)]]
+            curve_obj(f"fuller_core{side}", [fz], 0.003, me, root)
+    span, gs = d.get("guard_span", 0.2), d.get("guard", "bar")
+    mg = mt if r5 else mat_metal("guard", hexc(d.get("gold", "#a88a60")), 0.3)
+    if gs == "bell":
+        lathe("guard", [(0.03, -0.09), (0.06, -0.07), (span * 0.75, -0.02), (span * 0.8, 0.0), (0.05, 0.02)], 64, [mg], root)
+        curve_obj("guard_band", [[(span * 0.7 * math.cos(TAU * i / 96), span * 0.7 * math.sin(TAU * i / 96), -0.03)
+                                  for i in range(96)]], 0.003, me, root, cyclic=True)
+    elif gs == "sun":
+        extrude_poly("guard", star_poly(16, span * 0.75, span * 0.5, 0, -0.02), 0.05, [mg], root, bevel_w=0.004)
+        extrude_poly("guard_core", star_poly(8, span * 0.32, span * 0.16, 0, -0.02), 0.012, [me], root, y=-0.028)
+    else:
+        # thanh ngang có hai móc vuốt lên ôm chân lưỡi
+        pts = [(-span, 0.03), (-span * 0.9, 0.0), (-0.06, 0.0), (0.06, 0.0), (span * 0.9, 0.0), (span, 0.03),
+               (span * 0.96, -0.02), (span * 0.6, -0.06), (-span * 0.6, -0.06), (-span * 0.96, -0.02)]
+        extrude_poly("guard", pts, 0.062, [mg], root, bevel_w=0.006, smooth=True)
+    core_gem(root, (0.0, -0.034, -0.03), 0.034 if r5 else 0.024, d, mt)
+    gl = d.get("grip_len", 0.36)
+    wrap = mat_cloth("wrap", hexc(d.get("wrap", "#3d2a1c")), 0.4, 0.7)
+    grip(root, -0.06 - gl, -0.06, 0.028, 0.03, d, wrap, mat_metal("core", hexc("#1a1410"), 0.4), turns=9)
+    pz = -0.06 - gl
+    lathe("pommel", [(0.03, pz), (0.048, pz - 0.02), (0.05, pz - 0.045), (0.03, pz - 0.065), (0, pz - 0.07)], 48, [mt], root)
+    if r5:
+        crystal("pommel_gem", (0, 0, pz - 0.066), (0, 0, -1), 0.07, 0.018, 6, [mat_gem("pg", hexc(d.get("gem", d["glow"])),
+                hexc(d["glow"]), 6)], root)
+        motes(root, lambda t: (0.0, 0.0, -0.05 + 1.1 * t * L), d.get("motes", 46), d, spread=0.14)
+    if d.get("tassel"):
+        tassel(root, (0.0, 0.0, pz - 0.07), 0.24, 80, d["tassel"], seed=9, spread=0.3)
+    return root
+
+
+# ---------------------------------------------------------------- cung
+
+def build_bow_ornate(d):
+    """Cung cơ bản (models) cộng viền kim loại dọc cánh, lõi đá ở tay cầm; 5★ thêm vây tinh thể, hạt sáng."""
+    root = build_bow(d)
+    r5 = d["r"] >= 5
+    mt = trim(d)
+    me = mat_emit("accent", hexc(d["glow"]), d.get("glow_strength", 5))
+    H, rec = d.get("half", 0.62), d.get("recurve", 0.06)
+    curve = lambda t: -0.16 * math.sin(math.pi * min(1.0, t / 0.85) * 0.5) + rec * max(0.0, (t - 0.8) / 0.2) ** 2
+    for sgn in (1, -1):
+        for sx in ((-1, 1) if r5 else (1,)):
+            pts = [(curve(t) + sx * 0.02 * (1 - 0.55 * t), -0.012, sgn * (0.08 + H * t)) for t in [0.06 + 0.86 * i / 50 for i in range(51)]]
+            curve_obj(f"limb_trim{sgn}{sx}", [pts], 0.0024, mt, root)
+        lathe(f"limb_band{sgn}", [(0.03, sgn * 0.1 - 0.012), (0.036, sgn * 0.1), (0.03, sgn * 0.1 + 0.012)], 24, [mt], root)
+    core_gem(root, (0.0, -0.034, 0.0), 0.03 if r5 else 0.022, d, mt)
+    if r5:
+        for sgn in (1, -1):  # vây tinh thể hất ra từ hai đầu tay cầm
+            for k in range(3):
+                crystal(f"fin{sgn}{k}", (-0.02, 0.0, sgn * (0.1 + 0.02 * k)), (-0.8, 0.0, sgn * (0.6 + 0.3 * k)),
+                        0.1 - 0.02 * k, 0.012, 5, [mat_gem(f"fin{sgn}{k}", hexc(d.get("gem", d["glow"])), hexc(d["glow"]), 5)], root)
+            tip = (curve(1.0), 0.0, sgn * (0.08 + H))
+            crystal(f"tip_gem{sgn}", tip, (0.2, 0.0, sgn), 0.06, 0.014, 6, [me], root)
+        motes(root, lambda t: (curve(abs(2 * t - 1)) - 0.02, 0.0, (2 * t - 1) * (0.08 + H)), d.get("motes", 46), d, spread=0.1)
+    return root
+
+
+def build_sword_crystal(d):
+    """Kiếm một lưỡi chắn tay tinh thể (models) cộng lõi đá ở chắn tay, tinh thể đốc và hạt sáng cho 5★."""
+    root = build_sword(d)
+    mt = trim(d)
+    core_gem(root, (0.0, -0.02, -0.02), 0.026, d, mt)
+    L = d.get("length", 1.0)
+    crystal("pommel_ice", (0, 0, -0.34), (0, 0, -1), 0.07, 0.016, 6, [mat_gem("pi", hexc(d.get("gem", d["glow"])),
+            hexc(d["glow"]), 7)], root)
+    motes(root, lambda t: (0.0, 0.0, 0.02 + 1.0 * t * L), d.get("motes", 46), d, spread=0.1)
+    return root
+
+
+# ---------------------------------------------------------------- pháp khí khác
+
+def build_crystal_bloom(d):
+    """Tinh thể băng dài lơ lửng, trong lòng là đóa hoa đỏ phát sáng; nôi kim loại chạm ôm hai đầu, mảnh băng bay quanh."""
+    root = empty()
+    mt = trim(d)
+    me = mat_emit("glow", hexc(d["glow"]), d.get("glow_strength", 5))
+    ice = mat_gem("ice", hexc(d.get("ice", "#cdeeff")), hexc(d["glow"]), d.get("core", 0.3), 0.015)
+    lathe("crystal", [(0.0, -0.26), (0.1, -0.1), (0.12, 0.0), (0.1, 0.12), (0.0, 0.3)], 6, [ice], root, sharp_deg=10)
+    petal = mat_cloth("petal", hexc(d.get("flower", "#d8243a")), 0.9, 0.45, 80)
+    petal_e = mat_emit("petal_glow", hexc(d.get("flower", "#ff3050")), 4.0)
+    for ring_i, (n_p, r0, sz, z) in enumerate(((6, 0.0, 0.075, 0.0), (5, 0.018, 0.058, 0.02), (4, 0.0, 0.038, 0.04))):
+        for k in range(n_p):
+            a = TAU * k / n_p + ring_i * 0.6
+            pts = [(0.0, 0.0), (sz * 0.45, sz * 0.5), (sz * 0.2, sz), (-sz * 0.2, sz), (-sz * 0.45, sz * 0.5)]
+            o = extrude_poly(f"petal{ring_i}_{k}", pts, 0.003, [petal if ring_i < 2 else petal_e], root, smooth=True)
+            o.rotation_euler = (math.radians(70 - ring_i * 20), 0, a)
+            o.location = (r0 * math.cos(a), r0 * math.sin(a), z - 0.02)
+    lathe("stem", [(0.003, -0.16), (0.003, -0.02)], 10, [mat_cloth("stem", hexc("#2a5a2a"), 0.2, 0.6)], root)
+    # nôi kim loại: vành chạm ở eo dưới và chóp trên, bốn nhánh cong ôm thân tinh thể
+    for zz, rr in ((-0.12, 0.1), (0.16, 0.085)):
+        curve_obj(f"cradle_ring{zz}", [[(rr * math.cos(TAU * i / 64), rr * math.sin(TAU * i / 64), zz) for i in range(64)]],
+                  0.006, mt, root, cyclic=True)
+    for k in range(4):
+        a = TAU * k / 4 + 0.4
+        arm = [(0.1 * math.cos(a) * (1 + 0.25 * math.sin(math.pi * u)), 0.1 * math.sin(a) * (1 + 0.25 * math.sin(math.pi * u)),
+                -0.12 + 0.28 * u) for u in [i / 24 for i in range(25)]]
+        curve_obj(f"cradle_arm{k}", [arm], 0.004, mt, root)
+        crystal(f"cradle_tip{k}", (0.1 * math.cos(a), 0.1 * math.sin(a), -0.12), (math.cos(a) * 0.4, math.sin(a) * 0.4, -1),
+                0.08, 0.008, 4, [mt], root)
+    core_gem(root, (0, 0, -0.31), 0.02, d, mt, axis="Z", facets=6)
+    rune_ring(root, (0, 0, -0.36), 0.1, d, me, tilt=(math.radians(82), 0.0), n=16, seed=4)
+    shard = mat_gem("shard", hexc("#e8f8ff"), hexc(d["glow"]), 2, 0.02)
+    for k in range(6):
+        a = TAU * k / 6 + 0.3
+        crystal(f"shard{k}", (0.22 * math.cos(a), 0.22 * math.sin(a) * 0.4, 0.05 * math.sin(2 * a)), (0.2 * math.cos(a), 0.2, 1),
+                0.06, 0.012, 6, [shard], root)
+    motes(root, lambda t: (0.22 * math.cos(TAU * t), 0.1 * math.sin(TAU * t), -0.2 + 0.4 * t), d.get("motes", 40), d)
+    return root
+
+
+def build_bell_ornate(d):
+    """Chuông phép: thân bạc có ba dải ký tự phát sáng, quai có ngọc, quả lắc tinh thể, vòng gợn nước bên dưới."""
+    root = empty()
+    mt = trim(d)
+    me = mat_emit("glow", hexc(d["glow"]), d.get("glow_strength", 5))
+    body = mat_aged("silver", hexc(d.get("metal", "#cfd6de")), hexc("#2a3038"), 0.2)
+    prof = [(0.0, 0.2), (0.05, 0.2), (0.09, 0.17), (0.11, 0.08), (0.13, -0.04), (0.17, -0.14), (0.175, -0.16),
+            (0.15, -0.16), (0.12, -0.1), (0.0, -0.1)]
+    lathe("bell", prof, 64, [body], root)
+    lathe("lip", [(0.168, -0.15), (0.186, -0.158), (0.18, -0.172), (0.162, -0.166)], 64, [mt], root)
+    lathe("shoulder", [(0.07, 0.19), (0.098, 0.165), (0.104, 0.15), (0.092, 0.16)], 64, [mt], root)
+    R = rng(7)
+    for z, r in ((0.1, 0.108), (0.0, 0.122), (-0.1, 0.152)):
+        glyphs = []
+        for k in range(14):
+            a = TAU * k / 14
+            for _ in range(R.randint(2, 3)):
+                a0, a1 = a + R.uniform(-0.08, 0.08), a + R.uniform(-0.08, 0.08)
+                z0, z1 = z + R.uniform(-0.018, 0.018), z + R.uniform(-0.018, 0.018)
+                glyphs.append([((r + 0.003) * math.cos(a0), (r + 0.003) * math.sin(a0), z0),
+                               ((r + 0.003) * math.cos(a1), (r + 0.003) * math.sin(a1), z1)])
+        if not d.get("icon") or z == 0.0:
+            curve_obj(f"glyph{z}", glyphs, 0.0022, me, root)
+        for dz in (-0.028, 0.028):
+            rz = r + (0.012 if dz < 0 else -0.006) * (1 if z < 0.05 else 0.4)
+            curve_obj(f"band{z}{dz}", [[(rz * math.cos(TAU * i / 96), rz * math.sin(TAU * i / 96), z + dz) for i in range(96)]],
+                      0.003, mt, root, cyclic=True)
+    curve_obj("loop", [[(0, 0, 0.2), (0.06, 0, 0.27), (0, 0, 0.33), (-0.06, 0, 0.27), (0, 0, 0.2)]], 0.009, mt, root, kind="BEZIER")
+    core_gem(root, (0, -0.012, 0.27), 0.022, d, mt)
+    crystal("clapper", (0, 0, -0.1), (0, 0, -1), 0.11, 0.024, 8, [mat_gem("clap", hexc(d.get("gem", d["glow"])), hexc(d["glow"]), 7)], root)
+    for k, rr in enumerate((0.14, 0.2)):
+        curve_obj(f"ripple{k}", [[(rr * math.cos(TAU * i / 96), rr * math.sin(TAU * i / 96), -0.24 - 0.01 * k) for i in range(96)]],
+                  0.003, me, root, cyclic=True)
+    motes(root, lambda t: (0.2 * math.cos(TAU * t), 0.1 * math.sin(TAU * t), -0.2 + 0.4 * t), d.get("motes", 40), d)
+    return root
+
+
+def build_lantern_ornate(d):
+    """Đèn phép 4★: lồng kim loại sáu cạnh, kính mờ, lõi lửa tinh thể bên trong, mái chóp và quai."""
+    root = empty()
+    mt = mat_metal("cage", hexc(d.get("gold", "#5a5a60")), 0.3)
+    me = mat_emit("glow", hexc(d["glow"]), d.get("glow_strength", 4))
+    glass = mat_gem("glass", hexc("#fff4dc"), None, 0, 0.12)
+    lathe("glass", [(0.0, -0.15), (0.1, -0.15), (0.12, 0.0), (0.1, 0.15), (0.0, 0.15)], 6, [glass], root, sharp_deg=10)
+    for k in range(6):
+        a = TAU * k / 6
+        rib = [(r * 1.04 * math.cos(a), r * 1.04 * math.sin(a), z) for r, z in ((0.1, -0.16), (0.12, 0.0), (0.1, 0.16))]
+        curve_obj(f"rib{k}", [rib], 0.006, mt, root, kind="BEZIER")
+    lathe("base", [(0.0, -0.22), (0.07, -0.21), (0.12, -0.17), (0.11, -0.15), (0.0, -0.15)], 6, [mt], root, sharp_deg=20)
+    lathe("roof", [(0.0, 0.15), (0.13, 0.16), (0.14, 0.18), (0.06, 0.24), (0.02, 0.29), (0.0, 0.3)], 6, [mt], root, sharp_deg=20)
+    curve_obj("handle", [[(0, 0, 0.3), (0.07, 0, 0.38), (0, 0, 0.45), (-0.07, 0, 0.38), (0, 0, 0.3)]], 0.007, mt, root, kind="BEZIER")
+    fire = mat_gem("fire", hexc(d.get("gem", d["glow"])), hexc(d["glow"]), d.get("core_glow", 6), 0.03)
+    crystal("flame", (0, 0, -0.08), (0, 0, 1), 0.2, 0.045, 6, [fire], root, twist=0.5)
+    for k in range(3):
+        a = TAU * k / 3
+        crystal(f"flame_s{k}", (0.03 * math.cos(a), 0.03 * math.sin(a), -0.08), (0.3 * math.cos(a), 0.3 * math.sin(a), 1),
+                0.11, 0.022, 5, [me], root, twist=0.4)
+    if d.get("tassel"):
+        tassel(root, (0.0, 0.0, -0.22), 0.14, 50, d["tassel"], seed=2, spread=0.15)
+    return root
+
+
+def build_moon_mirror(d):
+    """Gương trăng 4★: khung bạc tám mũi, mặt gương sáng, trăng khuyết bằng ngọc phát sáng, dây treo và tua."""
+    root = empty()
+    mt = mat_metal("frame", hexc(d.get("gold", "#d0b070")), 0.22)
+    me = mat_emit("glow", hexc(d["glow"]), d.get("glow_strength", 3))
+    extrude_poly("frame", star_poly(8, 0.2, 0.165, 0, 0, rot=math.pi / 8), 0.03, [mt], root, bevel_w=0.004)
+    circ = lambda r, cx=0.0, cz=0.0, n=64: [(cx + r * math.cos(TAU * i / n), cz + r * math.sin(TAU * i / n)) for i in range(n)]
+    extrude_poly("mirror", circ(0.15), 0.036, [mat_metal("mirror", hexc("#e8f0f4"), 0.04)], root)
+    jade = mat_gem("jade", hexc(d.get("jade", "#cfe8e4")), hexc(d["glow"]), d.get("core", 2.5), 0.08)
+    moon = circ(0.1)
+    cut = circ(0.085, 0.045, 0.03)
+    crescent = [p for p in moon if (p[0] - 0.045) ** 2 + (p[1] - 0.03) ** 2 > 0.085 ** 2]
+    crescent += [p for p in reversed(cut) if p[0] ** 2 + p[1] ** 2 < 0.1 ** 2]
+    extrude_poly("crescent", crescent, 0.01, [jade], root, y=-0.022, smooth=True)
+    curve_obj("mirror_ring", [[(0.152 * math.cos(TAU * i / 96), -0.019, 0.152 * math.sin(TAU * i / 96)) for i in range(96)]],
+              0.003, me, root, cyclic=True)
+    lathe("bail", [(0, 0.2), (0.02, 0.21), (0.022, 0.23), (0.018, 0.25), (0, 0.26)], 24, [mt], root)
+    cord = mat_cloth("cord", hexc(d.get("cord", "#3a5a8a")), 0.6, 0.6)
+    curve_obj("cord", [[(0, 0, 0.26), (0.0, 0, 0.36), (0.03, 0, 0.44)]], 0.006, cord, root, kind="BEZIER")
+    tassel(root, (0.0, 0.0, -0.2), 0.2, 60, d.get("cord", "#3a5a8a"), seed=6, spread=0.12)
+    return root
+
+
 BUILDERS_ORNATE = {"sword_ornate": build_sword_ornate, "spear_ornate": build_spear_ornate,
-                   "orb_ornate": build_orb_ornate, "wind_compass": build_wind_compass}
+                   "orb_ornate": build_orb_ornate, "wind_compass": build_wind_compass,
+                   "great_ornate": build_great_ornate, "bow_ornate": build_bow_ornate,
+                   "sword_crystal": build_sword_crystal, "crystal_bloom": build_crystal_bloom,
+                   "bell_ornate": build_bell_ornate, "lantern_ornate": build_lantern_ornate,
+                   "moon_mirror": build_moon_mirror}

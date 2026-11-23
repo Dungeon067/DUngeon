@@ -78,13 +78,17 @@ def build_sword_rustic(d):
     extrude_poly("guard", top + bot[::-1], 0.022, [mi], root, bevel_w=0.003, smooth=True)
     lathe("guard_knot", [(0.0, -0.034), (0.018, -0.03), (0.022, -0.015), (0.018, 0.0), (0.0, 0.004)], 8, [mi], root,
           sharp_deg=20)
-    # dấu khắc la bàn nhỏ ở chân lưỡi (khắc chìm, màu sẫm)
     mark = mat_metal("mark", hexc("#2a2826"), 0.7)
     y = -0.0102
+    if d.get("mark") == "notches":  # ba vạch khắc đếm ngày ở chân lưỡi
+        curve_obj("mark_notch", [[(-0.012 + 0.012 * k, y, 0.06), (-0.012 + 0.012 * k, y, 0.09)] for k in range(3)],
+                  0.0014, mark, root)
     c, rr = (0.0, 0.07), 0.012
-    curve_obj("mark_ring", [[(c[0] + rr * math.cos(TAU * i / 32), y, c[1] + rr * math.sin(TAU * i / 32))
+    if d.get("mark") == "notches":
+        rr = 0.0
+    if rr: curve_obj("mark_ring", [[(c[0] + rr * math.cos(TAU * i / 32), y, c[1] + rr * math.sin(TAU * i / 32))
                              for i in range(32)]], 0.0011, mark, root, cyclic=True)
-    curve_obj("mark_needle", [[(0, y, c[1] - rr * 1.5), (0, y, c[1] + rr * 1.5)],
+    if rr: curve_obj("mark_needle", [[(0, y, c[1] - rr * 1.5), (0, y, c[1] + rr * 1.5)],
                               [(-rr * 0.9, y, c[1]), (rr * 0.9, y, c[1])]], 0.0011, mark, root)
     # chuôi quấn dây gai, đốc sắt có khoen đồng buộc dây
     gl = d.get("grip_len", 0.22)
@@ -186,5 +190,34 @@ def build_spear_rustic(d):
     return root
 
 
-BUILDERS_RUSTIC = {"sword_rustic": build_sword_rustic, "bow_rustic": build_bow_rustic,
+# ---------------------------------------------------------------- pháp khí 3★
+
+def build_book_rustic(d):
+    """Vở chép tay: bìa da sờn, góc bịt sắt, dây da quấn ngang có khóa đồng, gáy khâu chỉ. Không phát sáng."""
+    root = empty()
+    W, Hh, T = 0.34, 0.46, 0.085
+    cover = leather(d, "cover", "cover")
+    for y in (T / 2, -T / 2):
+        extrude_poly(f"cover{y}", [(-W / 2, -Hh / 2), (W / 2, -Hh / 2), (W / 2 + 0.004, Hh / 2 - 0.01), (-W / 2, Hh / 2)], 0.012,
+                     [cover], root, y=y, bevel_w=0.004, smooth=True)
+    extrude_poly("pages", [(-W / 2 + 0.01, -Hh / 2 + 0.012), (W / 2 - 0.012, -Hh / 2 + 0.012), (W / 2 - 0.014, Hh / 2 - 0.014),
+                           (-W / 2 + 0.01, Hh / 2 - 0.012)], T - 0.012, [mat_cloth("paper", hexc("#d8c8a0"), 0.1, 0.85, 600)], root)
+    lathe("spine", [(0.0, -Hh / 2), (T / 2 + 0.006, -Hh / 2), (T / 2 + 0.006, Hh / 2), (0.0, Hh / 2)], 16, [cover], root,
+          offset=(-W / 2, 0, 0))
+    mi, mz = iron(d), bronze(d)
+    for cx, cz in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
+        extrude_poly(f"corner{cx}{cz}", [(cx * W / 2, cz * Hh / 2), (cx * (W / 2 - 0.05), cz * Hh / 2), (cx * W / 2, cz * (Hh / 2 - 0.05))],
+                     0.016, [mi], root, y=-T / 2 - 0.004)
+    strap = leather(d, "strap", "strap")
+    extrude_poly("strap", [(-W / 2 - 0.01, -0.025), (W / 2 + 0.03, -0.025), (W / 2 + 0.03, 0.025), (-W / 2 - 0.01, 0.025)], T + 0.02,
+                 [strap], root)
+    extrude_poly("buckle", [(W / 2 - 0.02, -0.04), (W / 2 + 0.04, -0.04), (W / 2 + 0.04, 0.04), (W / 2 - 0.02, 0.04)], 0.012,
+                 [mz], root, y=-T / 2 - 0.012, bevel_w=0.003)
+    curve_obj("stitch", [[(-W / 2 - 0.004, -T / 2 - 0.003, -Hh / 2 + 0.03 + k * 0.05), (-W / 2 + 0.012, -T / 2 - 0.003,
+                                                                                         -Hh / 2 + 0.03 + k * 0.05)] for k in range(9)],
+              0.0016, mat_cloth("thread", hexc("#e0d0a8"), 0.1, 0.9), root)
+    return root
+
+
+BUILDERS_RUSTIC = {"sword_rustic": build_sword_rustic, "book_rustic": build_book_rustic, "bow_rustic": build_bow_rustic,
                    "spear_rustic": build_spear_rustic}
