@@ -204,7 +204,7 @@ export class VrmActor {
             vrm.humanoid.getNormalizedBoneNode("rightMiddleProximal") ??
             vrm.humanoid.getNormalizedBoneNode("rightHand");
         if (wtype === "bow" && str?.isMesh && gr && nock) a.bow = new BowRig(str, gr, nock, a.obj);
-        a.wfx = new WeaponFx(vrm, holder, wtype, POSES.vuKhi, (n) => a.duration(n), grip.scale);
+        a.wfx = new WeaponFx(vrm, holder, wtype, POSES.vuKhi, (n) => a.duration(n), grip.scale, a.obj);
       }
     }
     return a;

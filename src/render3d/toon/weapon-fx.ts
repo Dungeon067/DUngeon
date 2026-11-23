@@ -7,6 +7,7 @@
 import * as THREE from "three";
 import type { VRM } from "@pixiv/three-vrm";
 import type { VuKhiCfg } from "../../data/poses-schema";
+import { setWorldQuat } from "./ik";
 
 type St = "hand" | "stowing" | "worn" | "fading" | "gone";
 const D = Math.PI / 180;
@@ -42,7 +43,9 @@ export class WeaponFx {
     private cfg: VuKhiCfg,
     private clipDur: (n: string) => number,
     gripScale: number,
+    private root: THREE.Object3D | null = null,
   ) {
+    this.cat = wtype === "cat";
     this.hand = holder.parent!;
     this.handPos = holder.position.clone();
     this.handQuat = holder.quaternion.clone();
@@ -75,15 +78,34 @@ export class WeaponFx {
         vertexShader:
           "attribute float a; varying float vA; uniform float uS; void main(){ vA=a; vec4 mv=modelViewMatrix*vec4(position,1.0); gl_PointSize=uS*a/-mv.z; gl_Position=projectionMatrix*mv; }",
         fragmentShader:
-          "uniform vec3 uC; varying float vA; void main(){ vec2 d=gl_PointCoord-0.5; float r=1.0-smoothstep(0.1,0.5,length(d)); if(vA<=0.0||r<=0.0) discard; gl_FragColor=vec4(mix(uC,vec3(1.0),0.45*r)*1.6, r*vA); }",
+          "uniform vec3 uC; varying float vA; void main(){ vec2 d=gl_PointCoord-0.5; float r=1.0-smoothstep(0.1,0.5,length(d)); if(vA<=0.0||r<=0.0) discard; gl_FragColor=vec4(mix(uC,vec3(1.0),0.3*r*r)*1.15, r*vA); }",
         transparent: true,
         depthWrite: false,
-        blending: THREE.AdditiveBlending,
+        blending: THREE.NormalBlending,
       }),
     );
     this.pts.frustumCulled = false;
   }
   private noi: VuKhiCfg["noi"]["sword"];
+  private cat = false;
+  private fpos: THREE.Vector3 | null = null;
+
+  /** Pháp khí lơ lửng cạnh tay phải (bám theo tay có trễ, nhấp nhô và xoay chậm), không dính cứng vào lòng bàn tay. */
+  private float(dt: number) {
+    if (!this.root) return;
+    const t = (this.t2 += dt);
+    const rq = this.root.getWorldQuaternion(new THREE.Quaternion()),
+      sc = this.root.getWorldScale(new THREE.Vector3()).y;
+    const hp = this.hand.getWorldPosition(new THREE.Vector3());
+    const off = new THREE.Vector3(-0.13, 0.13 + 0.025 * Math.sin(t * 2.2), 0.1).multiplyScalar(sc).applyQuaternion(rq);
+    const tgt = hp.add(off);
+    if (!this.fpos) this.fpos = tgt.clone();
+    else this.fpos.lerp(tgt, Math.min(1, dt * 10));
+    this.holder.position.copy(this.hand.worldToLocal(this.fpos.clone()));
+    const bob = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.12 * Math.sin(t * 1.3), 0.35 * Math.sin(t * 0.7), 0.08 * Math.sin(t * 1.7)));
+    setWorldQuat(this.holder, rq.multiply(this.handQuat).multiply(bob));
+  }
+  private t2 = 0;
 
   /** Đặt trạng thái mong muốn mỗi khung. standing: đang đứng yên (mới chạy clip cất). */
   want(out: boolean, standing: boolean, scene: THREE.Object3D | null) {
@@ -121,6 +143,7 @@ export class WeaponFx {
     this.st = "hand";
     this.clip = null;
     this.slide = 1;
+    this.fpos = null;
     if (!wasVisible) this.burst(true);
   }
 
@@ -162,6 +185,7 @@ export class WeaponFx {
 
   update(dt: number) {
     this.t += dt;
+    if (this.cat && this.st === "hand") this.float(dt);
     if (this.st === "stowing") {
       const at = this.clip ? this.noi.luc * this.clipDur(this.clip) : 0;
       if (this.t >= at && this.holder.parent === this.hand) {
