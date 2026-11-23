@@ -73,12 +73,20 @@ Danh sách đội ở cạnh phải giữa màn, cụm nút Đánh, Kỹ năng, 
 
 | Cỡ màn (CSS px)                        | Ảnh                                 |
 | -------------------------------------- | ----------------------------------- |
-| 844×390 (iPhone ngang)                 | ![844×390](anh/hud-844x390.png)     |
-| 932×430 (iPhone Pro Max ngang)         | ![932×430](anh/hud-932x430.png)     |
-| 1000×460 (iPad Safari còn thanh duyệt) | ![1000×460](anh/hud-1000x460.png)   |
-| 1180×820 (iPad Air ngang)              | ![1180×820](anh/hud-1180x820.png)   |
-| 1366×1024 (iPad Pro 12.9 ngang)        | ![1366×1024](anh/hud-1366x1024.png) |
-| 1920×1080 (máy tính)                   | ![1920×1080](anh/hud-1920x1080.png) |
+| 844×390 (iPhone ngang)                 | ![844×390](anh/hud-844x390.jpg)     |
+| 932×430 (iPhone Pro Max ngang)         | ![932×430](anh/hud-932x430.jpg)     |
+| 1000×460 (iPad Safari còn thanh duyệt) | ![1000×460](anh/hud-1000x460.jpg)   |
+| 1180×820 (iPad Air ngang)              | ![1180×820](anh/hud-1180x820.jpg)   |
+| 1366×1024 (iPad Pro 12.9 ngang)        | ![1366×1024](anh/hud-1366x1024.jpg) |
+| 1920×1080 (máy tính)                   | ![1920×1080](anh/hud-1920x1080.jpg) |
+
+Bản ứng dụng chạy thử:
+
+| Bản                                 | Ảnh                                               |
+| ----------------------------------- | ------------------------------------------------- |
+| Android (máy ảo Pixel 6, APK)       | ![Android](anh/android-emulator.jpg)              |
+| iOS, iPad Pro 13 (Simulator, Xcode) | ![iPad Simulator](anh/ios-ipad-simulator.jpg)     |
+| iOS, iPhone 17 (Simulator, Xcode)   | ![iPhone Simulator](anh/ios-iphone-simulator.jpg) |
 
 ## Cho người phát triển
 

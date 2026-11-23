@@ -174,7 +174,8 @@ for (const [w, h] of [
       );
       expect(unnamed).toEqual([]);
       await page.screenshot({ path: info.outputPath(`hud-${w}x${h}.png`) });
-      if (process.env.CHUP_ANH === "1") await page.screenshot({ path: `docs/cai-dat/anh/hud-${w}x${h}.png` });
+      if (process.env.CHUP_ANH === "1")
+        await page.screenshot({ path: `docs/cai-dat/anh/hud-${w}x${h}.jpg`, quality: 80 });
       expect(errors).toEqual([]);
     });
   });

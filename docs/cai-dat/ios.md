@@ -52,6 +52,8 @@ Rồi bấm **Run** trong Xcode như bước 6.
 
 ## Gặp lỗi
 
+- **iPad đang cầm dọc thì game hiện nằm ngang, có hai dải đen**: xoay iPad sang ngang. iPadOS 26 không tự xoay ứng dụng chỉ chơi ngang.
+
 - **"Untrusted Developer"** hoặc **"Nhà phát triển chưa được tin cậy"**: làm bước 7.
 - **"Failed to register bundle identifier"**: đổi Bundle Identifier như ở bước 4.
 - **Màn hình đen hoặc trắng**: chạy lại `pnpm build && pnpm exec cap sync ios`, rồi Run.
