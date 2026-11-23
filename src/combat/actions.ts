@@ -46,6 +46,7 @@ export function tryAttack(): boolean {
   p.comboT = 1.1;
   p.atkCd = W.int;
   p.atkAnim = 1;
+  p.act = { k: `atk${step + 1}`, t0: GS.G.time };
   aim();
   const ang = p.ang,
     el = m.c.w === "cat" || step === 2 ? m.c.el : null,
@@ -138,6 +139,7 @@ export function castSkill(): boolean {
     col = F.c;
   m.skillCd = S.cd;
   aim();
+  p.act = { k: "skill", t0: GS.G.time };
   const ang = p.ang;
   const cast = { gave: false, amount: 12 };
   sfx("skill");
@@ -202,6 +204,7 @@ export function castBurst(): boolean {
   m.energy = 0;
   GS.G.pending.burst++;
   p.iframes = 1.4;
+  p.act = { k: "burst", t0: GS.G.time };
   sfx("burst");
   GS.G.cine = { t: 0.95, max: 0.95, m, fire: () => doBurst(m) };
   return true;

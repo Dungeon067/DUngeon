@@ -11,7 +11,9 @@ import {
   unboundActions,
   type ColorMode,
   type Quality,
+  type RendererPref,
 } from "../core/settings";
+import { applyRenderer } from "../render3d/select";
 import { captureNextKey } from "../core/input";
 import { resize } from "../core/canvas";
 import { applyVolumes } from "../core/audio";
@@ -111,6 +113,16 @@ function panelGeneral() {
       ],
       settings.quality,
       (v) => ((settings.quality = v), commit(), resize()),
+    ),
+    choice<RendererPref>(
+      "Lớp vẽ thế giới",
+      [
+        ["auto", "Tự chọn (3D nếu máy hỗ trợ)"],
+        ["3d", "3D (WebGL)"],
+        ["2d", "2D (bản cũ, nhẹ nhất)"],
+      ],
+      settings.renderer,
+      (v) => ((settings.renderer = v), commit(), applyRenderer()),
     ),
     pct("Cỡ chữ", settings.fontScale, (v) => ((settings.fontScale = v), commit()), { min: 80, max: 140, step: 10 }),
     choice<ColorMode>(
