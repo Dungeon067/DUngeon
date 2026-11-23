@@ -192,7 +192,7 @@ function stsIcon(name: string, col: string) {
   let im = stsImg.get(k);
   if (!im && typeof Image !== "undefined") {
     im = new Image();
-    im.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(iconSvg(name, { size: 24 }).replace("<svg", `<svg style="color:${col}" color="${col}"`))}`;
+    im.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(iconSvg(name, { size: 24 }).replace("<svg", `<svg xmlns="http://www.w3.org/2000/svg" style="color:${col}" color="${col}"`))}`;
     stsImg.set(k, im);
   }
   return im;
