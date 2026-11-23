@@ -5,6 +5,7 @@ export type { Weapon } from "./weapons-schema";
 
 const n = z.number().nonnegative();
 const int = z.number().int().nonnegative();
+const chestTier = z.object({ daSao: int, xu: int, sach: int }).strict();
 const pct = z.number().min(0).max(1);
 const byRarity = <T extends z.ZodTypeAny>(t: T) => z.object({ "4": t, "5": t }).strict();
 
@@ -41,6 +42,7 @@ const GameSchema = z
             sachMoiCap: int,
           })
           .strict(),
+        ruongCauDo: z.object({ thuong: chestTier, quy: chestTier, tinhXao: chestTier }).strict(),
         uyThac: z
           .object({
             moiViec: z.object({ daSao: int, xu: int }).strict(),
@@ -159,6 +161,7 @@ const DesignSchema = z
         tuan: z.object({ daSao: int, xu: int }).strict(),
         thang: z.object({ thapKy: int, suKien: int, baoTri: int }).strict(),
         motLan: z.object({ daSao: int, trongSoNgay: int.min(1) }).strict(),
+        cauDo: z.object({ daSao: int, trongSoNgay: int.min(1) }).strict(),
       })
       .strict(),
     moHinhTran: z

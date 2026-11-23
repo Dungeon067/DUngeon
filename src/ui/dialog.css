@@ -1,0 +1,43 @@
+/* Hộp thoại NPC quest mini (S23): lớp phủ dưới giữa màn hình, không thuộc bố cục HUD. */
+.tt-dialog {
+  position: fixed;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: min(720px, calc(100vw - 32px));
+  z-index: 60;
+  background: rgba(14, 18, 40, 0.94);
+  border: 1px solid rgba(240, 192, 96, 0.55);
+  border-radius: 14px;
+  padding: 12px 16px 10px;
+  color: #f4ecd8;
+  font:
+    500 15px/1.5 "Be Vietnam Pro",
+    sans-serif;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+.tt-dialog__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: #c9b98f;
+  margin-bottom: 4px;
+}
+.tt-dialog__who {
+  font-weight: 700;
+  color: #f0c060;
+  font-size: 15px;
+}
+.tt-dialog__row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+@media (max-height: 420px) {
+  .tt-dialog {
+    font-size: 13px;
+    padding: 8px 12px 6px;
+  }
+}

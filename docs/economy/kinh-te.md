@@ -13,6 +13,14 @@ Số liệu từ `content/economy.yaml` (mục `game.thuong`, `thietKe.linhLuc`,
 | Bảo Ấn                          | Rơi trong Lòng Sao, chất lượng theo Thiên Tượng       | —        | —                                                                          | —                                                                                                                                        |
 | Linh Lực                        | Hồi **180** mỗi ngày, tối đa tích 160                 | —        | 5.400                                                                      | Không bán                                                                                                                                |
 
+**Câu đố, bí cảnh, quest mini (S23, một lần):** **325 Đá Sao**, cộng Xu và Sách từ rương:
+
+- Rương thường: 5 Đá Sao, 800 Xu, 1 Sách.
+- Rương quý: 10 Đá Sao, 1.500 Xu, 2 Sách.
+- Rương tinh xảo: 20 Đá Sao, 3.000 Xu, 4 Sách.
+
+Mô phỏng chia đều 325 Đá Sao trong 60 ngày đầu (`thietKe.thuNhap.cauDo`). `pnpm content:check` báo lỗi nếu tổng thưởng trong `content/puzzles.yaml` lệch con số này. Chi tiết: [docs/world/cau-do-bi-canh.md](../world/cau-do-bi-canh.md).
+
 Lòng Sao tốn 20 Linh Lực mỗi lượt, nên một ngày có 9 lượt. Linh Lực tối đa 160 nên ai bỏ một ngày chỉ mất phần vượt trần, không tích được cả tuần để "cày bù".
 
 Từ bản nguồn nguyên liệu vũ khí, mô phỏng cho F2P dành 2 lượt mỗi ngày (40 Linh Lực) cho Bí Cảnh Binh Khí, còn lại 7 lượt Lòng Sao. Lượt Bí Cảnh ngày đầu trả bằng 160 Linh Lực đầy sẵn lúc tạo hồ sơ. Mỗi lượt Bí Cảnh trả 1.200 Xu bù một phần.

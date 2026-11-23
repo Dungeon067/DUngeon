@@ -25,7 +25,8 @@ export function showBanner(t: any) {
   GS.G.banner = { t: 2.2, txt: t };
 }
 export function partyWipe() {
-  if (GS.G.mode === "world") {
+  if (GS.G.mode === "world" || GS.G.mode === "domain") {
+    const dom = GS.G.mode === "domain";
     showBanner("Cả đội gục ngã");
     GS.G.over = true;
     later(1.6, () => {
@@ -39,8 +40,12 @@ export function partyWipe() {
       GS.G.over = false;
       snapCam();
       buildHudParty();
-      showBanner("Hồi sinh tại Bia Đá");
-      toast("Cả đội về Bia Đá đã chạm gần nhất, máu đầy, không mất vật phẩm");
+      showBanner(dom ? "Hồi sinh tại cửa bí cảnh" : "Hồi sinh tại Bia Đá");
+      toast(
+        dom
+          ? "Cả đội về sảnh bí cảnh, máu đầy, phòng đã qua vẫn giữ"
+          : "Cả đội về Bia Đá đã chạm gần nhất, máu đầy, không mất vật phẩm",
+      );
     });
   } else endRun(false, "Cả đội đã gục ngã");
 }

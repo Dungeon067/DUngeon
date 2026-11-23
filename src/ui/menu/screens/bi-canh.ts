@@ -41,7 +41,7 @@ registerScreen("bicanh", {
     run.id = "biCanhRun";
     host.append(
       h("p", { class: "tt-dim" }, [
-        `Mỗi lượt rơi ${list(N.biCanh.roi)} và ${fmt(N.biCanh.xu)} Xu. Linh Lực hồi ${L.hoiMoiNgay} mỗi ngày, tối đa ${L.toiDa}. Bản tạm: sẽ gộp vào hệ bí cảnh.`,
+        `Mỗi lượt rơi ${list(N.biCanh.roi)} và ${fmt(N.biCanh.xu)} Xu. Linh Lực hồi ${L.hoiMoiNgay} mỗi ngày, tối đa ${L.toiDa}. Quét nhanh, lặp lại mỗi ngày; bí cảnh trên đảo chỉ khám phá một lần.`,
       ]),
       h("div", { class: "tt-row" }, [progress(ll / L.toiDa, { label: "Linh Lực", text: `${ll}/${L.toiDa}` }), run]),
     );

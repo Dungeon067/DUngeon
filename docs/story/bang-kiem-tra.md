@@ -21,18 +21,18 @@ Nhãn cũng ghi ở đầu `docs/characters/<id>/ho-so.md` của từng nhân v�
 
 ### Nhân vật được nhắc trong Mở đầu và Chương 1
 
-| Nhân vật    | ★   | Loại 5★       | Vai trò trong Mở đầu, Ch.1                 | Vào đội                      |
-| ----------- | --- | ------------- | ------------------------------------------ | ---------------------------- |
-| Sương Mai   | 4★  | Không áp dụng | Đi cùng từ `md_01`                         | Có, thật (đội khởi đầu)      |
-| Mai Linh    | 4★  | Không áp dụng | Đi cùng từ `md_01`                         | Có, thật (đội khởi đầu)      |
-| Bạch Vũ     | 4★  | Không áp dụng | Lần ước miễn phí `md_02`                   | Có, thật (đội khởi đầu)      |
-| Lạc Hồng    | 5★  | `thuong-tru`  | Dẫn đường Ch.1; trận `md_05`; từ `c1_01`   | Tạm thời (`temporary: true`) |
-| Thạch Sơn   | 5★  | `thuong-tru`  | Dẫn đường Ch.1; từ `c1_03`                 | Tạm thời (`temporary: true`) |
-| Thủy Nguyệt | 5★  | `thuong-tru`  | Gặp ở `md_06`; dẫn đường Ch.1 từ `c1_04`   | Tạm thời (`temporary: true`) |
-| Minh Khải   | 4★  | Không áp dụng | Gặp ở `c1_02`; dẫn đường Làng Chìm `c1_06` | Tạm thời trong `c1_06`       |
-| Phong Vân   | 5★  | `thuong-tru`  | Chỉ được nhắc tên (`dd_12`)                | Không                        |
-| Ngọc Thạch  | 4★  | Không áp dụng | Chỉ được nhắc tên (`dd_03`, `np_08`)       | Không                        |
-| Hạ Vy       | 4★  | Không áp dụng | Chỉ được nhắc tên (`np_04`, `c1_05`)       | Không                        |
+| Nhân vật    | ★   | Loại 5★       | Vai trò trong Mở đầu, Ch.1                                             | Vào đội                      |
+| ----------- | --- | ------------- | ---------------------------------------------------------------------- | ---------------------------- |
+| Sương Mai   | 4★  | Không áp dụng | Đi cùng từ `md_01`                                                     | Có, thật (đội khởi đầu)      |
+| Mai Linh    | 4★  | Không áp dụng | Đi cùng từ `md_01`                                                     | Có, thật (đội khởi đầu)      |
+| Bạch Vũ     | 4★  | Không áp dụng | Lần ước miễn phí `md_02`                                               | Có, thật (đội khởi đầu)      |
+| Lạc Hồng    | 5★  | `thuong-tru`  | Dẫn đường Ch.1; trận `md_05`; từ `c1_01`                               | Tạm thời (`temporary: true`) |
+| Thạch Sơn   | 5★  | `thuong-tru`  | Dẫn đường Ch.1; từ `c1_03`                                             | Tạm thời (`temporary: true`) |
+| Thủy Nguyệt | 5★  | `thuong-tru`  | Gặp ở `md_06`; dẫn đường Ch.1 từ `c1_04`                               | Tạm thời (`temporary: true`) |
+| Minh Khải   | 4★  | Không áp dụng | Gặp ở `c1_02`; dẫn đường Làng Chìm `c1_06`                             | Tạm thời trong `c1_06`       |
+| Phong Vân   | 5★  | `thuong-tru`  | Chỉ được nhắc tên (`dd_12`)                                            | Không                        |
+| Ngọc Thạch  | 4★  | Không áp dụng | Nhắc tên ở `dd_03`; nhận free qua `np_08` (S23)                        | Nhập đội thật sau `np_08`    |
+| Hạ Vy       | 4★  | Không áp dụng | Nhắc tên ở `np_04`, `c1_05`; nhận free qua quest mini `mq-ha-vy` (S23) | Nhập đội thật sau `mq-ha-vy` |
 
 Không nhân vật 5★ giới hạn nào xuất hiện trong Mở đầu và Chương 1.
 

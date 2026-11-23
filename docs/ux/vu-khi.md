@@ -37,7 +37,7 @@ Banner nhân vật: lượt 3★ giờ cho một vũ khí 3★ ngẫu nhiên (v�
 
 ### Nguồn nguyên liệu
 
-- **Bí Cảnh Binh Khí** (nút ở Kho vũ khí, màn `bicanh`): quét một lượt tốn Linh Lực, rơi Quặng Tinh Luyện và Xu. Linh Lực lưu ở `P.ll`, hồi theo thời gian thực. Hệ bí cảnh của S23 chưa có trong game nên đây là hoạt động độc lập; khi S23 có bí cảnh đánh thật thì gộp route `biCanh` vào đó, giữ nguyên số liệu `nguon.biCanh`.
+- **Bí Cảnh Binh Khí** (nút ở Kho vũ khí, màn `bicanh`): quét một lượt tốn Linh Lực, rơi Quặng Tinh Luyện và Xu. Linh Lực lưu ở `P.ll`, hồi theo thời gian thực. 4 bí cảnh của S23 (`content/puzzles.yaml`) là khám phá một lần, rương chỉ nhận một lần, không tốn Linh Lực. Vì vậy Bí Cảnh Binh Khí vẫn là lượt quét lặp lại độc lập. Khi có chế độ đánh lại bí cảnh S23 thì chế độ đó gọi chung route `biCanh`, giữ nguyên số liệu `nguon.biCanh`.
 - **Ủy thác:** thưởng đủ bốn việc có thêm Quặng Thô (`nguon.uyThac`).
 - **Cửa hàng quặng** (cùng màn): đổi Xu lấy quặng, giới hạn theo tuần (`P.wShop`, khóa tuần theo thứ Hai).
 - **Thành tựu Binh Khí:** đếm lượt Bí Cảnh, đột phá, tinh luyện, rèn (`P.wStat`); nhận Phôi Lồng Sao một lần (`P.wAch`). Cửa hàng sự kiện đổi Phôi sẽ thêm khi hệ sự kiện vào game.

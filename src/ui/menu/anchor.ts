@@ -5,8 +5,8 @@ export function anchorXY(at: string, M: any): [number, number] | null {
   if (!M) return null;
   if (at === "start") return M.statues[0] ? [M.statues[0].x + 0.5, M.statues[0].y + 0.5] : null;
   if (at === "center") return [M.cx, M.cy];
-  if (at === "tower") return [M.tower.x + 0.5, M.tower.y + 0.5];
-  if (at === "gate") return [M.gate.x + 0.5, M.gate.y + 0.5];
+  if (at === "tower") return M.tower ? [M.tower.x + 0.5, M.tower.y + 0.5] : null;
+  if (at === "gate") return M.gate ? [M.gate.x + 0.5, M.gate.y + 0.5] : null;
   const st = /^statue:(\d)$/.exec(at);
   if (st) {
     const s = M.statues[Number(st[1])];

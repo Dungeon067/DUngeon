@@ -1,4 +1,5 @@
-import type { LogEntry, Profile, WeaponBannerCfg } from "./types";
+import type { LogEntry, Profile, PuzzleSave, WeaponBannerCfg } from "./types";
+import { DOMAINS, MINI, PZ } from "../data/puzzles";
 import { fmt, pick, todayKey } from "../core/util";
 import { CHARS, DAILY_POOL, DEFAULT_CFG, START_PROFILE, byId } from "../data/content";
 import { toast } from "../ui/toast";
@@ -145,7 +146,23 @@ function baseProfile(): Profile {
     affinity: {},
     econ: {},
     quits: [],
+    puz: freshPuz(),
   } as unknown as Profile;
+}
+export const freshPuz = (): PuzzleSave => ({ solved: [], talked: [], mini: [], domains: {} });
+const arr = (v: any) => (Array.isArray(v) ? v.filter((x) => typeof x === "string") : []);
+/** Save trước S23 chưa có `puz`; save hỏng một phần thì giữ phần dùng được. */
+function withPuz(p: Profile): Profile {
+  const o: any = p.puz && typeof p.puz === "object" ? p.puz : {};
+  const domains: PuzzleSave["domains"] = {};
+  if (o.domains && typeof o.domains === "object")
+    for (const [k, v] of Object.entries<any>(o.domains)) {
+      const d = DOMAINS.find((x) => x.id === k);
+      if (d && v && typeof v === "object")
+        domains[k] = { room: Math.min(d.phong.length + 2, Math.max(0, Number(v.room) | 0)), done: !!v.done };
+    }
+  p.puz = { solved: arr(o.solved), talked: arr(o.talked), mini: arr(o.mini), domains };
+  return p;
 }
 export function freshProfile(): Profile {
   return ensureWeapons(baseProfile());
@@ -153,11 +170,13 @@ export function freshProfile(): Profile {
 /** Chuyển hồ sơ cũ (v2) lên v3, giữ toàn bộ dữ liệu đã có; cuối cùng bổ sung kho vũ khí (S24). */
 export function migrate(old: any): Profile | null {
   if (!old || typeof old !== "object") return null;
-  if (old.v === 3) return ensureWeapons(withLimitedBanner({ ...baseProfile(), ...old }));
+  if (old.v === 3) return ensureWeapons(withPuz(withLimitedBanner({ ...baseProfile(), ...old })));
   if (old.v !== 2) return null;
   const base = baseProfile();
   const party = Array.isArray(old.party) && old.party.length ? old.party : base.party;
-  return ensureWeapons(withLimitedBanner({ ...base, ...old, v: 3, party, teams: [[...party], [], [], []], team: 0 }));
+  return ensureWeapons(
+    withPuz(withLimitedBanner({ ...base, ...old, v: 3, party, teams: [[...party], [], [], []], team: 0 })),
+  );
 }
 /** Hồ sơ cũ có banner nổi bật không còn là 5★ giới hạn (ví dụ Lạc Hồng trước S23): chuyển về banner mặc định. */
 function withLimitedBanner(p: Profile): Profile {
@@ -325,6 +344,15 @@ export const Server = {
   econ(key: string, n: number) {
     if (!n) return;
     this.P.econ[key] = (this.P.econ[key] ?? 0) + n;
+  },
+  chestTier(t: "thuong" | "quy" | "tinhXao", key: string) {
+    const R = ECON.game.thuong.ruongCauDo[t],
+      P = this.P;
+    P.gems += R.daSao;
+    P.coin += R.xu;
+    P.books += R.sach;
+    this.econ(key, R.daSao);
+    return { gems: R.daSao, coin: R.xu, books: R.sach, tier: t };
   },
   bumpDaily(id: string, n = 1) {
     const d = this.P.daily;
@@ -576,6 +604,63 @@ export const Server = {
       P.books += b;
       this.bumpDaily("chest");
       return { gems: g, coin: c, books: b };
+    },
+    /** S23: giải câu đố nguyên tố (một lần), thưởng rương theo bậc. */
+    solvePuzzle(this: any, { id }: any) {
+      const P = this.P,
+        p = PZ[id];
+      if (!p) throw new Error("Không có câu đố này");
+      if (P.puz.solved.includes(id)) throw new Error("Câu đố đã giải");
+      P.puz.solved.push(id);
+      return p.ruong ? this.chestTier(p.ruong, "vao:cau-do") : { gems: 0, coin: 0, books: 0 };
+    },
+    talkMini(this: any, { id }: any) {
+      if (!MINI.some((m) => m.id === id)) throw new Error("Không có quest này");
+      if (!this.P.puz.talked.includes(id)) this.P.puz.talked.push(id);
+      return this.P.puz.talked;
+    },
+    /** Xong quest mini khi đã nhận quest và giải hết câu đố của nó. */
+    finishMini(this: any, { id }: any) {
+      const P = this.P,
+        m = MINI.find((x) => x.id === id);
+      if (!m) throw new Error("Không có quest này");
+      if (P.puz.mini.includes(id)) throw new Error("Quest đã xong");
+      if (!P.puz.talked.includes(id) || !m.cauDo.every((c) => P.puz.solved.includes(c)))
+        throw new Error("Quest chưa xong");
+      P.puz.mini.push(id);
+      P.gems += m.thuong.daSao;
+      this.econ("vao:quest-mini", m.thuong.daSao);
+      P.coin += m.thuong.xu;
+      const gift = m.tang && !P.owned[m.tang] ? (this.grant(m.tang), m.tang) : null;
+      return { gems: m.thuong.daSao, coin: m.thuong.xu, gift };
+    },
+    domainRoom(this: any, { id, room }: any) {
+      if (!DOMAINS.some((d) => d.id === id)) throw new Error("Không có bí cảnh này");
+      const D = (this.P.puz.domains[id] ??= { room: 0, done: false });
+      D.room = Math.max(D.room, room | 0);
+      return D;
+    },
+    domainClear(this: any, { id }: any) {
+      const d = DOMAINS.find((x) => x.id === id);
+      if (!d) throw new Error("Không có bí cảnh này");
+      const D = (this.P.puz.domains[id] ??= { room: 0, done: false });
+      if (D.done) throw new Error("Đã nhận rương bí cảnh");
+      D.done = true;
+      D.room = d.phong.length + 1;
+      return this.chestTier(d.ruong, "vao:bi-canh");
+    },
+    /** Admin: đặt lại câu đố, quest mini, bí cảnh (tất cả hoặc theo id). Không thu hồi thưởng hay nhân vật đã nhận. */
+    resetPuzzles(this: any, { id }: any = {}) {
+      const P = this.P;
+      if (!id) P.puz = freshPuz();
+      else {
+        const rm = (a: string[]) => a.filter((x) => x !== id);
+        P.puz.solved = rm(P.puz.solved);
+        P.puz.talked = rm(P.puz.talked);
+        P.puz.mini = rm(P.puz.mini);
+        delete P.puz.domains[id];
+      }
+      return P.puz;
     },
     towerClear(this: any, { floor, stars }: any) {
       const P = this.P,

@@ -2,6 +2,7 @@ import { GS } from "../../core/state";
 import { $, TAU, dist } from "../../core/util";
 import { Server } from "../../server/server";
 import { MH, MW, TS } from "../../world/map";
+import { isMiniTarget, miniTargetXY, puzzleMarks } from "../../world/puzzle-marks";
 
 /* Bản đồ nhỏ (góc trên trái). Bản đồ lớn là màn "map" của menu S10 (src/ui/menu/screens/map.ts). */
 
@@ -14,15 +15,22 @@ const MARK = {
   you: { c: "#ffffff", label: "Vị trí của bạn" },
   target: { c: "#7dffb2", label: "Mục tiêu hiện tại" },
   ledge: { c: "#b9a27a", label: "Bệ đá, gờ cao (nhảy lên được)" },
+  puzzle: { c: "#c9a6ff", label: "Câu đố nguyên tố (xám: đã giải)" },
+  domain: { c: "#ff9a5a", label: "Cửa bí cảnh (màu nguyên tố, xám: đã xong)" },
+  quest: { c: "#ffe27a", label: "Quest mini" },
 } as const;
 
 function targetPoints(): [number, number][] {
   const M = GS.G.map,
     t = GS.G.objTarget;
   if (!M || !t) return [];
+  if (isMiniTarget(t)) {
+    const xy = miniTargetXY(t, M);
+    return xy ? [xy] : [];
+  }
   if (t === "statue") return M.statues.map((s: any) => [s.x + 0.5, s.y + 0.5]);
-  if (t === "tower") return [[M.tower.x + 0.5, M.tower.y + 0.5]];
-  if (t === "gate") return [[M.gate.x + 0.5, M.gate.y + 0.5]];
+  if (t === "tower") return M.tower ? [[M.tower.x + 0.5, M.tower.y + 0.5]] : [];
+  if (t === "gate") return M.gate ? [[M.gate.x + 0.5, M.gate.y + 0.5]] : [];
   if (t === "chest") {
     const p = GS.G.p;
     let best: any = null,
@@ -48,8 +56,14 @@ function drawMarks(c: CanvasRenderingContext2D, P: Dot, mark: (x: number, y: num
   M.chests.forEach((ch: any, i: any) => {
     if (!Server.P.chests.includes(i)) P(ch.x + 0.5, ch.y + 0.5, MARK.chest.c, big ? 3.5 : 3);
   });
-  P(M.tower.x + 0.5, M.tower.y + 0.5, MARK.tower.c, big ? 7 : 6);
-  P(M.gate.x + 0.5, M.gate.y + 0.5, MARK.gate.c, big ? 7 : 6);
+  if (M.tower) P(M.tower.x + 0.5, M.tower.y + 0.5, MARK.tower.c, big ? 7 : 6);
+  if (M.gate) P(M.gate.x + 0.5, M.gate.y + 0.5, MARK.gate.c, big ? 7 : 6);
+  for (const k of puzzleMarks(M)) {
+    if (k.kind === "quest" && k.done) continue;
+    const r = k.kind === "domain" ? 5 : k.kind === "quest" ? 4 : 3;
+    P(k.x, k.y, "#000", r + 1.5);
+    P(k.x, k.y, k.col, r);
+  }
   for (const e of GS.G.enemies) if (!e.dead && dist(e.x, e.y, p.x, p.y) < 900) P(e.x / TS, e.y / TS, MARK.enemy.c, 2.2);
   c.lineWidth = 2;
   for (const [x, y] of targetPoints()) {

@@ -9,6 +9,7 @@ import { cur } from "../entities/party";
 import { FEEL, charFx, feelState, hitstop, inputBuffer, shake } from "../combat/feel";
 import { Server } from "../server/server";
 import { canAirDash, tryJump, tryPlunge } from "./jump";
+import { pulseElement } from "../world/puzzles";
 
 /* ---------- đệm lệnh: bấm sớm trong FEEL.input.buffer giây vẫn được nhận ---------- */
 export type BufferedAct = "atk" | "skill" | "burst" | "dash" | "jump";
@@ -54,6 +55,7 @@ export function tryAttack(): boolean {
     fxSlash(p.x, p.y - 16, ang, W.range!, el ? F.c : F.c2, m.c.w, F.trail, el ? F.c2 : "#ffffff");
     if (el) fxParticles(p.x + Math.cos(ang) * W.range! * 0.7, p.y - 16 + Math.sin(ang) * W.range! * 0.7, F, 5);
     let landed = false;
+    pulseElement(p.x + Math.cos(ang) * W.range! * 0.6, p.y + Math.sin(ang) * W.range! * 0.6, W.range! * 0.7, el);
     p.x += Math.cos(ang) * 4;
     p.y += Math.sin(ang) * 4;
     for (const e of GS.G.enemies) {
@@ -154,6 +156,7 @@ export function castSkill(): boolean {
     fxBurst(p.x, p.y - 12, col, 24, 260, 3.5);
     fxParticles(p.x, p.y - 12, F, 14, 220);
     shake("skill");
+    pulseElement(p.x, p.y, R, el);
     for (const e of GS.G.enemies) {
       if (!e.dead && dist(p.x, p.y, e.x, e.y) < R + e.r) hitEnemy(e, m, S.m, el, { cast, kb: 180 });
     }
@@ -217,6 +220,7 @@ export function doBurst(m: any) {
     fxRing(p.x, p.y - 12, 230, col, 0.6, 16);
     fxRing(p.x, p.y - 12, 150, F.c2, 0.5, 8);
     fxBurst(p.x, p.y - 12, col, 50, 420, 5);
+    pulseElement(p.x, p.y, 230, el);
     for (const e of GS.G.enemies) {
       if (!e.dead && dist(p.x, p.y, e.x, e.y) < 230 + e.r) hitEnemy(e, m, B.m, el, { noEnergy: true, kb: 260 });
     }
@@ -232,6 +236,7 @@ export function doBurst(m: any) {
           GS.G.fx.push({ k: "arrowRain", x, y, col, life: 0.22, max: 0.22 });
         } else fxBolt(x, y, col);
         fxRing(x, y, 55, col, 0.25, 4);
+        pulseElement(x, y, 55, el);
         for (const e of GS.G.enemies) {
           if (!e.dead && dist(x, y, e.x, e.y) < 55 + e.r) hitEnemy(e, m, B.m, el, { noEnergy: true, noKb: true });
         }
@@ -240,6 +245,7 @@ export function doBurst(m: any) {
     fxRing(p.x, p.y - 12, 240, col, 0.7, 18);
     fxRing(p.x, p.y - 12, 180, F.c2, 0.6, 10);
     fxBurst(p.x, p.y - 12, F.c2, 40, 360, 4);
+    pulseElement(p.x, p.y, 240, el);
     for (const e of GS.G.enemies) {
       if (!e.dead && dist(p.x, p.y, e.x, e.y) < 240 + e.r) hitEnemy(e, m, B.m, el, { noEnergy: true, kb: 300 });
     }
@@ -255,6 +261,7 @@ export function doBurst(m: any) {
       sfx("slam");
       fxRing(x, y, 170, col, 0.6, 16);
       fxBurst(x, y, col, 50, 420, 5);
+      pulseElement(x, y, 170, el);
       for (const e of GS.G.enemies) {
         if (!e.dead && dist(x, y, e.x, e.y) < 170 + e.r) hitEnemy(e, m, B.m, el, { noEnergy: true, kb: 200 });
       }
