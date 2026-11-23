@@ -12,6 +12,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import lib  # noqa: E402
 from designs import design_for  # noqa: E402
 from models import BUILDERS  # noqa: E402
+from ornate import BUILDERS_ORNATE  # noqa: E402
+
+BUILDERS = {**BUILDERS, **BUILDERS_ORNATE}
 
 argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 ap = argparse.ArgumentParser()
@@ -29,13 +32,14 @@ for w in weapons:
     if ids and w["id"] not in ids:
         continue
     d = design_for(w)
-    if d["type"] not in BUILDERS:
+    kind = d.get("builder", d["type"])
+    if kind not in BUILDERS:
         print(f"[bo qua] {w['id']}: chua co bo dung cho loai {d['type']}")
         continue
     t0 = time.time()
     sc = lib.reset_scene()
     sc.render.resolution_x = sc.render.resolution_y = a.res
-    root = BUILDERS[d["type"]](d)
+    root = BUILDERS[kind](d)
     center, size = lib.frame(root, d.get("angle", 45), d.get("yaw", 18), d.get("roll", 8))
     lib.studio(center, size, lib.hexc(d["glow"]))
     lib.render(os.path.join(a.out, f"{w['id']}.png"), a.samples)

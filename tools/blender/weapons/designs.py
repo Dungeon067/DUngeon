@@ -13,9 +13,9 @@ PLAIN = dict(glow="#ffffff", glow_strength=0)
 DESIGNS = {
     # ---------------- 5★ giới hạn
     "thien-loi-pha-tran": dict(
-        r=5, type="spear", steel="#5d5f6e", edge="#e6e2f4", glow="#b47bff", gold="#c9a35a", cavity="#1d1430",
-        blade_motif="veins", motif_col="#d9c3ff", motif_glow=6.0, fuller_glow=5.0, shaft_col="#16121f",
-        shaft_col2="#3b2f55", crack_glow=6.0, tassel="#2a1838", gem="#c99bff", glow_strength=7, wings=True),
+        r=5, type="spear", builder="spear_ornate", steel="#5a5c68", edge="#f2f0f8", glow="#b47bff", gold="#e2c47a",
+        cavity="#1d1430", blade_motif="veins", motif_col="#d9c3ff", motif_glow=5.0, fuller_glow=4.0,
+        shaft_col="#16121f", shaft_col2="#3b2f55", crack_glow=4.0, tassel="#2a1838", gem="#c99bff", glow_strength=8),
     "tuyet-lac-vo-thanh": dict(
         r=5, type="sword", single_edge=True, steel="#6f7d8c", edge="#eef7ff", curve=0.025, length=1.02, width=0.06,
         hamon_glow=9.0, glow="#8fe1ff", gold="#c7d3df", cavity="#2a3440", guard="crystal", guard_span=0.2,
@@ -33,13 +33,13 @@ DESIGNS = {
         r=5, type="great", steel="#6e5f50", edge="#f4e2c0", glow="#ffb040", gold="#e0a040", cavity="#3a2010",
         blade_motif="veins", motif_col="#ffcf7a", motif_glow=6.0, fuller_glow=5.0, guard="bell", guard_span=0.17,
         gem="#ffb040", wrap="#4a2a14", glow_strength=7),
-    "thuy-mac-van-thien": dict(r=5, type="cat", form="orb", orb="#173a36", core=1.4, glow="#7af0d8", gold="#c9a35a",
-                               angle=20, yaw=40, roll=35),
+    "thuy-mac-van-thien": dict(r=5, type="cat", builder="orb_ornate", orb="#0b2624", core=5, glow="#5af0d0",
+                               gold="#d8b46a", cavity="#2a1e0c", gem="#bffff0", glow_strength=4, rune_glow=1.3, mote_glow=3, angle=12, yaw=30, roll=10),
     # ---------------- 5★ thường trú
     "hong-vu-truong-ca": dict(
-        r=5, type="sword", steel="#5e626c", edge="#e9e4da", curve=0.02, length=1.0, width=0.07, blade_motif="feather",
-        motif_col="#e3a446", motif_glow=7.0, fuller_glow=4.0, glow="#ff6a2a", gold="#e6a64a", cavity="#3a1a0c",
-        guard="wing", guard_span=0.21, wrap="#5c1212", pommel="drum", gem="#ff3b1f", tassel="#c8302a",
+        r=5, type="sword", builder="sword_ornate", steel="#5a5d66", edge="#f2ebe0", length=1.0, width=0.068,
+        blade_motif="feather", motif_col="#e3a446", motif_glow=4.0, fuller_glow=0.0, glow="#ff6a2a", gold="#e8b456",
+        cavity="#3a1a0c", guard="flame", guard_span=0.2, wrap="#5c1212", pommel="drum", gem="#ff4a1f",
         glow_strength=8),
     "ban-thach-tran-son": dict(r=5, type="great", steel="#7a7466", edge="#e0dccc", glow="#ffd27a", gold="#b8a070",
                                cavity="#2a2a20", blade_motif="veins", motif_col="#d8d0a0", motif_glow=3.5,
@@ -49,8 +49,9 @@ DESIGNS = {
     "ngu-phong-truy-van": dict(r=5, type="bow", limb="#a8b878", limb_dark="#4a5a2a", glow="#bfe8ff", gold="#e0e6f0",
                                wrap="#3a5a8a", string_glow=1.8, glow_strength=6),
     # ---------------- 4★ Lò Rèn
-    "loi-the-bai-sao": dict(r=4, type="sword", steel="#4e5058", edge="#d8d6d0", glow="#ffcf7a", gold="#9a7a50",
-                            fuller_glow=1.5, guard="bar", wrap="#3a2418"),
+    "loi-the-bai-sao": dict(r=4, type="sword", builder="sword_ornate", steel="#55585f", edge="#e4e2dc", glow="#ffcf7a",
+                            gold="#c4c8d0", fuller_glow=1.6, guard_span=0.17, wrap="#3a2418", gem="#ffb347",
+                            core_glow=5, glow_strength=3),
     "tieng-trong-dinh-lang": dict(r=4, type="great", steel="#7a5a3a", edge="#e0c8a0", glow="#ffb060", gold="#a86a30",
                                   guard="sun", guard_span=0.17, wrap="#2a1a10", glow_strength=2),
     "den-canh-hai-dang": dict(r=4, type="cat", form="lantern", paper="#ffd27a", paper_glow=3.0, glow="#ffd27a",
