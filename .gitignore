@@ -7,3 +7,7 @@ blob-report/
 .vite/
 *.log
 .DS_Store
+
+# S22: bản cài đặt
+src-tauri/target/
+src-tauri/gen/

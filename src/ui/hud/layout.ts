@@ -3,7 +3,7 @@ import { $ } from "../../core/util";
 import { CONTROLS } from "../../data/content";
 import { HUD_BUTTONS, type HudButton } from "../../data/schema";
 import { resetLayout, saveSettings, settings } from "../../core/settings";
-import { centerZone, itemRect, layoutProblems, overlaps, toItem, type Rect, type Safe } from "./geometry";
+import { centerZone, itemRect, layoutProblems, overlaps, partyFit, toItem, type Rect, type Safe } from "./geometry";
 
 /* Đặt nút cảm ứng theo settings.layout, và chế độ chỉnh bố cục (kéo thả, đổi cỡ, độ trong suốt). */
 
@@ -46,10 +46,31 @@ export function applyLayout() {
     e.style.setProperty("--size", r.w + "px");
     e.style.setProperty("--op", String(settings.layout[b].opacity));
   }
+  layoutParty();
   const { vw, vh } = vp();
   const cz = centerZone(vw, vh, CONTROLS.centerSafe);
   const z = document.getElementById("centerZone");
   if (z) z.style.cssText = `left:${cz.x}px;top:${cz.y}px;width:${cz.w}px;height:${cz.h}px`;
+}
+
+/** Cỡ tự nhiên của một ô đội hình (ds.css .tt-slot: chân dung 42 px + viền). */
+const SLOT_H = 48;
+/** Đặt cột đội hình ở cạnh phải giữa màn, luôn tránh menu nhanh và cụm nút dưới phải. */
+export function layoutParty() {
+  const box = document.getElementById("hudParty");
+  if (!box) return;
+  const n = box.children.length;
+  const first = box.children[0] as HTMLElement | undefined;
+  if (!n || !first) return;
+  const { vw, vh } = vp();
+  const qm = document.getElementById("quickMenu")?.getBoundingClientRect();
+  const top = (qm && qm.height ? qm.bottom : safeInsets().t + 44) + 8;
+  const buttons = HUD_BUTTONS.filter((b) => b !== "joy" && b !== "interact").map(rectOf);
+  const f = partyFit(n, first.offsetWidth, SLOT_H, vh <= 520 ? 4 : 6, vw, vh, safeInsets(), top, buttons);
+  box.style.top = f.y + "px";
+  box.style.setProperty("--slot-h", f.slotH + "px");
+  box.style.setProperty("--slot-gap", f.gap + "px");
+  box.style.setProperty("--slot-k", String(Math.min(1, (f.slotH - 6) / 42)));
 }
 
 /* ---------------- chế độ chỉnh bố cục ---------------- */

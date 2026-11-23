@@ -14,7 +14,7 @@ import { closeMenu, currentScreen, menuOpen, openMenu } from "./menu/shell";
 import { dailyReady } from "./menu/screens/main";
 import { MENU } from "../data/menu-content";
 import { trackedObjective } from "./menu/quests";
-import { applyLayout } from "./hud/layout";
+import { applyLayout, layoutParty } from "./hud/layout";
 import { openSettings } from "./settings";
 import type { Action } from "../data/schema";
 
@@ -152,6 +152,7 @@ export function buildHudParty() {
     b.addEventListener("click", () => switchTo(i));
     box.append(b);
   });
+  layoutParty();
   GS.hudCache = {};
 }
 
