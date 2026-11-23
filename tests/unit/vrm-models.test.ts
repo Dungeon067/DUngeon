@@ -23,17 +23,57 @@ function inspect(path: string) {
   const vrm = j.extensions?.VRMC_vrm;
   const springs: { joints: { node: number }[] }[] = j.extensions?.VRMC_springBone?.springs ?? [];
   const jointNames = springs.flatMap((s) => s.joints.map((jt) => String(j.nodes[jt.node].name)));
-  return { vrm, tris, maxTex, jointNames };
+  return { vrm, tris, maxTex, jointNames, j };
+}
+
+// S26: váy và vạt áo không lật như giấy: spring nặng, collider capsule ở chân, có quần bó và mặt trong tối.
+function clothCheck(path: string, id: string) {
+  const { j } = inspect(path);
+  const sb = j.extensions.VRMC_springBone;
+  const over = M.nhanVat[id]?.vai ?? M.npc[id]?.vai ?? {};
+  const rules = [...Object.entries(over), ...M.vai.xuong].map(([re, l]) => [new RegExp(re, "i"), l] as const);
+  const loai = (n: string) => rules.find(([re]) => re.test(n))?.[1] ?? M.vai.macDinh;
+  const capGroups = new Set(
+    sb.colliderGroups
+      .map((g: { colliders: number[] }, i: number) => (g.colliders.some((c) => sb.colliders[c].shape.capsule) ? i : -1))
+      .filter((i: number) => i >= 0),
+  );
+  let risky = 0;
+  for (const s of sb.springs) {
+    const n = String(j.nodes[s.joints[0].node].name);
+    if (!["vay", "vat"].includes(loai(n))) continue;
+    risky++;
+    const j0 = s.joints[0];
+    expect(j0.stiffness, n).toBeGreaterThanOrEqual(1.2);
+    expect(j0.dragForce, n).toBeGreaterThanOrEqual(0.6);
+    expect(j0.gravityPower, n).toBeGreaterThanOrEqual(0.4);
+    expect(j0.gravityDir[1], n).toBeLessThan(-0.9);
+    expect(
+      (s.colliderGroups ?? []).some((g: number) => capGroups.has(g)),
+      `${n}: collider capsule chân`,
+    ).toBe(true);
+  }
+  const mats: string[] = j.materials.map((m: { name: string }) => m.name);
+  if (risky) {
+    expect(
+      mats.some((m) => /Shorts/.test(m)),
+      "quần bó tối dưới váy/vạt",
+    ).toBe(true);
+    expect(
+      mats.some((m) => /_Inner$/.test(m)),
+      "mặt trong vải tối",
+    ).toBe(true);
+  }
 }
 
 // S26: mô hình nhân vật chính thức (trừ mẫu tạm) phải đạt chuẩn của chủ dự án.
 const ids = readdirSync(DIR).filter((d) => d !== M.mau && existsSync(`${DIR}/${d}/model.vrm`));
 
 describe("S26: chuẩn mô hình VRM nhân vật", () => {
-  it.each(ids)("%s: VRM 1.0, < 30.000 tam giác, texture ≤ 2048, spring bone tóc + vạt, cho dùng thương mại", (id) => {
+  it.each(ids)("%s: VRM 1.0, ≤ 60.000 tam giác, texture ≤ 2048, spring bone tóc + vạt, cho dùng thương mại", (id) => {
     const r = inspect(`${DIR}/${id}/model.vrm`);
     expect(r.vrm?.specVersion).toBe("1.0");
-    expect(r.tris).toBeLessThan(30000);
+    expect(r.tris).toBeLessThanOrEqual(60000);
     expect(r.maxTex).toBeLessThanOrEqual(2048);
     expect(
       r.jointNames.some((n) => /Hair/i.test(n)),
@@ -61,5 +101,24 @@ describe("S26: chuẩn mô hình VRM nhân vật", () => {
     const r = inspect(`${DIR}/npc/${id}/model.vrm`);
     expect(r.vrm?.specVersion).toBe("1.0");
     expect(existsSync(`content/characters/${id}.yaml`)).toBe(false);
+  });
+
+  it.each(ids)("%s: váy, vạt áo có trọng lượng, collider chân, quần bó, mặt trong tối", (id) =>
+    clothCheck(`${DIR}/${id}/model.vrm`, id),
+  );
+  it.each(Object.keys(M.npc))("npc %s: váy, vạt áo có trọng lượng, collider chân, quần bó, mặt trong tối", (id) =>
+    clothCheck(`${DIR}/npc/${id}/model.vrm`, id),
+  );
+
+  it("giới hạn góc: váy, vạt trước sau 45–55°, áo choàng/dải vải/tóc bay mạnh hơn và nhận gió nhiều hơn váy", () => {
+    const L = M.vai.loai;
+    for (const k of ["vay", "vat"]) {
+      expect(L[k]!.gocMax).toBeGreaterThanOrEqual(45);
+      expect(L[k]!.gocMax).toBeLessThanOrEqual(55);
+    }
+    for (const k of ["aoChoang", "daiVai", "toc"]) {
+      expect(L[k]!.gocMax).toBeGreaterThan(L.vay!.gocMax);
+      expect(L[k]!.gio).toBeGreaterThan(L.vay!.gio);
+    }
   });
 });

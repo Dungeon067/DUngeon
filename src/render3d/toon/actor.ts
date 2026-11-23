@@ -76,6 +76,17 @@ export function loadWeapon(id: string): Promise<THREE.Object3D | null> {
   return p.then((o) => (o ? o.clone() : null));
 }
 
+const _q = new THREE.Quaternion();
+
+/** Khớp spring bone (vải, tóc): góc lệch tối đa (rad) và trọng số gió theo `vai` trong content/models.yaml. */
+export interface ClothJoint {
+  bone: THREE.Object3D;
+  rest: THREE.Quaternion;
+  loai: string;
+  max: number;
+  gio: number;
+}
+
 export class VrmActor {
   obj = new THREE.Group();
   mixer: THREE.AnimationMixer;
@@ -83,6 +94,8 @@ export class VrmActor {
   private cur: THREE.AnimationAction | null = null;
   curName = "";
   weapon: THREE.Object3D | null = null;
+  /** Đọc `gio` ở đây để cộng lực gió (S27); `max` luôn được giữ sau mỗi bước mô phỏng. */
+  clothJoints: ClothJoint[] = [];
   constructor(
     public vrm: VRM,
     public wtype: WeaponType,
@@ -115,6 +128,24 @@ export class VrmActor {
       this.actions.set(name, this.mixer.clipAction(new THREE.AnimationClip(name, -1, tracks)));
     }
     this.obj.add(vrm.scene);
+  }
+
+  setupCloth(id: string) {
+    const V = MODELS.vai,
+      rules = [...Object.entries(MODELS.nhanVat[id]?.vai ?? MODELS.npc[id]?.vai ?? {}), ...V.xuong].map(
+        ([re, l]) => [new RegExp(re, "i"), l] as const,
+      );
+    for (const j of this.vrm.springBoneManager?.joints ?? []) {
+      const loai = rules.find(([re]) => re.test(j.bone.name))?.[1] ?? V.macDinh,
+        t = V.loai[loai]!;
+      this.clothJoints.push({
+        bone: j.bone,
+        rest: j.bone.quaternion.clone(),
+        loai,
+        max: (t.gocMax * Math.PI) / 180,
+        gio: t.gio,
+      });
+    }
   }
 
   static async load(
@@ -169,6 +200,7 @@ export class VrmActor {
           .invert()
       : new THREE.Quaternion();
     const a = new VrmActor(vrm, wtype, A.clips, A.fps, url);
+    a.setupCloth(id);
     a.obj.scale.setScalar(s);
     a.obj.updateMatrixWorld(true);
     a.obj.userData.yOff = look.yOffset - box.min.y * s;
@@ -218,7 +250,12 @@ export class VrmActor {
 
   update(dt: number) {
     this.mixer.update(dt);
-    this.vrm.update(dt);
+    // Khung hình giật (dt lớn) làm spring bone văng: giới hạn bước mô phỏng.
+    this.vrm.update(Math.min(dt, 1 / 30));
+    // Váy, vạt áo không lật quá giới hạn của loại vải so với tư thế nghỉ, dù gió mạnh tới đâu.
+    for (const c of this.clothJoints)
+      if (c.rest.angleTo(c.bone.quaternion) > c.max)
+        c.bone.quaternion.copy(_q.copy(c.rest).rotateTowards(c.bone.quaternion, c.max));
   }
 
   dispose() {
