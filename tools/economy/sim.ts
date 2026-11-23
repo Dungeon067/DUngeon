@@ -60,12 +60,20 @@ export function investOnDay(day: number, p: Profile | null, E: Economy) {
   const T = E.thietKe,
     ht = hoTinhLevel(day, E),
     cp = caps(ht, E);
-  const runs = Math.floor((day * T.linhLuc.hoiMoiNgay) / T.linhLuc.moiLuotLongSao);
+  const B = T.vuKhi.nguon.biCanh,
+    // Bí Cảnh ăn bớt Linh Lực của Lòng Sao; lượt ngày đầu trả bằng Linh Lực đầy sẵn lúc tạo hồ sơ (mô hình cũ không tính phần này).
+    runs = Math.max(
+      0,
+      Math.floor(
+        (day * T.linhLuc.hoiMoiNgay - Math.max(0, day - 1) * B.linhLuc * B.luotMoiNgay) / T.linhLuc.moiLuotLongSao,
+      ),
+    );
   const U = E.game.thuong.uyThac,
     seasons = p?.hoChieu ? Math.ceil(day / E.goiNap.hoChieuSao.ngay) : 0;
   let books = runs * T.linhLuc.thuongMoiLuot.sach + day * U.duBon.sach + seasons * E.goiNap.hoChieuSao.sach;
   let coin =
     runs * T.linhLuc.thuongMoiLuot.xu +
+    Math.floor(day * B.luotMoiNgay) * B.xu +
     day * 4 * U.moiViec.xu +
     Math.floor(day / 7) * T.thuNhap.tuan.xu +
     seasons * E.goiNap.hoChieuSao.xu;
@@ -100,9 +108,83 @@ export function investOnDay(day: number, p: Profile | null, E: Economy) {
   };
 }
 
+export interface WeaponFlow {
+  /** Bậc tinh luyện vũ khí 4★ Lò Rèn theo ngày (số bản rèn được, tối đa 5). */
+  r: number[];
+  /** Ngày một vũ khí 4★ lên cấp tối đa (đủ kinh nghiệm và đủ 6 lần đột phá), null nếu không kịp. */
+  lvDay: number | null;
+  r5Day: number | null;
+  /** Xu đã tiêu cho vũ khí tới ngày d (cộng dồn): cửa hàng quặng, kinh nghiệm, đột phá, Lò Rèn. */
+  xu: number[];
+}
+const flowCache = new WeakMap<object, WeaponFlow>();
+/** Dòng nguyên liệu vũ khí của người không nạp: Bí Cảnh, Ủy thác, cửa hàng tuần, thành tựu và sự kiện (vuKhi.nguon). */
+export function weaponFlow(E: Economy, days = 400): WeaponFlow {
+  const V = E.thietKe.vuKhi;
+  const hit = flowCache.get(V);
+  if (hit && hit.r.length > days) return hit;
+  const N = V.nguon,
+    sao = V.quang.reduce((a, q) => (q.r > a.r ? q : a)).id,
+    expOf = new Map(V.quang.map((q) => [q.id, q.kinhNghiem])),
+    ex = (o: Record<string, number>, k = 1) =>
+      Object.entries(o).reduce((s, [id, n]) => s + (id === sao ? 0 : (expOf.get(id) ?? 0) * n * k), 0),
+    so = (o: Record<string, number>, k = 1) => (o[sao] ?? 0) * k,
+    shop = Object.fromEntries(N.cuaHang.map((x) => [x.id, x.moiTuan])),
+    shopXu = N.cuaHang.reduce((s, x) => s + x.xu * x.moiTuan, 0);
+  let lvNeed = 0;
+  for (let L = 1; L < V.cap.toiDa; L++) lvNeed += V.cap.kinhNghiem.goc + V.cap.kinhNghiem.moiCap * (L - 1);
+  let exp = ex(V.khoiDau),
+    saoHave = so(V.khoiDau),
+    runs = 0,
+    lvDay: number | null = null,
+    r5Day: number | null = null;
+  let bought = 0;
+  const r: number[] = [],
+    xu: number[] = [],
+    phoi0 = V.khoiDau[V.loRen.nguyenLieu] ?? 0;
+  for (let d = 0; d <= days; d++) {
+    if (d > 0) {
+      runs += N.biCanh.luotMoiNgay;
+      exp += ex(N.biCanh.roi, N.biCanh.luotMoiNgay) + ex(N.uyThac);
+      saoHave += so(N.biCanh.roi, N.biCanh.luotMoiNgay) + so(N.uyThac);
+      if ((d - 1) % 7 === 0) {
+        exp += ex(shop);
+        saoHave += so(shop);
+        bought += shopXu;
+      }
+    }
+    let asc = 0;
+    for (let s = 0; asc < 6 && s + V.cap.dotPha.quang[asc]! <= saoHave; asc++) s += V.cap.dotPha.quang[asc]!;
+    if (lvDay === null && asc === 6 && exp >= lvNeed) lvDay = d;
+    const event = Math.floor((d * N.phoi.suKienMoiThang) / 30);
+    let forges = 0;
+    for (let i = 0; i < 6; i++) {
+      const stat: Record<string, number> = {
+        biCanh: runs,
+        dotPha: asc,
+        tinhLuyen: Math.max(0, forges - 1),
+        ren: forges,
+      };
+      const ach = N.phoi.thanhTuu.reduce((s, a) => s + ((stat[a.loai] ?? 0) >= a.can ? a.phoi : 0), 0);
+      forges = Math.min(5, Math.floor((phoi0 + event + ach) / V.loRen.so));
+    }
+    r.push(Math.max(1, forges));
+    let capNeed = 0;
+    for (let L = 1; L < V.cap.gioiHan[asc]!; L++) capNeed += V.cap.kinhNghiem.goc + V.cap.kinhNghiem.moiCap * (L - 1);
+    let spent = bought + Math.min(exp, capNeed) * V.cap.xuMoiKinhNghiem + forges * V.loRen.xu;
+    for (let i = 0; i < asc; i++) spent += V.cap.dotPha.xu[i]!;
+    xu.push(Math.ceil(spent));
+    if (r5Day === null && forges >= 5) r5Day = d;
+  }
+  const f = { r, lvDay, r5Day, xu };
+  flowCache.set(V, f);
+  return f;
+}
 /** Bậc tinh luyện vũ khí 4★ Lò Rèn ở ngày `day`. */
-export const craftRefine = (day: number, E: Economy) =>
-  Math.min(5, 1 + Math.floor((4 * day) / E.thietKe.vuKhi.loRenR5Ngay));
+export const craftRefine = (day: number, E: Economy) => {
+  const f = weaponFlow(E, Math.max(400, day));
+  return f.r[Math.min(day, f.r.length - 1)]!;
+};
 const craftId = (w: string, E: Economy) =>
   (E.thietKe.vuKhi.danhSach.find((x) => x.nguon === "loRen" && x.loai === w) ??
     E.thietKe.vuKhi.danhSach.find((x) => x.nguon === "loRen")!)!.id;

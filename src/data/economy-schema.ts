@@ -119,6 +119,29 @@ const DesignSchema = z
         loRen: z.object({ nguyenLieu: z.string().min(1), so: int.min(1), xu: int }).strict(),
         macDinh: z.record(z.enum(["sword", "great", "cat", "bow", "spear"]), z.string().min(1)),
         khoiDau: z.record(z.string(), int),
+        nguon: z
+          .object({
+            biCanh: z.object({ linhLuc: int.min(1), xu: int, roi: z.record(z.string(), int), luotMoiNgay: n }).strict(),
+            uyThac: z.record(z.string(), int),
+            cuaHang: z.array(z.object({ id: z.string().min(1), xu: int, moiTuan: int.min(1) }).strict()),
+            phoi: z
+              .object({
+                suKienMoiThang: n,
+                thanhTuu: z.array(
+                  z
+                    .object({
+                      id: z.string().min(1),
+                      ten: z.string().min(1),
+                      loai: z.enum(["biCanh", "dotPha", "tinhLuyen", "ren"]),
+                      can: int.min(1),
+                      phoi: int.min(1),
+                    })
+                    .strict(),
+                ),
+              })
+              .strict(),
+          })
+          .strict(),
         danhSach: z.array(VuKhiSchema).min(1),
       })
       .strict(),
@@ -268,6 +291,10 @@ export function validateEconomy(raw: unknown, chars: { id: string; r: number }[]
   const wc = t.vuKhi.cap;
   if (!mono(wc.gioiHan) || wc.gioiHan.at(-1) !== wc.toiDa)
     errors.push("vuKhi.cap.gioiHan phải tăng dần và kết thúc bằng vuKhi.cap.toiDa");
+  const oreIds = new Set(t.vuKhi.quang.map((q) => q.id));
+  const N = t.vuKhi.nguon;
+  for (const id of [...Object.keys(N.biCanh.roi), ...Object.keys(N.uyThac), ...N.cuaHang.map((x) => x.id)])
+    if (!oreIds.has(id)) errors.push(`vuKhi.nguon: "${id}" không phải Quặng Tinh Luyện trong vuKhi.quang`);
   for (const [loai, id] of Object.entries(t.vuKhi.macDinh)) {
     const w = wById.get(id);
     if (!w || w.r !== 3 || w.loai !== loai) errors.push(`vuKhi.macDinh.${loai}: "${id}" phải là vũ khí 3★ cùng loại`);

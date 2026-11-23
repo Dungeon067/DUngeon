@@ -1,7 +1,8 @@
 import { fmt } from "../../../core/util";
+import { ITEMS } from "../../../data/menu-content";
 import { startBoss } from "../../../modes/boss";
 import { startTower } from "../../../modes/tower";
-import { Server } from "../../../server/server";
+import { Server, vk } from "../../../server/server";
 import { drawBossWith } from "../../boss";
 import { button, h, progress, tag, toast } from "../../ds";
 import { icon } from "../../icons/icons";
@@ -49,12 +50,15 @@ registerScreen("daily", {
       );
     });
     const all = d.tasks.every((t: any) => t.claimed);
+    const ores = Object.entries(vk().nguon.uyThac)
+      .map(([id, n]) => `${n} ${ITEMS.find((i) => i.id === id)?.name ?? id}`)
+      .join(", ");
     ul.append(
       h("li", { class: "tt-task is-bonus" }, [
         icon("sao", { size: 24 }),
         h("div", { class: "tt" }, [
           h("b", {}, ["Thưởng hoàn thành ngày"]),
-          h("small", { class: "tt-dim" }, ["60 Đá Sao, 5 Sách Kinh Nghiệm"]),
+          h("small", { class: "tt-dim" }, [`60 Đá Sao, 5 Sách Kinh Nghiệm${ores ? ", " + ores : ""}`]),
         ]),
         button(d.bonus ? "Đã nhận" : "Nhận", {
           variant: all && !d.bonus ? "primary" : "ghost",

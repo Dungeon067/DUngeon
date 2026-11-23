@@ -74,6 +74,13 @@ export interface Profile {
   wPick: string | null;
   wHistory: { n: string; r: number; t: number; id: string }[];
   wcfg: WeaponBannerCfg;
+  /** Linh Lực: giá trị v ở thời điểm t (ms), hồi dần theo thời gian. */
+  ll: { v: number; t: number };
+  /** Bộ đếm cho thành tựu Binh Khí (biCanh, dotPha, tinhLuyen, ren) và các thành tựu đã nhận. */
+  wStat: Record<string, number>;
+  wAch: string[];
+  /** Cửa hàng quặng theo tuần: khóa tuần (thứ Hai) và số đã đổi. */
+  wShop: { week: string; bought: Record<string, number> };
 }
 export interface PuzzleSave {
   solved: string[];

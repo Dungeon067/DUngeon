@@ -23,6 +23,21 @@ Mô phỏng chia đều 325 Đá Sao trong 60 ngày đầu (`thietKe.thuNhap.cau
 
 Lòng Sao tốn 20 Linh Lực mỗi lượt, nên một ngày có 9 lượt. Linh Lực tối đa 160 nên ai bỏ một ngày chỉ mất phần vượt trần, không tích được cả tuần để "cày bù".
 
+Từ bản nguồn nguyên liệu vũ khí, mô phỏng cho F2P dành 2 lượt mỗi ngày (40 Linh Lực) cho Bí Cảnh Binh Khí, còn lại 7 lượt Lòng Sao. Lượt Bí Cảnh ngày đầu trả bằng 160 Linh Lực đầy sẵn lúc tạo hồ sơ. Mỗi lượt Bí Cảnh trả 1.200 Xu bù một phần.
+
+### Nguyên liệu vũ khí (`thietKe.vuKhi.nguon`)
+
+| Nguồn                   | Lượng                                                                                     | Giới hạn                                    |
+| ----------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------- |
+| Khởi đầu (một lần)      | 30 Quặng Thô, 10 Quặng Tinh Luyện, 3 Quặng Sao, 8 Phôi Lồng Sao                           | —                                           |
+| Bí Cảnh Binh Khí        | 3 Quặng Thô + 1 Quặng Tinh Luyện + 1.200 Xu mỗi lượt                                      | 20 Linh Lực mỗi lượt                        |
+| Ủy thác (thưởng đủ bốn) | 2 Quặng Thô mỗi ngày                                                                      | 1 lần mỗi ngày                              |
+| Cửa hàng quặng (đổi Xu) | Quặng Tinh Luyện 1.500 Xu; Quặng Sao 8.000 Xu                                             | 7 và 3 mỗi tuần, làm mới thứ Hai            |
+| Thành tựu Binh Khí      | Phôi Lồng Sao: 10/30/60 lượt Bí Cảnh (4 mỗi mốc), lần đầu đột phá 2, lần đầu tinh luyện 2 | Một lần                                     |
+| Cửa hàng sự kiện        | 12 Phôi Lồng Sao mỗi tháng                                                                | Chỉ trong mô phỏng, chờ hệ sự kiện vào game |
+
+Kết quả mô phỏng (F2P, xem [ket-qua/tom-tat.md](ket-qua/tom-tat.md)): một vũ khí 4★ lên cấp tối đa ở **ngày 36**, Quặng Sao để đột phá là điểm nghẽn (cần 21, mỗi tuần mua được 3). Vũ khí 4★ Lò Rèn đủ R5 (5 bản, 40 Phôi) ở **ngày 40**, khớp `loRenR5Ngay` của S19. Cấp tối đa vũ khí hiện là 60 (thang S19), tương ứng mốc "cấp 90" trong yêu cầu.
+
 ## 2. Nguồn ra (chỗ tiêu)
 
 | Tài nguyên       | Chỗ tiêu                         | Mức tiêu                                                      |

@@ -1,6 +1,6 @@
 /** Xuất CSV, HTML (biểu đồ SVG tự chứa) và bảng in ra terminal. */
 import type { Economy } from "../../src/data/economy-schema";
-import { type ProfileResult, type SimChar, type SimOpts, type Tiering, doDe } from "./sim";
+import { type ProfileResult, type SimChar, type SimOpts, type Tiering, doDe, weaponFlow } from "./sim";
 
 const f0 = (x: number) => Math.round(x).toLocaleString("vi-VN");
 const f2 = (x: number) => x.toFixed(2).replace(".", ",");
@@ -263,6 +263,13 @@ ${checks}
 
 Kết luận: **${ok(fair.ok)}**
 
+## Nguyên liệu vũ khí (người không nạp)
+
+${(() => {
+  const f = weaponFlow(E);
+  return `- Một vũ khí 4★ lên cấp ${E.thietKe.vuKhi.cap.toiDa}: ngày ${f.lvDay ?? "chưa kịp"} (mục tiêu 30–45).\n- Vũ khí 4★ Lò Rèn R5: ngày ${f.r5Day ?? "chưa kịp"} (mục tiêu khoảng ${E.thietKe.vuKhi.loRenR5Ngay}).\n- Xu cho vũ khí (cửa hàng quặng, kinh nghiệm, đột phá, Lò Rèn) tới ngày ${E.thietKe.vuKhi.loRenR5Ngay}: ${f0(f.xu[E.thietKe.vuKhi.loRenR5Ngay]!)}. Mô hình nuôi nhân vật chưa trừ khoản này.`;
+})()}
+
 ## Bốn hồ sơ
 
 ${tProfiles}
@@ -310,6 +317,8 @@ ${moc.flatMap((d) => res.map((r) => roster(r, d))).join("\n")}
   const terminal = [
     "== Kiểm tra mô hình phân tầng ==",
     checks,
+    "",
+    `== Nguyên liệu vũ khí == 4★ cấp tối đa: ngày ${weaponFlow(E).lvDay ?? "chưa kịp"}, Lò Rèn R5: ngày ${weaponFlow(E).r5Day ?? "chưa kịp"}`,
     "",
     "== Bốn hồ sơ ==",
     tProfiles,

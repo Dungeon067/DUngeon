@@ -147,6 +147,7 @@ function renderInventory(host: HTMLElement, params: any) {
       (v) => (inv.sort = v),
     ),
     button("Lò Rèn", { icon: "nang-cap", onClick: () => openMenu("forge") }),
+    button("Bí Cảnh Binh Khí", { icon: "ruong", onClick: () => openMenu("bicanh") }),
   ]);
   const grid = h("div", { class: "tt-wgrid", id: "weaponGrid", role: "list" });
   for (const w of list) {

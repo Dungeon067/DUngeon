@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import type { Plugin } from "vite";
 import { defineConfig } from "vitest/config";
@@ -15,8 +16,13 @@ function yamlToJson(): Plugin {
   };
 }
 
+const APP_VERSION = (
+  JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf8")) as { version: string }
+).version;
+
 export default defineConfig({
   base: process.env.BASE_PATH ?? "./",
+  define: { __APP_VERSION__: JSON.stringify(APP_VERSION) },
   plugins: [
     yamlToJson(),
     {
@@ -58,7 +64,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,webmanifest}"],
-        globIgnores: ["admin/**", "styleguide/**", "**/media/**"],
+        globIgnores: ["styleguide/**", "**/media/**"],
         maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
         navigateFallback: "index.html",
         navigateFallbackDenylist: [/\/admin\//, /\/legacy\//, /\/styleguide\//, /\/pr-preview\//, /\/media\//],
