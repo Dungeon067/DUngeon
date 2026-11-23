@@ -355,8 +355,12 @@ function render3dOverlay(r3: WorldRenderer, tm: number) {
   ctx.restore();
   for (const e of GS.G.enemies) {
     if (e.dead) continue;
+    // Neo phép chiếu tại tâm vùng cảnh báo (đích nhảy, đích phép, giữa đường đạn) cho đỡ lệch phối cảnh.
+    const tl = e.tele,
+      ax = tl?.kind === "proj" ? (e.x + GS.G.p.x) / 2 : (tl?.tx ?? tl?.x ?? e.x),
+      ay = tl?.kind === "proj" ? (e.y + GS.G.p.y) / 2 : (tl?.ty ?? tl?.y ?? e.y);
     ctx.save();
-    if (groundXf(r3, e.x, e.y)) {
+    if (groundXf(r3, ax, ay)) {
       if (e.isBoss) drawBossTele(e);
       else drawTele(e);
     }
