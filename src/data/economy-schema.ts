@@ -160,7 +160,7 @@ const DesignSchema = z
       .object({
         tuan: z.object({ daSao: int, xu: int }).strict(),
         thang: z.object({ thapKy: int, suKien: int, baoTri: int }).strict(),
-        motLan: z.object({ daSao: int, trongSoNgay: int.min(1) }).strict(),
+        motLan: z.object({ daSao: int, trongSoNgay: int.min(1), xu: int }).strict(),
         cauDo: z.object({ daSao: int, trongSoNgay: int.min(1) }).strict(),
       })
       .strict(),

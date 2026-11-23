@@ -41,6 +41,7 @@ describe("Bản chỉnh kinh tế từ Admin", () => {
     const old = structuredClone(ECON_BASE) as any;
     delete old.game.thuong.ruongCauDo;
     delete old.thietKe.thuNhap.cauDo;
+    delete old.thietKe.thuNhap.motLan.xu;
     old.thietKe.vuKhi.buocTinhLuyen = 0.3;
     localStorage.setItem(KEY, JSON.stringify(old));
     const { ECON, econEdited } = await load();
@@ -48,6 +49,7 @@ describe("Bản chỉnh kinh tế từ Admin", () => {
     expect(ECON.thietKe.vuKhi.buocTinhLuyen).toBe(0.3);
     expect(ECON.game.thuong.ruongCauDo).toEqual(ECON_BASE.game.thuong.ruongCauDo);
     expect(ECON.thietKe.thuNhap.cauDo).toEqual(ECON_BASE.thietKe.thuNhap.cauDo);
+    expect(ECON.thietKe.thuNhap.motLan.xu).toBe(ECON_BASE.thietKe.thuNhap.motLan.xu);
   });
 
   it("chỉnh chỉ số vũ khí thì giữ lại, tên và truyện vẫn theo weapons.yaml", async () => {

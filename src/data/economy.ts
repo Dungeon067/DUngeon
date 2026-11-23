@@ -40,6 +40,9 @@ function withContent(o: unknown) {
   if (th && typeof th === "object" && th.ruongCauDo === undefined)
     th.ruongCauDo = clone(ECON_BASE.game.thuong.ruongCauDo);
   if (tn && typeof tn === "object" && tn.cauDo === undefined) tn.cauDo = clone(ECON_BASE.thietKe.thuNhap.cauDo);
+  // Bản chỉnh lưu trước khi mô phỏng tính Xu khởi đầu: lấy theo file.
+  const ml = tn?.motLan;
+  if (ml && typeof ml === "object" && ml.xu === undefined) ml.xu = ECON_BASE.thietKe.thuNhap.motLan.xu;
   return e;
 }
 

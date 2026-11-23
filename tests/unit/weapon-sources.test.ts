@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ECON } from "../../src/data/economy";
 import { RES_CAP, TEST_MAX, freshProfile, linhLucNow, migrate, Server, weekKey } from "../../src/server/server";
-import { weaponFlow } from "../../tools/economy/sim";
+import { investOnDay, weaponFlow } from "../../tools/economy/sim";
 
 /* Nguồn nguyên liệu vũ khí: Bí Cảnh Binh Khí, ủy thác, cửa hàng tuần, thành tựu Phôi Lồng Sao; cấp tài nguyên Admin. */
 const N = ECON.thietKe.vuKhi.nguon;
@@ -93,6 +93,36 @@ describe("Nguồn nguyên liệu vũ khí", () => {
     expect(f.lvDay).toBeGreaterThanOrEqual(30);
     expect(f.lvDay).toBeLessThanOrEqual(45);
     expect(Math.abs(f.r5Day! - ECON.thietKe.vuKhi.loRenR5Ngay)).toBeLessThanOrEqual(5);
+  });
+
+  it("mô phỏng: Xu vũ khí trừ vào nhân vật mà đội F2P không chậm đi", () => {
+    const f = weaponFlow(ECON);
+    expect(f.xu[ECON.thietKe.vuKhi.loRenR5Ngay]!).toBeGreaterThan(0);
+    for (let d = 1; d <= 120; d++) {
+      const a = investOnDay(d, null, ECON),
+        b = investOnDay(d, null, ECON, ECON.thietKe.vuKhi.loRen.xu);
+      expect(a.inv).toEqual(b.inv);
+      expect(a.coinLeft).toBeGreaterThanOrEqual(0);
+      expect(f.xu[d]!).toBeGreaterThanOrEqual(f.xu[d - 1]!);
+    }
+  });
+
+  it("mô phỏng: xong cấp tối đa và R5 thì không mua quặng hay tiêu Xu vũ khí nữa", () => {
+    const f = weaponFlow(ECON),
+      done = Math.max(f.lvDay!, f.r5Day!);
+    expect(f.r[0]).toBe(1);
+    expect(f.xu[done + 60]).toBe(f.xu[done]);
+  });
+
+  it("mô phỏng: Lò Rèn đắt hơn Xu khởi đầu thì không rèn sẵn và Xu không âm", () => {
+    const E = structuredClone(ECON);
+    E.thietKe.vuKhi.loRen.xu = E.thietKe.thuNhap.motLan.xu + 1;
+    expect(weaponFlow(E).r[0]).toBe(0);
+    expect(investOnDay(1, null, E).coinLeft).toBeGreaterThanOrEqual(0);
+  });
+
+  it("mô phỏng: Xu khởi đầu bằng hồ sơ mới trong game", () => {
+    expect(ECON.thietKe.thuNhap.motLan.xu).toBe(freshProfile().coin);
   });
 });
 

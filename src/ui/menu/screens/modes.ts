@@ -1,4 +1,5 @@
 import { fmt } from "../../../core/util";
+import { ECON } from "../../../data/economy";
 import { ITEMS } from "../../../data/menu-content";
 import { startBoss } from "../../../modes/boss";
 import { startTower } from "../../../modes/tower";
@@ -23,6 +24,7 @@ registerScreen("daily", {
     Server.ensureDaily();
     const d = Server.P.daily!;
     host.classList.add("tt-menu-daily");
+    const UT = ECON.game.thuong.uyThac.moiViec;
     const ul = h("ul", { class: "tt-tasks", id: "dailyTasks" });
     d.tasks.forEach((t: any, i: number) => {
       const done = t.prog >= t.goal;
@@ -32,7 +34,7 @@ registerScreen("daily", {
         disabled: !done || t.claimed,
         onClick: () => {
           if (Server.req("claimTask", { i }).ok) {
-            toast("+30 Đá Sao, +3.000 Xu", "ok");
+            toast(`+${UT.daSao} Đá Sao, +${fmt(UT.xu)} Xu`, "ok");
             refreshWallets();
             rerender();
           }
@@ -75,7 +77,7 @@ registerScreen("daily", {
     );
     host.append(
       h("p", { class: "tt-dim" }, [
-        `Ngày ${new Date().toLocaleDateString("vi-VN")} · Mỗi Ủy thác: 30 Đá Sao và 3.000 Xu · Làm mới lúc 0 giờ`,
+        `Ngày ${new Date().toLocaleDateString("vi-VN")} · Mỗi Ủy thác: ${UT.daSao} Đá Sao và ${fmt(UT.xu)} Xu · Làm mới lúc 0 giờ`,
       ]),
       ul,
     );
