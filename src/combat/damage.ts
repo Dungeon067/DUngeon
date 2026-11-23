@@ -214,7 +214,11 @@ export function hurtPlayer(dmg: number, col = "#ff7070") {
 /** Bị động tích tầng: cứ `giay` giây không bị đánh thì thêm 1 tầng, tối đa `toiDa`. */
 export function tickStack(m: any, dt: number) {
   const c = weaponOf(m.stack.id, ECON).biDong.coChe;
-  if (!c || m.stack.tang >= c.toiDa) return;
+  if (!c) return;
+  if (m.stack.tang >= c.toiDa) {
+    m.stack.tang = c.toiDa;
+    return;
+  }
   m.stack.t += dt;
   if (m.stack.t >= c.giay) {
     m.stack.t = 0;
