@@ -31,6 +31,13 @@ export const ModelsSchema = z.object({
         .extend({ dang: DANG.optional(), vuKhi: z.string().min(1).optional(), camVuKhi: grip.partial().optional() }),
     )
     .default({}),
+  /** Bộ NPC (public/media/models/npc/<id>/model.vrm): không vào slot nhân vật chơi được. */
+  npc: z
+    .record(
+      z.string().regex(/^[a-z0-9-]+$/),
+      look.partial().extend({ ten: z.string().min(1), dang: DANG, tu: z.string().optional() }),
+    )
+    .default({}),
 });
 export type ModelsConfig = z.infer<typeof ModelsSchema>;
 export type WeaponType = z.infer<typeof WT>;

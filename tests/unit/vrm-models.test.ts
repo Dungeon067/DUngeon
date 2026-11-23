@@ -56,4 +56,10 @@ describe("S26: chuẩn mô hình VRM nhân vật", () => {
     for (const [id, c] of Object.entries(M.nhanVat))
       if (c.vuKhi) expect(existsSync(`${DIR}/weapons/${c.vuKhi}.glb`), id).toBe(true);
   });
+
+  it.each(Object.keys(M.npc))("npc %s: VRM 1.0 hợp lệ, không trùng id nhân vật chơi được", (id) => {
+    const r = inspect(`${DIR}/npc/${id}/model.vrm`);
+    expect(r.vrm?.specVersion).toBe("1.0");
+    expect(existsSync(`content/characters/${id}.yaml`)).toBe(false);
+  });
 });

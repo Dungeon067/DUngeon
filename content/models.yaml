@@ -33,3 +33,10 @@ nhanVat:
   suongmai: { height: 1.56, dang: nu-teen }
   mailinh: { height: 1.4, dang: nu-nho, vuKhi: den-long-hoa-mai, camVuKhi: { rot: [0, 0, -90] } }
   bachvu: { height: 1.72, dang: nam-teen }
+# Bộ NPC (S26): dựng từ bản đầu của đội khởi đầu, đổi tên và màu. File: public/media/models/npc/<id>/model.vrm.
+# tu = mô hình gốc. Không dùng làm nhân vật chơi được.
+npc:
+  lamchi: { ten: Lam Chi, height: 1.55, dang: nu-teen, tu: havy }
+  thuha: { ten: Thu Hà, height: 1.56, dang: nu-teen, tu: suongmai }
+  bena: { ten: Bé Na, height: 1.4, dang: nu-nho, tu: mailinh }
+  khai: { ten: Khải, height: 1.72, dang: nam-teen, tu: bachvu }
