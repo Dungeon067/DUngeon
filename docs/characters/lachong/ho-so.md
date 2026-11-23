@@ -1,5 +1,7 @@
 # Lạc Hồng: Hồ sơ
 
+> **Loại 5★:** `thuong-tru` (5★ thường trú, có trong pool cố định, ra khi thua 50/50). Đề xuất S06, chờ chủ dự án duyệt; cơ chế pool và banner do S19 làm.
+
 > Hộ Tinh hệ Hỏa 5★, kiếm đơn. Danh hiệu: **Hậu Duệ Chim Lạc**. ID: `lachong`.
 
 ## 1. Thông tin cơ bản

@@ -1,5 +1,7 @@
 # Golnar: Hồ sơ
 
+> **Loại 5★:** `gioi-han` (5★ giới hạn, chỉ ra ở banner theo kỳ, có thể quay lại ở kỳ sau). Đề xuất S06, chờ chủ dự án duyệt; truyện chính không tặng nhân vật này, chỉ cho xuất hiện như NPC hoặc khách mời, không vào đội.
+
 > Hộ Tinh hệ Băng, pháp khí, 5★. Danh hiệu trong game: **Người Giữ Nhà Băng**.
 > Nguồn đối chiếu: `docs/world/03-dia-ly.md` mục 6 (Golbaran, Hội Đồng Giếng, Kênh Ngầm Dài, Ngày Mưa Hoa), `docs/world/07-hac-giao-va-hoi-mat-na.md` mục 2.5.4, `docs/world/11-dat-ten.md` mục 2, `docs/characters/havy/`.
 

@@ -6,6 +6,36 @@
 >
 > **Danh vọng Đảo Lạc:** bắt đầu ở Đom Đóm; lên **Đèn Lồng** khi xong `c1_07`. Mỗi nhiệm vụ phụ cộng điểm danh vọng (gợi ý 50 điểm mỗi nhiệm vụ, S19 chốt ngưỡng).
 
+## 0. Loại nhân vật 5★ (đề xuất S06, chờ chủ dự án duyệt)
+
+- **`thuong-tru` (5★ thường trú, "5★ lệch"):** nằm trong pool cố định, ra khi thua 50/50. Người chơi không nạp có thể nhận qua quà sự kiện hoặc phần thưởng cột mốc.
+- **`gioi-han` (5★ giới hạn):** chỉ ra ở banner giới hạn theo kỳ, có thể quay lại ở kỳ sau.
+- **Quy tắc truyện:** truyện chính không tặng nhân vật 5★ nào (kể cả thường trú; việc tặng 5★ thường trú qua sự kiện hoặc cột mốc do S19 quyết). Nhân vật 5★ thường trú được **đi cùng tạm thời** trong nhiệm vụ (`join_party` có `temporary: true`). Nhân vật 5★ giới hạn chỉ xuất hiện như NPC hoặc khách mời, **không vào đội**, kể cả tạm thời. Lần ước miễn phí vẫn ra Bạch Vũ 4★.
+
+| Loại         | Nhân vật 5★                                                      | Lý do đề xuất                                                                                                                             |
+| ------------ | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `thuong-tru` | Lạc Hồng, Thủy Nguyệt, Thạch Sơn, Phong Vân, Tuyết Lan, Lôi Đình | Sáu 5★ hạt giống, mỗi người một nguyên tố (Hỏa, Thủy, Thổ, Phong, Băng, Lôi); là người dẫn đường của các chương nên cần lấy được lâu dài. |
+| `gioi-han`   | Ardo, Golnar, Naraa, Nghiễn Thư, Takane                          | 5★ mới của các vùng ngoài Đảo Lạc, ra theo kỳ gắn với chương hoặc sự kiện của vùng mình; chỉ làm NPC hoặc khách mời trong truyện.         |
+
+Nhãn cũng ghi ở đầu `docs/characters/<id>/ho-so.md` của từng nhân vật.
+
+### Nhân vật được nhắc trong Mở đầu và Chương 1
+
+| Nhân vật    | ★   | Loại 5★       | Vai trò trong Mở đầu, Ch.1                 | Vào đội                      |
+| ----------- | --- | ------------- | ------------------------------------------ | ---------------------------- |
+| Sương Mai   | 4★  | Không áp dụng | Đi cùng từ `md_01`                         | Có, thật (đội khởi đầu)      |
+| Mai Linh    | 4★  | Không áp dụng | Đi cùng từ `md_01`                         | Có, thật (đội khởi đầu)      |
+| Bạch Vũ     | 4★  | Không áp dụng | Lần ước miễn phí `md_02`                   | Có, thật (đội khởi đầu)      |
+| Lạc Hồng    | 5★  | `thuong-tru`  | Dẫn đường Ch.1; trận `md_05`; từ `c1_01`   | Tạm thời (`temporary: true`) |
+| Thạch Sơn   | 5★  | `thuong-tru`  | Dẫn đường Ch.1; từ `c1_03`                 | Tạm thời (`temporary: true`) |
+| Thủy Nguyệt | 5★  | `thuong-tru`  | Gặp ở `md_06`; dẫn đường Ch.1 từ `c1_04`   | Tạm thời (`temporary: true`) |
+| Minh Khải   | 4★  | Không áp dụng | Gặp ở `c1_02`; dẫn đường Làng Chìm `c1_06` | Tạm thời trong `c1_06`       |
+| Phong Vân   | 5★  | `thuong-tru`  | Chỉ được nhắc tên (`dd_12`)                | Không                        |
+| Ngọc Thạch  | 4★  | Không áp dụng | Chỉ được nhắc tên (`dd_03`, `np_08`)       | Không                        |
+| Hạ Vy       | 4★  | Không áp dụng | Chỉ được nhắc tên (`np_04`, `c1_05`)       | Không                        |
+
+Không nhân vật 5★ giới hạn nào xuất hiện trong Mở đầu và Chương 1.
+
 ## 1. Mở đầu: Sao Rơi Đêm Tết
 
 | Mã    | Tên                | Mở khi       | Phần thưởng                          | Hộ Tinh xuất hiện                       | NPC                    | Địa điểm                       | Hướng dẫn                       |
@@ -17,16 +47,16 @@
 | md_05 | Trống Đình Đêm Tết | Xong `md_04` | Lạc Hồng đi cùng tạm thời trong trận | Mai Linh, Sương Mai, Bạch Vũ, Lạc Hồng  | Cụ Đoan Khang, Lão Neo | Đình Trống Đồng, Phố Vạn Đăng  | Dùng nộ                         |
 | md_06 | Bóng Dưới Vịnh     | Xong `md_05` | Mở Chương 1                          | Cả bốn, Thủy Nguyệt (gặp, chưa nhập)    | Cụ Đoan Khang          | Vịnh Khơi                      | Không                           |
 
-Đội sau Mở đầu khớp `startProfile` trong `content/config.yaml`: Sương Mai, Mai Linh, Bạch Vũ (Lạc Hồng chỉ đi cùng tạm thời trong trận ở `md_05`, nhập đội chính thức ở `c1_01`).
+Đội sau Mở đầu khớp `startProfile` trong `content/config.yaml`: Sương Mai, Mai Linh, Bạch Vũ (Lạc Hồng chỉ đi cùng tạm thời trong trận ở `md_05`, tiếp tục đi cùng tạm thời trong Chương 1).
 
 ## 2. Chương 1: Tiếng Trống Dưới Nước Đen
 
 | Mã    | Tên                       | Mở khi       | Phần thưởng (mã thưởng)                                                                                                        | Hộ Tinh xuất hiện                                 | NPC                                                                | Địa điểm                                               | Trận                                                                                             |
 | ----- | ------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
-| c1_01 | Sáng Sau Đêm Sao          | Xong `md_06` | Lạc Hồng nhập đội; mở bảng Ủy thác; 20 Đá Sao, 1000 Xu (`c1_01`)                                                               | Lạc Hồng, Mai Linh, Sương Mai, Bạch Vũ            | Cụ Đoan Khang, Ông Lạc Thành, Bà Cả Thu Vọng, Bà Trùm Kha, Cao Lũy | Đình Trống Đồng                                        | Không                                                                                            |
+| c1_01 | Sáng Sau Đêm Sao          | Xong `md_06` | Lạc Hồng đi cùng tạm thời; mở bảng Ủy thác; 20 Đá Sao, 1000 Xu (`c1_01`)                                                       | Lạc Hồng, Mai Linh, Sương Mai, Bạch Vũ            | Cụ Đoan Khang, Ông Lạc Thành, Bà Cả Thu Vọng, Bà Trùm Kha, Cao Lũy | Đình Trống Đồng                                        | Không                                                                                            |
 | c1_02 | Nước Đen Ở Bến Vạn Lưới   | Xong `c1_01` | 20 Đá Sao, 1200 Xu (`c1_02`); cờ `c1_tra_loi_neo`                                                                              | Lạc Hồng, Mai Linh, Sương Mai, Bạch Vũ, Minh Khải | Lão Neo, Tám Lụa, Hai Khoác                                        | Bến Làng Vạn Lưới                                      | 3 Bóng Cặn                                                                                       |
-| c1_03 | Hai Ổ Lõi Trống           | Xong `c1_02` | Thạch Sơn nhập đội; 20 Đá Sao, 1200 Xu (`c1_03`)                                                                               | Thạch Sơn + đội                                   | Cai Tôn                                                            | Lối vào Hang Hắc Giao, Bia Đông, Bia Tây               | Hộ Vệ Đá Cổ (`golem`)                                                                            |
-| c1_04 | Chuông Bạc Lạc Nhịp       | Xong `c1_03` | Thủy Nguyệt nhập đội; 20 Đá Sao, 1200 Xu (`c1_04`)                                                                             | Thủy Nguyệt, Thạch Sơn + đội                      | Bà Cả Thu Vọng                                                     | Hồ Gương, Đền Trăng                                    | 4 Bóng Cặn, 1 Giọt Nhầy                                                                          |
+| c1_03 | Hai Ổ Lõi Trống           | Xong `c1_02` | Thạch Sơn đi cùng tạm thời; 20 Đá Sao, 1200 Xu (`c1_03`)                                                                       | Thạch Sơn + đội                                   | Cai Tôn                                                            | Lối vào Hang Hắc Giao, Bia Đông, Bia Tây               | Hộ Vệ Đá Cổ (`golem`)                                                                            |
+| c1_04 | Chuông Bạc Lạc Nhịp       | Xong `c1_03` | Thủy Nguyệt đi cùng tạm thời; 20 Đá Sao, 1200 Xu (`c1_04`)                                                                     | Thủy Nguyệt, Thạch Sơn + đội                      | Bà Cả Thu Vọng                                                     | Hồ Gương, Đền Trăng                                    | 4 Bóng Cặn, 1 Giọt Nhầy                                                                          |
 | c1_05 | Mặt Nạ Trắng Ở Chợ Đêm    | Xong `c1_04` | Theo cờ `c1_ut_gao`: `giao_quan` 500 Xu + 50 danh vọng (`c1_05_giao_quan`); `ve_nha` 3 Bánh Trống + 20 Đá Sao (`c1_05_ve_nha`) | Đội                                               | Bà Tư, Bà Ngoan, Bà Bảy Sóng, Út Gạo, Cao Lũy hoặc Bà Hạnh         | Chợ đêm Phố Vạn Đăng, bến cũ, nhà Bà Hạnh              | 3 Lính Mặt Nạ Trắng, 1 Pháp Sư Mặt Nạ (`shaman`)                                                 |
 | c1_06 | Nửa Lời Của Bà Lưới       | Xong `c1_05` | Đèn Sét Của Minh Khải (`den_set_minh_khai`); 20 Đá Sao, 1200 Xu (`c1_06`)                                                      | Minh Khải (đi cùng tạm thời) + đội                | Bà Hạnh                                                            | Làng Vạn Lưới, Vịnh Khơi, Làng Chìm                    | 6 Bóng Cặn                                                                                       |
 | c1_07 | Tiếng Trống Dưới Nước Đen | Xong `c1_06` | 2 Lõi Sao Cạn (`loi_sao_can`); 60 Đá Sao, 3000 Xu, danh vọng lên Đèn Lồng (`c1_07_ket_chuong`)                                 | Cả đội, Minh Khải (cuối cảnh)                     | Lão Neo, Cao Lũy, Cai Tôn, Út Gạo, Ông Lạc Thành, Cụ Đoan Khang    | Hang Hắc Giao (Bia Bắc), Đình Trống Đồng, Phố Vạn Đăng | **Boss:** Mặt Nạ Gỗ + 2 Lính Mặt Nạ Trắng; rồi Hắc Giao bản yếu (`hacgiao`, `variant: chuong_1`) |
@@ -63,18 +93,18 @@ Ghi chú: `np_06` có lời của Thủy Nguyệt nên mở sau `c1_04`. Nếu n
 
 Kịch bản ở `docs/characters/<id>/nhiem-vu-nhan-vat.md`. Bảng này chỉ ghi mốc mở để khớp Chương 1, không thay điều kiện chi tiết trong từng file.
 
-| Nhân vật    | Chuỗi                  | Phần mở ở Đảo Lạc trong/sau Ch.1                                                           | Mốc khóa                             |
-| ----------- | ---------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------ |
-| Lạc Hồng    | Trống Không Ai Đáp     | Phần 1 sau khi nhập đội (`c1_01`)                                                          | Theo file nhân vật                   |
-| Thủy Nguyệt | Bầu Trời Dưới Đáy Hồ   | Phần 1–3 sau khi nhập đội (`c1_04`)                                                        | Phần 4–5 mở muộn hơn (theo file)     |
-| Thạch Sơn   | Đá Nhớ Thay Người      | Phần 1 sau khi nhập đội (`c1_03`); Phần 2 "Ổ Lõi Trống" sau khi Ch.1 hé lộ hai bia mất lõi | Theo file nhân vật                   |
-| Sương Mai   | Báo Cáo Chưa Viết      | Phần 1–2 sau Mở đầu                                                                        | Phần 3–5 sau `c1_07` (ông Neo đã lộ) |
-| Mai Linh    | Ngọn Đèn Không Ai Châm | Phần 1 sau Mở đầu                                                                          | Theo file nhân vật                   |
-| Bạch Vũ     | Nút Hai Vòng           | Phần 1 sau Mở đầu                                                                          | Phần 2–5 sau Ch.2                    |
-| Minh Khải   | Đèn Canh               | Phần 1–3 sau `c1_02` (gặp lần đầu)                                                         | Phần 4–5 sau `c1_07`                 |
-| Ngọc Thạch  | Ba Ngắn Một Dài        | Khi có Ngọc Thạch trong đội                                                                | Theo file nhân vật                   |
-| Phong Vân   | Dải Tín                | Khi có Phong Vân trong đội                                                                 | Phần 4 sau Ch.4                      |
-| Hạ Vy       | Không Bỏ Lại Ai        | Khi có Hạ Vy trong đội                                                                     | Theo file nhân vật                   |
+| Nhân vật    | Chuỗi                  | Phần mở ở Đảo Lạc trong/sau Ch.1                                                              | Mốc khóa                             |
+| ----------- | ---------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------ |
+| Lạc Hồng    | Trống Không Ai Đáp     | Phần 1 khi đã sở hữu và xong `c1_01`                                                          | Theo file nhân vật                   |
+| Thủy Nguyệt | Bầu Trời Dưới Đáy Hồ   | Phần 1–3 khi đã sở hữu và xong `c1_04`                                                        | Phần 4–5 mở muộn hơn (theo file)     |
+| Thạch Sơn   | Đá Nhớ Thay Người      | Phần 1 khi đã sở hữu và xong `c1_03`; Phần 2 "Ổ Lõi Trống" sau khi Ch.1 hé lộ hai bia mất lõi | Theo file nhân vật                   |
+| Sương Mai   | Báo Cáo Chưa Viết      | Phần 1–2 sau Mở đầu                                                                           | Phần 3–5 sau `c1_07` (ông Neo đã lộ) |
+| Mai Linh    | Ngọn Đèn Không Ai Châm | Phần 1 sau Mở đầu                                                                             | Theo file nhân vật                   |
+| Bạch Vũ     | Nút Hai Vòng           | Phần 1 sau Mở đầu                                                                             | Phần 2–5 sau Ch.2                    |
+| Minh Khải   | Đèn Canh               | Phần 1–3 sau `c1_02` (gặp lần đầu)                                                            | Phần 4–5 sau `c1_07`                 |
+| Ngọc Thạch  | Ba Ngắn Một Dài        | Khi có Ngọc Thạch trong đội                                                                   | Theo file nhân vật                   |
+| Phong Vân   | Dải Tín                | Khi có Phong Vân trong đội                                                                    | Phần 4 sau Ch.4                      |
+| Hạ Vy       | Không Bỏ Lại Ai        | Khi có Hạ Vy trong đội                                                                        | Theo file nhân vật                   |
 
 ## 5. Danh sách kiểm tra cho S11, S12
 

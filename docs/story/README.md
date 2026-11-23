@@ -75,3 +75,7 @@ Một "dòng thoại" là một bước có `speaker` khác `he_thong`. Lời c�
 
 - `start_battle` có thể có `protect: <mã NPC hoặc vật>` (nhiệm vụ hộ tống: thua nếu đối tượng này hết máu) và `variant: <mã>` (biến thể của quái, ví dụ `hacgiao` bản `chuong_1`).
 - Người nói là kẻ địch: `hacgiao` (Hắc Giao), `npc_mat_na_khac` (Pháp Sư Mặt Nạ ở chợ đêm), `npc_mat_na_go` (Lão Neo khi còn đeo mặt nạ, chỉ trong `c1_07`).
+
+## Nhân vật 5★ trong truyện
+
+Mỗi nhân vật 5★ có nhãn `thuong-tru` hoặc `gioi-han` (danh sách và lý do: `bang-kiem-tra.md` mục 0; nhãn ở đầu `docs/characters/<id>/ho-so.md`). Truyện chính không tặng nhân vật 5★. Nhân vật 5★ thường trú chỉ được `join_party` với `temporary: true`. Nhân vật 5★ giới hạn không được `join_party`, chỉ xuất hiện như NPC hoặc khách mời.

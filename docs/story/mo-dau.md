@@ -508,7 +508,7 @@ Lệ Tết Sao Rơi (bổ sung S06, ghi ở `docs/world/09-tu-dien.md`): đêm T
   quest: md_05
 ```
 
-> **Ghi chú triển khai:** `goblin_lon` là biến thể to của Yêu Rừng (thêm máu, chậm hơn), cùng mô hình `goblin`. Lạc Hồng chỉ đi cùng tạm thời trong md_05; nhập đội chính thức ở `c1_01`. Nếu S11 thấy cần, có thể cho người chơi dùng nộ của Sương Mai thay cho Lạc Hồng mà không đổi lời thoại khác.
+> **Ghi chú triển khai:** `goblin_lon` là biến thể to của Yêu Rừng (thêm máu, chậm hơn), cùng mô hình `goblin`. Lạc Hồng (5★ thường trú) chỉ đi cùng tạm thời trong md_05 và trong Chương 1; truyện không tặng nhân vật 5★. Nếu S11 thấy cần, có thể cho người chơi dùng nộ của Sương Mai thay cho Lạc Hồng mà không đổi lời thoại khác.
 
 ---
 

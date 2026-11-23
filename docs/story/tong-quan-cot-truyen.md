@@ -26,6 +26,10 @@
 
 ---
 
+## Nhân vật 5★ và đội trong truyện
+
+"Dẫn đường" là nhân vật trọng tâm về mặt truyện, không phải phần thưởng. Sáu người dẫn đường 5★ (Lạc Hồng, Thủy Nguyệt, Thạch Sơn, Phong Vân, Tuyết Lan, Lôi Đình) được đề xuất là 5★ thường trú (`thuong-tru`) và chỉ đi cùng đội tạm thời trong nhiệm vụ. Các 5★ giới hạn (`gioi-han`: Ardo, Golnar, Naraa, Nghiễn Thư, Takane) chỉ xuất hiện như NPC hoặc khách mời, không vào đội. Truyện chính không tặng nhân vật 5★; đội thật của người chơi sau Mở đầu là Sương Mai, Mai Linh, Bạch Vũ. Danh sách đề xuất ở `bang-kiem-tra.md` mục 0.
+
 ## Mở đầu: Sao Rơi Đêm Tết
 
 - **Vùng:** Đảo Lạc, Bãi Sao Rơi đến Đình Trống Đồng. Đêm Tết Sao Rơi, tháng Trống, NS 1350.

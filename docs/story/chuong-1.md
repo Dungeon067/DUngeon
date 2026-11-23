@@ -5,11 +5,12 @@
 > **Mở khi:** xong `md_06`.
 > **Dẫn đường:** Lạc Hồng, Thủy Nguyệt, Thạch Sơn. **Phản diện:** Lão Neo (Mặt Nạ Gỗ).
 > **Hé lộ trong chương** ([Hé lộ Ch.1]): Hắc Giao sinh từ Nguyện Cặn; Mùa Nước Đen là lúc Hắc Giao trồi lên tìm người nghe; lời ước của Bà Lưới chỉ được trả lời một nửa; hai Bia Đá cổ mất lõi; ông Neo là Mặt Nạ Gỗ (chỉ ở `c1_07`).
+> **Hộ Tinh 5★ trong chương:** Lạc Hồng, Thạch Sơn, Thủy Nguyệt đều là 5★ thường trú (`thuong-tru`), chỉ **đi cùng tạm thời** trong mạch truyện (`join_party` với `temporary: true`), không được tặng. Người chơi sở hữu họ qua ước nguyện hoặc phần thưởng sự kiện, cột mốc (S19). Không nhân vật 5★ giới hạn nào vào đội trong chương này.
 > **Không hé lộ:** Hắc Giao là phần bị thương của Bà Khơi; Hắc Giao thức dậy vì Người Ước Nguyện; tên Tô Khuyết; Lõi Sao Cả.
 
 ## Nhiệm vụ trong chương
 
-| Mã    | Tên                       | Địa điểm chính                    | Hộ Tinh nhập đội             | Trận                                    |
+| Mã    | Tên                       | Địa điểm chính                    | Hộ Tinh đi cùng (tạm thời)   | Trận                                    |
 | ----- | ------------------------- | --------------------------------- | ---------------------------- | --------------------------------------- |
 | c1_01 | Sáng Sau Đêm Sao          | Đình Trống Đồng                   | Lạc Hồng                     | Không                                   |
 | c1_02 | Nước Đen Ở Bến Vạn Lưới   | Làng Vạn Lưới                     | Không                        | Bóng Cặn                                |
@@ -127,9 +128,10 @@ Cả hai lựa chọn nhập lại cùng một mạch, không rẽ nhánh lớn.
   text: "Trống còn, đảo còn. Đi thôi."
 - action: join_party
   character: lachong
+  temporary: true
 - speaker: he_thong
   emotion: binh_thuong
-  text: "Lạc Hồng đã nhập đội"
+  text: "Lạc Hồng đi cùng đội trong Chương 1"
 - speaker: ke_chuyen
   emotion: binh_thuong
   text: "Trước cửa Đình, một tấm bảng gỗ dán kín giấy. Giấy nào cũng viết tay, nét to nét nhỏ."
@@ -380,9 +382,10 @@ Cả hai lựa chọn nhập lại cùng một mạch, không rẽ nhánh lớn.
   text: "Cho tôi đi cùng đội cậu. Đá thì tôi biết chỗ nào gõ là nó nghe."
 - action: join_party
   character: thachson
+  temporary: true
 - speaker: he_thong
   emotion: binh_thuong
-  text: "Thạch Sơn đã nhập đội"
+  text: "Thạch Sơn đi cùng đội trong Chương 1"
 - speaker: thachson
   emotion: binh_thuong
   text: "Khiên ngọc của tôi che được cả đội. Khi nó giơ tay, gọi tôi trước."
@@ -540,9 +543,10 @@ Cả hai lựa chọn nhập lại cùng một mạch, không rẽ nhánh lớn.
   text: "Tôi là Thủy Nguyệt. Lần này chào cho đúng. Tôi đi cùng cậu."
 - action: join_party
   character: thuynguyet
+  temporary: true
 - speaker: he_thong
   emotion: binh_thuong
-  text: "Thủy Nguyệt đã nhập đội"
+  text: "Thủy Nguyệt đi cùng đội trong Chương 1"
 - speaker: thuynguyet
   emotion: binh_thuong
   text: "Chuông của tôi chữa được vết thương cho đội. Nếu ai ngã, gọi tôi."
