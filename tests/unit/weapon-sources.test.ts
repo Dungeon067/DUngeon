@@ -29,6 +29,11 @@ describe("Nguồn nguyên liệu vũ khí", () => {
     expect(Server.P.wStat.biCanh).toBe(runs + 1);
   });
 
+  it("Linh Lực vượt trần (trần bị hạ) chỉ dùng được tới trần", () => {
+    Server.P.ll = { v: L.toiDa * 3, t: Date.now() };
+    expect(linhLucNow(Server.P)).toBe(L.toiDa);
+  });
+
   it("ủy thác hằng ngày thưởng thêm quặng khi nhận đủ", () => {
     Server.ensureDaily();
     for (const t of Server.P.daily!.tasks) {
@@ -50,6 +55,15 @@ describe("Nguồn nguyên liệu vũ khí", () => {
     vi.setSystemTime(new Date(2026, 10, 30, 9));
     expect(Server.req("buyOre", { id: it0.id }).ok).toBe(true);
     expect(Server.req("buyOre", { id: "phoi-long-sao" }).ok).toBe(false);
+  });
+
+  it("kho quặng đầy thì cửa hàng không trừ Xu, không tính lượt", () => {
+    const id = N.cuaHang[0]!.id;
+    Server.P.bag[id] = RES_CAP;
+    Server.P.coin = 1_000_000;
+    expect(Server.req("buyOre", { id }).ok).toBe(false);
+    expect(Server.P.coin).toBe(1_000_000);
+    expect(Server.P.wShop.bought[id] ?? 0).toBe(0);
   });
 
   it("thành tựu Binh Khí cho Phôi Lồng Sao một lần", () => {

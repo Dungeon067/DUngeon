@@ -66,7 +66,7 @@ const DAY_MS = 86_400_000;
 /** Linh Lực hiện có: hồi hoiMoiNgay mỗi ngày tới toiDa. */
 export function linhLucNow(P: Profile, now = Date.now()) {
   const L = ECON.thietKe.linhLuc;
-  if (P.ll.v >= L.toiDa) return P.ll.v;
+  if (P.ll.v >= L.toiDa) return L.toiDa;
   return Math.min(L.toiDa, P.ll.v + (Math.max(0, now - P.ll.t) * L.hoiMoiNgay) / DAY_MS);
 }
 /** Khóa tuần theo ngày thứ Hai đầu tuần (giờ máy). */
@@ -746,6 +746,7 @@ export const Server = {
       if (!(k >= 1)) throw new Error("Số lượng không hợp lệ");
       if (shopLeft(P, id) < k) throw new Error("Đã hết lượt đổi tuần này");
       if (P.coin < it.xu * k) throw new Error("Không đủ Xu");
+      if ((P.bag[id] ?? 0) + k > RES_CAP) throw new Error("Kho đã đầy");
       const wk = weekKey();
       if (P.wShop.week !== wk) P.wShop = { week: wk, bought: {} };
       P.wShop.bought[id] = (P.wShop.bought[id] ?? 0) + k;
