@@ -66,3 +66,17 @@ Mỗi khối có thêm `fx` (họa tiết hiệu ứng) và `anim` (clip hoạt 
 
 - Hiệu ứng 3D: hạt, lưới, shader toon, đèn điểm, xung gió cho tóc và vải (gọi hàm gió của S27). Mỗi nhân vật một bảng màu và motif riêng (cột cuối bảng 4).
 - Hoạt ảnh: mỗi kỹ năng, nộ và trọng kích có clip riêng theo nhân vật, dựng bằng `tools/anim/author.ts` trên bộ clip dáng × vũ khí của S27. Tên clip: `<id>.<chiêu>`, ví dụ `havy.charge2`, `loidinh.burst`. Chỉ thêm clip mới; sửa file chung của S27 (`humanoid.json`, `content/poses.yaml`) thì báo S27 trước.
+
+## 7. Vai trò và buff/debuff
+
+Luật chung (thời gian, cộng dồn, nhóm, trần, chỉ số mới): [he-trang-thai.md](he-trang-thai.md).
+
+| Nhân vật  | Vai trò                        | Buff/debuff đặc trưng            | Trạng thái khác      |
+| --------- | ------------------------------ | -------------------------------- | -------------------- |
+| Sương Mai | Sát thương chính, Bảo vệ       | Ướt Sương, Sông Che              | Giọt Sương, Sóng Bạc |
+| Mai Linh  | Sát thương phụ, Hỗ trợ buff    | Đèn Canh, Tàn Pháo               | –                    |
+| Bạch Vũ   | Hỗ trợ buff, Khống chế         | Gió Đọc Tên, Bão Trắng, Lông Hạc | Bị gom               |
+| Hạ Vy     | Bảo vệ, Khống chế, Hỗ trợ buff | Khâu Băng, Áo Buồm, Gió Đầu Mùa  | Hầm Băng, Bị gom     |
+| Lôi Đình  | Sát thương chính               | Sấm Xé Giáp, Lôi Hiệu            | Nhịp Vó, Thiên Lôi   |
+
+Đội khởi đầu phủ đủ 5 vai trò: Sương Mai đánh chính và giảm sát thương cho đội, Mai Linh đánh phụ ngoài sân và tăng tấn công, Bạch Vũ gom quái, hồi năng lượng và giảm kháng, Hạ Vy khiên cứu người và khống chế, Lôi Đình giảm phòng thủ và tự cường hóa.

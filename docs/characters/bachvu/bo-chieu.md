@@ -32,6 +32,18 @@
 2. **Thắt Nút:** quái bị dây diều quấn không thoát được khỏi lốc hoặc bão trong 2 giây, kể cả quái tinh nhuệ.
 3. **Khám phá, Thuyền Mây Nhỏ:** nhảy cao hơn 20%. Đang rơi thì giữ nút nhảy để lượn bằng diều đỏ (tốn thể lực theo giây).
 
+## Vai trò và buff/debuff
+
+**Vai trò:** Hỗ trợ buff, Khống chế. ★ = buff/debuff đặc trưng, lý do để chọn vào đội.
+
+| Trạng thái  | Loại   | Tác dụng                                                             | Thời gian | Cộng dồn                                                                    |
+| ----------- | ------ | -------------------------------------------------------------------- | --------- | --------------------------------------------------------------------------- |
+| Bị gom      | Debuff | Quái bị hút về một điểm.                                             | 0.6 giây  | không cộng dồn, áp lại thì làm mới                                          |
+| Lông Hạc ★  | Buff   | Cả đội tăng tinh thông nguyên tố. Giá trị: 80.                       | 10 giây   | không cộng dồn, áp lại thì làm mới (nhóm tinhThong: chỉ tính cái mạnh nhất) |
+| Bão Trắng ★ | Buff   | Cả đội tăng sát thương của nguyên tố Bão Trắng đã hút. Giá trị: 20%. | 10 giây   | không cộng dồn, áp lại thì làm mới                                          |
+
+Số liệu chạy trong game lấy từ `content/kits/bachvu.yaml` và `content/statuses.yaml`.
+
 ## Phối hợp
 
 - Gom quái cho chiêu vùng của Mai Linh (pháo hoa) và Hạ Vy (Hầm Băng).
