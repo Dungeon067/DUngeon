@@ -157,7 +157,8 @@ export class VrmActor {
     const s = look.height / Math.max(0.1, box.max.y - box.min.y);
     // Hướng nghỉ của xương tay thô khác nhau giữa các bản xuất (VRoid, Blender): quy `camVuKhi` về
     // trục của mô hình để cùng một cấu hình cầm vũ khí đúng cho mọi file.
-    const grip = { ...MODELS.camVuKhi[wtype], ...MODELS.nhanVat[id]?.camVuKhi };
+    const cfg = MODELS.nhanVat[id],
+      grip = { ...MODELS.camVuKhi[wtype], ...(!weaponId && cfg?.vuKhi ? cfg.camVuKhi : null) };
     const bone = vrm.humanoid.getRawBoneNode(grip.bone as any);
     vrm.scene.updateMatrixWorld(true);
     const restInv = bone
@@ -171,7 +172,7 @@ export class VrmActor {
     a.obj.scale.setScalar(s);
     a.obj.updateMatrixWorld(true);
     a.obj.userData.yOff = look.yOffset - box.min.y * s;
-    const wid = weaponId ?? MODELS.nhanVat[id]?.vuKhi ?? MODELS.vuKhiMacDinh[wtype];
+    const wid = weaponId ?? cfg?.vuKhi ?? MODELS.vuKhiMacDinh[wtype];
     if (wid) {
       const w = await loadWeapon(wid);
       if (w && bone) {

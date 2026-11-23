@@ -2,7 +2,7 @@
 # Thả file vào public/media/models/<id>/model.vrm là game tự nhận, không phải sửa code.
 # Nhân vật chưa có file thì dùng mẫu tạm `mau`. Mục `nhanVat` chỉ để chỉnh riêng từng người
 # (height, yOffset, dang = dáng người cho hệ tư thế S27: nu-teen, nu-nho, nam-teen...;
-# vuKhi = GLB vũ khí hiển thị riêng khi chưa trang bị, thay cho vuKhiMacDinh).
+# vuKhi = GLB vũ khí hiển thị riêng khi chưa trang bị, thay cho vuKhiMacDinh; camVuKhi chỉ áp cho vuKhi đó).
 mau: _mau
 macDinh:
   height: 1.6 # chiều cao hiển thị
