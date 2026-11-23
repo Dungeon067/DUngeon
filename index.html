@@ -1,13 +1,22 @@
 <!doctype html>
 <html lang="vi">
-<script type="module" crossorigin src="./assets/main-Dk_T5EjD.js"></script>
-<link rel="modulepreload" crossorigin href="./assets/logic-KflZr5Rp.js">
+<script type="module" crossorigin src="./assets/main-D8WE9OUy.js"></script>
+<link rel="modulepreload" crossorigin href="./assets/logic-oB1VEC9f.js">
 <link rel="stylesheet" crossorigin href="./assets/logic-JZqo9pwl.css">
-<link rel="stylesheet" crossorigin href="./assets/main-Dx4Oqs9e.css">
+<link rel="stylesheet" crossorigin href="./assets/main-B4cFWLCU.css">
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Tinh Tú Ước Nguyện</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <meta name="theme-color" content="#0f1430" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Tinh Tú" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon-180.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png" />
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
   <meta name="claude:viewport-fit-sides" content="cover" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
@@ -303,5 +312,16 @@
 
   <div class="modal" id="modal" hidden><div class="box" id="modalBox"></div></div>
   <div class="toast" id="toast" hidden></div>
+  <!-- S22: bản cài đặt -->
+  <button type="button" id="pwaUpdate" class="tt-root pwa-update" hidden>Có bản cập nhật, chạm để tải lại</button>
+  <div id="pwaHint" class="tt-root pwa-hint" role="dialog" aria-labelledby="pwaHintT" hidden>
+    <svg class="pwa-hint-i" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 3v12M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+    </svg>
+    <p id="pwaHintT">
+      Chơi toàn màn hình: chạm <b>Chia sẻ</b> rồi <b>Thêm vào MH chính</b>, sau đó mở Tinh Tú từ màn hình chính.
+    </p>
+    <button type="button" id="pwaHintClose" class="pwa-hint-x" aria-label="Tắt gợi ý cài đặt">✕</button>
+  </div>
 
 </html>
