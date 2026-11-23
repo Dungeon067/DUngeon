@@ -141,7 +141,7 @@ function loopEnd(s: Src, from: number, to: number) {
   const key = ["LeftUpLeg", "RightUpLeg", "LeftLeg", "RightLeg", "LeftArm", "RightArm", "LowerBack"];
   const snap = (t: number) => {
     poseAt(s, t);
-    return key.map((k) => s.by.get(k)!.quaternion.clone());
+    return key.filter((k) => s.by.has(k)).map((k) => s.by.get(k)!.quaternion.clone());
   };
   const a = snap(from);
   let best = to,

@@ -25,7 +25,7 @@ const glbLoader = new GLTFLoader();
 type ClipData = { n: number; bones: Record<string, { q: number[][] }>; hips: number[][]; str?: number[] };
 let animLib: Promise<{ fps: number; clips: Record<string, ClipData> } | null> | null = null;
 function loadAnims() {
-  return (animLib ??= fetch(`${base}media/anim/humanoid.json`)
+  return (animLib ??= fetch((globalThis as { __animUrl?: string }).__animUrl ?? `${base}media/anim/humanoid.json`)
     .then((r) => (r.ok ? r.json() : null))
     .catch(() => null));
 }

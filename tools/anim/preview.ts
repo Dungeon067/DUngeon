@@ -9,6 +9,7 @@ import { HeroFx } from "../../src/render3d/toon/motion-fx";
 import { WindField, type WindEnv, type WindSrc } from "../../src/render3d/toon/wind";
 
 const q = new URLSearchParams(location.search);
+if (q.get("anim")) (globalThis as { __animUrl?: string }).__animUrl = q.get("anim")!;
 const id = q.get("id") ?? "havy",
   w = (q.get("w") ?? "sword") as any,
   clip = q.get("clip") ?? "idle",
@@ -297,7 +298,7 @@ function sequence(src: string) {
       else if (iv) {
         play(iv.split("#")[0], { once: true, fade: 0.35, restart: iv !== cur });
         cur = iv;
-      } else play(armed ? (A.ready ?? A.stand) : "relax", { fade: armed ? 0.2 : 0.35 });
+      } else play(armed ? (A.ready ?? A.stand) : a!.dang?.gioi === "nam" ? "relaxNam" : "relax", { fade: armed ? 0.2 : 0.35 });
     }
     const jv = jd ? (ju < 0.35 ? 1 - ju / 0.35 : adash ? 1 : ju < 0.9 ? (ju - 0.6) / 0.3 : 1) : s.k === "jump" && ju < 0.8 ? 1 - 2 * (ju / 0.8) : 1;
     const free = !armed;

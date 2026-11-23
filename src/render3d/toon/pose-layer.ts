@@ -10,6 +10,9 @@ import type { VRM } from "@pixiv/three-vrm";
 import type { DangParams } from "../../data/poses-schema";
 import { solveLimb, alignQuat, type Limb } from "./ik";
 
+/** Hệ số lớp dáng khi đứng yên trên nền mocap. */
+const RELAX_K = 0.3;
+
 export type PoseMode = "relax" | "ready" | "move" | "act" | "air";
 export interface PoseInput {
   mode: PoseMode;
@@ -215,6 +218,8 @@ export class PoseLayer {
       const side = new THREE.Vector3(1, 0, 0).applyQuaternion(rq),
         fwd = new THREE.Vector3(0, 0, 1).applyQuaternion(rq),
         up = new THREE.Vector3(0, 1, 0);
+      // Đứng yên đã là mocap (tự thở, dồn trọng tâm): lớp dáng chỉ cộng nhẹ (RELAX_K).
+      const wD = wR * RELAX_K;
       // Thở + dồn trọng tâm (ngoài trận), nhún (trong trận).
       const br = Math.sin(t * Math.PI * 2 * dung.tho.nhip),
         sh = Math.sin(t * Math.PI * 2 * dung.doiTrong.nhip),
@@ -225,24 +230,24 @@ export class PoseLayer {
         tr = dung.tru;
       const tilt = dung.hong * (tr > 0 ? sup : 1);
       const hy =
-        -cho.ha * wC - cho.nhun * (0.5 + 0.5 * bo) * wC - 0.002 * Math.abs(sh) * wR - 0.012 * tr * Math.abs(sup) * wR;
+        -cho.ha * wC - cho.nhun * (0.5 + 0.5 * bo) * wC - 0.002 * Math.abs(sh) * wD - 0.012 * tr * Math.abs(sup) * wD;
       hips.position.y += (hy * H) / scale;
       hips.position.addScaledVector(
         new THREE.Vector3(sg, 0, 0),
-        (0.008 * dung.doiTrong.bien * sh + 0.04 * tr * sup) * wR * this.hipsH,
+        (0.008 * dung.doiTrong.bien * sh + 0.04 * tr * sup) * wD * this.hipsH,
       );
-      this.pre("hips", 0, 0, (tilt + 1.2 * dung.doiTrong.bien * sh) * wR);
-      this.post("spine", dung.lung * wR + cho.cui * 0.6 * wC, 0, -tilt * 0.6 * wR);
+      this.pre("hips", 0, 0, (tilt + 1.2 * dung.doiTrong.bien * sh) * wD);
+      this.post("spine", dung.lung * wD + cho.cui * 0.6 * wC, 0, -tilt * 0.6 * wD);
       this.post(
         "upperChest",
-        -dung.tho.bien * (0.5 + 0.5 * br) * (wR + wC * 0.6) + cho.cui * 0.4 * wC,
+        -dung.tho.bien * (0.5 + 0.5 * br) * (wD + wC * 0.6) + cho.cui * 0.4 * wC,
         0,
-        -dung.vai * (tr > 0 ? sup : 1) * wR,
+        -dung.vai * (tr > 0 ? sup : 1) * wD,
       );
-      this.post("head", dung.dauCui * wR - cho.cui * 0.5 * wC, 0, dung.dau * wR * (0.7 + 0.3 * Math.sin(t * 0.37)));
-      const sb = 0.8 * dung.tho.bien * (0.5 + 0.5 * br) * (wR + wC * 0.6);
-      this.post("leftShoulder", 0, dung.moVai * wR, sb);
-      this.post("rightShoulder", 0, -dung.moVai * wR, -sb);
+      this.post("head", dung.dauCui * wD - cho.cui * 0.5 * wC, 0, dung.dau * wD * (0.7 + 0.3 * Math.sin(t * 0.37)));
+      const sb = 0.8 * dung.tho.bien * (0.5 + 0.5 * br) * (wD + wC * 0.6);
+      this.post("leftShoulder", 0, dung.moVai * wD, sb);
+      this.post("rightShoulder", 0, -dung.moVai * wD, -sb);
       // Tay đung đưa nhẹ (dáng trẻ em): cùng nhịp, như đang chờ chơi.
       const wH = wR * this.wHand;
       const sw = dung.tay.dua * Math.sin(t * Math.PI * 2 * dung.doiTrong.nhip * 2) * wH;
@@ -270,8 +275,8 @@ export class PoseLayer {
         const w = (dung.chan * wR + cho.chan * wC) * k * H;
         a.p.addScaledVector(side, w);
         // Chân không trụ đặt lên trước, mở mũi chân.
-        a.p.addScaledVector(fwd, dung.chanTruoc * free * wR * H);
-        a.q.premultiply(_q.setFromAxisAngle(up, dung.xoay * (0.6 + 0.6 * free) * k * wR * D));
+        a.p.addScaledVector(fwd, dung.chanTruoc * free * wD * H);
+        a.q.premultiply(_q.setFromAxisAngle(up, dung.xoay * (0.6 + 0.6 * free) * k * wD * D));
         let dy = 0;
         if (this.ground) dy = THREE.MathUtils.clamp(this.ground(a.p.x, a.p.z) - g0, -0.3 * H, 0.3 * H) * this.wStand;
         dys.push(dy);
@@ -284,8 +289,6 @@ export class PoseLayer {
         a.p.y += dys[i];
         solveLimb(this.legs[s], a.p, a.knee.lengthSq() > 0 ? this.kneePole(a.knee, rq) : side, a.q);
       }
-      if (dung.tay.truoc > 0 && wH > 0.01 && inp.freeL && inp.freeR) this.handsFront(dung.tay.truoc * wH, rq, H);
-      if (dung.tay.sau > 0 && wH > 0.01 && inp.freeL && inp.freeR) this.handsBack(dung.tay.sau * wH, rq, H);
     }
   }
 
@@ -296,61 +299,5 @@ export class PoseLayer {
   private kneePole(dir: THREE.Vector3, rq: THREE.Quaternion) {
     // Đầu gối hướng trước mặt (theo thân), hơi theo hướng gối hiện tại.
     return new THREE.Vector3(0, 0, 1).applyQuaternion(rq).addScaledVector(dir, 0.1);
-  }
-  /** Chắp hai tay nhẹ sau lưng (dáng thiếu nữ hồn nhiên). */
-  private handsBack(w: number, rq: THREE.Quaternion, H: number) {
-    const hips = this.B.hips.getWorldPosition(new THREE.Vector3());
-    const fwd = new THREE.Vector3(0, 0, 1).applyQuaternion(rq),
-      side = new THREE.Vector3(1, 0, 0).applyQuaternion(rq),
-      up = new THREE.Vector3(0, 1, 0);
-    for (const s of ["l", "r"] as const) {
-      const L = this.arms[s],
-        k = s === "l" ? 1 : -1;
-      const cur = L.c.getWorldPosition(new THREE.Vector3());
-      const tgt = hips
-        .clone()
-        .addScaledVector(fwd, -0.15 * H)
-        .addScaledVector(up, -0.02 * H + (s === "r" ? 0.02 * H : 0))
-        .addScaledVector(side, 0.035 * k * H);
-      const fing = side.clone().multiplyScalar(-k).addScaledVector(up, -0.7).addScaledVector(fwd, -0.3),
-        thumb = up.clone().addScaledVector(fwd, -0.5);
-      const f0 = new THREE.Vector3(this.v0 ? -k : k, 0, 0),
-        t0 = new THREE.Vector3(0, 0, this.v0 ? -1 : 1);
-      const hq = alignQuat(f0, t0, fing, thumb);
-      const q = L.c.getWorldQuaternion(new THREE.Quaternion()).slerp(hq, w);
-      solveLimb(L, cur.lerp(tgt, w), side.clone().multiplyScalar(k).addScaledVector(fwd, -0.6), q);
-    }
-  }
-  /** Hai tay khép nhẹ trước bụng (trái đặt lên phải), trang nhã. */
-  private handsFront(w: number, rq: THREE.Quaternion, H: number) {
-    const hips = this.B.hips.getWorldPosition(new THREE.Vector3());
-    const fwd = new THREE.Vector3(0, 0, 1).applyQuaternion(rq),
-      side = new THREE.Vector3(1, 0, 0).applyQuaternion(rq),
-      up = new THREE.Vector3(0, 1, 0);
-    for (const s of ["l", "r"] as const) {
-      const L = this.arms[s],
-        k = s === "l" ? 1 : -1;
-      const cur = L.c.getWorldPosition(new THREE.Vector3());
-      const tgt = hips
-        .clone()
-        .addScaledVector(fwd, 0.17 * H)
-        .addScaledVector(up, -0.04 * H + (s === "l" ? 0.015 * H : 0))
-        .addScaledVector(side, 0.025 * k * H);
-      const fing = side.clone().multiplyScalar(-k).addScaledVector(up, -0.8).addScaledVector(fwd, 0.2),
-        thumb = up.clone().addScaledVector(fwd, 0.4);
-      const f0 = new THREE.Vector3(this.v0 ? -k : k, 0, 0),
-        t0 = new THREE.Vector3(0, 0, this.v0 ? -1 : 1);
-      const hq = alignQuat(f0, t0, fing, thumb);
-      const q = L.c.getWorldQuaternion(new THREE.Quaternion()).slerp(hq, w);
-      solveLimb(
-        L,
-        cur.lerp(tgt, w),
-        side
-          .clone()
-          .multiplyScalar(k * 0.4)
-          .addScaledVector(fwd, -1),
-        q,
-      );
-    }
   }
 }

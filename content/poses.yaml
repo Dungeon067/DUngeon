@@ -108,7 +108,7 @@ dang:
         lung: 0,
         dau: 4,
         dauCui: 1,
-        tay: { mo: 3, gap: 16, truoc: 0, sau: 0.85, dua: 0 },
+        tay: { mo: 3, gap: 16, truoc: 0, sau: 0, dua: 0 },
         tho: { nhip: 0.27, bien: 1.1 },
         doiTrong: { nhip: 0.21, bien: 1.1 },
       }
@@ -156,7 +156,7 @@ dang:
         lung: -2.5,
         dau: 3,
         dauCui: 2,
-        tay: { mo: 2, gap: 28, truoc: 0.85, sau: 0, dua: 0 },
+        tay: { mo: 2, gap: 28, truoc: 0, sau: 0, dua: 0 },
         tho: { nhip: 0.19, bien: 0.8 },
         doiTrong: { nhip: 0.14, bien: 0.7 },
       }

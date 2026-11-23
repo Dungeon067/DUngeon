@@ -438,7 +438,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         : { k: mv?.run ?? "run", fade: 0.18, speed: p.atkAnim > 0 ? 0.6 : 1 };
     }
     if (hero!.wfx?.clip) return { k: hero!.wfx.clip, once: true, fade: 0.12 };
-    return armed ? { k: A.ready ?? A.stand, fade: 0.25 } : { k: "relax", fade: 0.35 };
+    return armed ? { k: A.ready ?? A.stand, fade: 0.25 } : { k: hero!.dang?.gioi === "nam" ? "relaxNam" : "relax", fade: 0.35 };
   }
 
   let lastT = 0;
