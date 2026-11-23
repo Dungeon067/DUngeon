@@ -1,5 +1,6 @@
 import { sfx } from "../../../core/audio";
-import { byId } from "../../../data/content";
+import { EL, byId } from "../../../data/content";
+import { calm } from "../../../core/settings";
 import { ECON } from "../../../data/economy";
 import { ITEMS, MC } from "../../../data/menu-content";
 import { lvCapOf, passiveLevels, type WeaponInst } from "../../../economy/weapons";
@@ -55,6 +56,8 @@ const I_SORTS: [BagSort, string][] = [
   ["name", "Tên"],
 ];
 const st = {
+  slide: null as "l" | "r" | null,
+  pop: false,
   tab: "vu-khi" as TuDoTab,
   wsort: "r" as WSort,
   isort: "rarity" as BagSort,
@@ -138,7 +141,12 @@ function openFilter() {
 }
 
 /** Đầu bảng chi tiết: nền độ hiếm, tên, loại, chỉ số chính, sao, ảnh lớn bên phải. */
-function detailHead(o: { r: number; name: string; kind: string; main?: [string, string]; art: Node }) {
+function detailHead(o: { r: number; name: string; kind: string; main?: [string, string]; art: Node; glow?: string }) {
+  const motes = o.glow
+    ? Array.from({ length: 7 }, (_, i) =>
+        h("i", { class: "tt-mote", style: `--i:${i};--x:${(i * 37) % 100}%;--c:${o.glow}` }),
+      )
+    : [];
   return h("header", { class: "tt-tudo-head tt-loot-hero", "data-r": o.r }, [
     h("div", { class: "txt" }, [
       h("h3", { class: "name" }, [o.name]),
@@ -147,8 +155,14 @@ function detailHead(o: { r: number; name: string; kind: string; main?: [string, 
       o.main ? h("p", { class: "mv" }, [o.main[1]]) : null,
       stars(o.r as 3 | 4 | 5, 16),
     ]),
-    h("div", { class: "art" }, [o.art]),
+    h("div", { class: "art" }, [h("span", { class: "tt-tudo-ring", "aria-hidden": "true" }), o.art, ...motes]),
   ]);
+}
+
+/** Màu hạt sáng ở ảnh lớn: nguyên tố của chủ vũ khí (5★ giới hạn) hoặc người đang cầm, không có thì màu độ hiếm. */
+function weaponGlow(d: { r: number; cua?: string }, who: string | null) {
+  const el = byId[d.cua ?? who ?? ""]?.el;
+  return el ? EL[el]?.c : `var(--tt-r${d.r})`;
 }
 
 function weaponDetail(w: WeaponInst) {
@@ -163,6 +177,7 @@ function weaponDetail(w: WeaponInst) {
       kind: TYPE_NAME(d.loai),
       main: rows[0],
       art: weaponImg(w.id, 512, d.ten),
+      glow: weaponGlow(d, who),
     }),
     h("div", { class: "body" }, [
       h("div", { class: "tt-row meta" }, [
@@ -227,8 +242,10 @@ function render(host: HTMLElement, params: any = {}) {
     st.tab,
     (id) => {
       if (id === st.tab) return;
+      const ix = (t: string) => TABS.findIndex((x) => x.id === t);
+      st.slide = ix(id) > ix(st.tab) ? "r" : "l";
       st.tab = id as TuDoTab;
-      sfx("react");
+      sfx("tab");
       rerender();
     },
   );
@@ -253,7 +270,8 @@ function render(host: HTMLElement, params: any = {}) {
       c.setAttribute("role", "listitem");
       c.addEventListener("click", () => {
         st.wsel = w.uid;
-        sfx("react");
+        st.pop = true;
+        sfx("pick");
         rerender();
       });
       grid.append(c);
@@ -301,7 +319,7 @@ function render(host: HTMLElement, params: any = {}) {
       c.classList.add("tt-item-cell");
       c.dataset.id = r.id;
       c.setAttribute("role", "listitem");
-      c.addEventListener("click", () => ((st.isel = r.id), sfx("react"), rerender()));
+      c.addEventListener("click", () => ((st.isel = r.id), (st.pop = true), sfx("pick"), rerender()));
       grid.append(c);
     }
     const sel = rows.find((r) => r.id === st.isel);
@@ -320,7 +338,43 @@ function render(host: HTMLElement, params: any = {}) {
       h("span", { class: "cap" }, [`${rows.length} loại`]),
     );
   }
-  host.append(tl, h("div", { class: "tt-tudo-main" }, [h("section", { class: "tt-tudo-left" }, [grid, bar]), detail]));
+  const main = h("div", { class: "tt-tudo-main" + (st.slide ? ` tt-slide-${st.slide}` : "") }, [
+    h("section", { class: "tt-tudo-left" }, [grid, bar]),
+    detail,
+  ]);
+  if (st.pop) grid.querySelector(".is-sel")?.classList.add("is-pop");
+  st.slide = null;
+  st.pop = false;
+  host.append(sky(host), tl, main);
+}
+
+/** Lớp chòm sao parallax: theo con trỏ hoặc độ nghiêng máy, gom theo khung hình; tắt khi Giảm chuyển động. */
+function sky(host: HTMLElement) {
+  const el = h("div", { class: "tt-tudo-sky", "aria-hidden": "true" });
+  if (calm()) return el;
+  const ac = new AbortController();
+  let tx = 0,
+    ty = 0,
+    raf = 0;
+  const set = (x: number, y: number) => {
+    tx = Math.max(-1, Math.min(1, x));
+    ty = Math.max(-1, Math.min(1, y));
+    if (!raf)
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        if (!el.isConnected) return ac.abort();
+        el.style.setProperty("--px", tx.toFixed(3));
+        el.style.setProperty("--py", ty.toFixed(3));
+      });
+  };
+  const o = { signal: ac.signal, passive: true } as const;
+  host.addEventListener(
+    "pointermove",
+    (e) => set((e.clientX / innerWidth) * 2 - 1, (e.clientY / innerHeight) * 2 - 1),
+    o,
+  );
+  addEventListener("deviceorientation", (e) => set((e.gamma ?? 0) / 30, ((e.beta ?? 45) - 45) / 30), o);
+  return el;
 }
 
 export const renderTuDo = render;

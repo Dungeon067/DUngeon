@@ -262,3 +262,107 @@
   object-fit: contain;
   filter: drop-shadow(0 8px 14px rgb(0 0 0 / 0.45));
 }
+
+/* ---------- S24 phần 2: ánh kim, vệt sáng, nảy khi chọn ---------- */
+.tt-loot[data-r="5"]::before,
+.tt-loot[data-r="4"]::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 1.5px;
+  pointer-events: none;
+  background: linear-gradient(135deg, #fff3c4, #b8783a 28%, #ffe6a0 50%, #8a5a24 72%, #ffd27a);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+.tt-loot[data-r="4"]::before {
+  padding: 1px;
+  opacity: 0.75;
+  background: linear-gradient(135deg, #e6dcff, #6b5cc0 35%, #c8b8ff 55%, #3e3488);
+}
+.tt-loot__shine {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.tt-loot__shine::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: 0;
+  width: 38%;
+  height: 140%;
+  background: linear-gradient(100deg, transparent, rgb(255 246 220 / 0.55), transparent);
+  transform: translateX(-160%) skewX(-18deg);
+  animation: tt-shine 5.5s ease-in-out infinite;
+  will-change: transform;
+}
+.tt-loot[data-r="4"] .tt-loot__shine::after {
+  background: linear-gradient(100deg, transparent, rgb(220 210 255 / 0.3), transparent);
+  animation-duration: 8s;
+}
+@keyframes tt-shine {
+  0%,
+  62% {
+    transform: translateX(-160%) skewX(-18deg);
+  }
+  86%,
+  100% {
+    transform: translateX(380%) skewX(-18deg);
+  }
+}
+.tt-loot.is-pop {
+  animation: tt-pop 0.38s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+}
+.tt-loot.is-pop::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 14px 14px 6px 6px;
+  pointer-events: none;
+  box-shadow: 0 0 14px 3px color-mix(in srgb, var(--rc) 75%, transparent);
+  animation: tt-glow 0.9s ease-out both;
+}
+@keyframes tt-pop {
+  0% {
+    transform: translateY(-2px) scale(0.94);
+  }
+  60% {
+    transform: translateY(-3px) scale(1.05);
+  }
+  100% {
+    transform: translateY(-2px) scale(1);
+  }
+}
+@keyframes tt-glow {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tt-loot__shine,
+  .tt-loot.is-pop::after {
+    display: none;
+  }
+  .tt-loot.is-pop {
+    animation: none;
+  }
+}
+.tt-calm .tt-loot__shine,
+.tt-calm .tt-loot.is-pop::after {
+  display: none;
+}
+.tt-calm .tt-loot {
+  animation: none;
+  transition: none;
+}

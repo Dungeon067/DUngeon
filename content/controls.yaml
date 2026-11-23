@@ -72,3 +72,4 @@ defaults:
   colorMode: none # none | protan | deutan | tritan
   mouseAim: false
   showHints: true
+  reduceMotion: false # tắt hiệu ứng chuyển động trong menu

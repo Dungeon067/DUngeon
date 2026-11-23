@@ -447,7 +447,10 @@ export function lootCard(o: LootOpts) {
       disabled: o.disabled,
     },
     [
-      h("span", { class: "tt-loot__art" }, [o.art]),
+      h("span", { class: "tt-loot__art" }, [
+        o.art,
+        o.rarity >= 4 ? h("span", { class: "tt-loot__shine", "aria-hidden": "true" }) : null,
+      ]),
       o.refine ? h("span", { class: "tt-loot__ref" }, [`R${o.refine}`]) : null,
       tr,
       st,

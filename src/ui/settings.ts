@@ -127,6 +127,7 @@ function panelGeneral() {
     ),
     sw("Rung màn hình khi đánh", settings.shake, (v) => ((settings.shake = v), commit())),
     sw("Rung máy khi trúng đòn (điện thoại)", settings.vibrate, (v) => ((settings.vibrate = v), commit())),
+    sw("Giảm chuyển động (menu)", settings.reduceMotion, (v) => ((settings.reduceMotion = v), commit())),
     sw("Hiện gợi ý HUD lần đầu", settings.showHints, (v) => ((settings.showHints = v), commit())),
   ]);
 }

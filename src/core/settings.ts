@@ -25,6 +25,7 @@ export interface Settings {
   colorMode: ColorMode;
   mouseAim: boolean;
   showHints: boolean;
+  reduceMotion: boolean;
   joystick: { mode: JoyMode; deadzone: number; sensitivity: number };
   keys: Record<Action, string[]>;
   layout: Record<HudButton, LayoutItem>;
@@ -58,7 +59,7 @@ export function sanitize(raw: any): Settings {
   num("music");
   num("sfx");
   if (["high", "medium", "low"].includes(raw.quality)) s.quality = raw.quality;
-  for (const k of ["shake", "vibrate", "mouseAim", "showHints"] as const)
+  for (const k of ["shake", "vibrate", "mouseAim", "showHints", "reduceMotion"] as const)
     if (typeof raw[k] === "boolean") s[k] = raw[k];
   if (typeof raw.fontScale === "number") s.fontScale = clamp(raw.fontScale, 0.8, 1.4);
   if (["none", "protan", "deutan", "tritan"].includes(raw.colorMode)) s.colorMode = raw.colorMode;
@@ -102,6 +103,13 @@ function readStored(): Settings {
 }
 
 export const settings: Settings = readStored();
+/** Giảm chuyển động: bật trong Cài đặt hoặc theo hệ điều hành. */
+export const calm = () =>
+  settings.reduceMotion || (typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches);
+function applyCalm() {
+  if (typeof document !== "undefined") document.documentElement.classList.toggle("tt-calm", settings.reduceMotion);
+}
+applyCalm();
 type Listener = (s: Settings) => void;
 const listeners: Listener[] = [];
 export function onSettings(f: Listener) {
@@ -114,6 +122,7 @@ export function saveSettings() {
   } catch {
     /* trình duyệt chặn lưu trữ */
   }
+  applyCalm();
   for (const f of listeners) f(settings);
 }
 /** Nạp lại từ localStorage (dùng cho test và khi tab khác đổi cài đặt). */

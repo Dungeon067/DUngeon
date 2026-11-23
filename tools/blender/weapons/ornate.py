@@ -287,5 +287,62 @@ def build_orb_ornate(d):
     return root
 
 
+def _rot(pts, a):
+    c, s = math.cos(a), math.sin(a)
+    return [(x * c - z * s, x * s + z * c) for x, z in pts]
+
+
+def build_wind_compass(d):
+    """La bàn gió bạc: bốn cánh cong xoay quanh viên ngọc lục nhỏ, vành la bàn khắc vạch. Không có vòng thiên văn."""
+    root = empty()
+    silver = mat_metal("silver", hexc(d.get("gold", "#c4ccd4")), 0.22)
+    dark = mat_metal("silver_dark", hexc(d.get("cavity", "#3a444c")), 0.4)
+    mt = trim(d)
+    me = mat_emit("wind", hexc(d["glow"]), d.get("glow_strength", 2.5))
+    R = 0.2
+    # vành la bàn: hai vòng bạc lồng nhau, vạch khắc 32 hướng
+    for k, (rr, th, m) in enumerate(((R, 0.009, mt), (R * 0.9, 0.005, dark))):
+        curve_obj(f"rim{k}", [[(rr * math.cos(TAU * i / 96), 0.0, rr * math.sin(TAU * i / 96)) for i in range(96)]],
+                  th, m, root, cyclic=True)
+    ticks = []
+    for i in range(32):
+        a = TAU * i / 32
+        r0 = R * (0.84 if i % 4 else 0.8)
+        ticks.append([(r0 * math.cos(a), 0.004, r0 * math.sin(a)), (R * 0.88 * math.cos(a), 0.004, R * 0.88 * math.sin(a))])
+    curve_obj("ticks", ticks, 0.0016, silver, root)
+    # bốn mũi hướng chính nhô ra khỏi vành, mũi bắc dài hơn
+    for k in range(4):
+        L = 0.09 if k == 1 else 0.06
+        tri = _rot([(R * 0.98, -0.018), (R + L, 0.0), (R * 0.98, 0.018)], TAU * k / 4)
+        extrude_poly(f"point{k}", tri, 0.008, [mt], root, bevel_w=0.002)
+    # bốn cánh chong chóng cong, mỗi cánh có đường gân phát sáng nhẹ
+    vane = [(0.035, -0.012), (0.08, -0.03), (0.13, -0.03), (0.165, -0.006), (0.15, 0.022), (0.1, 0.03), (0.045, 0.014)]
+    for k in range(4):
+        a = TAU * k / 4 + math.radians(d.get("spin", 20))
+        extrude_poly(f"vane{k}", _rot(vane, a), 0.006, [silver], root, y=0.012 * (k % 2), bevel_w=0.0015)
+        vein = [(x * math.cos(a) - z * math.sin(a), 0.016 + 0.012 * (k % 2), x * math.sin(a) + z * math.cos(a))
+                for x, z in [(0.045, 0.0), (0.09, -0.004), (0.14, 0.004)]]
+        curve_obj(f"vein{k}", [vein], 0.0022, me, root)
+    # trục giữa và viên ngọc lục nhỏ
+    curve_obj("hub", [[(0.04 * math.cos(TAU * i / 32), 0.0, 0.04 * math.sin(TAU * i / 32)) for i in range(32)]], 0.008,
+              mt, root, cyclic=True)
+    core_gem(root, (0, 0.012, 0), 0.026, d, mt, axis="Y", facets=8)
+    # quai treo và ngọc rủ phía dưới
+    lathe("stem", [(0.0, -R - 0.075), (0.008, -R - 0.07), (0.006, -R - 0.03), (0.01, -R - 0.005), (0.0, -R)], 8,
+          [mt], root, sharp_deg=25)
+    crystal("drop", (0, 0, -R - 0.075), (0, 0, -1), 0.05, 0.012, 6,
+            [mat_gem("drop", hexc(d.get("gem", "#c8ffe0")), hexc(d["glow"]), 2, 0.03)], root)
+    # vệt gió mảnh quấn quanh vành
+    if not d.get("icon"):
+        for k in range(3):
+            a0 = TAU * k / 3
+            pts = [((R + 0.03 + 0.03 * t) * math.cos(a0 + 1.6 * t), 0.02 - 0.04 * t,
+                    (R + 0.03 + 0.03 * t) * math.sin(a0 + 1.6 * t)) for t in [i / 24 for i in range(25)]]
+            curve_obj(f"gust{k}", [pts], 0.0018, me, root)
+    motes(root, lambda t: ((R + 0.05) * math.cos(TAU * t), 0.02, (R + 0.05) * math.sin(TAU * t)), d.get("motes", 10), d,
+          spread=0.03)
+    return root
+
+
 BUILDERS_ORNATE = {"sword_ornate": build_sword_ornate, "spear_ornate": build_spear_ornate,
-                   "orb_ornate": build_orb_ornate}
+                   "orb_ornate": build_orb_ornate, "wind_compass": build_wind_compass}

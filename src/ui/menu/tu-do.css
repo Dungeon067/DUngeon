@@ -274,3 +274,151 @@
     grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
   }
 }
+
+/* ---------- S24 phần 2: chuyển động Tủ Đồ (tắt khi Giảm chuyển động) ---------- */
+.tt-menu-screen.tt-tudo {
+  position: relative;
+  isolation: isolate;
+}
+.tt-tudo-sky {
+  --px: 0;
+  --py: 0;
+  position: absolute;
+  inset: -24px;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--tt-star-pattern) 0 0 / 180px 180px;
+  opacity: 0.55;
+  transform: translate3d(calc(var(--px) * -14px), calc(var(--py) * -10px), 0);
+  transition: transform 0.4s ease-out;
+}
+.tt-tudo-head .art {
+  overflow: visible;
+}
+.tt-tudo-ring {
+  position: absolute;
+  width: 92%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  background:
+    repeating-conic-gradient(rgb(255 255 255 / 0.22) 0 1deg, transparent 1deg 15deg),
+    radial-gradient(closest-side, transparent 86%, rgb(255 255 255 / 0.12) 87% 88%, transparent 89%);
+  -webkit-mask: radial-gradient(closest-side, transparent 80%, #000 81% 100%);
+  mask: radial-gradient(closest-side, transparent 80%, #000 81% 100%);
+  animation: tt-spin 60s linear infinite;
+}
+.tt-tudo-head .art > img {
+  animation: tt-float 4.5s ease-in-out infinite;
+  will-change: transform;
+}
+.tt-mote {
+  position: absolute;
+  bottom: 10%;
+  left: var(--x);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 6px 1px var(--c);
+  opacity: 0;
+  animation: tt-mote 4.2s ease-in infinite;
+  animation-delay: calc(var(--i) * 0.6s);
+  pointer-events: none;
+}
+.tt-tudo-head .tt-stars > * {
+  animation: tt-star-in 0.36s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+}
+.tt-tudo-head .tt-stars > :nth-child(2) {
+  animation-delay: 0.08s;
+}
+.tt-tudo-head .tt-stars > :nth-child(3) {
+  animation-delay: 0.16s;
+}
+.tt-tudo-head .tt-stars > :nth-child(4) {
+  animation-delay: 0.24s;
+}
+.tt-tudo-head .tt-stars > :nth-child(5) {
+  animation-delay: 0.32s;
+}
+.tt-tudo-main.tt-slide-r > * {
+  animation: tt-slide-r 0.28s ease-out both;
+}
+.tt-tudo-main.tt-slide-l > * {
+  animation: tt-slide-l 0.28s ease-out both;
+}
+@keyframes tt-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes tt-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+@keyframes tt-mote {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.6);
+  }
+  20% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-120px) scale(1);
+  }
+}
+@keyframes tt-star-in {
+  from {
+    opacity: 0;
+    transform: scale(0.3) rotate(-30deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes tt-slide-r {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+}
+@keyframes tt-slide-l {
+  from {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tt-tudo-ring,
+  .tt-tudo-head .art > img,
+  .tt-tudo-head .tt-stars > *,
+  .tt-tudo-main > * {
+    animation: none !important;
+  }
+  .tt-mote {
+    display: none;
+  }
+  .tt-tudo-sky {
+    transform: none;
+  }
+}
+.tt-calm .tt-tudo-ring,
+.tt-calm .tt-tudo-head .art > img,
+.tt-calm .tt-tudo-head .tt-stars > *,
+.tt-calm .tt-tudo-main > * {
+  animation: none !important;
+}
+.tt-calm .tt-mote {
+  display: none;
+}
+.tt-calm .tt-tudo-sky {
+  transform: none;
+}
