@@ -1,0 +1,9 @@
+{
+  "reshape": "python tools/vrm/reshape_face.py mailinh_raw.vrm mailinh_vroid.vrm short=0.2 p=2.5 alpha=0.85 cheek=0.08",
+  "blush": "python tools/vrm/paint_blush.py textures/mailinh_face_blush.png size=1024 a=0.55 u=0.355 rx=0.075 ry=0.038 v=0.655 skin=<texture da mat goc>",
+  "short": 0.2,
+  "p": 2.5,
+  "alpha": 0.85,
+  "cheek": 0.08,
+  "back": 0.003
+}
