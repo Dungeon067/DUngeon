@@ -23,6 +23,9 @@ render() {  # shot variant dir
   local spec; spec=$(IFS=,; echo "${missing[*]}")
   (cd "$HERE/blender" && "$BLENDER" -b --factory-startup -P build.py -- --shot "$shot" --variant "$variant" \
       --res 1920x1080 --samples "${SAMPLES[$shot]}" --frames "$spec" --out "$dir") | grep -E "^FRAME|Error" || true
+  for ((f = 1; f <= LAST[$shot]; f++)); do  # Blender dừng giữa chừng thì không mã hóa đè video cũ
+    [[ -f "$dir/$(printf %04d "$f").png" ]] || { echo "thiếu khung $f của $shot/$variant" >&2; exit 1; }
+  done
 }
 
 render s1 5a "$FRAMES/common/s1"
