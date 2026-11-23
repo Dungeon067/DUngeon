@@ -235,3 +235,41 @@
     animation: none !important;
   }
 }
+/* Tủ Đồ: thẻ chi tiết cuộn trong khung, nút Khóa/Nâng Cấp luôn ở đáy */
+.tt-babar .tt-btn {
+  flex-shrink: 0;
+}
+.tt-badetail {
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+.tt-badetail .tt-bacard {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  grid-template-columns: 1fr;
+  border: 0;
+  border-radius: 0;
+}
+.tt-badetail .tt-bacard .hero {
+  width: min(200px, 60%);
+  justify-self: center;
+}
+.tt-bacard .body {
+  min-width: 0;
+}
+@media (max-height: 480px) {
+  .tt-badetail .tt-bacard {
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: var(--tt-sp-2);
+  }
+  .tt-badetail .tt-bacard .hero {
+    width: auto;
+  }
+  .tt-badetail .tt-bacard .tt-story {
+    display: none;
+  }
+}
+.tt-bastats {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px var(--tt-sp-3);
+}

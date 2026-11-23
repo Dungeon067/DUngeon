@@ -215,7 +215,7 @@ export function renderBaoAnBag(host: HTMLElement, params: any, tl: HTMLElement) 
     });
     grid.append(c);
   }
-  const bar = h("div", { class: "tt-tudo-bar" });
+  const bar = h("div", { class: "tt-tudo-bar tt-babar" });
   const nf = nFilter(bag.f);
   bar.append(
     button(`Sắp xếp: ${BA_SORTS.find(([k]) => k === bag.sort)![1]}`, {
@@ -239,9 +239,12 @@ export function renderBaoAnBag(host: HTMLElement, params: any, tl: HTMLElement) 
     },
   });
   scrapBtn.id = "baScrapMode";
+  const domBtn = button("Bí Cảnh Bảo Ấn", { variant: "ghost", icon: "ruong", onClick: () => openMenu("baoan") });
+  domBtn.classList.add("tt-tudo-ext");
+  domBtn.setAttribute("aria-label", "Bí Cảnh Bảo Ấn");
   bar.append(
     scrapBtn,
-    button("Bí Cảnh Bảo Ấn", { variant: "ghost", icon: "ruong", onClick: () => openMenu("baoan") }),
+    domBtn,
     h("span", { class: "cap" }, [
       icon("bao-an", { size: 16 }),
       h("b", {}, [`${list.length}`]),
