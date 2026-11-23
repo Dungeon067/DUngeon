@@ -113,7 +113,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   scene.add(sky.mesh);
   const lights: THREE.PointLight[] = [];
   for (let i = 0; i < 8; i++) {
-    const l = new THREE.PointLight(0xffffff, 0, 6, 1.5);
+    const l = new THREE.PointLight(0xffffff, 0, 6, 2);
     lights.push(l);
     scene.add(l);
   }
@@ -652,7 +652,8 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       const g = i < Q.lights ? glow[i] : undefined;
       l.intensity = g ? g.i * 1.2 : 0;
       if (g) {
-        l.position.set(g.x, g.y, g.z);
+        // Giữ đèn cách mặt đất: đèn sát bề mặt làm độ sáng vọt lên vô hạn và bloom loang trắng.
+        l.position.set(g.x, Math.max(g.y, (F ? F.at(g.x, g.z) : 0) + 1.1), g.z);
         l.color.copy(g.c);
       }
     });

@@ -126,10 +126,10 @@ export class VrmActor {
         if (!m?.isMToonMaterial) continue;
         // Bóng ngả tím lam, viền sáng (rim) ấm theo phong cách hoạt hình.
         m.shadeColorFactor?.lerp(new THREE.Color(0x6a5a9a), 0.25);
-        m.parametricRimColorFactor?.set(0xfff0d8);
-        m.parametricRimFresnelPowerFactor = 3.5;
-        m.parametricRimLiftFactor = 0.05;
-        m.rimLightingMixFactor = 0.6;
+        m.parametricRimColorFactor?.set(0x7a6a50);
+        m.parametricRimFresnelPowerFactor = 5;
+        m.parametricRimLiftFactor = 0;
+        m.rimLightingMixFactor = 1;
       }
     });
     const look = { ...MODELS.macDinh, ...(MODELS.nhanVat[id] ?? {}) };

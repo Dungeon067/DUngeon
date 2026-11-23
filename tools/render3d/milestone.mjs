@@ -37,7 +37,10 @@ async function boot(b, w, h, { renderer = "3d", quality = "high", video } = {}) 
   await pg.reload();
   await pg.waitForFunction(() => window.__tinhtu?.S?.scene === "play" && !!window.__tinhtu.S.G.map);
   await calm(pg);
-  await sleep(1500);
+  // Chờ hết màn mở đầu (chữ tên vùng, lớp mờ) và mô hình VRM tải xong.
+  await pg.waitForFunction(() => window.__tinhtu.S.G.time > 4, null, { timeout: 300000 });
+  await calm(pg);
+  await sleep(500);
   return { ctx, pg };
 }
 /** Bỏ quái trong bán kính 16 ô quanh điểm xuất phát để cảnh quay gọn. */
