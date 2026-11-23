@@ -29,7 +29,15 @@ function hasFile(url: string) {
   if (!p) {
     p = fetch(url, { method: "HEAD" })
       .then((r) => r.ok && !(r.headers.get("content-type") ?? "").includes("text/html"))
-      .catch(() => false);
+      // Ngoại tuyến: HEAD lỗi mạng, nhưng file có thể đã nằm trong bộ nhớ đệm media của PWA (lưu theo GET).
+      .catch(() =>
+        typeof caches === "undefined"
+          ? false
+          : caches.match(url).then(
+              (r) => !!r,
+              () => false,
+            ),
+      );
     exists.set(url, p);
   }
   return p;
