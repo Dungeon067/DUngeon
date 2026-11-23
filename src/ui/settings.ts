@@ -152,10 +152,10 @@ function panelApp() {
     inst.id = "stInstall";
     const sync = () => {
       inst.hidden = !canInstall();
-      if (!inst.isConnected && inst.dataset.bound) off();
+      if (inst.isConnected) inst.dataset.mounted = "1";
+      else if (inst.dataset.mounted) off();
     };
     const off = onInstallChange(sync);
-    inst.dataset.bound = "1";
     sync();
     rows.push(h("div", { class: "st-row" }, [inst]));
     rows.push(
