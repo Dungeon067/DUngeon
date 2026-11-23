@@ -217,7 +217,10 @@ function choose(v: MonsterView, e: any, dt: number): [string, number] {
     if (v.lock) return [v.lock.name, 1];
     return [e.phase === 2 ? "chase" : "patrol", 1];
   }
-  if (e.frozen > 0) return [v.cur ?? "idle", 0];
+  if (e.frozen > 0) {
+    if (!e.tele) v.hadTele = false;
+    return [v.cur ?? "idle", 0];
+  }
   if (e.stun > 0) {
     v.hadTele = false;
     return ["stun", 1];
