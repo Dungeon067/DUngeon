@@ -98,3 +98,25 @@ void main() {
   m.customProgramCacheKey = () => "fade";
   m.needsUpdate = true;
 }
+
+/**
+ * Dọn hết tài nguyên GPU của một cây vật thể: geometry, vật liệu, texture trong vật liệu và uniform,
+ * InstancedMesh, Reflector. Giữ lại tài nguyên dùng chung (gradient toon, vật liệu viền trong cache).
+ */
+export function disposeTree(root: THREE.Object3D): void {
+  const shared = new Set<unknown>([gradientMap(), ...outlineCache.values()]);
+  root.removeFromParent();
+  root.traverse((o: any) => {
+    o.geometry?.dispose();
+    for (const m of [o.material].flat()) {
+      if (!m || shared.has(m)) continue;
+      for (const v of Object.values(m)) if ((v as any)?.isTexture && !shared.has(v)) (v as THREE.Texture).dispose();
+      for (const u of Object.values((m as any).uniforms ?? {})) {
+        const v = (u as any)?.value;
+        if (v?.isTexture && !shared.has(v)) v.dispose();
+      }
+      m.dispose();
+    }
+    if (o.isInstancedMesh || o.isReflector) o.dispose();
+  });
+}

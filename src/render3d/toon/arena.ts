@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { Reflector } from "three/examples/jsm/objects/Reflector.js";
 import { EL } from "../../data/content";
 import { TS } from "../../world/map";
-import { fadeOccluder, hash2, noise2, outlineMat, toonMat, withOutline } from "./mat";
+import { disposeTree, fadeOccluder, hash2, noise2, outlineMat, toonMat, withOutline } from "./mat";
 
 export type ArenaKind = "tower" | "boss";
 export interface ArenaQ {
@@ -347,18 +347,7 @@ function baseArena(kind: ArenaKind) {
     }
   });
   function dispose() {
-    group.removeFromParent();
-    group.traverse((o: any) => {
-      o.geometry?.dispose();
-      for (const m of [o.material].flat()) {
-        if (!m) continue;
-        for (const v of Object.values(m)) if ((v as any)?.isTexture) (v as THREE.Texture).dispose();
-        for (const u of Object.values((m as any).uniforms ?? {}))
-          if ((u as any)?.value?.isTexture) (u as any).value.dispose();
-        m.dispose();
-      }
-      o.dispose?.();
-    });
+    disposeTree(group);
     beamGeo.dispose();
     ringGeo.dispose();
   }

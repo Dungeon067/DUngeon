@@ -21,7 +21,7 @@ import { CanvasSprite } from "./actors3d";
 import { getRenderable, renderObjects } from "./renderables";
 import type { WorldRenderer } from "./select";
 import { MODELS, VrmActor } from "./toon/actor";
-import { FADE, fadeOccluder, toonMat } from "./toon/mat";
+import { FADE, disposeTree, fadeOccluder, toonMat } from "./toon/mat";
 import { animateMonster, buildMonster, type MonsterView } from "./toon/monsters";
 import { buildSky } from "./toon/sky";
 import { buildBossArena, buildTowerArena, type Arena } from "./toon/arena";
@@ -347,13 +347,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   }
 
   function dropWorld() {
-    for (const o of [world, water?.mesh, grass?.mesh]) {
-      o?.removeFromParent();
-      o?.traverse((x: any) => {
-        x.geometry?.dispose();
-        for (const m of [x.material].flat()) m?.dispose?.();
-      });
-    }
+    for (const o of [world, water?.mesh, grass?.mesh]) if (o) disposeTree(o);
     world = null;
     worldOf = null;
     water = null;
