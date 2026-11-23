@@ -779,6 +779,22 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     unproject(sx, sy) {
       ray.setFromCamera(new THREE.Vector2((sx / GS.VW) * 2 - 1, -(sy / GS.VH) * 2 + 1), camera);
       const p = GS.G.p;
+      // Chuột chỉ vào thân quái thì nhắm quái đó (giống tự ngắm), không phải mặt đất phía sau.
+      let best: any = null,
+        bd = 1e9;
+      for (const e of GS.G.enemies) {
+        if (e.dead) continue;
+        const el = lift(e),
+          c = new THREE.Vector3(e.x / TS, groundY(e.x, e.y, el.g) + el.air / TS + (e.isBoss ? 1 : 0.45), e.y / TS),
+          r = (e.r ?? 14) / TS + 0.25;
+        if (ray.ray.distanceSqToPoint(c) > r * r) continue;
+        const d = c.distanceTo(ray.ray.origin);
+        if (d < bd) {
+          bd = d;
+          best = e;
+        }
+      }
+      if (best) return { x: best.x, y: best.y - (best.isBoss ? 20 : 10) };
       plane.constant = -groundY(p.x, p.y, lift(p).g);
       return ray.ray.intersectPlane(plane, hit) ? { x: hit.x * TS, y: hit.z * TS } : { x: p.x, y: p.y };
     },
