@@ -17,6 +17,8 @@ import { trackedObjective } from "./menu/quests";
 import { applyLayout, layoutParty } from "./hud/layout";
 import { openSettings } from "./settings";
 import type { Action } from "../data/schema";
+import { REGIONS, cellAt, regionEffectText } from "../world/regions";
+import { startStory, storyObjective } from "../story/story";
 
 /* =========================================================
    HUD (S09). Vị trí theo bố cục quen thuộc của thể loại, phần nhìn theo hệ thống
@@ -161,6 +163,8 @@ export function currentObjective(): { text: string; target: string | null } {
   const G = GS.G;
   if (G.mode === "tower") return { text: OBJECTIVES.tower.replace("{floor}", String(G.tower.floor)), target: null };
   if (G.mode === "boss") return { text: OBJECTIVES.boss, target: null };
+  const so = storyObjective();
+  if (so) return so;
   const tq = trackedObjective();
   if (tq) return tq;
   const P = Server.P;
@@ -191,6 +195,11 @@ function statusIcons(p: any, m: any) {
   const out: [string, string, string][] = [];
   if (p.shield > 0) out.push(["khien", `Khiên ${fmt(p.shield)}`, `${Math.ceil(p.shieldT)}s`]);
   if (GS.G.healAura) out.push(["bia-da", "Đang hồi phục gần Bia Đá", ""]);
+  if (GS.G.mode === "world") {
+    const rg = cellAt(GS.G.map, p.x, p.y).r,
+      fx = regionEffectText(rg);
+    if (fx.length) out.push(["ban-do", `${REGIONS[rg]!.name}: ${fx.join(", ")}`, ""]);
+  }
   if (p.iframes > 0 && p.dashT > 0) out.push(["luot", "Đang lướt né, miễn sát thương", ""]);
   if (m && m.energy >= m.c.burst.cost) out.push(["no", "Nộ đã đầy", ""]);
   if (p.stamina < 20) out.push(["the-luc", "Thể lực thấp, chưa lướt được", ""]);
@@ -308,6 +317,13 @@ export function updateHud() {
   if (C.ob !== ob.text) {
     C.ob = ob.text;
     $("objective").innerHTML = `${iconSvg("nhiem-vu", { size: 16 })}<span>${ob.text}</span>`;
+    const el = $("objective");
+    if (!el.dataset.story) {
+      el.dataset.story = "1";
+      // Chạm dòng mục tiêu để chơi tiếp cốt truyện.
+      el.addEventListener("click", () => startStory());
+    }
+    el.classList.toggle("is-story", !!storyObjective());
   }
   GS.G.objTarget = ob.target;
   let info = "";

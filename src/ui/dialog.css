@@ -41,3 +41,63 @@
     padding: 8px 12px 6px;
   }
 }
+
+/* Cốt truyện chính: chân dung người nói, lời kể in nghiêng, lựa chọn. */
+.tt-story .tt-dialog__head button {
+  min-height: 28px;
+  padding: 2px 12px;
+  font-size: 12px;
+}
+.tt-story__body {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.tt-story__pic {
+  flex: 0 0 auto;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid #f0c060;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+}
+.tt-story__pic canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.tt-story__txt {
+  flex: 1;
+  min-height: 3em;
+}
+.tt-story__narr {
+  font-style: italic;
+  color: #d8cfb8;
+}
+.tt-story__choices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+.tt-story__choices button {
+  justify-content: flex-start;
+  text-align: left;
+  min-height: 44px;
+}
+.hud-obj.is-story {
+  cursor: pointer;
+  pointer-events: auto;
+  border-color: rgba(240, 192, 96, 0.8);
+}
+.tt-dialog.tt-story {
+  z-index: 300;
+}
+/* Đang chạy hội thoại cốt truyện: ẩn cụm nút đánh, joystick và thanh máu để hộp thoại không bị đè. */
+body.story-on #hudActions,
+body.story-on #hudSelf,
+body.story-on .hud-joy,
+body.story-on #joy {
+  visibility: hidden;
+}

@@ -1,5 +1,6 @@
 import { fbm, hash2 } from "../core/util";
 import { TERRAIN } from "../data/content";
+import { assignRegions } from "./regions";
 import { WORLD_PUZZLES } from "../data/puzzles";
 
 const terrainIndex = (id: string) =>
@@ -220,6 +221,7 @@ export function genWorld() {
         if (m[i] === TL.LEDGE || m[i] === TL.ROCK) h[i] = L.h;
       }
   for (let i = 0; i < MW * MH; i++) terrain[i] = terrainIndex(TILE_TERRAIN[m[i]!]!);
+  assignRegions(region, terrain, cx, cy);
   const ledges = computeLedges(h, m);
   const mini = miniCanvas(m);
   const decks = START_DECKS.map((d) => ({ ...d, x: cx + d.dx, y: cy + d.dy }));

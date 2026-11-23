@@ -4,6 +4,7 @@
 main:
   - { id: chars, name: Nhân vật, icon: nhan-vat, group: Hồ sơ, hint: "Thông tin, Nét Sao, hồ sơ" }
   - { id: team, name: Đội hình, icon: doi-hinh, group: Hồ sơ, hint: "4 đội lưu sẵn" }
+  - { id: home, name: Nhà Sao, icon: bia-da, group: Hồ sơ, hint: "Nhà riêng, trang trí, Hộ Tinh ghé thăm" }
   - { id: wish, name: Ước nguyện, icon: uoc-nguyen, group: Ước nguyện, hint: "Bảo Hộ Vận Sao, lịch sử" }
   - { id: bag, name: Túi đồ, icon: tui-do, group: Hành trang, hint: "Vật phẩm và câu chuyện" }
   - { id: weapons, name: Kho vũ khí, icon: danh, group: Hành trang, hint: "Nâng cấp, tinh luyện, Lò Rèn" }

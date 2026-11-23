@@ -1,0 +1,251 @@
+# S21: Nhà Sao, nhà riêng của Người Ước Nguyện trên Đảo Lạc.
+# Đồ nội thất mua bằng Xu (không bán bằng tiền thật). Điểm Ấm Cúng chỉ mở thưởng nhẹ, không tăng sức mạnh.
+# kt: kích thước [rộng, sâu] theo ô. amCung: điểm Ấm Cúng khi đặt. bo: bộ sưu tập.
+# hinh: kiểu vẽ (ban, ghe, giuong, tu, den, cay, tham, ke, trong, dong-ho, tranh, binh, ruong, bep, ao-ca, hang-rao).
+# mau: màu chính, mau2: màu phụ.
+ten: Nhà Sao
+moTa: Căn nhà gỗ bên dốc Phố Vạn Đăng mà Cụ Trưởng Đình để lại cho người từ trên trời rơi xuống. Trống trải, nhưng mái không dột.
+phong: { rong: 12, sau: 9 }
+noiThat:
+  - {
+      id: ban-go,
+      ten: Bàn gỗ mộc,
+      kt: [2, 1],
+      gia: 3000,
+      amCung: 4,
+      bo: nha-go,
+      hinh: ban,
+      mau: "#a8784a",
+      mau2: "#7a5230",
+    }
+  - {
+      id: ghe-dau,
+      ten: Ghế đẩu,
+      kt: [1, 1],
+      gia: 1200,
+      amCung: 2,
+      bo: nha-go,
+      hinh: ghe,
+      mau: "#b08454",
+      mau2: "#7a5230",
+    }
+  - {
+      id: giuong-tre,
+      ten: Giường tre đan,
+      kt: [2, 3],
+      gia: 8000,
+      amCung: 8,
+      bo: nha-go,
+      hinh: giuong,
+      mau: "#c8a868",
+      mau2: "#e8e0d0",
+    }
+  - {
+      id: tu-go,
+      ten: Tủ gỗ hai cánh,
+      kt: [2, 1],
+      gia: 6000,
+      amCung: 5,
+      bo: nha-go,
+      hinh: tu,
+      mau: "#8a5a32",
+      mau2: "#c8a050",
+    }
+  - {
+      id: ke-sach,
+      ten: Kệ sách ba tầng,
+      kt: [2, 1],
+      gia: 5000,
+      amCung: 5,
+      bo: thu-phong,
+      hinh: ke,
+      mau: "#7a5230",
+      mau2: "#c86a50",
+    }
+  - {
+      id: den-long-do,
+      ten: Đèn lồng đỏ,
+      kt: [1, 1],
+      gia: 2500,
+      amCung: 4,
+      bo: dem-hoi,
+      hinh: den,
+      mau: "#d04a3a",
+      mau2: "#ffcf70",
+    }
+  - {
+      id: den-long-sao,
+      ten: Đèn lồng sao,
+      kt: [1, 1],
+      gia: 4000,
+      amCung: 6,
+      bo: dem-hoi,
+      hinh: den,
+      mau: "#3a5ab0",
+      mau2: "#cfe8ff",
+    }
+  - {
+      id: trong-nho,
+      ten: Trống đồng nhỏ,
+      kt: [1, 1],
+      gia: 7000,
+      amCung: 7,
+      bo: dem-hoi,
+      hinh: trong,
+      mau: "#b08a3a",
+      mau2: "#6a4a20",
+    }
+  - {
+      id: cay-truc,
+      ten: Chậu trúc cảnh,
+      kt: [1, 1],
+      gia: 2000,
+      amCung: 3,
+      bo: vuon,
+      hinh: cay,
+      mau: "#4a9a4a",
+      mau2: "#8a5a32",
+    }
+  - {
+      id: cay-mai,
+      ten: Chậu mai vàng,
+      kt: [1, 1],
+      gia: 3500,
+      amCung: 5,
+      bo: vuon,
+      hinh: cay,
+      mau: "#f0c040",
+      mau2: "#8a5a32",
+    }
+  - {
+      id: ao-ca,
+      ten: Ao cá nhỏ,
+      kt: [2, 2],
+      gia: 9000,
+      amCung: 9,
+      bo: vuon,
+      hinh: ao-ca,
+      mau: "#4aa8e8",
+      mau2: "#8a8678",
+    }
+  - {
+      id: tham-coi,
+      ten: Thảm cói,
+      kt: [3, 2],
+      gia: 2500,
+      amCung: 3,
+      bo: nha-go,
+      hinh: tham,
+      mau: "#d8b878",
+      mau2: "#a8884a",
+    }
+  - {
+      id: tham-hoa,
+      ten: Thảm hoa văn sóng,
+      kt: [3, 2],
+      gia: 4500,
+      amCung: 5,
+      bo: thu-phong,
+      hinh: tham,
+      mau: "#3a6a9a",
+      mau2: "#e8d8a8",
+    }
+  - {
+      id: dong-ho,
+      ten: Đồng hồ cát,
+      kt: [1, 1],
+      gia: 3000,
+      amCung: 3,
+      bo: thu-phong,
+      hinh: dong-ho,
+      mau: "#c8a050",
+      mau2: "#f0e0b0",
+    }
+  - {
+      id: tranh-thuy,
+      ten: Tranh thủy mặc,
+      kt: [2, 1],
+      gia: 5500,
+      amCung: 6,
+      bo: thu-phong,
+      hinh: tranh,
+      mau: "#f0ead8",
+      mau2: "#2a2a30",
+    }
+  - {
+      id: binh-gom,
+      ten: Bình gốm men lam,
+      kt: [1, 1],
+      gia: 2800,
+      amCung: 3,
+      bo: thu-phong,
+      hinh: binh,
+      mau: "#3a6ac8",
+      mau2: "#e8f0ff",
+    }
+  - {
+      id: ruong-go,
+      ten: Rương gỗ cũ,
+      kt: [1, 1],
+      gia: 2200,
+      amCung: 2,
+      bo: nha-go,
+      hinh: ruong,
+      mau: "#8a5a32",
+      mau2: "#c8a050",
+    }
+  - {
+      id: bep-lo,
+      ten: Bếp lò đất,
+      kt: [2, 1],
+      gia: 6500,
+      amCung: 6,
+      bo: nha-go,
+      hinh: bep,
+      mau: "#a85a3a",
+      mau2: "#ff9a40",
+    }
+  - {
+      id: hang-rao,
+      ten: Hàng rào tre,
+      kt: [2, 1],
+      gia: 1500,
+      amCung: 1,
+      bo: vuon,
+      hinh: hang-rao,
+      mau: "#c8a868",
+      mau2: "#8a7a4a",
+    }
+  - {
+      id: den-dem-sao,
+      ten: Đèn đếm sao,
+      kt: [1, 1],
+      gia: 12000,
+      amCung: 10,
+      bo: dem-hoi,
+      hinh: den,
+      mau: "#2a2a5a",
+      mau2: "#ffe27a",
+    }
+# Bộ sưu tập: đặt đủ mọi món trong bộ thì được cộng điểm và nhận thưởng một lần.
+bo:
+  - { id: nha-go, ten: Nhà gỗ ấm, thuong: { daSao: 40, xu: 5000 }, them: 10 }
+  - { id: dem-hoi, ten: Đêm hội đèn, thuong: { daSao: 60, xu: 5000 }, them: 12 }
+  - { id: vuon, ten: Vườn nhỏ, thuong: { daSao: 40, xu: 5000 }, them: 10 }
+  - { id: thu-phong, ten: Thư phòng, thuong: { daSao: 50, xu: 5000 }, them: 10 }
+# Mốc Ấm Cúng: đạt mốc thì nhận thưởng một lần.
+moc:
+  - { can: 10, thuong: { daSao: 20, xu: 3000 } }
+  - { can: 30, thuong: { daSao: 30, xu: 6000 } }
+  - { can: 60, thuong: { daSao: 40, xu: 10000 } }
+  - { can: 100, thuong: { daSao: 60, xu: 15000 } }
+  - { can: 150, thuong: { daSao: 80, xu: 20000 } }
+# Hộ Tinh tới thăm: tối đa số người, mỗi ngày nói chuyện được một lần với mỗi người, cộng Thân thiết.
+khach: { toiDa: 3, thanThiet: 30 }
+loiKhach:
+  - Nhà cậu thơm mùi gỗ mới. Tôi ngồi đây một lát nhé.
+  - Đèn này ai làm vậy? Đẹp ghê.
+  - Ở đây yên quá. Ngoài kia lúc nào cũng có tiếng trống.
+  - Cậu đặt cái ghế này lệch rồi. Thôi, lệch cũng dễ thương.
+  - Lần sau tôi mang bánh trống tới. Nhớ pha trà nhé.
+  - Đêm nay trời nhiều sao. Cậu có nhớ ngôi nào là của mình không?

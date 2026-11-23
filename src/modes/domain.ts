@@ -1,3 +1,4 @@
+import { lootOf, showChestReveal } from "../ui/chest-reveal";
 import { GS } from "../core/state";
 import { sfx } from "../core/audio";
 import { dist, fmt } from "../core/util";
@@ -112,8 +113,7 @@ export function domainInteract(it: any) {
   if (it.kind !== "dchest") return;
   const r = Server.req("domainClear", { id: d.id });
   if (!r.ok) return;
-  sfx("chest");
-  sfx("star3");
+  showChestReveal(d.ruong ?? "quy", lootOf(r.data));
   fxBurst(it.x, it.y - 14, "#f0c060", 40, 280, 4);
   fxRing(it.x, it.y - 10, 80, "#f0c060", 0.6, 6);
   fxText(it.x, it.y - 60, `${d.ten}: đã hoàn thành`, "#ffe27a", 18);

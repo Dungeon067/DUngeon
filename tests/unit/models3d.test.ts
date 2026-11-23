@@ -29,13 +29,24 @@ describe("S25: cấu hình mô hình 3D và hoạt ảnh humanoid", () => {
     }
   });
 
-  it("đòn kiếm thứ 2 là bản lật trái phải của đòn 1", () => {
+  it("ba đòn kiếm và ba đòn đại kiếm là clip riêng (khung hóa tay), đủ khung cho mọi xương", () => {
+    const sets = [M.hoatAnh.sword.atk, M.hoatAnh.great.atk];
+    for (const atk of sets) {
+      expect(new Set(atk).size).toBe(3);
+      for (const k of atk) {
+        const c = A.clips[k];
+        expect(c, k).toBeTruthy();
+        for (const tr of Object.values(c.bones) as { q: number[][] }[]) expect(tr.q.length).toBe(c.n);
+        expect(c.hips.length).toBe(c.n);
+      }
+    }
+    // Đòn 2 không còn là bản lật của đòn 1: tay phải ở giữa đòn khác hẳn.
     const a = A.clips.sword1,
-      b = A.clips.sword2,
-      i = Math.floor(a.n / 2);
-    const [x, y, z, w] = a.bones.rightUpperArm.q[i],
-      [x2, y2, z2, w2] = b.bones.leftUpperArm.q[i];
-    expect([x2, y2, z2, w2].map((v) => +v.toFixed(3))).toEqual([x, -y, -z, w].map((v) => +v.toFixed(3)));
+      b = A.clips.sword2;
+    const qa = a.bones.rightUpperArm.q[Math.floor(a.n / 2)],
+      qb = b.bones.rightUpperArm.q[Math.floor(b.n / 2)];
+    const dot = Math.abs(qa.reduce((s: number, v: number, i: number) => s + v * qb[i], 0));
+    expect(dot).toBeLessThan(0.97);
   });
 
   it("mẫu VRM tạm và vũ khí mặc định có file", () => {

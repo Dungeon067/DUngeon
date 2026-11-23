@@ -1,0 +1,152 @@
+/* Màn mở rương (chest-reveal.ts). */
+.cr {
+  position: fixed;
+  inset: 0;
+  z-index: 320;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: radial-gradient(ellipse at 50% 45%, rgba(20, 24, 56, 0.82), rgba(4, 6, 16, 0.94));
+  color: #f4ecd8;
+  animation: cr-in 0.25s ease-out;
+  cursor: pointer;
+  padding: max(12px, env(safe-area-inset-top)) 16px max(12px, env(safe-area-inset-bottom));
+}
+.cr-title {
+  font:
+    700 22px/1.2 "Noto Serif",
+    serif;
+  color: var(--c2);
+  text-shadow: 0 0 18px var(--c);
+  letter-spacing: 0.04em;
+  opacity: 0;
+  animation: cr-fade 0.4s 0.15s forwards;
+}
+.cr-stage {
+  position: relative;
+  width: min(220px, 40vh);
+  aspect-ratio: 160 / 130;
+}
+.cr-chest {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: cr-shake 0.5s 0.1s;
+}
+.cr-lid {
+  transform-origin: 80px 60px;
+  animation: cr-lid 0.45s 0.55s cubic-bezier(0.2, 1.6, 0.4, 1) forwards;
+}
+.cr-glow {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  width: 60%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%) scale(0);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--c2), var(--c) 40%, transparent 70%);
+  filter: blur(4px);
+  animation: cr-glow 0.6s 0.6s ease-out forwards;
+}
+.cr-rays {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  width: 260%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  background: repeating-conic-gradient(
+    from 0deg,
+    color-mix(in srgb, var(--c) 35%, transparent) 0 6deg,
+    transparent 6deg 22deg
+  );
+  mask: radial-gradient(circle, #000 15%, transparent 60%);
+  -webkit-mask: radial-gradient(circle, #000 15%, transparent 60%);
+  opacity: 0;
+  animation:
+    cr-fade 0.5s 0.6s forwards,
+    cr-spin 14s linear infinite;
+}
+.cr-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  max-width: min(640px, 100%);
+}
+.cr-cards .tt-item {
+  opacity: 0;
+  transform: translateY(24px) scale(0.85);
+  animation: cr-card 0.45s var(--d, 0.8s) cubic-bezier(0.2, 1.4, 0.4, 1) forwards;
+  pointer-events: none;
+}
+.cr-tap {
+  font-size: 12px;
+  color: #b8b0a0;
+  opacity: 0;
+  animation: cr-fade 0.4s 1.4s forwards;
+}
+@keyframes cr-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes cr-fade {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes cr-shake {
+  20%,
+  60% {
+    transform: rotate(-4deg);
+  }
+  40%,
+  80% {
+    transform: rotate(4deg);
+  }
+}
+@keyframes cr-lid {
+  to {
+    transform: translateY(-26px) rotate(-18deg);
+  }
+}
+@keyframes cr-glow {
+  to {
+    transform: translate(-50%, -50%) scale(1.6);
+    opacity: 0.9;
+  }
+}
+@keyframes cr-spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+@keyframes cr-card {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (max-height: 430px) {
+  .cr {
+    gap: 4px;
+  }
+  .cr-stage {
+    width: min(150px, 32vh);
+  }
+  .cr-title {
+    font-size: 17px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cr *,
+  .cr {
+    animation-duration: 0.01s !important;
+    animation-delay: 0s !important;
+  }
+}

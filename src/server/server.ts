@@ -1,3 +1,4 @@
+import { HOME, buy, comfort, move, normHome, place, remove, setsDone } from "../home/home-core";
 import type { LogEntry, Profile, PuzzleSave, WeaponBannerCfg } from "./types";
 import { DOMAINS, MINI, PZ } from "../data/puzzles";
 import { fmt, pick, todayKey } from "../core/util";
@@ -553,6 +554,66 @@ export const Server = {
       const add = [...new Set<string>(ids ?? [])].filter((id) => !this.P.codex.includes(id));
       this.P.codex.push(...add);
       return add;
+    },
+    /** S21 Nhà Sao: mua, đặt, dời, gỡ đồ; nhận thưởng mốc Ấm Cúng và bộ sưu tập; mời và trò chuyện với Hộ Tinh. */
+    homeBuy(this: any, { id }: any) {
+      const H = (this.P.home = normHome(this.P.home));
+      this.P.coin -= buy(H, id, this.P.coin);
+      return H;
+    },
+    homePlace(this: any, { id, x, y, rot }: any) {
+      const H = (this.P.home = normHome(this.P.home));
+      return place(H, { id, x: x | 0, y: y | 0, rot: rot ? 1 : 0 });
+    },
+    homeMove(this: any, { uid, x, y, rot }: any) {
+      const H = (this.P.home = normHome(this.P.home));
+      return move(H, uid, x | 0, y | 0, rot ? 1 : 0);
+    },
+    homeRemove(this: any, { uid }: any) {
+      const H = (this.P.home = normHome(this.P.home));
+      remove(H, uid);
+      return H;
+    },
+    homeClaim(this: any, { kind, id }: any) {
+      const H = (this.P.home = normHome(this.P.home));
+      let r: { daSao: number; xu: number };
+      if (kind === "moc") {
+        const m = HOME.moc.find((x) => x.can === id);
+        if (!m) throw new Error("Không có mốc này");
+        if (H.moc.includes(m.can)) throw new Error("Đã nhận");
+        if (comfort(H) < m.can) throw new Error("Chưa đủ Ấm Cúng");
+        H.moc.push(m.can);
+        r = m.thuong;
+      } else {
+        const b = HOME.bo.find((x) => x.id === id);
+        if (!b) throw new Error("Không có bộ này");
+        if (H.bo.includes(b.id)) throw new Error("Đã nhận");
+        if (!setsDone(H).includes(b)) throw new Error("Chưa đủ bộ");
+        H.bo.push(b.id);
+        r = b.thuong;
+      }
+      this.P.gems = capRes(this.P.gems + r.daSao);
+      this.econ("vao:nha", r.daSao);
+      this.P.coin = capRes(this.P.coin + r.xu);
+      return r;
+    },
+    homeGuests(this: any, { ids }: any) {
+      const H = (this.P.home = normHome(this.P.home));
+      H.khach = (Array.isArray(ids) ? ids : []).filter((x: string) => this.P.owned[x]).slice(0, HOME.khach.toiDa);
+      return H.khach;
+    },
+    homeTalk(this: any, { id }: any) {
+      const H = (this.P.home = normHome(this.P.home));
+      if (!H.khach.includes(id)) throw new Error("Người này không ở nhà");
+      const k = todayKey();
+      const line =
+        HOME.loiKhach[
+          Math.abs([...id].reduce((s, c) => s * 31 + c.charCodeAt(0), 7) + k.length) % HOME.loiKhach.length
+        ]!;
+      if (H.noiNgay[id] === k) return { line, n: 0 };
+      H.noiNgay[id] = k;
+      this.P.affinity[id] = (this.P.affinity[id] ?? 0) + HOME.khach.thanThiet;
+      return { line, n: HOME.khach.thanThiet };
     },
     affinity(this: any, { id, n }: any) {
       if (!byId[id]) throw new Error("Không có nhân vật này");

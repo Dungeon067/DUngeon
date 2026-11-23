@@ -66,6 +66,10 @@ export interface Profile {
   quits: { mode: string; t: number; at: string }[];
   /** S23: câu đố đã giải, quest mini đã nhận/xong, tiến độ bí cảnh (room = số phòng đã qua). */
   puz: PuzzleSave;
+  /** S21 Nhà Sao (thêm lúc dùng lần đầu, xem src/home/home-core.ts). */
+  home?: import("../home/home-core").HomeSave;
+  /** Cốt truyện chính: phân đoạn đã xong và cờ lựa chọn (src/story/story.ts). */
+  story?: { done: string[]; flags: Record<string, string> };
   /** S24: kho vũ khí theo uid, bộ đếm uid, banner Binh Khí Tinh Tú (Bảo Hộ Vận Sao, La Bàn Sao, lịch sử riêng). */
   weapons: Record<string, WeaponInst>;
   wSeq: number;
