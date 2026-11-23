@@ -7,7 +7,7 @@ import { ADMIN_CFG } from "../data/menu-content";
 import { stringify } from "yaml";
 import { ECON, econEdited, econForYaml, resetEcon, setEcon } from "../data/economy";
 import { packValue } from "../economy/core";
-import { LOG_KEY, SAVE_KEY, Server, WEAPONS, powerOf } from "../server/server";
+import { LOG_KEY, SAVE_KEY, Server, powerOf, weaponList } from "../server/server";
 import { button, field, h, tabs, tag, toggle } from "../ui/ds";
 import { icon } from "../ui/icons/icons";
 import { filterHistory } from "../ui/menu/logic";
@@ -174,7 +174,7 @@ function wish() {
   };
   const wsel = [0, 1].map((i) => {
     const sel = h("select", { class: "tt-input", id: `admWFeat${i}` });
-    for (const w of WEAPONS.filter((x) => x.r === 5 && x.nguon === "gioiHan"))
+    for (const w of weaponList().filter((x) => x.r === 5 && x.nguon === "gioiHan"))
       sel.add(new Option(w.ten, w.id, false, w.id === wc.featured[i]));
     return sel;
   });

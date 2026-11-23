@@ -11,7 +11,7 @@ import {
   passiveLevels,
   weaponStats,
 } from "../../src/economy/weapons";
-import { addWeapon, freshProfile, migrate, powerOf, Server, statsOf, wById } from "../../src/server/server";
+import { addWeapon, freshProfile, migrate, powerOf, Server, statsOf, wDef } from "../../src/server/server";
 import { mockRandom } from "./helpers";
 
 const VK = ECON.thietKe.vuKhi;
@@ -128,6 +128,9 @@ describe("Banner Binh Khí Tinh Tú", () => {
     expect(Server.P.wcfg).toMatchObject({ featured: pair, rate5: 1 });
     expect(Server.P.wPick).toBeNull();
     expect(Server.P.wPity).toMatchObject({ laBan: 0, guaranteed: false });
+    Server.P.wPity.guaranteed = true;
+    expect(Server.req("setWConfig", { featured: [pair[1], pair[0]] }).ok).toBe(true);
+    expect(Server.P.wPity.guaranteed).toBe(true);
     expect(Server.req("setWConfig", { featured: ["kiem-sat-lu-khach", "cung-tre-dau-lang"] }).ok).toBe(false);
     expect(Server.req("setWConfig", { soft: 90, hard: 77 }).ok).toBe(false);
   });
@@ -142,8 +145,8 @@ describe("Trang bị, nâng cấp, tinh luyện, Lò Rèn", () => {
     Server.grant("lachong");
     for (const [cid, o] of Object.entries(P.owned)) {
       const w = P.weapons[o.vk!]!;
-      expect(wById[w.id]!.loai).toBe(byId[cid]!.w);
-      expect(wById[w.id]!.r).toBe(3);
+      expect(wDef(w.id)!.loai).toBe(byId[cid]!.w);
+      expect(wDef(w.id)!.r).toBe(3);
     }
   });
   it("thay vũ khí: sai loại bị chặn, đang ở người khác cần xác nhận rồi đổi chéo", () => {
@@ -249,6 +252,6 @@ describe("Chuyển đổi save (S24)", () => {
     const M = migrate(JSON.parse(JSON.stringify(P)))!;
     const ids = Object.values(M.owned).map((o) => o.vk);
     expect(new Set(ids).size).toBe(ids.length);
-    for (const [cid, o] of Object.entries(M.owned)) expect(wById[M.weapons[o.vk!]!.id]!.loai).toBe(byId[cid]!.w);
+    for (const [cid, o] of Object.entries(M.owned)) expect(wDef(M.weapons[o.vk!]!.id)!.loai).toBe(byId[cid]!.w);
   });
 });

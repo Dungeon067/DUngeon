@@ -25,6 +25,14 @@ function withContent(o: unknown) {
     if (typeof p?.biDong?.satThuong === "number") w.biDong.satThuong = p.biDong.satThuong;
   }
   if (e?.game) e.game.nhanVat5Sao = clone(ECON_BASE.game.nhanVat5Sao);
+  // Bản chỉnh lưu trước S24 thiếu các mục vũ khí mới: lấy từ file thay vì bỏ cả bản chỉnh.
+  const v = e?.thietKe?.vuKhi,
+    b = ECON_BASE.thietKe.vuKhi as any;
+  if (v && typeof v === "object") {
+    for (const k of ["cap", "quang", "loRen", "macDinh", "khoiDau"]) if (v[k] === undefined) v[k] = clone(b[k]);
+    if (v.banner && typeof v.banner === "object")
+      for (const k of ["gia", "noiBat"]) if (v.banner[k] === undefined) v.banner[k] = clone(b.banner[k]);
+  }
   return e;
 }
 

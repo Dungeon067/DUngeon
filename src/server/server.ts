@@ -24,18 +24,19 @@ export const LOG_KEY = "tinhtu-log";
 export const FOG = 5;
 export const FOG_N = 22;
 
-export const VK = ECON.thietKe.vuKhi;
-export const WEAPONS = VK.danhSach;
-export const wById: Record<string, Weapon> = Object.fromEntries(WEAPONS.map((w) => [w.id, w]));
+/** Đọc qua hàm để bản chỉnh Admin (setEcon/reloadEcon) có hiệu lực ngay. */
+export const vk = () => ECON.thietKe.vuKhi;
+export const weaponList = () => vk().danhSach;
+export const wDef = (id: string): Weapon | undefined => vk().danhSach.find((w) => w.id === id);
 
 export function defaultWcfg(): WeaponBannerCfg {
-  const b = VK.banner;
+  const b = vk().banner;
   return { rate5: b.tiLe5, rate4: b.tiLe4, soft: b.mem, hard: b.cung, cost: b.gia, featured: [...b.noiBat] };
 }
 
 /** Thêm một bản vũ khí vào kho, trả về bản vừa thêm. */
 export function addWeapon(P: Profile, id: string): WeaponInst {
-  if (!wById[id]) throw new Error(`Không có vũ khí "${id}"`);
+  if (!wDef(id)) throw new Error(`Không có vũ khí "${id}"`);
   const uid = "w" + ++P.wSeq;
   return (P.weapons[uid] = newWeapon(uid, id));
 }
@@ -56,7 +57,7 @@ export function ensureWeapons(P: Profile): Profile {
   if (!P.weapons || typeof P.weapons !== "object") {
     P.weapons = {};
     P.bag = P.bag ?? {};
-    for (const [k, n] of Object.entries(VK.khoiDau)) P.bag[k] = (P.bag[k] ?? 0) + n;
+    for (const [k, n] of Object.entries(vk().khoiDau)) P.bag[k] = (P.bag[k] ?? 0) + n;
   }
   P.wSeq = Math.max(P.wSeq ?? 0, ...Object.keys(P.weapons).map((u) => Number(u.slice(1)) || 0));
   P.wPity = Object.assign({ pity5: 0, pity4: 0, guaranteed: false, laBan: 0 }, P.wPity);
@@ -68,7 +69,7 @@ export function ensureWeapons(P: Profile): Profile {
     const c = byId[cid];
     if (!c) continue;
     const w = o.vk ? P.weapons[o.vk] : undefined;
-    if (!w || !wById[w.id] || wById[w.id]!.loai !== c.w || used.has(o.vk!))
+    if (!w || !wDef(w.id) || wDef(w.id)!.loai !== c.w || used.has(o.vk!))
       o.vk = addWeapon(P, defaultWeaponFor(c.w, ECON)).uid;
     used.add(o.vk!);
   }
@@ -129,7 +130,7 @@ function withLimitedBanner(p: Profile): Profile {
 /** Số liệu banner vũ khí sau khi áp cấu hình Admin. */
 function wEcon(c: WeaponBannerCfg): Economy {
   const banner = {
-    ...VK.banner,
+    ...vk().banner,
     tiLe5: c.rate5,
     tiLe4: c.rate4,
     mem: c.soft,
@@ -137,7 +138,7 @@ function wEcon(c: WeaponBannerCfg): Economy {
     gia: c.cost,
     noiBat: c.featured,
   };
-  return { ...ECON, thietKe: { ...ECON.thietKe, vuKhi: { ...VK, banner } } };
+  return { ...ECON, thietKe: { ...ECON.thietKe, vuKhi: { ...vk(), banner } } };
 }
 export function genDaily(seedKey: string) {
   const pool = DAILY_POOL;
@@ -236,8 +237,8 @@ export const Server = {
       out = { kind: "char", id: c.id, r: 4, name: c.name, ...this.grant(c.id) };
     } else {
       P.coin += ECON.game.xuVatPham3;
-      const w = addWeapon(P, pick(WEAPONS.filter((x) => x.r === 3)).id);
-      out = { kind: "weapon", r: 3, id: w.id, uid: w.uid, name: wById[w.id]!.ten };
+      const w = addWeapon(P, pick(weaponList().filter((x) => x.r === 3)).id);
+      out = { kind: "weapon", r: 3, id: w.id, uid: w.uid, name: wDef(w.id)!.ten };
     }
     P.history.unshift({ n: out.name, r: out.r, t: Date.now() });
     if (P.history.length > 100) P.history.pop();
@@ -250,17 +251,17 @@ export const Server = {
     const res = rollWeapon(P.wPity, wEcon(c), Math.random);
     let id: string;
     if (res.r === 5) {
-      if (res.kind === "thuong") id = pick(WEAPONS.filter((w) => w.r === 5 && w.nguon === "thuongTru")).id;
+      if (res.kind === "thuong") id = pick(weaponList().filter((w) => w.r === 5 && w.nguon === "thuongTru")).id;
       else if (P.wPick && c.featured.includes(P.wPick))
         id = res.kind === "chon" ? P.wPick : c.featured.find((x) => x !== P.wPick)!;
       else {
         id = pick(c.featured);
         P.wPity.laBan = 0;
       }
-    } else if (res.r === 4) id = pick(WEAPONS.filter((w) => w.r === 4 && w.nguon === "uocNguyen")).id;
-    else id = pick(WEAPONS.filter((w) => w.r === 3)).id;
+    } else if (res.r === 4) id = pick(weaponList().filter((w) => w.r === 4 && w.nguon === "uocNguyen")).id;
+    else id = pick(weaponList().filter((w) => w.r === 3)).id;
     const w = addWeapon(P, id),
-      def = wById[id]!;
+      def = wDef(id)!;
     const out = { kind: "weapon", r: def.r, id, uid: w.uid, name: def.ten, feat: res.r === 5 && res.kind !== "thuong" };
     P.wHistory.unshift({ n: def.ten, r: def.r, t: Date.now(), id });
     if (P.wHistory.length > 100) P.wHistory.pop();
@@ -279,7 +280,7 @@ export const Server = {
     if (m.lock) throw new Error("Vũ khí đã khóa, mở khóa trước khi dùng làm nguyên liệu");
     const h = holders(this.P)[uid];
     if (h) throw new Error(`Vũ khí đang được ${byId[h]?.name ?? h} trang bị`);
-    if (wById[m.id]!.r >= 4 && !confirm) throw new Error("Cần xác nhận khi dùng vũ khí 4★/5★ làm nguyên liệu");
+    if (wDef(m.id)!.r >= 4 && !confirm) throw new Error("Cần xác nhận khi dùng vũ khí 4★/5★ làm nguyên liệu");
     return m;
   },
   /** Ghi Đá Sao vào/ra theo nguồn để trang Admin thống kê kinh tế. */
@@ -332,7 +333,7 @@ export const Server = {
         c = byId[char];
       if (!o || !c) throw new Error("Bạn chưa có nhân vật này");
       const w = this.wget(uid);
-      if (wById[w.id]!.loai !== c.w) throw new Error("Vũ khí không đúng loại của nhân vật");
+      if (wDef(w.id)!.loai !== c.w) throw new Error("Vũ khí không đúng loại của nhân vật");
       if (o.vk === uid) return { char, uid, from: null };
       const from = holders(P)[uid] ?? null;
       if (from && !swap) throw new Error(`Vũ khí đang ở ${byId[from]?.name ?? from}, cần xác nhận đổi`);
@@ -358,7 +359,7 @@ export const Server = {
       for (const [id, raw] of Object.entries(ores)) {
         const k = Math.floor(Number(raw));
         if (!k) continue;
-        const q = VK.quang.find((x) => x.id === id);
+        const q = vk().quang.find((x) => x.id === id);
         if (!q || k < 0) throw new Error("Nguyên liệu không hợp lệ");
         if ((P.bag[id] ?? 0) < k) throw new Error("Không đủ quặng");
         exp += k * q.kinhNghiem;
@@ -368,7 +369,7 @@ export const Server = {
       for (const m of list) exp += fodderExp(this.fodder(m, uid, confirm), ECON);
       if (!exp) throw new Error("Chưa chọn nguyên liệu");
       const pv = previewExp(w, exp, ECON),
-        cost = Math.ceil(pv.used * VK.cap.xuMoiKinhNghiem);
+        cost = Math.ceil(pv.used * vk().cap.xuMoiKinhNghiem);
       if (P.coin < cost) throw new Error(`Không đủ Xu: cần ${fmt(cost)}`);
       P.coin -= cost;
       for (const [id, k] of oreUse) P.bag[id] -= k;
@@ -401,8 +402,8 @@ export const Server = {
     },
     forgeWeapon(this: any, { id }: any) {
       const P = this.P,
-        def = wById[id],
-        F = VK.loRen;
+        def = wDef(id),
+        F = vk().loRen;
       if (!def || def.nguon !== "loRen") throw new Error("Lò Rèn chỉ rèn vũ khí 4★ của Lò Rèn");
       if ((P.bag[F.nguyenLieu] ?? 0) < F.so) throw new Error("Không đủ Phôi Lòng Sao");
       if (P.coin < F.xu) throw new Error(`Không đủ Xu: cần ${fmt(F.xu)}`);
@@ -638,9 +639,8 @@ export const Server = {
         if (!Array.isArray(f) || f.length !== 2 || f[0] === f[1])
           throw new Error("Cần đúng 2 vũ khí nổi bật khác nhau");
         for (const id of f)
-          if (wById[id]?.r !== 5 || wById[id]?.nguon !== "gioiHan")
-            throw new Error("Vũ khí nổi bật phải là 5★ giới hạn");
-        if (f.join() !== cfg.featured.join()) {
+          if (wDef(id)?.r !== 5 || wDef(id)?.nguon !== "gioiHan") throw new Error("Vũ khí nổi bật phải là 5★ giới hạn");
+        if ([...f].sort().join() !== [...cfg.featured].sort().join()) {
           P.wPick = null;
           P.wPity.laBan = 0;
           P.wPity.guaranteed = false;

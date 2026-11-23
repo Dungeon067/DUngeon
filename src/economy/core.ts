@@ -54,10 +54,10 @@ export function lvCostRange(from: number, to: number, E: Economy) {
   return { books, coin };
 }
 
-const weaponCache = new WeakMap<Economy, Map<string, Weapon>>();
+const weaponCache = new WeakMap<object, Map<string, Weapon>>();
 export function weaponOf(id: string, E: Economy): Weapon {
-  let m = weaponCache.get(E);
-  if (!m) weaponCache.set(E, (m = new Map(E.thietKe.vuKhi.danhSach.map((w) => [w.id, w]))));
+  let m = weaponCache.get(E.thietKe.vuKhi.danhSach);
+  if (!m) weaponCache.set(E.thietKe.vuKhi.danhSach, (m = new Map(E.thietKe.vuKhi.danhSach.map((w) => [w.id, w]))));
   const w = m.get(id);
   if (!w) throw new Error(`Không có vũ khí "${id}"`);
   return w;

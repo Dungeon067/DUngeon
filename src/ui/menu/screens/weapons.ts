@@ -5,7 +5,7 @@ import { ITEMS } from "../../../data/menu-content";
 import { byId } from "../../../data/content";
 import { ECON } from "../../../data/economy";
 import { ascendCost, fodderExp, lvCapOf, previewExp, type WeaponInst } from "../../../economy/weapons";
-import { Server, VK, WEAPONS, powerOf, statsOf, wById } from "../../../server/server";
+import { Server, powerOf, statsOf, vk, wDef, weaponList } from "../../../server/server";
 import { button, h, openDialog, stars, tabs, tag } from "../../ds";
 import { icon } from "../../icons/icons";
 import { weaponImg } from "../../weapon-art";
@@ -41,7 +41,7 @@ const weapons = () => Object.values(Server.P.weapons) as WeaponInst[];
 
 export function sortWeapons(list: WeaponInst[], sort: Sort) {
   const key = (w: WeaponInst) => {
-    const d = wById[w.id]!;
+    const d = wDef(w.id)!;
     return sort === "lv" ? [w.lv, d.r, w.tl] : sort === "tl" ? [w.tl, d.r, w.lv] : [d.r, w.lv, w.tl];
   };
   return [...list].sort((a, b) => {
@@ -53,7 +53,7 @@ export function sortWeapons(list: WeaponInst[], sort: Sort) {
 }
 export function filterWeapons(list: WeaponInst[], f: { type: string; r: number; eq: "all" | "on" | "off" }) {
   return list.filter((w) => {
-    const d = wById[w.id]!,
+    const d = wDef(w.id)!,
       on = !!holderOf(w.uid);
     return (
       (f.type === "all" || d.loai === f.type) && (!f.r || d.r === f.r) && (f.eq === "all" || (f.eq === "on") === on)
@@ -104,7 +104,7 @@ function renderInventory(host: HTMLElement, params: any) {
   }
   const all = weapons();
   const list = sortWeapons(filterWeapons(all, inv), inv.sort);
-  if (!inv.sel || !Server.P.weapons[inv.sel]) inv.sel = list[0]?.uid ?? null;
+  if (!inv.sel || !list.some((w) => w.uid === inv.sel)) inv.sel = list[0]?.uid ?? null;
   const typeTabs = tabs(
     TYPES.map((t) => ({ id: t, label: t === "all" ? "Tất cả" : TYPE_NAME(t), icon: t === "all" ? "tui-do" : "danh" })),
     inv.type,
@@ -263,7 +263,7 @@ function renderUpgrade(host: HTMLElement, params: any) {
     else {
       right.append(h("h3", { class: "tt-h3" }, ["Nguyên liệu"]));
       const ores = h("div", { class: "tt-wores" });
-      for (const q of VK.quang) {
+      for (const q of vk().quang) {
         const have = bagOf(q.id),
           n = up.ores[q.id] ?? 0;
         const minus = button("Bớt", { variant: "ghost", icon: "quay-lai", iconOnly: true, disabled: n <= 0 });
@@ -301,10 +301,10 @@ function renderUpgrade(host: HTMLElement, params: any) {
       }
       right.append(usable.length ? grid : h("p", { class: "tt-dim" }, ["Không có vũ khí rảnh để dùng."]));
       let exp = 0;
-      for (const q of VK.quang) exp += (up.ores[q.id] ?? 0) * q.kinhNghiem;
+      for (const q of vk().quang) exp += (up.ores[q.id] ?? 0) * q.kinhNghiem;
       for (const u of up.mats) if (P.weapons[u]) exp += fodderExp(P.weapons[u]!, ECON);
       const pv = previewExp(w, exp, ECON),
-        cost = Math.ceil(pv.used * VK.cap.xuMoiKinhNghiem);
+        cost = Math.ceil(pv.used * vk().cap.xuMoiKinhNghiem);
       const before = statRows(w).rows,
         after = statRows({ ...w, lv: pv.lv }).rows;
       right.append(
@@ -515,7 +515,7 @@ function renderSwap(host: HTMLElement, params: any) {
 
 function renderForge(host: HTMLElement) {
   const P = Server.P,
-    F = VK.loRen;
+    F = vk().loRen;
   host.classList.add("tt-menu-forge");
   const have = bagOf(F.nguyenLieu);
   host.append(
@@ -525,7 +525,7 @@ function renderForge(host: HTMLElement) {
     ]),
   );
   const grid = h("div", { class: "tt-forge", id: "forgeList" });
-  for (const d of WEAPONS.filter((w) => w.nguon === "loRen")) {
+  for (const d of weaponList().filter((w) => w.nguon === "loRen")) {
     const n = weapons().filter((w) => w.id === d.id).length;
     const b = button("Rèn", {
       variant: "primary",

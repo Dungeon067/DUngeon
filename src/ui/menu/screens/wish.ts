@@ -1,7 +1,7 @@
 import { portrait } from "../../../art/chibi";
 import { fmt } from "../../../core/util";
 import { EL, byId } from "../../../data/content";
-import { Server, VK, WEAPONS, wById } from "../../../server/server";
+import { Server, vk, wDef, weaponList } from "../../../server/server";
 import { sfx } from "../../../core/audio";
 import { weaponImg } from "../../weapon-art";
 import { TYPE_NAME, pct } from "../weapon-ui";
@@ -189,7 +189,7 @@ function histFilter() {
 function weaponPanel(panel: HTMLElement) {
   const P = Server.P,
     c = P.wcfg,
-    [a, b] = c.featured.map((id) => wById[id]!);
+    [a, b] = c.featured.map((id) => wDef(id)!);
   if (tab === "banner") {
     const cards = h("div", { class: "tt-wbanner-pair" });
     for (const w of [a!, b!]) {
@@ -229,11 +229,11 @@ function weaponPanel(panel: HTMLElement) {
           h("p", { class: "tt-eyebrow" }, ["Ước nguyện có hạn · Binh Khí Tinh Tú"]),
           h("h3", { class: "tt-h1" }, ["Binh Khí Tinh Tú"]),
           h("p", {}, [
-            `Hai binh khí 5★ nổi bật. Dùng La Bàn Sao chọn trước một món: mỗi lần 5★ ra không đúng món đã chọn tích 1 điểm, đủ ${VK.banner.laBanSao} điểm thì 5★ kế tiếp chắc chắn là món đã chọn.`,
+            `Hai binh khí 5★ nổi bật. Dùng La Bàn Sao chọn trước một món: mỗi lần 5★ ra không đúng món đã chọn tích 1 điểm, đủ ${vk().banner.laBanSao} điểm thì 5★ kế tiếp chắc chắn là món đã chọn.`,
           ]),
           h("p", { class: "pity", id: "wishPity" }, [
             `Bảo Hộ Vận Sao: ${P.wPity.pity5}/${c.hard} lần tới 5★ · ${P.wPity.pity4}/10 lần tới 4★`,
-            ` · La Bàn Sao ${P.wPick ? P.wPity.laBan : 0}/${VK.banner.laBanSao}`,
+            ` · La Bàn Sao ${P.wPick ? P.wPity.laBan : 0}/${vk().banner.laBanSao}`,
             P.wPity.guaranteed ? h("b", {}, [" · Lần 5★ tới chắc chắn là vũ khí nổi bật"]) : "",
           ]),
         ]),
@@ -255,13 +255,15 @@ function weaponPanel(panel: HTMLElement) {
         h("dd", {}, [`${c.rate4}% mỗi lần, chắc chắn ít nhất 1 lần trong mỗi 10 lần`]),
         h("dt", {}, ["Vũ khí 4★"]),
         h("dd", {}, [
-          WEAPONS.filter((w) => w.r === 4 && w.nguon === "uocNguyen")
+          weaponList()
+            .filter((w) => w.r === 4 && w.nguon === "uocNguyen")
             .map((w) => w.ten)
             .join(", "),
         ]),
         h("dt", {}, ["3★"]),
         h("dd", {}, [
-          WEAPONS.filter((w) => w.r === 3)
+          weaponList()
+            .filter((w) => w.r === 3)
             .map((w) => w.ten)
             .join(", "),
         ]),

@@ -3,7 +3,7 @@ import { byId } from "../../data/content";
 import { CINEMATIC } from "../../data/menu-content";
 import { hasProfile, loadProfile } from "../../data/profiles";
 import { plain } from "../../data/markdown";
-import { Server, wById } from "../../server/server";
+import { Server, wDef } from "../../server/server";
 import { preloadWeaponArt } from "../weapon-art";
 import { createCinematic } from "./cinematic";
 import type { CineItem } from "./cinematic";
@@ -23,7 +23,7 @@ export function normalize(list: any[]): CineItem[] {
     x.kind === "char"
       ? { kind: "char", id: x.id, r: x.r, name: x.name, feat: !!x.feat, isNew: !x.dup }
       : x.kind === "weapon"
-        ? { kind: "item", r: x.r, name: x.name, k: wById[x.id]?.loai ?? "sword", wid: x.id, feat: !!x.feat }
+        ? { kind: "item", r: x.r, name: x.name, k: wDef(x.id)?.loai ?? "sword", wid: x.id, feat: !!x.feat }
         : { kind: "item", r: 3, name: typeof x.name === "string" ? x.name : String(x.name?.n ?? x.name), k: "sword" },
   );
 }

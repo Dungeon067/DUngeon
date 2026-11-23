@@ -4,7 +4,7 @@ import { WEAP, byId } from "../../data/content";
 import { ECON } from "../../data/economy";
 import type { Weapon } from "../../data/economy-schema";
 import { lvCapOf, passiveLevels, weaponStats, type WeaponInst } from "../../economy/weapons";
-import { Server, holders, wById } from "../../server/server";
+import { Server, holders, wDef } from "../../server/server";
 import { h, stars, tag } from "../ds";
 import { icon } from "../icons/icons";
 import { weaponImg } from "../weapon-art";
@@ -18,7 +18,7 @@ export const SUB_NAME: Record<Weapon["phu"]["loai"], string> = {
 export const TYPE_NAME = (t: string) => WEAP[t]?.vi ?? t;
 export const pct = (v: number, d = 1) => `${(v * 100).toFixed(d).replace(/\.0$/, "")}%`;
 
-export const defOf = (w: WeaponInst) => wById[w.id]!;
+export const defOf = (w: WeaponInst) => wDef(w.id)!;
 export const holderOf = (uid: string) => holders(Server.P)[uid] ?? null;
 
 /** Ô vũ khí trong lưới: ảnh trên nền theo độ hiếm, cấp, R, khóa, người đang cầm. */
@@ -50,7 +50,7 @@ export function weaponCell(w: WeaponInst, o: { selected?: boolean; picked?: bool
 
 /** Các dòng chỉ số của một vũ khí ở cấp hiện tại. */
 export function statRows(w: Pick<WeaponInst, "id" | "lv" | "tl">) {
-  const d = wById[w.id]!,
+  const d = wDef(w.id)!,
     s = weaponStats(w, ECON);
   const rows: [string, string][] = [["Tấn công", "+" + pct(s.tanCong)]];
   if (s.phu.giaTri > 0) rows.push([SUB_NAME[s.phu.loai], "+" + pct(s.phu.giaTri)]);
