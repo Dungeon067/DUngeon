@@ -1,0 +1,31 @@
+{
+  "note": "Hạ Vy bản nhân vật chính (nền VRoid). havy.vroid/havy_vroid.vrm cũ giữ làm NPC.",
+  "export": "VRoid 2.16: havy_hero.vroid -> havy_hero_raw.vrm (không giảm đa giác)",
+  "reshape": "python tools/vrm/reshape_face.py havy_hero_raw.vrm havy_hero_face.vrm short=0.15 p=2.3 alpha=0.75 cheek=0.04 back=0.003",
+  "textures": "python art-src/models/havy/textures/paint_hero.py havy_hero_face.vrm art-src/models/havy/havy_hero_vroid.vrm",
+  "eyes": "cd art-src/models/havy/textures && python paint_eyes_hero.py eye_iris_src.png",
+  "body": {
+    "headSize": 0.08,
+    "neckLength": 0.1,
+    "neckThickness": -0.3,
+    "neckWidth": -0.3,
+    "shoulderWidth": -0.25,
+    "armLength": 0.15,
+    "handSize": -0.25,
+    "torsoLength": -0.3,
+    "waistWidth": -0.4,
+    "legLength": 0.5,
+    "footSize": -0.3
+  },
+  "face": {
+    "eyeSizeX": 0.5,
+    "eyeSizeY": 0.65,
+    "irisSize": 0.15,
+    "eyebrowsY": 0.4,
+    "eyebrowsArch": 0.2,
+    "femEyes": 0.6
+  },
+  "post": "blender -b --python tools/vrm/post.py -- havy_hero_vroid.vrm post.vrm post.blend post_hero.json",
+  "acc": "blender -b --python tools/vrm/hero_acc.py -- post.vrm acc.vrm hero_acc.json",
+  "cloth": "blender -b --python tools/vrm/cloth.py -- acc.vrm havy_hero.vrm --shorts '#272838' --blend havy_hero.blend"
+}
