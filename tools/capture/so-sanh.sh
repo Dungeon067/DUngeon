@@ -5,7 +5,7 @@ set -euo pipefail
 B=$1 A=$2 O=$3
 F=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf
 mkdir -p "$O"
-declare -A KHUNG=([thuong]="40" [trong]="82" [bam]="18 40" [giu]="40 120" [no]="70 140 220" [rutcat]="20 60 360")
+declare -A KHUNG=([thuong]="40" [trong]="60 79" [bam]="18 40" [giu]="40 120" [no]="70 140 220" [rutcat]="20 60 360")
 for s in "${!KHUNG[@]}"; do
   for f in ${KHUNG[$s]}; do
     n=$(printf %05d "$f")

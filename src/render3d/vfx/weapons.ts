@@ -90,14 +90,14 @@ class Book {
     }
     const [cover, page, glyph, light] = this.mats;
     setCols(cover.uniforms, "#f6d9a0", "#7a3f2a", "#3a1d18");
-    setCols(page.uniforms, "#fffaf0", "#f2e6cc", "#e0cfa8");
+    setCols(page.uniforms, "#e9dcbc", "#cdb68a", "#a98d5f");
     setCols(glyph.uniforms, c0, c1, c2);
     setCols(light.uniforms, c0, c1, c2);
     for (const m of this.mats) {
       m.uniforms.uT.value = t;
       m.uniforms.uDis.value = dis;
       m.uniforms.uWin.value.set(-1, 2);
-      m.uniforms.uGlow.value = 1;
+      m.uniforms.uGlow.value = m === cover || m === page ? 0.75 : 1;
       m.uniforms.uScroll.value.set(0, 0);
     }
     cover.uniforms.uAge.value = 0.5;
@@ -106,7 +106,7 @@ class Book {
     page.uniforms.uNA.value = 0.15;
     page.uniforms.uNs.value.set(30, 30);
     glyph.uniforms.uAge.value = 0.35;
-    glyph.uniforms.uA.value = glow * open;
+    glyph.uniforms.uA.value = 0.7 * glow * open;
     glyph.uniforms.uRot.value = t * 0.4;
     glyph.uniforms.uGlow.value = 1.3;
     light.uniforms.uAge.value = 0.4;
@@ -177,7 +177,11 @@ export class Catalyst {
       fx = Math.sin(yaw),
       fz = Math.cos(yaw);
     const base = hand ?? new THREE.Vector3(h.x + lx * 0.32, h.y + 1.0, h.z + lz * 0.32);
-    this.pos.set(base.x + lx * 0.22 + fx * 0.12, base.y + 0.12 + Math.sin(V.t * 2.2) * 0.03, base.z + lz * 0.22 + fz * 0.12);
+    this.pos.set(
+      base.x + lx * 0.22 + fx * 0.12,
+      base.y + 0.12 + Math.sin(V.t * 2.2) * 0.03,
+      base.z + lz * 0.22 + fz * 0.12,
+    );
     const appear = this.want ? ease(this.out * 1.6 - 0.4) : 1;
     const open = this.want ? ease((this.out - 0.45) / 0.55) : ease((this.out - 0.5) / 0.5);
     const dis = this.want ? 0 : Math.max(0, 1 - this.out / 0.5);
@@ -209,7 +213,7 @@ export class Catalyst {
         const a = V.t * 9 + i * 2.1,
           r = 0.55;
         return {
-          cell: i % 2 ? "sao4" : ELCELL[this.el]?.[0] ?? "sao6",
+          cell: i % 2 ? "sao4" : (ELCELL[this.el]?.[0] ?? "sao6"),
           x: this.pos.x + Math.cos(a) * r,
           y: this.pos.y - 0.2 + i * 0.12,
           z: this.pos.z + Math.sin(a) * r,
@@ -243,13 +247,23 @@ export class Catalyst {
       }));
     // Trọng kích: vòng phép dưới chân lớn dần, hạt hội tụ vào sách; buông thì lóe lớn.
     if (this.chargeK > 0) {
-      X.rune(RUNE[this.el] ?? "ice", h.x, h.y, h.z, 0.8 + this.chargeK * 1.1, 0.35, cols, this.chargeK, 0.6 + this.chargeK * 2);
+      X.rune(
+        RUNE[this.el] ?? "ice",
+        h.x,
+        h.y,
+        h.z,
+        0.8 + this.chargeK * 1.1,
+        0.35,
+        cols,
+        this.chargeK,
+        0.6 + this.chargeK * 2,
+      );
       X.shock(h.x, h.y, h.z, 1.6, (V.t * 1.6) % 1, cols, 0.4 * this.chargeK, 0.9);
       X.emit(2 + this.chargeK * 3, () => {
         const a = Math.random() * 6.28,
           r = 1 + Math.random() * 0.6;
         return {
-          cell: Math.random() < 0.5 ? "sao4" : ELCELL[this.el]?.[1] ?? "sao4",
+          cell: Math.random() < 0.5 ? "sao4" : (ELCELL[this.el]?.[1] ?? "sao4"),
           x: this.pos.x + Math.cos(a) * r,
           y: this.pos.y + (Math.random() - 0.3) * 1.2,
           z: this.pos.z + Math.sin(a) * r,
@@ -269,9 +283,17 @@ export class Catalyst {
       const n = 10;
       for (let i = 0; i < n; i++) {
         const a = V.t * 2.5 + (i / n) * Math.PI * 2;
-        const e = X.use("cat-letter", SH.decal, { map: runeTex(RUNE[this.el] ?? "ice"), side: THREE.DoubleSide, depthTest: false });
+        const e = X.use("cat-letter", SH.decal, {
+          map: runeTex(RUNE[this.el] ?? "ice"),
+          side: THREE.DoubleSide,
+          depthTest: false,
+        });
         if (!e) break;
-        e.m.position.set(this.pos.x + Math.cos(a) * 0.62 * lx, this.pos.y + Math.sin(a) * 0.62, this.pos.z + Math.cos(a) * 0.62 * lz);
+        e.m.position.set(
+          this.pos.x + Math.cos(a) * 0.62 * lx,
+          this.pos.y + Math.sin(a) * 0.62,
+          this.pos.z + Math.cos(a) * 0.62 * lz,
+        );
         e.m.rotation.set(Math.PI / 2, yaw, a, "YXZ");
         e.m.scale.setScalar(0.12);
         setCols(e.u, ...cols);
@@ -292,7 +314,18 @@ export class Catalyst {
     if (this.out < 0.5) return;
     const cols = colsOf(this.el);
     X.flash(this.pos.x, this.pos.y + 0.08, this.pos.z, cols[1], 3.2, 1.2);
-    X.emit(1, () => ({ cell: "sao4", x: this.pos.x, y: this.pos.y + 0.1, z: this.pos.z, life: 0.14, size: 0.9, size1: 0.2, col: "#ffffff", col1: cols[1], rot: Math.random() }));
+    X.emit(1, () => ({
+      cell: "sao4",
+      x: this.pos.x,
+      y: this.pos.y + 0.1,
+      z: this.pos.z,
+      life: 0.14,
+      size: 0.9,
+      size1: 0.2,
+      col: "#ffffff",
+      col1: cols[1],
+      rot: Math.random(),
+    }));
     X.emit(5, () => ({
       cell: "tiaLua",
       x: this.pos.x,
@@ -338,14 +371,52 @@ const SIG: Record<string, (P: THREE.Vector3, t: number) => any> = {
   // Đóa Hồng Ngủ Trong Băng: cánh hoa lựu hồng đông băng, trôi chậm quanh sách.
   "doa-hong-ngu-trong-bang": (P, t) => {
     const a = t * 1.3 + Math.random() * 6.28;
-    return { cell: "canhMai", x: P.x + Math.cos(a) * 0.35, y: P.y + (Math.random() - 0.5) * 0.3, z: P.z + Math.sin(a) * 0.35, vx: -Math.sin(a) * 0.4, vy: 0.15, vz: Math.cos(a) * 0.4, life: 1.2, size: 0.12, size1: 0.06, col: "#ffd0dc", col1: "#9fe6ff", spin: 1.5 };
+    return {
+      cell: "canhMai",
+      x: P.x + Math.cos(a) * 0.35,
+      y: P.y + (Math.random() - 0.5) * 0.3,
+      z: P.z + Math.sin(a) * 0.35,
+      vx: -Math.sin(a) * 0.4,
+      vy: 0.15,
+      vz: Math.cos(a) * 0.4,
+      life: 1.2,
+      size: 0.12,
+      size1: 0.06,
+      col: "#ffd0dc",
+      col1: "#9fe6ff",
+      spin: 1.5,
+    };
   },
   // Thủy Mặc Vấn Thiên: giọt mực nổi lên rồi tan thành chữ.
-  "thuy-mac-van-thien": (P) => ({ cell: Math.random() < 0.5 ? "giotNuoc" : "khoi", x: P.x + (Math.random() - 0.5) * 0.3, y: P.y, z: P.z + (Math.random() - 0.5) * 0.3, vy: 0.5, drag: 0.5, life: 1, size: 0.08, size1: 0.18, col: "#1d2a4a", col1: "#6fa8ff", a: 0.8 }),
+  "thuy-mac-van-thien": (P) => ({
+    cell: Math.random() < 0.5 ? "giotNuoc" : "khoi",
+    x: P.x + (Math.random() - 0.5) * 0.3,
+    y: P.y,
+    z: P.z + (Math.random() - 0.5) * 0.3,
+    vy: 0.5,
+    drag: 0.5,
+    life: 1,
+    size: 0.08,
+    size1: 0.18,
+    col: "#1d2a4a",
+    col1: "#6fa8ff",
+    a: 0.8,
+  }),
   // Kính Thủy Lưu Nguyệt: ánh trăng non bạc lấp lánh như mặt hồ.
   "kinh-thuy-luu-nguyet": (P, t) => {
     const a = t * 0.8 + Math.random() * 0.8;
-    return { cell: "sao6", x: P.x + Math.cos(a) * 0.4, y: P.y + 0.2 + Math.sin(a) * 0.3, z: P.z, life: 0.8, size: 0.1, size1: 0.02, col: "#ffffff", col1: "#bcd8ff", spin: 2 };
+    return {
+      cell: "sao6",
+      x: P.x + Math.cos(a) * 0.4,
+      y: P.y + 0.2 + Math.sin(a) * 0.3,
+      z: P.z,
+      life: 0.8,
+      size: 0.1,
+      size1: 0.02,
+      col: "#ffffff",
+      col1: "#bcd8ff",
+      spin: 2,
+    };
   },
 };
 
@@ -394,7 +465,19 @@ export function catProj(pr: any, X: Vfx) {
   if (el === "ice" || el === "earth") {
     for (let i = 0; i < 3; i++) {
       const a = V.t * 8 + (i * Math.PI * 2) / 3;
-      X.crystal("crystal", x + Math.cos(a) * 0.16 * Math.cos(yaw), y + Math.sin(a) * 0.16, z - Math.cos(a) * 0.16 * Math.sin(yaw), 0.16 * s, 0.35, yaw, a, 1, 0, cols);
+      X.crystal(
+        "crystal",
+        x + Math.cos(a) * 0.16 * Math.cos(yaw),
+        y + Math.sin(a) * 0.16,
+        z - Math.cos(a) * 0.16 * Math.sin(yaw),
+        0.16 * s,
+        0.35,
+        yaw,
+        a,
+        1,
+        0,
+        cols,
+      );
     }
   } else if (el === "fire" || el === "wood") {
     for (let i = 0; i < 4; i++) {
@@ -422,9 +505,9 @@ export function catProj(pr: any, X: Vfx) {
     x,
     y,
     z,
-    vx: (Math.random() - 0.5) * 0.8 - pr.vx / V.TS * 0.05,
+    vx: (Math.random() - 0.5) * 0.8 - (pr.vx / V.TS) * 0.05,
     vy: (Math.random() - 0.3) * 0.8,
-    vz: (Math.random() - 0.5) * 0.8 - pr.vy / V.TS * 0.05,
+    vz: (Math.random() - 0.5) * 0.8 - (pr.vy / V.TS) * 0.05,
     life: 0.35,
     size: 0.14 * s,
     size1: 0.03,
@@ -448,17 +531,29 @@ export function catBurst(f: any, X: Vfx) {
   const e = X.use("cb-shell", SH.ball, { fres: 1.4, fresAlpha: true });
   if (e) {
     e.m.position.set(x, y, z);
-    e.m.scale.setScalar(0.1 + ease(a * 2) * 0.22);
+    e.m.scale.setScalar(0.08 + ease(a * 2) * 0.16);
     setCols(e.u, ...cols);
     e.u.uAge.value = a;
-    e.u.uA.value = 0.9 * (1 - a);
+    e.u.uA.value = 0.5 * (1 - a);
     e.u.uDis.value = 0.2 + a * 0.8;
     e.u.uNs.value.set(5, 5);
   }
   if (el === "ice" || el === "earth")
     for (let i = 0; i < 5; i++) {
       const t = (i / 5) * Math.PI * 2;
-      X.crystal("spike", x + Math.cos(t) * 0.2, y - 0.1, z + Math.sin(t) * 0.2, 0.45, 0.5, -t, 1.1, a * 5, Math.max(0, a - 0.4) * 1.7, cols);
+      X.crystal(
+        "spike",
+        x + Math.cos(t) * 0.2,
+        y - 0.1,
+        z + Math.sin(t) * 0.2,
+        0.45,
+        0.5,
+        -t,
+        1.1,
+        a * 5,
+        Math.max(0, a - 0.4) * 1.7,
+        cols,
+      );
     }
   else if (el === "fire" || el === "wood")
     for (let i = 0; i < 6; i++) {
@@ -498,7 +593,23 @@ export function catBurst(f: any, X: Vfx) {
     X.emit(10, (i) => {
       const t = Math.random() * 6.28,
         v = 1.5 + Math.random() * 2.5;
-      return { cell: i % 2 ? c1 : c2, x, y, z, vx: Math.cos(t) * v, vy: 1 + Math.random() * 2.5, vz: Math.sin(t) * v, grav: 6, drag: 1.5, life: 0.5, size: 0.16, size1: 0.04, col: cols[0], col1: cols[1], spin: 8 };
+      return {
+        cell: i % 2 ? c1 : c2,
+        x,
+        y,
+        z,
+        vx: Math.cos(t) * v,
+        vy: 1 + Math.random() * 2.5,
+        vz: Math.sin(t) * v,
+        grav: 6,
+        drag: 1.5,
+        life: 0.5,
+        size: 0.16,
+        size1: 0.04,
+        col: cols[0],
+        col1: cols[1],
+        spin: 8,
+      };
     });
   }
   if (a < 0.35) X.flash(x, y, z, cols[1], (1 - a / 0.35) * 3, 1.2);

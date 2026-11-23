@@ -114,7 +114,18 @@ export function paintHit(f: any, X: Vfx) {
         spin: (Math.random() - 0.5) * 14,
       };
     });
-    X.emit(1, () => ({ cell: "sao4", x, y, z, life: 0.16, size: 1.1 * pw, size1: 0.3, col: "#ffffff", col1: h1, rot: Math.random() }));
+    X.emit(1, () => ({
+      cell: "sao4",
+      x,
+      y,
+      z,
+      life: 0.16,
+      size: 1.1 * pw,
+      size1: 0.3,
+      col: "#ffffff",
+      col1: h1,
+      rot: Math.random(),
+    }));
   }
   if (f.w === "cat" && f.normal) catBurst(f, X);
   X.shock(x, y - 0.75, z, 0.9 * pw, a, [h0, h1, h1], 0.8);

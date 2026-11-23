@@ -29,8 +29,12 @@ interface Shot {
 }
 const C = "window.__tinhtu.cap";
 /** Vẽ trong requestAnimationFrame để khung WebGL được trình chiếu trước khi chụp. */
+// Quái đứng yên tại chỗ khi quay (GOM=1 để cho phép gom/kéo quái).
+const PIN = process.env.GOM
+  ? ""
+  : "for (const e of T.S.G?.enemies ?? []) if (e._hx != null) { e.x = e._hx; e.y = e._hy; }";
 const step = (n: number, dt: number) =>
-  `new Promise((r) => requestAnimationFrame(() => { window.__tinhtu.capStep(${n}, ${dt}); requestAnimationFrame(() => r(0)); }))`;
+  `new Promise((r) => requestAnimationFrame(() => { const T = window.__tinhtu; ${PIN} T.capStep(${n}, ${dt}); requestAnimationFrame(() => r(0)); }))`;
 const atk = `${C}.press("atk")`;
 const hold = (on: boolean) => `window.__tinhtu.S.holdAtk = ${on}`;
 const full = `(() => { const G = window.__tinhtu.S.G; const m = G.party[G.act]; m.energy = m.c.burst.cost; m.skCd = 0; })()`;
@@ -55,7 +59,7 @@ const SHOTS: Shot[] = [
   { id: "giu", ten: "Kỹ năng (giữ)", frames: 180, steps: [[0, `${C}.castKitSkill("giu")`]] },
   { id: "no", ten: "Nộ", frames: 240, steps: [[0, `${C}.castKitBurst()`]], cam: { dist: 9 } },
   // Rút vũ khí khi ra đòn, đứng yên tới khi tự cất (pháp khí: sách hiện ra, mở, khép rồi tan).
-  { id: "rutcat", ten: "Rút ra và cất đi", frames: 400, steps: [[10, atk]], cam: { dist: 3.2, yaw: 2.3, pitch: 0.25 } },
+  { id: "rutcat", ten: "Rút ra và cất đi", frames: 400, steps: [[10, atk]], cam: { dist: 3.4, yaw: 1.6, pitch: 0.35 } },
 ];
 
 async function main() {
@@ -160,7 +164,7 @@ async function setup(page: any, party: string[], s: Shot) {
     const p = G.p; p.x = G.bounds.w / 2; p.y = G.bounds.h / 2 + 60;
     for (const [dx, dy] of [[0, -130], [-70, -175], [70, -175]]) {
       const e = T.cap.makeEnemy("slime", p.x + dx, p.y + dy, 20, null);
-      e.hp = e.maxHp = 1e8; e.spd = 0; e.spd0 = 0; e.speed = 0; e.mass = 1e9; e.atkCd = 1e9; G.enemies.push(e); }
+      e.hp = e.maxHp = 1e8; e.spd = 0; e.spd0 = 0; e.speed = 0; e.mass = 1e9; e._hx = e.x; e._hy = e.y; e.atkCd = 1e9; G.enemies.push(e); }
     const m = G.party[G.act]; m.energy = m.c.burst.cost; m.skCd = 0; m.cd = 0;
     S.camYaw = ${cam.yaw}; S.camPitch = ${cam.pitch}; S.camDist = ${cam.dist}; S.holdAtk = false; })()`);
   await page.evaluate(step(30, 1 / 60));

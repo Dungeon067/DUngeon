@@ -45,7 +45,11 @@ export class Vfx {
     for (const p of this.pools.values()) p.i = 0;
   }
   /** Lấy một mesh từ pool `key` (tạo mới nếu thiếu). Pool tối đa 96 mesh mỗi khóa. */
-  use(key: string, geo: () => THREE.BufferGeometry, opt: FxMatOpt = {}): { m: THREE.Mesh; u: FxMat["uniforms"] } | null {
+  use(
+    key: string,
+    geo: () => THREE.BufferGeometry,
+    opt: FxMatOpt = {},
+  ): { m: THREE.Mesh; u: FxMat["uniforms"] } | null {
     let p = this.pools.get(key);
     if (!p) this.pools.set(key, (p = { list: [], i: 0 }));
     if (p.i >= 96) return null;
@@ -121,7 +125,17 @@ export class Vfx {
     e.u.uDis.value = a * 0.55;
   }
   /** Decal phù văn trên nền: nở nhanh, xoay chậm, tan theo noise khi già. */
-  rune(k: Rune, x: number, y: number, z: number, R: number, a: number, c: [string, string, string], al = 1, spin = 0.3) {
+  rune(
+    k: Rune,
+    x: number,
+    y: number,
+    z: number,
+    R: number,
+    a: number,
+    c: [string, string, string],
+    al = 1,
+    spin = 0.3,
+  ) {
     const e = this.use(`rune-${k}`, SH.decal, { map: runeTex(k), depthTest: true });
     if (!e) return;
     const grow = 1 - Math.pow(1 - Math.min(1, a * 4), 3);
@@ -149,7 +163,11 @@ export class Vfx {
     dis: number,
     c: [string, string, string],
   ) {
-    const e = this.use(key, key === "crystal" ? SH.crystal : SH.spike, { facet: true, add: false, side: THREE.FrontSide });
+    const e = this.use(key, key === "crystal" ? SH.crystal : SH.spike, {
+      facet: true,
+      add: false,
+      side: THREE.FrontSide,
+    });
     if (!e) return;
     const g = 1 - Math.pow(1 - Math.min(1, grow), 3);
     e.m.position.set(x, y, z);

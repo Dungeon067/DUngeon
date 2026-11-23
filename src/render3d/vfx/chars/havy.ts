@@ -19,7 +19,17 @@ const hash = (i: number) => {
 };
 
 /** Hoa tuyết 3D: lõi tinh thể (đặc) + vỏ sáng cộng. */
-function flake(X: Vfx, x: number, y: number, z: number, s: number, spin: number, tilt: number, al: number, dis: number) {
+function flake(
+  X: Vfx,
+  x: number,
+  y: number,
+  z: number,
+  s: number,
+  spin: number,
+  tilt: number,
+  al: number,
+  dis: number,
+) {
   const a = X.use("hv-flake", SH.flake3d, { facet: true, add: false, side: THREE.FrontSide });
   const b = X.use("hv-flakeGlow", SH.flake3d, { fres: 1.6 });
   for (const e of [a, b]) {
@@ -39,7 +49,18 @@ function flake(X: Vfx, x: number, y: number, z: number, s: number, spin: number,
   }
 }
 /** Vòng tinh thể nhô lên quanh tâm, nghiêng ra ngoài. */
-function crown(X: Vfx, x: number, gy: number, z: number, R: number, n: number, grow: number, dis: number, seed: number, h = 1) {
+function crown(
+  X: Vfx,
+  x: number,
+  gy: number,
+  z: number,
+  R: number,
+  n: number,
+  grow: number,
+  dis: number,
+  seed: number,
+  h = 1,
+) {
   for (let i = 0; i < n; i++) {
     const a = (i / n) * Math.PI * 2 + seed,
       r = R * (0.82 + hash(i + seed) * 0.2),
@@ -88,30 +109,27 @@ const snowBurst = (X: Vfx, x: number, y: number, z: number, n: number, sp: numbe
   }));
 };
 const mist = (X: Vfx, x: number, y: number, z: number, R: number, n: number, life = 1.4) =>
-  X.emit(
-    n,
-    () => {
-      const a = Math.random() * Math.PI * 2,
-        r = Math.sqrt(Math.random()) * R;
-      return {
-        cell: "khoi",
-        x: x + Math.cos(a) * r,
-        y: y + 0.15,
-        z: z + Math.sin(a) * r,
-        vx: Math.cos(a) * 0.6,
-        vy: 0.15,
-        vz: Math.sin(a) * 0.6,
-        drag: 1,
-        life,
-        size: 1.2,
-        size1: 2.4,
-        col: "#bfeaff",
-        col1: "#4f86d8",
-        a: 0.16,
-        spin: 0.4,
-      };
-    },
-  );
+  X.emit(n, () => {
+    const a = Math.random() * Math.PI * 2,
+      r = Math.sqrt(Math.random()) * R;
+    return {
+      cell: "khoi",
+      x: x + Math.cos(a) * r,
+      y: y + 0.15,
+      z: z + Math.sin(a) * r,
+      vx: Math.cos(a) * 0.6,
+      vy: 0.15,
+      vz: Math.sin(a) * 0.6,
+      drag: 1,
+      life,
+      size: 1.2,
+      size1: 2.4,
+      col: "#bfeaff",
+      col1: "#4f86d8",
+      a: 0.16,
+      spin: 0.4,
+    };
+  });
 
 export const HAVY: Painters = {
   fx: {
@@ -127,7 +145,17 @@ export const HAVY: Painters = {
         snowBurst(X, x, gy + 1, z, 22, 5);
         mist(X, x, gy, z, R, 8);
       }
-      flake(X, x, gy + 1 + ease(a * 2) * 0.5, z, R * (0.25 + 0.5 * ease(a * 2.5)), V.t * 1.4, -1.1, 1, Math.max(0, a - 0.55) * 2.2);
+      flake(
+        X,
+        x,
+        gy + 1 + ease(a * 2) * 0.5,
+        z,
+        R * (0.25 + 0.5 * ease(a * 2.5)),
+        V.t * 1.4,
+        -1.1,
+        1,
+        Math.max(0, a - 0.55) * 2.2,
+      );
       crown(X, x, gy, z, R * 0.5, 6, a * 3.5, Math.max(0, a - 0.5) * 2, f.x, 1.1);
       X.rune("ice", x, gy, z, R * 1.05, a, ICE, 0.9, 0.6);
       X.shock(x, gy, z, R * 1.3, Math.min(1, a * 1.6), ICE, 1);
@@ -178,7 +206,19 @@ export const HAVY: Painters = {
           e.u.uDis.value = Math.max(0, a - 0.6) * 2.2;
           e.u.uGlow.value = 1.6;
         }
-        X.crystal("spike", tx, gy + 2.2 - ease(a * 3) * 1.2, tz, 0.9, 0.7, 0, Math.PI, 1, Math.max(0, a - 0.6) * 2.2, DEEP);
+        X.crystal(
+          "spike",
+          tx,
+          gy + 2.2 - ease(a * 3) * 1.2,
+          tz,
+          0.9,
+          0.7,
+          0,
+          Math.PI,
+          1,
+          Math.max(0, a - 0.6) * 2.2,
+          DEEP,
+        );
         X.rune("ice", tx, gy, tz, 0.7, a, ICE, 0.8, 1.2);
         if (X.first(f.pts)) snowBurst(X, tx, gy + 1, tz, 6, 2);
       }
@@ -216,7 +256,8 @@ export const HAVY: Painters = {
         gy = V.ground(f.x, f.y),
         u = 1 - f.life / f.max;
       const H = 6;
-      const p = (w: number) => new THREE.Vector3(sx + (x - sx) * w, gy + 1 + Math.sin(w * Math.PI) * H, sz + (z - sz) * w);
+      const p = (w: number) =>
+        new THREE.Vector3(sx + (x - sx) * w, gy + 1 + Math.sin(w * Math.PI) * H, sz + (z - sz) * w);
       const c = p(u),
         d = p(Math.min(1, u + 0.02)).sub(c);
       arrowHead(X, c, Math.atan2(d.x, d.z), -Math.atan2(d.y, Math.hypot(d.x, d.z)), 1.3);

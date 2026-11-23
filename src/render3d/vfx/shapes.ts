@@ -69,7 +69,12 @@ export const flake3d = () =>
   });
 
 /** Dải ruy-băng theo đường cong f(u) -> điểm, bề rộng w(u) theo hướng pháp tuyến n(u). */
-function strip(seg: number, f: (u: number) => THREE.Vector3, side: (u: number) => THREE.Vector3, w: (u: number) => number) {
+function strip(
+  seg: number,
+  f: (u: number) => THREE.Vector3,
+  side: (u: number) => THREE.Vector3,
+  w: (u: number) => number,
+) {
   const pos: number[] = [],
     uv: number[] = [],
     idx: number[] = [];
@@ -145,7 +150,9 @@ export const flame = () =>
     const pts: THREE.Vector2[] = [];
     for (let i = 0; i <= 12; i++) {
       const u = i / 12;
-      pts.push(new THREE.Vector2(0.3 * Math.sin(Math.pow(1 - u, 0.6) * Math.PI * 0.5) * (1 + 0.15 * Math.sin(u * 14)), u));
+      pts.push(
+        new THREE.Vector2(0.3 * Math.sin(Math.pow(1 - u, 0.6) * Math.PI * 0.5) * (1 + 0.15 * Math.sin(u * 14)), u),
+      );
     }
     return new THREE.LatheGeometry(pts, 10);
   });

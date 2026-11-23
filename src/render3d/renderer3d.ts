@@ -933,8 +933,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       else if (pr.m?.c.w === "cat" && pr.kind === "orb" && !pr.skin) {
         if (vfx.first(pr)) cat.muzzle(vfx);
         catProj(pr, vfx);
-      }
-      else if (pr.skin && pr.m) {
+      } else if (pr.skin && pr.m) {
         const K = KITS[pr.m.c.id];
         if (K) kitTrail(pr, kc, groundY(pr.x, pr.y, 0) + 0.9, K.mau.c, K.mau.c2);
       }
