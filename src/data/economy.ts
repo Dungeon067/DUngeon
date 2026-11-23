@@ -31,4 +31,8 @@ export function resetEcon() {
   Object.assign(ECON, clone(ECON_BASE));
   localStorage.removeItem(ECON_KEY);
 }
+/** Tab khác (Admin) vừa đổi bản chỉnh: đọc lại để game dùng ngay. */
+export function reloadEcon() {
+  Object.assign(ECON, loadOverride());
+}
 export const econEdited = () => localStorage.getItem(ECON_KEY) !== null;
