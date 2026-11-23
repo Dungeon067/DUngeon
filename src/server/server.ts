@@ -5,7 +5,7 @@ import { fmt, pick, todayKey } from "../core/util";
 import { CHARS, DAILY_POOL, DEFAULT_CFG, START_PROFILE, byId } from "../data/content";
 import { toast } from "../ui/toast";
 import { ECON } from "../data/economy";
-import { charStats, chienLuc, lvCost as lvCostOf, rollRarity, rollWeapon, type Invest } from "../economy/core";
+import { caps, charStats, chienLuc, lvCost as lvCostOf, rollRarity, rollWeapon, type Invest } from "../economy/core";
 import type { Economy, Weapon } from "../data/economy-schema";
 import {
   addExp,
@@ -17,6 +17,21 @@ import {
   previewExp,
   type WeaponInst,
 } from "../economy/weapons";
+import { BA } from "../data/bao-an";
+import { SLOT_IDS, type SlotId, type StatId } from "../data/bao-an-schema";
+import {
+  addExp as baAddExp,
+  bonusOf,
+  capOf as baCapOf,
+  dismantleYield,
+  expToNext,
+  fodderExp as baFodderExp,
+  rollBaoAn,
+  type BaRarity,
+  type BaoAnInst,
+  type MilestoneRoll,
+  type RollSpec,
+} from "../economy/bao-an";
 
 export const SAVE_KEY = "tinhtu-v3";
 export const OLD_SAVE_KEY = "tinhtu-v2";
@@ -116,6 +131,66 @@ export function ensureWeapons(P: Profile): Profile {
   return P;
 }
 
+// ---------------------------------------------------------------- Bảo Ấn (S31)
+
+/** Thêm một Bảo Ấn mới tung theo content/bao-an.yaml. */
+export function addBaoAn(P: Profile, spec: RollSpec, rng: () => number = Math.random): BaoAnInst {
+  const uid = "b" + ++P.baSeq;
+  return (P.baoAn[uid] = rollBaoAn(BA, uid, spec, rng));
+}
+/** uid Bảo Ấn → id nhân vật đang mặc. */
+export function baHolders(P: Profile) {
+  const m: Record<string, string> = {};
+  for (const [cid, o] of Object.entries(P.owned)) for (const u of Object.values(o.ba ?? {})) if (u) m[u] = cid;
+  return m;
+}
+/** Bảo Ấn một nhân vật đang mặc, theo thứ tự ô. */
+export function worn(P: Profile, cid: string, over?: Partial<Record<SlotId, string | null>>) {
+  const ba = { ...P.owned[cid]?.ba, ...over };
+  return SLOT_IDS.map((o) => (ba[o] ? P.baoAn?.[ba[o]!] : undefined)).filter((a): a is BaoAnInst => !!a);
+}
+/** Cấp Hộ Tinh của hồ sơ (game chưa có cấp tài khoản riêng: lấy cấp cao nhất trong các nhân vật đã có). */
+export const hoTinhOf = (P: Profile) => Math.max(1, ...Object.values(P.owned).map((o) => o.lv || 1));
+/** Mức Thiên Tượng cao nhất đã mở cho Bí Cảnh Bảo Ấn. */
+export const ttMaxOf = (P: Profile) => caps(hoTinhOf(P), ECON).thienTuong;
+export function baDoiLeft(P: Profile, id: string) {
+  const d = BA.doi.find((x) => x.id === id);
+  if (!d) return 0;
+  return Math.max(0, d.moiTuan - (P.baDoi.week === weekKey() ? (P.baDoi.used[id] ?? 0) : 0));
+}
+/** Sáp Ấn kèm mỗi lượt Bí Cảnh Bảo Ấn ở mức Thiên Tượng tt. */
+export function domainSap(tt: number) {
+  const k = 1 + BA.biCanh.sapMoiTT * tt;
+  return Object.fromEntries(Object.entries(BA.biCanh.sap).map(([id, n]) => [id, Math.round(n * k)]));
+}
+
+/** Bước chuyển đổi S31 (kho Bảo Ấn). Idempotent: thiếu kho thì tạo kèm quà khởi đầu; bỏ ô trỏ tới món không còn. */
+export function ensureBaoAn(P: Profile): Profile {
+  if (!P.baoAn || typeof P.baoAn !== "object") {
+    P.baoAn = {};
+    P.baSeq = 0;
+    const K = BA.khoiDau;
+    for (const [k, n] of Object.entries(K.sap)) P.bag[k] = capRes((P.bag[k] ?? 0) + n);
+    if (K.buiAn) P.bag["bui-an"] = capRes((P.bag["bui-an"] ?? 0) + K.buiAn);
+    for (const x of K.bao) for (const o of SLOT_IDS) addBaoAn(P, { bo: x.bo, o, r: x.r as BaRarity });
+  }
+  for (const [u, a] of Object.entries(P.baoAn))
+    if (!a || !BA.bo.some((b) => b.id === a.bo) || !SLOT_IDS.includes(a.o)) delete P.baoAn[u];
+  P.baSeq = Math.max(P.baSeq ?? 0, ...Object.keys(P.baoAn).map((u) => Number(u.slice(1)) || 0));
+  P.baDoi = P.baDoi?.used ? P.baDoi : { week: "", used: {} };
+  const used = new Set<string>();
+  for (const o of Object.values(P.owned)) {
+    if (!o.ba) continue;
+    for (const k of Object.keys(o.ba) as SlotId[]) {
+      const u = o.ba[k],
+        a = u ? P.baoAn[u] : undefined;
+      if (!u || !a || a.o !== k || used.has(u)) delete o.ba[k];
+      else used.add(u);
+    }
+  }
+  return P;
+}
+
 /** Hồ sơ gốc chưa có phần vũ khí (S24 bổ sung qua ensureWeapons). */
 function baseProfile(): Profile {
   const party = [...START_PROFILE.party];
@@ -166,17 +241,19 @@ function withPuz(p: Profile): Profile {
   return p;
 }
 export function freshProfile(): Profile {
-  return ensureWeapons(baseProfile());
+  return ensureBaoAn(ensureWeapons(baseProfile()));
 }
 /** Chuyển hồ sơ cũ (v2) lên v3, giữ toàn bộ dữ liệu đã có; cuối cùng bổ sung kho vũ khí (S24). */
 export function migrate(old: any): Profile | null {
   if (!old || typeof old !== "object") return null;
-  if (old.v === 3) return ensureWeapons(withPuz(withLimitedBanner({ ...baseProfile(), ...old })));
+  if (old.v === 3) return ensureBaoAn(ensureWeapons(withPuz(withLimitedBanner({ ...baseProfile(), ...old }))));
   if (old.v !== 2) return null;
   const base = baseProfile();
   const party = Array.isArray(old.party) && old.party.length ? old.party : base.party;
-  return ensureWeapons(
-    withPuz(withLimitedBanner({ ...base, ...old, v: 3, party, teams: [[...party], [], [], []], team: 0 })),
+  return ensureBaoAn(
+    ensureWeapons(
+      withPuz(withLimitedBanner({ ...base, ...old, v: 3, party, teams: [[...party], [], [], []], team: 0 })),
+    ),
   );
 }
 /** Hồ sơ cũ có banner nổi bật không còn là 5★ giới hạn (ví dụ Lạc Hồng trước S23): chuyển về banner mặc định. */
@@ -910,6 +987,163 @@ export const Server = {
       P.wcfg = cfg;
       return cfg;
     },
+    // ---- Bảo Ấn (S31) ----
+    baget(this: any, uid: string): BaoAnInst {
+      const a = this.P.baoAn[uid];
+      if (!a) throw new Error("Không có Bảo Ấn này");
+      return a;
+    },
+    equipBaoAn(this: any, { char, uid, swap = false }: any) {
+      const P: Profile = this.P,
+        o = P.owned[char];
+      if (!o) throw new Error("Bạn chưa có nhân vật này");
+      const a: BaoAnInst = this.routes.baget.call(this, uid);
+      o.ba = o.ba ?? {};
+      if (o.ba[a.o] === uid) return { char, uid, from: null };
+      const from = baHolders(P)[uid] ?? null;
+      if (from && !swap) throw new Error(`Bảo Ấn đang ở ${byId[from]?.name ?? from}, cần xác nhận đổi`);
+      const mine = o.ba[a.o];
+      if (from) {
+        const fo = P.owned[from]!.ba!;
+        if (mine) fo[a.o] = mine;
+        else delete fo[a.o];
+      }
+      o.ba[a.o] = uid;
+      return { char, uid, from };
+    },
+    unequipBaoAn(this: any, { char, o }: any) {
+      const w = this.P.owned[char];
+      if (!w) throw new Error("Bạn chưa có nhân vật này");
+      if (w.ba) delete w.ba[o as SlotId];
+      return true;
+    },
+    lockBaoAn(this: any, { uid, lock }: any) {
+      const a: BaoAnInst = this.routes.baget.call(this, uid);
+      a.lock = !!lock;
+      return a.lock;
+    },
+    /** Nâng cấp bằng Sáp Ấn và Bảo Ấn khác. Tốn Xu theo kinh nghiệm thực nhận; trả về các mốc +4 vừa tung. */
+    upgradeBaoAn(this: any, { uid, sap = {}, mats = [] }: any) {
+      const P: Profile = this.P,
+        a: BaoAnInst = this.routes.baget.call(this, uid);
+      if (a.lv >= baCapOf(BA, a.r)) throw new Error("Đã đạt cấp tối đa");
+      const hold = baHolders(P);
+      let exp = 0;
+      const sapUse: [string, number][] = [];
+      for (const [id, raw] of Object.entries(sap)) {
+        const k = Math.floor(Number(raw));
+        if (!k) continue;
+        const s = BA.kinhNghiem.sap.find((x) => x.id === id);
+        if (!s || k < 0) throw new Error("Nguyên liệu không hợp lệ");
+        if ((P.bag[id] ?? 0) < k) throw new Error("Không đủ Sáp Ấn");
+        exp += k * s.kinhNghiem;
+        sapUse.push([id, k]);
+      }
+      const list: string[] = [...new Set<string>(Array.isArray(mats) ? mats : [])];
+      for (const m of list) {
+        const f: BaoAnInst = this.routes.baget.call(this, m);
+        if (m === uid) throw new Error("Không dùng chính món đang nâng");
+        if (f.lock) throw new Error("Bảo Ấn đã khóa");
+        if (hold[m]) throw new Error("Bảo Ấn đang được mặc");
+        exp += baFodderExp(BA, f);
+      }
+      if (!exp) throw new Error("Chưa chọn nguyên liệu");
+      const probe = { ...a, phu: a.phu.map((x) => ({ ...x })) };
+      const used = baAddExp(BA, probe, exp, () => 0).used,
+        cost = Math.ceil(used * BA.kinhNghiem.xuMoiKinhNghiem);
+      if (P.coin < cost) throw new Error(`Không đủ Xu: cần ${fmt(cost)}`);
+      P.coin -= cost;
+      for (const [id, k] of sapUse) P.bag[id] -= k;
+      for (const m of list) delete P.baoAn[m];
+      const from = a.lv;
+      const { rolls } = baAddExp(BA, a, exp, Math.random);
+      return { from, lv: a.lv, exp: a.exp, used, coin: cost, rolls: rolls as MilestoneRoll[] };
+    },
+    /** Phân rã nhiều món cùng lúc (bỏ qua món khóa hoặc đang mặc thì báo lỗi). */
+    dismantleBaoAn(this: any, { uids = [] }: any) {
+      const P: Profile = this.P,
+        hold = baHolders(P);
+      const list: string[] = [...new Set<string>(Array.isArray(uids) ? uids : [])];
+      if (!list.length) throw new Error("Chưa chọn Bảo Ấn");
+      const items = list.map((u) => this.routes.baget.call(this, u) as BaoAnInst);
+      if (items.some((a) => a.lock)) throw new Error("Có món đã khóa");
+      if (items.some((a) => hold[a.uid])) throw new Error("Có món đang được mặc");
+      const got: Record<string, number> = {};
+      for (const a of items) {
+        const y = dismantleYield(BA, a);
+        got["bui-an"] = (got["bui-an"] ?? 0) + y.bui;
+        for (const [k, n] of Object.entries(y.sap)) got[k] = (got[k] ?? 0) + n;
+        delete P.baoAn[a.uid];
+      }
+      for (const [k, n] of Object.entries(got)) P.bag[k] = capRes((P.bag[k] ?? 0) + n);
+      return { n: items.length, got };
+    },
+    /** Đổi Bụi Ấn lấy Bảo Ấn 5★ cấp 0, chọn bộ, ô (và chỉ số chính nếu là Ấn Chọn Chính), có giới hạn tuần. */
+    exchangeBaoAn(this: any, { id, bo, o, chinh }: any) {
+      const P: Profile = this.P,
+        d = BA.doi.find((x) => x.id === id);
+      if (!d) throw new Error("Không có lựa chọn đổi này");
+      if (!BA.bo.some((b) => b.id === bo) || !SLOT_IDS.includes(o)) throw new Error("Bộ hoặc ô không hợp lệ");
+      if (baDoiLeft(P, id) < 1) throw new Error("Đã hết lượt đổi tuần này");
+      if ((P.bag["bui-an"] ?? 0) < d.buiAn) throw new Error(`Cần ${d.buiAn} Bụi Ấn`);
+      const a = addBaoAn(P, { bo, o, r: 5, chinh: d.chon.includes("chinh") ? chinh : undefined });
+      const wk = weekKey();
+      if (P.baDoi.week !== wk) P.baDoi = { week: wk, used: {} };
+      P.baDoi.used[id] = (P.baDoi.used[id] ?? 0) + 1;
+      P.bag["bui-an"] -= d.buiAn;
+      return { uid: a.uid, left: baDoiLeft(P, id) };
+    },
+    /** Nhận thưởng một lượt Bí Cảnh Bảo Ấn (gọi khi thắng trận): tốn Linh Lực, rơi đồ theo Thiên Tượng tt. */
+    baoAnDomain(this: any, { id, tt }: any) {
+      const P: Profile = this.P,
+        B = BA.biCanh,
+        dom = B.danhSach.find((x) => x.id === id);
+      if (!dom) throw new Error("Không có bí cảnh này");
+      if (hoTinhOf(P) < B.moCapHoTinh) throw new Error(`Cần một Hộ Tinh cấp ${B.moCapHoTinh}`);
+      const t = Math.floor(Number(tt ?? ttMaxOf(P)));
+      if (!(t >= 0 && t <= ttMaxOf(P))) throw new Error("Chưa mở mức Thiên Tượng này");
+      const now = Date.now(),
+        cur = linhLucNow(P, now);
+      if (cur < B.linhLuc) throw new Error(`Cần ${B.linhLuc} Linh Lực`);
+      P.ll = { v: cur - B.linhLuc, t: now };
+      const roi = B.roi[t]!,
+        items: string[] = [];
+      for (const [r, e] of [
+        [3, roi.r3],
+        [4, roi.r4],
+        [5, roi.r5],
+      ] as [BaRarity, number][]) {
+        const n = Math.floor(e) + (Math.random() < e - Math.floor(e) ? 1 : 0);
+        for (let i = 0; i < n; i++) {
+          const bo = pick(dom.bo),
+            o = pick([...SLOT_IDS]);
+          items.push(addBaoAn(P, { bo, o, r }).uid);
+        }
+      }
+      const sap = domainSap(t);
+      for (const [k, n] of Object.entries(sap)) P.bag[k] = capRes((P.bag[k] ?? 0) + n);
+      P.coin = capRes(P.coin + B.xu);
+      bump(P, "baoAnDomain");
+      return { items, sap, coin: B.xu, ll: Math.floor(P.ll.v), tt: t };
+    },
+    /** Admin: cấp Bảo Ấn để thử (bộ, ô, độ hiếm, chỉ số chính, dòng phụ, cấp). */
+    giveBaoAn(this: any, { bo, o, r = 5, chinh, phu, lv = 0 }: any) {
+      const rr = Number(r) as BaRarity;
+      if (![3, 4, 5].includes(rr)) throw new Error("Độ hiếm phải là 3, 4 hoặc 5");
+      if (!SLOT_IDS.includes(o)) throw new Error("Ô không hợp lệ");
+      const a = addBaoAn(this.P, {
+        bo,
+        o,
+        r: rr,
+        chinh: chinh || undefined,
+        phu: Array.isArray(phu) ? (phu as StatId[]) : undefined,
+      });
+      const target = Math.min(baCapOf(BA, rr), Math.max(0, Math.floor(Number(lv) || 0)));
+      let need = 0;
+      for (let l = 0; l < target; l++) need += expToNext(BA, rr, l);
+      if (need) baAddExp(BA, a, need, Math.random);
+      return a;
+    },
     giveWeapon(this: any, { id }: any) {
       return addWeapon(this.P, id);
     },
@@ -942,17 +1176,25 @@ export function lvCost(lv: number) {
   return lvCostOf(lv, ECON);
 }
 /** Đầu tư của một nhân vật để tính chỉ số: cấp, Nét Sao và vũ khí đang trang bị. */
-export function investOf(id: string, vkOverride?: string | null): Invest {
+/** Ô Bảo Ấn thay thử (so sánh trước khi mặc): uid mới hoặc null để tháo. */
+export type BaOverride = Partial<Record<SlotId, string | null>>;
+export function investOf(id: string, vkOverride?: string | null, baOverride?: BaOverride): Invest {
   const o = Server.P.owned[id] || { lv: 1, cons: 0 };
   const uid = vkOverride === undefined ? o.vk : vkOverride;
   const w = uid ? Server.P.weapons?.[uid] : undefined;
-  return { lv: o.lv, cons: o.cons, vuKhi: w ? { id: w.id, tinhLuyen: w.tl, lv: w.lv } : null };
+  const ba = Server.P.owned[id] ? worn(Server.P, id, baOverride) : [];
+  return {
+    lv: o.lv,
+    cons: o.cons,
+    vuKhi: w ? { id: w.id, tinhLuyen: w.tl, lv: w.lv } : null,
+    baoAn: ba.length ? bonusOf(BA, ba, byId[id]?.el) : null,
+  };
 }
-export function statsOf(id: string, vk?: string | null) {
-  const { skill: _s, ...st } = charStats(byId[id], investOf(id, vk), ECON);
+export function statsOf(id: string, vk?: string | null, ba?: BaOverride) {
+  const { skill: _s, ...st } = charStats(byId[id], investOf(id, vk, ba), ECON);
   return st;
 }
-/** Chiến Lực một nhân vật đang có (cấp, Nét Sao, vũ khí; Bảo Ấn và Khai Tinh chưa có trong game). */
-export function powerOf(id: string, vk?: string | null) {
-  return chienLuc(charStats(byId[id], investOf(id, vk), ECON), ECON);
+/** Chiến Lực một nhân vật đang có (cấp, Nét Sao, vũ khí, Bảo Ấn; Khai Tinh chưa có trong game). */
+export function powerOf(id: string, vk?: string | null, ba?: BaOverride) {
+  return chienLuc(charStats(byId[id], investOf(id, vk, ba), ECON), ECON);
 }

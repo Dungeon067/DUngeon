@@ -72,40 +72,40 @@ mocCap: 4
 # Cấp 0 bằng heSoCap0 lần, tăng đều tới 1 ở cấp tối đa của độ hiếm đó.
 chinh:
   giaTri:
-    hp: 1100
-    atk: 72
-    hpPct: 0.18
-    atkPct: 0.18
-    defPct: 0.225
-    tinhThong: 72
-    hoiNl: 0.2
-    chiMang: 0.12
-    stcm: 0.24
-    triLieu: 0.14
-    stHoa: 0.18
-    stThuy: 0.18
-    stPhong: 0.18
-    stLoi: 0.18
-    stTho: 0.18
-    stBang: 0.18
-    stMoc: 0.18
-    stVatLy: 0.225
+    hp: 720
+    atk: 23
+    hpPct: 0.09
+    atkPct: 0.0576
+    defPct: 0.112
+    tinhThong: 23
+    hoiNl: 0.064
+    chiMang: 0.0384
+    stcm: 0.0768
+    triLieu: 0.0448
+    stHoa: 0.0576
+    stThuy: 0.0576
+    stPhong: 0.0576
+    stLoi: 0.0576
+    stTho: 0.0576
+    stBang: 0.0576
+    stMoc: 0.0576
+    stVatLy: 0.0717
   heSoDoHiem: { "3": 0.6, "4": 0.8, "5": 1 }
   heSoCap0: 0.2
 
 # Chỉ số phụ: giá trị một lần tung ở bậc cao nhất (5★). Mỗi lần tung chọn một trong bốn bậc.
 phu:
   giaTriToiDa:
-    hp: 120
-    atk: 8
-    def: 10
-    hpPct: 0.024
-    atkPct: 0.024
-    defPct: 0.03
-    tinhThong: 10
-    hoiNl: 0.027
-    chiMang: 0.016
-    stcm: 0.032
+    hp: 72
+    atk: 3
+    def: 6
+    hpPct: 0.0144
+    atkPct: 0.0092
+    defPct: 0.0115
+    tinhThong: 4
+    hoiNl: 0.0104
+    chiMang: 0.0062
+    stcm: 0.0123
   bac: [0.7, 0.8, 0.9, 1]
   heSoDoHiem: { "3": 0.6, "4": 0.8, "5": 1 }
   # Trọng số chọn dòng mới (bỏ dòng trùng chỉ số chính và dòng đã có).
@@ -168,8 +168,8 @@ biCanh:
     - { r3: 0.6, r4: 1.2, r5: 1.0 }
     - { r3: 0.4, r4: 1.2, r5: 1.1 }
   # Sáp Ấn rơi kèm mỗi lượt (cộng thêm sapMoiTT mỗi bậc Thiên Tượng, tính theo sap-an-tho).
-  sap: { sap-an-tho: 2, sap-an: 1 }
-  sapMoiTT: 0.25
+  sap: { sap-an-tho: 3 }
+  sapMoiTT: 0.1
   danhSach:
     - id: ham-den-pho-cu
       ten: Hầm Đèn Phố Cũ
@@ -232,10 +232,10 @@ bo:
     mau: ["#ff8a3a", "#ffd27a"]
     hai:
       hieuUng: "Tăng 20% sát thương nộ."
-      chienLuc: { dmg: 0.06 }
+      chienLuc: { dmg: 0.024 }
     bon:
       hieuUng: "Sau khi dùng nộ, đánh thường và trọng kích tăng 30% sát thương trong 8 giây."
-      chienLuc: { dmg: 0.1 }
+      chienLuc: { dmg: 0.04 }
     mon:
       hoa:
         ten: Hoa Giấy Đèn Lồng
@@ -262,10 +262,10 @@ bo:
     mau: ["#b47bff", "#e8f0ff"]
     hai:
       hieuUng: "Tăng 60 Tinh thông nguyên tố."
-      chienLuc: { tinhThong: 60 }
+      chienLuc: { tinhThong: 24 }
     bon:
       hieuUng: "Tăng 30% sát thương do phản ứng gây ra. Bốc Hơi và Tan Chảy tăng thêm 12%."
-      chienLuc: { dmg: 0.09 }
+      chienLuc: { dmg: 0.036 }
     mon:
       hoa:
         ten: Hoa Muối Đầu Mùa
@@ -292,10 +292,10 @@ bo:
     mau: ["#e8b456", "#7a3a14"]
     hai:
       hieuUng: "Tăng 15% Tấn công."
-      chienLuc: { atkPct: 0.15 }
+      chienLuc: { atkPct: 0.06 }
     bon:
       hieuUng: "Dùng nộ thì cả đội tăng 18% Tấn công trong 12 giây. Hiệu ứng này không cộng dồn."
-      chienLuc: { doiAtkPct: 0.1 }
+      chienLuc: { doiAtkPct: 0.04 }
     mon:
       hoa:
         ten: Hoa Đồng Mặt Trống
@@ -322,10 +322,10 @@ bo:
     mau: ["#4cf0c0", "#e0f4ff"]
     hai:
       hieuUng: "Tăng 20% Hồi năng lượng."
-      chienLuc: { hoiNl: 0.2 }
+      chienLuc: { hoiNl: 0.08 }
     bon:
       hieuUng: "Kỹ năng trúng địch thì cả đội hồi 2 năng lượng. Mỗi 6 giây chỉ một lần."
-      chienLuc: { hoiNl: 0.15 }
+      chienLuc: { hoiNl: 0.06 }
     mon:
       hoa:
         ten: Hoa Giấy Đuôi Diều
@@ -352,10 +352,10 @@ bo:
     mau: ["#ffd24a", "#8a5cff"]
     hai:
       hieuUng: "Tăng 18% sát thương trọng kích."
-      chienLuc: { dmg: 0.05 }
+      chienLuc: { dmg: 0.02 }
     bon:
       hieuUng: "Trọng kích trúng địch cho 1 tầng Vó Giông trong 6 giây, tối đa 3 tầng. Mỗi tầng tăng 10% sát thương trọng kích và 3% tỉ lệ chí mạng trọng kích."
-      chienLuc: { dmg: 0.08, chiMang: 0.03 }
+      chienLuc: { dmg: 0.032, chiMang: 0.012 }
     mon:
       hoa:
         ten: Hoa Cỏ Sau Sét
@@ -382,10 +382,10 @@ bo:
     mau: ["#3fb4ff", "#d8243a"]
     hai:
       hieuUng: "Khiên tạo ra bền thêm 30%."
-      chienLuc: { hpPct: 0.1 }
+      chienLuc: { hpPct: 0.04 }
     bon:
       hieuUng: "Nhân vật đang có khiên tăng 20% sát thương gây ra."
-      chienLuc: { dmg: 0.1 }
+      chienLuc: { dmg: 0.04 }
     mon:
       hoa:
         ten: Hoa Lựu Trên Gạch
@@ -412,10 +412,10 @@ bo:
     mau: ["#bfe8ff", "#f2f0f8"]
     hai:
       hieuUng: "Tăng 15% trị liệu."
-      chienLuc: { triLieu: 0.15 }
+      chienLuc: { triLieu: 0.06 }
     bon:
       hieuUng: "Mỗi lần hồi máu cho đồng đội, cả đội tăng 12% sát thương trong 6 giây."
-      chienLuc: { dmg: 0.08 }
+      chienLuc: { dmg: 0.032 }
     mon:
       hoa:
         ten: Hoa Súng Hồ Gương
@@ -442,10 +442,10 @@ bo:
     mau: ["#9be8ff", "#3a5a78"]
     hai:
       hieuUng: "Tăng 15% sát thương nguyên tố."
-      chienLuc: { dmg: 0.15 }
+      chienLuc: { dmg: 0.06 }
     bon:
       hieuUng: "Kỹ năng trúng địch làm giảm 15% kháng nguyên tố của nó trong 10 giây."
-      chienLuc: { dmg: 0.1 }
+      chienLuc: { dmg: 0.04 }
     mon:
       hoa:
         ten: Lan Tuyết Không Tan

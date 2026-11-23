@@ -1,4 +1,6 @@
 import type { WeaponInst } from "../economy/weapons";
+import type { BaoAnInst } from "../economy/bao-an";
+import type { SlotId } from "../data/bao-an-schema";
 import type { WeaponPity } from "../economy/core";
 import type { Config } from "../data/schema";
 
@@ -7,6 +9,8 @@ export interface OwnedChar {
   cons: number;
   /** uid vũ khí đang trang bị (trong Profile.weapons). */
   vk?: string;
+  /** S31: uid Bảo Ấn đang mặc theo ô (trong Profile.baoAn). */
+  ba?: Partial<Record<SlotId, string>>;
 }
 
 export interface DailyTask {
@@ -85,6 +89,10 @@ export interface Profile {
   wAch: string[];
   /** Cửa hàng quặng theo tuần: khóa tuần (thứ Hai) và số đã đổi. */
   wShop: { week: string; bought: Record<string, number> };
+  /** S31: kho Bảo Ấn theo uid, bộ đếm uid, lượt đổi Bụi Ấn theo tuần. */
+  baoAn: Record<string, BaoAnInst>;
+  baSeq: number;
+  baDoi: { week: string; used: Record<string, number> };
 }
 export interface PuzzleSave {
   solved: string[];
