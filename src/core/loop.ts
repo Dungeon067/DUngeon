@@ -48,8 +48,8 @@ export function update(dt: number) {
   const p = GS.G.p,
     m = cur();
   // movement input
-  // Chỉ xoay theo camera khi cảnh 3D đang vẽ (đấu trường và bản 2D dùng góc nhìn cố định).
-  let [mx, my] = camRelative(...moveAxis(), renderer3d() && GS.G.map ? (GS.camYaw ?? 0) : 0);
+  // Cảnh 3D (đảo, bí cảnh, đấu trường): hướng đi theo camera. Bản 2D kiểm thử dùng góc nhìn cố định.
+  let [mx, my] = camRelative(...moveAxis(), renderer3d() ? (GS.camYaw ?? 0) : 0);
   const ml = Math.hypot(mx, my);
   if (ml > 1) {
     mx /= ml;

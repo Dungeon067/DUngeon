@@ -2,7 +2,7 @@ import { GS } from "../core/state";
 import { beginLifted, drawShadow, drawWaves } from "./render-z";
 import { drawChibi } from "../art/chibi";
 import { drawBoss, drawEnemy } from "../art/enemy";
-import { drawBossTele, drawBossWorldUi, drawEnemyUi, drawTele, drawTurret } from "../art/props";
+import { drawAlert, drawBossTele, drawBossWorldUi, drawEnemyUi, drawTele, drawTurret } from "../art/props";
 import { drawParticle, drawSlash } from "../art/fx";
 import { ctx } from "../core/canvas";
 import { TAU, hash2, rand, rgba } from "../core/util";
@@ -10,12 +10,15 @@ import { EL } from "../data/content";
 import { cur } from "../entities/party";
 import { Server } from "../server/server";
 import { drawCine } from "../ui/cine";
-import { renderer3d, type WorldRenderer } from "../render3d/select";
+import { renderer3d, wants3D, type WorldRenderer } from "../render3d/select";
 import { drawMenuBg } from "../ui/menuBg";
 import { drawArena, drawChest, drawPortal, drawRock, drawStatue, drawTile, drawTree } from "../world/draw";
 import { MH, MW, TL, TS } from "../world/map";
 import { queuePuzzles } from "../world/draw-puzzles";
 import { groundAt } from "../world/collision";
+
+/** Người chơi luôn chơi 3D; lớp vẽ 2D chỉ còn cho kiểm thử tự động (?e2e, ?renderer=2d). */
+const PLAYER_3D = wants3D();
 
 export function render() {
   const tm = performance.now() / 1000;
@@ -26,11 +29,18 @@ export function render() {
     return;
   }
   const r3 = renderer3d();
-  if (r3 && GS.G.map && r3.frame(tm)) {
+  if (r3 && r3.frame(tm)) {
     render3dOverlay(r3, tm);
     return;
   }
   r3?.hide?.();
+  if (PLAYER_3D) {
+    // 3D đang tải hoặc đang dựng lại sau khi mất context: màn tối, không vẽ 2D.
+    ctx.fillStyle = "#070b1c";
+    ctx.fillRect(0, 0, GS.VW, GS.VH);
+    drawScreenOverlays(tm);
+    return;
+  }
   const sx = GS.G.shake ? rand(-GS.G.shake, GS.G.shake) : 0,
     sy = GS.G.shake ? rand(-GS.G.shake, GS.G.shake) : 0;
   ctx.fillStyle = "#1f5a8e";
@@ -348,6 +358,56 @@ export function render() {
 /** Lớp 2D đè lên cảnh 3D: chữ sát thương theo vị trí chiếu, viền tối, băng chữ, cắt cảnh. */
 function render3dOverlay(r3: WorldRenderer, tm: number) {
   ctx.clearRect(0, 0, GS.VW, GS.VH);
+  if (GS.G.map) drawWorldTele3d(r3, tm);
+  else drawArenaUi3d(r3);
+  ctx.setTransform(GS.DPR, 0, 0, GS.DPR, 0, 0);
+  ctx.textAlign = "center";
+  for (const t of GS.G.texts) {
+    const k = t.life / t.max,
+      q = r3.project(t.x, t.y + 30, 30);
+    if (!q.vis) continue;
+    ctx.globalAlpha = Math.min(1, k * 2);
+    ctx.font = `800 ${t.size * GS.ZOOM}px 'Be Vietnam Pro',sans-serif`;
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "rgba(0,0,0,.65)";
+    ctx.strokeText(t.txt, q.x, q.y);
+    ctx.fillStyle = t.col;
+    ctx.fillText(t.txt, q.x, q.y);
+  }
+  ctx.globalAlpha = 1;
+  drawScreenOverlays(tm);
+}
+
+/** Đấu trường 3D: vùng cảnh báo đã vẽ 3D trên sàn; ở đây chỉ chiếu thanh máu, dấu "!", sao choáng lên đầu quái. */
+function drawArenaUi3d(r3: WorldRenderer) {
+  const D = GS.DPR,
+    s = GS.ZOOM;
+  /** Vẽ bản 2D gốc tại (ax, ay) sao cho điểm đó rơi đúng vị trí chiếu của (x, y, z) trong cảnh 3D. */
+  const at = (x: number, y: number, z: number, ax: number, ay: number, f: () => void) => {
+    const q = r3.project(x, y, z);
+    if (!q.vis || q.x < -80 || q.x > GS.VW + 80 || q.y < -80 || q.y > GS.VH + 80) return;
+    ctx.save();
+    ctx.setTransform(D * s, 0, 0, D * s, D * (q.x - s * ax), D * (q.y - s * ay));
+    f();
+    ctx.restore();
+  };
+  for (const e of GS.G.enemies) {
+    if (e.dead) continue;
+    if (e.isBoss) {
+      // Đầu Hắc Giao ngóc cao khoảng 2–3 ô trên mặt nước.
+      at(e.x, e.y, 120, e.x, e.y - 92, () => drawBossWorldUi(e));
+      if (e.tele && e.state === "wind" && e.tele.kind !== "summon")
+        at(e.x, e.y, 150, e.x, e.y - 110, () => drawAlert(e.x, e.y - 110, Math.min(1, e.t / e.tele.dur)));
+      continue;
+    }
+    const top = e.type === "golem" ? 78 : e.type === "slime" ? 34 : 46,
+      z = top * (e.type === "golem" ? 1.05 : 1.15) + Math.max(0, e.z ?? 0);
+    at(e.x, e.y, z, e.x, e.y - top, () => drawEnemyUi(e));
+  }
+}
+
+/** Đảo và bí cảnh: câu đố, vùng cảnh báo và sóng xung kích vẫn chiếu bản 2D lên mặt đất (địa hình không phẳng). */
+function drawWorldTele3d(r3: WorldRenderer, tm: number) {
   drawPuzzles3d(r3, tm);
   // Vùng cảnh báo đòn và sóng xung kích: bản vẽ 2D chiếu lên mặt đất quanh điểm của nó.
   ctx.save();
@@ -366,22 +426,6 @@ function render3dOverlay(r3: WorldRenderer, tm: number) {
     }
     ctx.restore();
   }
-  ctx.setTransform(GS.DPR, 0, 0, GS.DPR, 0, 0);
-  ctx.textAlign = "center";
-  for (const t of GS.G.texts) {
-    const k = t.life / t.max,
-      q = r3.project(t.x, t.y + 30, 30);
-    if (!q.vis) continue;
-    ctx.globalAlpha = Math.min(1, k * 2);
-    ctx.font = `800 ${t.size * GS.ZOOM}px 'Be Vietnam Pro',sans-serif`;
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = "rgba(0,0,0,.65)";
-    ctx.strokeText(t.txt, q.x, q.y);
-    ctx.fillStyle = t.col;
-    ctx.fillText(t.txt, q.x, q.y);
-  }
-  ctx.globalAlpha = 1;
-  drawScreenOverlays(tm);
 }
 
 /** Đặt phép biến đổi affine của mặt đất quanh (x, y): vẽ tọa độ thế giới 2D lên mặt đất 3D. */

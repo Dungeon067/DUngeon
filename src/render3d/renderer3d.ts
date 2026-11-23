@@ -21,9 +21,11 @@ import { CanvasSprite } from "./actors3d";
 import { getRenderable, renderObjects } from "./renderables";
 import type { WorldRenderer } from "./select";
 import { MODELS, VrmActor } from "./toon/actor";
-import { FADE, fadeOccluder, toonMat } from "./toon/mat";
+import { FADE, disposeTree, fadeOccluder, toonMat } from "./toon/mat";
 import { animateMonster, buildMonster, type MonsterView } from "./toon/monsters";
 import { buildSky } from "./toon/sky";
+import { buildBossArena, buildTowerArena, type Arena } from "./toon/arena";
+import { createTeleLayer } from "./toon/tele3d";
 import { createS23Layer } from "./toon/s23";
 import { LV, buildGrass, buildHeight, buildProps, buildTerrain, buildWater, type HeightField } from "./toon/terrain";
 
@@ -222,6 +224,10 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   const monsters = new Map<any, MonsterView>();
   const renderables = new Map<any, { o: any; auto?: CanvasSprite }>();
   const s23 = createS23Layer(scene);
+  // Đấu trường (Tháp, Hắc Giao): dựng một lần khi vào trận, dọn khi ra. Vùng cảnh báo đòn vẽ 3D trên sàn.
+  let arena: Arena | null = null,
+    arenaOf: any = null;
+  const tele = createTeleLayer(scene);
 
   // Hạt nguyên tố.
   const MAXP = 700;
@@ -241,6 +247,9 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     orb: new THREE.SphereGeometry(0.1, 10, 8),
   };
   const pickPool: THREE.Mesh[] = [];
+  const turretPool: THREE.Group[] = [],
+    turretPoleG = new THREE.CylinderGeometry(0.05, 0.06, 0.6, 6).translate(0, 0.3, 0),
+    turretOrbG = new THREE.OctahedronGeometry(0.18, 1);
   const ringPool: THREE.Mesh[] = [],
     arrowPool: THREE.Object3D[] = [],
     orbPool: THREE.Mesh[] = [];
@@ -318,6 +327,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     }
     blob.visible = !Q.shadows;
     dropWorld();
+    dropArena();
     hero?.dispose();
     hero = null;
     heroFallback?.obj.removeFromParent();
@@ -340,17 +350,28 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   }
 
   function dropWorld() {
-    for (const o of [world, water?.mesh, grass?.mesh]) {
-      o?.removeFromParent();
-      o?.traverse((x: any) => {
-        x.geometry?.dispose();
-        for (const m of [x.material].flat()) m?.dispose?.();
-      });
-    }
+    for (const o of [world, water?.mesh, grass?.mesh]) if (o) disposeTree(o);
     world = null;
     worldOf = null;
     water = null;
     grass = null;
+  }
+
+  function dropArena() {
+    arena?.dispose();
+    arena = null;
+    arenaOf = null;
+    tele.clear();
+  }
+
+  function syncArena() {
+    const G = GS.G;
+    if (arenaOf === G && arena) return;
+    dropArena();
+    const AQ = { shadows: Q.shadows, bloom: Q.bloom, reflect: Q.msaa > 0, dense: Q.grass ? Q.grass / 2 : 0.5 };
+    arena = G.mode === "boss" ? buildBossArena(G.bounds, AQ) : buildTowerArena(G.tower?.floor ?? 1, G.bounds, AQ);
+    scene.add(arena.group);
+    arenaOf = G;
   }
 
   function syncWorld() {
@@ -419,7 +440,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   /** Cập nhật vị trí làm mờ vật cản theo nhân vật đang điều khiển. */
   function updateFade() {
     const p = GS.G?.p;
-    if (!p || !GS.G.map) return void (FADE.uFadeR.value = 0);
+    if (!p) return void (FADE.uFadeR.value = 0);
     gl.getDrawingBufferSize(fsz);
     const el = lift(p),
       gy = groundY(p.x, p.y, el.g) + el.air / TS;
@@ -440,7 +461,14 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     lastT = t;
     cv.style.display = "block";
     gl.info.reset();
-    syncWorld();
+    if (GS.G.map) {
+      dropArena();
+      syncWorld();
+    } else {
+      dropWorld();
+      F = null;
+      syncArena();
+    }
     const G = GS.G,
       p = G.p,
       m = cur();
@@ -471,6 +499,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     camera.position.x += shake;
     camera.lookAt(camTarget);
     sky.mesh.position.copy(camera.position);
+    sky.mesh.visible = !arena;
 
     // Ngày đêm.
     const tod = lerpTod(timeOfDay());
@@ -485,7 +514,8 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     // Sương xa: tính theo khoảng cách camera, có mức tối thiểu để khi zoom gần không bị mù trắng.
     fog.near = 14 + dist * 0.8;
     fog.far = 40 + dist * 1.8;
-    if (camera.far !== fog.far + 12) {
+    if (camera.far !== fog.far + 12 || camera.near !== 0.3) {
+      camera.near = 0.3;
       camera.far = fog.far + 12;
       camera.updateProjectionMatrix();
     }
@@ -502,6 +532,25 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     hemi.color.copy(tod.top).lerp(new THREE.Color(0xffffff), 0.55);
     hemi.groundColor.set(0x6a5a9a).multiplyScalar(0.6 + 0.4 * (1 - tod.night));
     gl.toneMappingExposure = 1;
+    if (arena) {
+      // Đấu trường có ánh sáng riêng, không theo giờ trong ngày.
+      const E = arena.env;
+      fog.color.copy(E.fog);
+      fog.near = E.fogNear;
+      fog.far = E.fogFar;
+      if (camera.far !== fog.far + 12 || camera.near !== 2) {
+        // Mặt cắt gần xa hơn: đá, nấm ven vách sát camera không phủ kín màn hình.
+        camera.far = fog.far + 12;
+        camera.near = 2;
+        camera.updateProjectionMatrix();
+      }
+      hemi.color.copy(E.hemiSky);
+      hemi.groundColor.copy(E.hemiGround);
+      hemi.intensity = E.hemiI;
+      sun.color.copy(E.sunCol);
+      sun.intensity = E.sunI;
+      sun.position.copy(pos).add(E.sunOff);
+    }
 
     chests.forEach((c, i) => (c.visible = !Server.P.chests.includes(i)));
     const olR = (dist + 8) ** 2;
@@ -623,11 +672,19 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         v = buildMonster(e);
         monsters.set(e, v);
         scene.add(v.obj);
+        if (arena && !e.isBoss) arena.spawnFx(e.x, e.y, EL[e.el]?.c ?? "#ffffff");
       }
       const el = lift(e);
       v.obj.position.set(e.x / TS, groundY(e.x, e.y, el.g) + el.air / TS, e.y / TS);
       animateMonster(v, e, t, Math.atan2(p.x - e.x, p.y - e.y));
     }
+    // Hắc Giao bị hạ: giữ mô hình chìm dần xuống nước trong lúc chờ bảng kết quả.
+    for (const [e, v] of monsters)
+      if (e.isBoss && e.dead && !seen.has(e) && (v.deadT ?? 0) < 1) {
+        v.deadT = Math.min(1, (v.deadT ?? 0) + dt / 1.6);
+        seen.add(e);
+        animateMonster(v, e, t, 0);
+      }
     for (const [e, v] of monsters)
       if (!seen.has(e)) {
         v.obj.removeFromParent();
@@ -658,6 +715,38 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       o.rotation.y = t * 2.5;
     }
     for (let i = ki; i < pickPool.length; i++) pickPool[i].visible = false;
+
+    // Trụ phép (kỹ năng "turret"): cọc gỗ và quả cầu nguyên tố lơ lửng, nháy khi sắp hết giờ.
+    let tti = 0;
+    const turretGlow: { x: number; y: number; z: number; c: THREE.Color; i: number }[] = [];
+    for (const tu of G.turrets) {
+      let o = turretPool[tti];
+      if (!o) {
+        o = new THREE.Group();
+        const pole = new THREE.Mesh(turretPoleG, toonMat({ color: 0x4a3a2a }));
+        pole.castShadow = true;
+        const orb = new THREE.Mesh(
+          turretOrbG,
+          toonMat({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 1.4 }),
+        );
+        orb.position.y = 0.85;
+        o.add(pole, orb);
+        turretPool.push(o);
+        fxGroup.add(o);
+      }
+      tti++;
+      const orb = o.children[1] as THREE.Mesh,
+        om = orb.material as THREE.MeshToonMaterial,
+        c = EL[tu.el]?.c ?? "#ffffff";
+      om.color.set(EL[tu.el]?.c2 ?? c);
+      om.emissive.set(c);
+      o.visible = !(tu.life < 2 && Math.floor(t * 8) % 2);
+      o.position.set(tu.x / TS, groundY(tu.x, tu.y, 0), tu.y / TS);
+      orb.position.y = 0.85 + Math.sin(t * 4) * 0.05;
+      orb.rotation.y = t * 2;
+      turretGlow.push({ x: tu.x / TS, y: o.position.y + 0.9, z: tu.y / TS, c: new THREE.Color(c), i: 1 });
+    }
+    for (let i = tti; i < turretPool.length; i++) turretPool[i].visible = false;
 
     // Vật thể câu đố (renderable).
     const live = new Set<any>();
@@ -702,7 +791,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     );
 
     // Mũi tên, đạn phép, vòng, hạt; đèn điểm theo nguyên tố.
-    const glow: { x: number; y: number; z: number; c: THREE.Color; i: number }[] = [];
+    const glow: { x: number; y: number; z: number; c: THREE.Color; i: number }[] = [...turretGlow];
     let si = 0,
       ai = 0,
       oi = 0,
@@ -881,7 +970,26 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     if (parts.instanceColor) parts.instanceColor.needsUpdate = true;
     for (let i = ri; i < ringPool.length; i++) ringPool[i].visible = false;
     for (let i = si; i < slashPool.length; i++) slashPool[i].g.visible = false;
-    if (night) {
+    if (arena) {
+      arena.tick({ t, dt, G, camera, addP });
+      for (const l of arena.lamps) glow.push({ x: l.x, y: l.y, z: l.z, c: l.c, i: l.i });
+      tele.sync(G);
+      const b = G.boss;
+      // Giai đoạn 2: tia lôi chạy dọc thân Hắc Giao.
+      if (b && !b.dead && b.phase === 2)
+        for (let j = 0; j < 10; j++) {
+          const sg = b.segs[(j * 3 + Math.floor(t * 30)) % b.segs.length];
+          addP(
+            sg.x / TS + (Math.random() - 0.5) * 0.9,
+            0.6 + Math.random() * 1.4,
+            sg.y / TS + (Math.random() - 0.5) * 0.9,
+            j % 3 ? EL.bolt.c2 : "#ffffff",
+            0.9,
+          );
+        }
+      if (b && !b.dead) glow.push({ x: b.x / TS, y: 2.4, z: b.y / TS, c: new THREE.Color(EL[b.el].c), i: 1.6 });
+    } else tele.clear();
+    if (night && !arena) {
       for (const l of lamps) glow.push({ x: l.x, y: l.y, z: l.z, c: new THREE.Color(l.c), i: 1.4 });
       if (m) glow.push({ x: pos.x, y: pos.y + 1.8, z: pos.z + 0.6, c: new THREE.Color(EL[m.c.el].c), i: 0.35 });
     }
@@ -942,6 +1050,8 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     },
     resize,
     dispose() {
+      dropArena();
+      tele.dispose();
       composer?.dispose();
       gl.dispose();
       cv.remove();
@@ -951,6 +1061,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     },
     hide() {
       cv.style.display = "none";
+      if (!GS.G || GS.G.map || GS.scene !== "play") dropArena();
     },
     /** Gỡ lỗi và đo: số tam giác theo nhóm, vật thể nhân vật. */
     debug() {
@@ -966,7 +1077,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
               : (o.parent?.parent === scene ? "grp" : o.parent?.parent?.type) + ":" + (o.material?.type ?? "");
         by[key] = (by[key] ?? 0) + n * k;
       });
-      return { by, hero, scene };
+      return { by, hero, scene, arena: arena ? { kind: arena.kind, ...arena.stats() } : null, tele: tele.count() };
     },
   } as WorldRenderer;
 }
