@@ -10,7 +10,7 @@ import {
   dpsNeeded,
   freeGemsOnDay,
   hoTinhLevel,
-  lvCostRange,
+  lvCost,
   rollRarity,
   teamChienLuc,
   teamDps,
@@ -55,10 +55,34 @@ export function investOnDay(day: number, p: Profile | null, E: Economy, weapon?:
     ht = hoTinhLevel(day, E),
     cp = caps(ht, E);
   const runs = Math.floor((day * T.linhLuc.hoiMoiNgay) / T.linhLuc.moiLuotLongSao);
-  let books = runs * T.linhLuc.thuongMoiLuot.sach + day * E.game.thuong.uyThac.duBon.sach;
-  if (p?.hanhTrinh) books += Math.ceil(day / E.goiNap.hanhTrinhMua.ngay) * E.goiNap.hanhTrinhMua.sach;
-  let lv = 1;
-  while (lv < cp.lv && lvCostRange(1, lv + 1, E).books * 4 <= books) lv++;
+  const U = E.game.thuong.uyThac,
+    seasons = p?.hanhTrinh ? Math.ceil(day / E.goiNap.hanhTrinhMua.ngay) : 0;
+  let books = runs * T.linhLuc.thuongMoiLuot.sach + day * U.duBon.sach + seasons * E.goiNap.hanhTrinhMua.sach;
+  let coin =
+    runs * T.linhLuc.thuongMoiLuot.xu +
+    day * 4 * U.moiViec.xu +
+    Math.floor(day / 7) * T.thuNhap.tuan.xu +
+    seasons * E.goiNap.hanhTrinhMua.xu;
+  let loi = runs * T.linhLuc.thuongMoiLuot.loiSao;
+  // Nuôi đội 4 người: lên cấp hoặc Khai Tinh khi đủ Sách, Xu, Lõi Sao.
+  let lv = 1,
+    khai = 0;
+  for (;;) {
+    if (lv < Math.min(cp.lv, T.khaiTinh.gioiHanCap[khai]!)) {
+      const c = lvCost(lv, E);
+      if (c.books * 4 > books || c.coin * 4 > coin) break;
+      books -= c.books * 4;
+      coin -= c.coin * 4;
+      lv++;
+    } else if (khai < cp.khai) {
+      const x = T.khaiTinh.xu[khai]! * 4,
+        l = T.khaiTinh.loiSao[khai]! * 4;
+      if (x > coin || l > loi) break;
+      coin -= x;
+      loi -= l;
+      khai++;
+    } else break;
+  }
   const baoAnRamp = Math.min(1, day / 30);
   const w = weapon ?? p?.vuKhi ?? { r: 4 as const, r5Ngay: T.thuNhap.vuKhi4MienPhiR5Ngay };
   const tinhLuyen = Math.min(5, 1 + Math.floor((4 * day) / w.r5Ngay));
@@ -67,8 +91,8 @@ export function investOnDay(day: number, p: Profile | null, E: Economy, weapon?:
     thienTuong: cp.thienTuong,
     inv: {
       lv,
-      khai: cp.khai,
-      kyNang: cp.kyNang,
+      khai,
+      kyNang: Math.min(cp.kyNang, T.kyNang.toiDaTheoKhaiTinh[khai]!),
       baoAn: T.baoAn.chatLuongTheoThienTuong[cp.thienTuong]! * baoAnRamp,
       vuKhi: { r: w.r, tinhLuyen },
     } satisfies Omit<Invest, "cons">,
@@ -81,7 +105,8 @@ export function paidGemsForMonth(month: number, p: Profile, E: Economy, usedFirs
   let budget = p.vndThang,
     gems = 0;
   if (p.theThang) budget -= S.theThang.gia;
-  if (p.hanhTrinh) budget -= Math.round((S.hanhTrinhMua.gia * 30) / S.hanhTrinhMua.ngay);
+  if (p.hanhTrinh)
+    for (let d = month * 30; d < month * 30 + 30; d++) if (d % S.hanhTrinhMua.ngay === 0) budget -= S.hanhTrinhMua.gia;
   const packs = [...S.daSao].sort((a, b) => b.gia - a.gia);
   if (S.napLanDauNhanDoi)
     for (const pk of [...packs].reverse())
@@ -95,7 +120,6 @@ export function paidGemsForMonth(month: number, p: Profile, E: Economy, usedFirs
       budget -= pk.gia;
       gems += pk.daSao + pk.thuong;
     }
-  void month;
   return gems;
 }
 
@@ -168,27 +192,28 @@ export function simulateProfile(p: Profile, chars: SimChar[], G: Gacha, E: Econo
       gems += g;
       if (pl === 0) gemsTotal += g;
       const feat = five[Math.floor((d - 1) / rotate) % five.length]!;
-      while (gems >= G.cost) {
-        gems -= G.cost;
-        np++;
-        const roll = rollRarity(st, G, E, rng);
-        let c: SimChar | null = null;
-        if (roll.r === 5) {
-          n5++;
-          if (roll.feat) {
-            c = feat;
-            nf++;
-            if (!first) first = d;
-          } else {
-            const pool = five.filter((x) => x.id !== feat.id);
-            c = pool[Math.floor(rng() * pool.length)]!;
+      if (gems >= Math.max(1, E.moPhong.tichLuyTruocKhiUoc) * G.cost)
+        while (gems >= G.cost) {
+          gems -= G.cost;
+          np++;
+          const roll = rollRarity(st, G, E, rng);
+          let c: SimChar | null = null;
+          if (roll.r === 5) {
+            n5++;
+            if (roll.feat) {
+              c = feat;
+              nf++;
+              if (!first) first = d;
+            } else {
+              const pool = five.filter((x) => x.id !== feat.id);
+              c = pool[Math.floor(rng() * pool.length)]!;
+            }
+          } else if (roll.r === 4) c = four[Math.floor(rng() * four.length)]!;
+          if (c) {
+            const k = idx.get(c.id)!;
+            owned[k] = Math.min(6, owned[k]! + 1);
           }
-        } else if (roll.r === 4) c = four[Math.floor(rng() * four.length)]!;
-        if (c) {
-          const k = idx.get(c.id)!;
-          owned[k] = Math.min(6, owned[k]! + 1);
         }
-      }
       pulls[d] += np;
       fiveA[d] += n5;
       featA[d] += nf;
