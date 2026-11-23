@@ -3,6 +3,8 @@
  * Chỉ đọc GS, không ghi logic. Kiến trúc và ngân sách hiệu năng: docs/art/renderer-3d.md.
  */
 import * as THREE from "three";
+import { KITS } from "../data/kits";
+import { kitFx, kitField, kitTrail, type FxCtx } from "./kit-fx";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
@@ -415,7 +417,14 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     if (a && ACT_WIN[a.k]) {
       const win = ACT_WIN[a.k] / (a.k.startsWith("atk") ? A.speed : 1);
       if (T - a.t0 < win) {
-        const k = a.k.startsWith("atk") ? A.atk[+a.k.slice(3) - 1] : a.k === "skill" ? A.skill : A.burst;
+        const k =
+          a.clip && hero!.has?.(a.clip)
+            ? a.clip
+            : a.k.startsWith("atk")
+              ? A.atk[+a.k.slice(3) - 1]
+              : a.k === "skill"
+                ? A.skill
+                : A.burst;
         const d = hero!.duration(k);
         return { k: `${k}#${a.t0}`, once: true, speed: d / win, fade: 0.08 };
       }
@@ -746,8 +755,11 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       const orb = o.children[1] as THREE.Mesh,
         om = orb.material as THREE.MeshToonMaterial,
         c = EL[tu.el]?.c ?? "#ffffff";
-      om.color.set(EL[tu.el]?.c2 ?? c);
-      om.emissive.set(c);
+      // Đèn hoa mai, Cọc Sấm, hoa băng: màu theo bộ chiêu, đèn nạp dầu sáng hơn.
+      const TK = tu.tag && tu.m ? KITS[tu.m.c.id] : null;
+      om.color.set(TK ? TK.mau.c2 : (EL[tu.el]?.c2 ?? c));
+      om.emissive.set(TK ? TK.mau.c : c);
+      orb.scale.setScalar(tu.tag === "den" ? 1.5 + (tu.oil > 0 ? 0.3 : 0) : 1);
       o.visible = !(tu.life < 2 && Math.floor(t * 8) % 2);
       o.position.set(tu.x / TS, groundY(tu.x, tu.y, 0), tu.y / TS);
       orb.position.y = 0.85 + Math.sin(t * 4) * 0.05;
@@ -868,10 +880,24 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       parts.setColorAt(pi, cc.set(col));
       pi++;
     };
+    const kc: FxCtx = {
+      addP,
+      glow: (x, y, z, c, i) => glow.push({ x, y, z, c: new THREE.Color(c), i }),
+      ground: (x, y) => groundY(x, y, 0),
+      TS,
+      t,
+    };
+    for (const pr of G.projs)
+      if (pr.skin && pr.m) {
+        const K = KITS[pr.m.c.id];
+        if (K) kitTrail(pr, kc, groundY(pr.x, pr.y, 0) + 0.9, K.mau.c, K.mau.c2);
+      }
+    for (const fl of G.fields) if (fl.k === "kvung") kitField(fl, kc, fl.m?.c.id ?? "");
     for (const f of G.fx) {
       const k = f.life / f.max,
         gy = groundY(f.x, f.y, 0);
-      if (f.k === "dot")
+      if (f.k === "kfx") kitFx(f, kc);
+      else if (f.k === "dot")
         addP(
           f.x / TS,
           gy + 0.2 + (f.z ?? 0) / TS + (1 - k) * 0.4,

@@ -61,6 +61,7 @@ export function kfx(id: string | undefined, c: Ctx, x: number, y: number, r: num
   GS.G.fx.push({
     k: "kfx",
     id,
+    who: c.m.c.id,
     x,
     y,
     r,

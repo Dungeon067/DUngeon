@@ -1,4 +1,5 @@
 import { GS } from "../core/state";
+import { STATUS } from "../data/kits";
 import { portrait } from "../art/chibi";
 import { $, fmt } from "../core/util";
 import { EL, OBJECTIVES } from "../data/content";
@@ -203,6 +204,16 @@ function statusIcons(p: any, m: any) {
   if (p.iframes > 0 && p.dashT > 0) out.push(["luot", "Đang lướt né, miễn sát thương", ""]);
   if (m && m.energy >= m.c.burst.cost) out.push(["no", "Nộ đã đầy", ""]);
   if (p.stamina < 20) out.push(["the-luc", "Thể lực thấp, chưa lướt được", ""]);
+  // Buff và debuff của nhân vật đang điều khiển (S30).
+  for (const s of m?.sts ?? []) {
+    const d = STATUS[s.id];
+    if (!d) continue;
+    out.push([
+      d.icon,
+      `${d.ten}${s.n > 1 ? ` ×${s.n}` : ""}: ${d.mo}`,
+      `${s.n > 1 ? `${s.n}·` : ""}${Math.ceil(s.t)}s`,
+    ]);
+  }
   return out;
 }
 
