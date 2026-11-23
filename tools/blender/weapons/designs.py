@@ -76,6 +76,9 @@ DESIGNS = {
     "gio-bac-trai-bac": dict(builder="spear_ornate", gem="#ffc070", r=4, type="spear", steel="#6a6c74", edge="#e0dccc", glow="#ffc070", gold="#a87a44",
                              shaft_col="#3a2414", shaft_col2="#5a3820", crack_glow=0.0, fuller_glow=0.8, tassel="#8a2a20",
                              glow_strength=1),
+    # Pháp khí hiển thị riêng của Mai Linh (S26, chỉ mô hình 3D; content/models.yaml nhanVat.mailinh.vuKhi)
+    "den-long-hoa-mai": dict(r=4, type="cat", builder="lantern_paper", glb_ornate=True, paper="#c8283a", gold="#e8b04a",
+                             glow="#ff8a2a", gem="#ffd27a", tassel="#ffd27a", core_glow=6, glow_strength=4, angle=10),
     # ---------------- 4★ Ước nguyện
     "suong-som-ben-song": dict(builder="sword_ornate", gem="#b8e8ff", core_glow=5, glow_strength=3, guard_span=0.15, r=4, type="sword", steel="#8aa0b4", edge="#f0f8ff", glow="#b8e8ff", gold="#b8c4d0",
                                fuller_glow=2.0, guard="bar", wrap="#2a3a4a", width=0.045, length=1.0),

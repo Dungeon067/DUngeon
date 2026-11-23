@@ -51,4 +51,9 @@ describe("S26: chuẩn mô hình VRM nhân vật", () => {
     expect(src.some((f) => /\.(vroid|blend)$/.test(f))).toBe(true);
     expect(M.nhanVat[id]?.dang, id).toBeTruthy();
   });
+
+  it("vũ khí hiển thị riêng (nhanVat.vuKhi) có file GLB", () => {
+    for (const [id, c] of Object.entries(M.nhanVat))
+      if (c.vuKhi) expect(existsSync(`${DIR}/weapons/${c.vuKhi}.glb`), id).toBe(true);
+  });
 });

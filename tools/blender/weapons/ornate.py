@@ -596,9 +596,68 @@ def build_moon_mirror(d):
     return root
 
 
+def build_lantern_paper(d):
+    """Đèn lồng giấy (Mai Linh): thân giấy đỏ hai nửa, khe giữa lộ lõi lửa, hoa mai vàng, nan và chóp vàng, tua vàng."""
+    root = empty()
+    mg = mat_metal("gold", hexc(d.get("gold", "#e0a83a")), 0.3)
+    paper = mat_cloth("paper", hexc(d.get("paper", "#c8283a")), 0.3, 0.7, 220)
+    me = mat_emit("glow", hexc(d["glow"]), d.get("glow_strength", 4))
+    R, Hh, gap = 0.12, 0.14, 0.03
+
+    def rz(z):
+        return R * math.sqrt(max(0.0, 1 - (z / Hh) ** 2))
+
+    for nm, z0, z1 in (("paper_lo", -0.125, -gap), ("paper_hi", gap, 0.125)):
+        prof = [(0.0, z0)] + [(rz(z0 + (z1 - z0) * k / 8), z0 + (z1 - z0) * k / 8) for k in range(9)] + [(0.0, z1)]
+        lathe(nm, prof, 32, [paper], root, sharp_deg=60)
+    for k in range(8):
+        a = TAU * k / 8
+        rib = [(rz(z) * 1.01 * math.cos(a), rz(z) * 1.01 * math.sin(a), z) for z in [-0.125 + 0.25 * t / 12 for t in range(13)]]
+        curve_obj(f"rib{k}", [rib], 0.0035, mg, root, bevel_res=1)
+    for nm, z in (("ring_lo", -gap), ("ring_hi", gap)):
+        lathe(nm, [(0.0, z - 0.006), (rz(z) + 0.006, z - 0.006), (rz(z) + 0.006, z + 0.006), (0.0, z + 0.006)], 32, [mg], root)
+    lathe("cap_hi", [(0.0, 0.12), (0.06, 0.12), (0.065, 0.135), (0.04, 0.15), (0.0, 0.155)], 24, [mg], root)
+    lathe("cap_lo", [(0.0, -0.155), (0.04, -0.15), (0.065, -0.135), (0.06, -0.12), (0.0, -0.12)], 24, [mg], root)
+    fire = mat_gem("fire", hexc(d.get("gem", "#ffcf6a")), hexc(d["glow"]), d.get("core_glow", 6), 0.03)
+    crystal("flame", (0, 0, -0.06), (0, 0, 1), 0.12, 0.05, 6, [fire], root, twist=0.5)
+    lathe("core", [(0.0, -0.06), (0.07, -0.03), (0.08, 0.0), (0.07, 0.03), (0.0, 0.06)], 16, [me], root)
+    flower = [((0.55 + 0.45 * abs(math.cos(2.5 * t))) * math.cos(t), (0.55 + 0.45 * abs(math.cos(2.5 * t))) * math.sin(t))
+              for t in [TAU * i / 30 + math.pi / 2 for i in range(30)]]
+    for k in range(4):
+        for z, s in ((0.075, 0.034), (-0.075, 0.03)):
+            a = TAU * (k + (0.5 if z < 0 else 0)) / 4
+            o = extrude_poly(f"mai{k}{z > 0}", [(x * s, y * s) for x, y in flower], 0.004, [mg], root)
+            o.location = (math.cos(a) * (rz(z) + 0.002), math.sin(a) * (rz(z) + 0.002), z)
+            o.rotation_euler = (0.0, 0.0, a + math.pi / 2)
+            c = extrude_poly(f"mai_c{k}{z > 0}", [(0.3 * s * math.cos(TAU * i / 10), 0.3 * s * math.sin(TAU * i / 10)) for i in range(10)],
+                             0.003, [me], root)
+            c.location = (math.cos(a) * (rz(z) + 0.005), math.sin(a) * (rz(z) + 0.005), z)
+            c.rotation_euler = (0.0, 0.0, a + math.pi / 2)
+    curve_obj("handle", [[(0, 0, 0.155), (0.05, 0, 0.21), (0, 0, 0.26), (-0.05, 0, 0.21), (0, 0, 0.155)]], 0.005, mg, root,
+              bevel_res=1, cyclic=True)
+    tm = mat_cloth("tassel", hexc(d.get("tassel", "#ffd27a")), 0.9, 0.55, 300)
+    lathe("tassel_knot", [(0.0, -0.19), (0.014, -0.185), (0.018, -0.17), (0.012, -0.155), (0.0, -0.155)], 12, [tm], root)
+    strands = []
+    for i in range(10):
+        a = TAU * i / 10
+        strands.append([(0.012 * (1 + 0.6 * t) * math.cos(a), 0.012 * (1 + 0.6 * t) * math.sin(a), -0.185 - 0.11 * t)
+                        for t in (0, 0.35, 0.7, 1)])
+    curve_obj("tassel", strands, 0.0035, tm, root, bevel_res=1)
+    # GLB tô toon có viền lật mặt: pháp tuyến phải hướng ra ngoài, nếu không thân đèn hiện màu viền.
+    import bmesh
+    for o in root.children_recursive:
+        if o.type == "MESH" and not o.name.startswith(("mai", "flame")):
+            bm = bmesh.new()
+            bm.from_mesh(o.data)
+            bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+            bm.to_mesh(o.data)
+            bm.free()
+    return root
+
+
 BUILDERS_ORNATE = {"sword_ornate": build_sword_ornate, "spear_ornate": build_spear_ornate,
                    "orb_ornate": build_orb_ornate, "wind_compass": build_wind_compass,
                    "great_ornate": build_great_ornate, "bow_ornate": build_bow_ornate,
                    "sword_crystal": build_sword_crystal, "crystal_bloom": build_crystal_bloom,
                    "bell_ornate": build_bell_ornate, "lantern_ornate": build_lantern_ornate,
-                   "moon_mirror": build_moon_mirror}
+                   "moon_mirror": build_moon_mirror, "lantern_paper": build_lantern_paper}

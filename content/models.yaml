@@ -1,7 +1,8 @@
 # S25: mô hình 3D cho renderer toon. Đơn vị: 1 = một ô bản đồ (40 px).
 # Thả file vào public/media/models/<id>/model.vrm là game tự nhận, không phải sửa code.
 # Nhân vật chưa có file thì dùng mẫu tạm `mau`. Mục `nhanVat` chỉ để chỉnh riêng từng người
-# (height, yOffset, dang = dáng người cho hệ tư thế S27: nu-teen, nu-nho, nam-teen...).
+# (height, yOffset, dang = dáng người cho hệ tư thế S27: nu-teen, nu-nho, nam-teen...;
+# vuKhi = GLB vũ khí hiển thị riêng khi chưa trang bị, thay cho vuKhiMacDinh).
 mau: _mau
 macDinh:
   height: 1.6 # chiều cao hiển thị
@@ -30,5 +31,5 @@ hoatAnh:
 nhanVat:
   havy: { height: 1.55, dang: nu-teen }
   suongmai: { height: 1.56, dang: nu-teen }
-  mailinh: { height: 1.4, dang: nu-nho }
+  mailinh: { height: 1.4, dang: nu-nho, vuKhi: den-long-hoa-mai, camVuKhi: { rot: [0, 0, -90] } }
   bachvu: { height: 1.72, dang: nam-teen }
