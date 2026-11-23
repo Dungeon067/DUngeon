@@ -35,6 +35,19 @@ describe("Bản chỉnh kinh tế từ Admin", () => {
     expect(reloaded.thietKe.vuKhi.danhSach.find((x) => x.id === "thien-loi-pha-tran")!.tanCong).toBe(0.5);
   });
 
+  it("trình duyệt chặn lưu trữ thì vẫn khởi động bằng file gốc", async () => {
+    const spy = vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+      throw new DOMException("blocked", "SecurityError");
+    });
+    const rm = vi.spyOn(Storage.prototype, "removeItem").mockImplementation(() => {
+      throw new DOMException("blocked", "SecurityError");
+    });
+    const { ECON, ECON_BASE } = await load();
+    expect(ECON).toEqual(ECON_BASE);
+    spy.mockRestore();
+    rm.mockRestore();
+  });
+
   it("bản chỉnh hỏng thì bỏ, Admin không còn báo đang chỉnh", async () => {
     localStorage.setItem(KEY, "{không phải json");
     const { econEdited } = await load();

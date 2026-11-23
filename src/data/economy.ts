@@ -29,13 +29,16 @@ function withContent(o: unknown) {
 }
 
 function loadOverride(): Economy {
-  const ls = typeof localStorage !== "undefined" ? localStorage : null;
   try {
-    const s = ls?.getItem(ECON_KEY);
+    const s = typeof localStorage !== "undefined" ? localStorage.getItem(ECON_KEY) : null;
     if (s) return validateEconomy(withContent(JSON.parse(s)), CHARS);
   } catch {
-    /* bản chỉnh hỏng thì bỏ, dùng file gốc */
-    ls?.removeItem(ECON_KEY);
+    /* bản chỉnh hỏng hoặc trình duyệt chặn lưu trữ: dùng file gốc */
+    try {
+      localStorage.removeItem(ECON_KEY);
+    } catch {
+      /* không xóa được thì thôi */
+    }
   }
   return clone(ECON_BASE);
 }
