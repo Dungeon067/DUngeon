@@ -26,7 +26,9 @@ const w0 =
     })(),
   )?.[1] ?? "sword";
 mkdirSync(out, { recursive: true });
-for (const [name, qs, w, h] of views) {
+for (const [name, qs, w, h] of views.filter(
+  ([n]) => !process.env.VIEWS || process.env.VIEWS.split(",").some((v) => n.startsWith(v)),
+)) {
   const pg = await b.newPage({ viewport: { width: w, height: h } });
   pg.on("pageerror", (e) => console.log("[err]", e.message));
   await pg.goto(`${URL0}tools/vrm/sheet.html?id=${id}&w=${w0}&${qs}${process.env.QS ?? ""}`);
