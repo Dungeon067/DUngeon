@@ -109,7 +109,12 @@ export class VrmActor {
     this.obj.add(vrm.scene);
   }
 
-  static async load(id: string, wtype: WeaponType, weaponId: string | null): Promise<VrmActor | null> {
+  static async load(
+    id: string,
+    wtype: WeaponType,
+    weaponId: string | null,
+    colors?: { hair?: string; outfit?: string; eye?: string; accent?: string },
+  ): Promise<VrmActor | null> {
     const own = `${base}media/models/${id}/model.vrm`;
     const url = (await hasFile(own)) ? own : `${base}media/models/${MODELS.mau}/model.vrm`;
     const [g, A] = await Promise.all([loader.loadAsync(url).catch(() => null), loadAnims()]);
@@ -118,12 +123,19 @@ export class VrmActor {
     VRMUtils.removeUnnecessaryVertices(vrm.scene);
     VRMUtils.combineSkeletons(vrm.scene);
     VRMUtils.rotateVRM0(vrm);
+    // Nhân vật chưa có mô hình riêng: nhuộm mẫu tạm theo màu YAML để còn phân biệt được.
+    const tint = url !== own && colors ? tintFor(colors) : null;
     vrm.scene.traverse((o: any) => {
       if (!o.isMesh) return;
       o.castShadow = true;
       o.frustumCulled = false;
       for (const m of [o.material].flat()) {
         if (!m?.isMToonMaterial) continue;
+        const tc = tint?.(m.name ?? "");
+        if (tc) {
+          m.color?.copy(tc).multiplyScalar(1.25);
+          m.shadeColorFactor?.copy(tc).multiplyScalar(0.6);
+        }
         // Bóng ngả tím lam, viền sáng (rim) ấm theo phong cách hoạt hình.
         m.shadeColorFactor?.lerp(new THREE.Color(0x6a5a9a), 0.25);
         m.parametricRimColorFactor?.set(0x7a6a50);
@@ -193,4 +205,20 @@ export class VrmActor {
     this.obj.removeFromParent();
     VRMUtils.deepDispose(this.vrm.scene);
   }
+}
+
+/** Màu nhuộm theo tên vật liệu VRoid (_HAIR, Tops/Bottoms _CLOTH, Shoes, EyeIris). */
+function tintFor(look: { hair?: string; outfit?: string; eye?: string; accent?: string }) {
+  const c = (h?: string) => (h ? new THREE.Color(h) : null);
+  const hair = c(look.hair),
+    outfit = c(look.outfit),
+    eye = c(look.eye),
+    accent = c(look.accent);
+  return (name: string): THREE.Color | null => {
+    if (/HAIR/i.test(name)) return hair;
+    if (/EyeIris/i.test(name)) return eye;
+    if (/Shoes/i.test(name)) return accent;
+    if (/Tops|Bottoms|CLOTH/i.test(name)) return outfit;
+    return null;
+  };
 }

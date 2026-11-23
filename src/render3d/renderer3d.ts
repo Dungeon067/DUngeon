@@ -21,7 +21,7 @@ import { CanvasSprite } from "./actors3d";
 import { getRenderable, renderObjects } from "./renderables";
 import type { WorldRenderer } from "./select";
 import { MODELS, VrmActor } from "./toon/actor";
-import { toonMat } from "./toon/mat";
+import { FADE, fadeOccluder, toonMat } from "./toon/mat";
 import { animateMonster, buildMonster, type MonsterView } from "./toon/monsters";
 import { buildSky } from "./toon/sky";
 import { LV, buildGrass, buildHeight, buildProps, buildTerrain, buildWater, type HeightField } from "./toon/terrain";
@@ -225,10 +225,11 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   const MAXP = 700;
   const parts = new THREE.InstancedMesh(
     new THREE.OctahedronGeometry(0.06, 0),
-    new THREE.MeshBasicMaterial({ color: 0xffffff, fog: false }),
+    new THREE.MeshBasicMaterial({ color: 0xffffff, fog: false, transparent: true, opacity: 0.7, depthWrite: false }),
     MAXP,
   );
   parts.frustumCulled = false;
+  fadeOccluder(parts.material as THREE.Material);
   scene.add(parts);
   // Vật rơi (xu, sách, mảnh nguyên tố, cầu năng lượng).
   const PICK_G: Record<string, THREE.BufferGeometry> = {
@@ -321,6 +322,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     world.add(buildTerrain(W, F, Q.shadows, Q.soft));
     const P = buildProps(W, F, Q.shadows, (i) => Server.P.chests.includes(i));
     world.add(P.grp);
+    P.grp.traverse((o: any) => o.isMesh && [o.material].flat().forEach(fadeOccluder));
     chests = P.chests;
     lamps = P.lamps;
     lods = P.lods;
@@ -371,6 +373,26 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   let lastT = 0;
   const camTarget = new THREE.Vector3();
   let camInit = false;
+  const fv = new THREE.Vector3(),
+    fsz = new THREE.Vector2();
+  /** Cập nhật vị trí làm mờ vật cản theo nhân vật đang điều khiển. */
+  function updateFade() {
+    const p = GS.G?.p;
+    if (!p || !GS.G.map) return void (FADE.uFadeR.value = 0);
+    gl.getDrawingBufferSize(fsz);
+    const el = lift(p),
+      gy = groundY(p.x, p.y, el.g) + el.air / TS;
+    fv.set(p.x / TS, gy + 0.8, p.y / TS).project(camera);
+    const sx = (fv.x * 0.5 + 0.5) * fsz.x,
+      sy = (fv.y * 0.5 + 0.5) * fsz.y,
+      z = fv.z * 0.5 + 0.5;
+    fv.set(p.x / TS, gy + 1.7, p.y / TS).project(camera);
+    const hy = (fv.y * 0.5 + 0.5) * fsz.y;
+    FADE.uFadeS.value.set(sx, sy);
+    FADE.uFadeZ.value = z;
+    FADE.uFadeR.value = Math.max(40, Math.abs(hy - sy) * 2.2);
+  }
+
   function frame(t: number): boolean {
     if (gl.getContext().isContextLost()) return false;
     const dt = Math.min(0.05, t - lastT || 0.016);
@@ -469,7 +491,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         heroFallback?.dispose();
         heroFallback = null;
         tipHist.length = baseHist.length = 0;
-        VrmActor.load(m.c.id, (m.c.w as WeaponType) ?? "sword", wid).then((a) => {
+        VrmActor.load(m.c.id, (m.c.w as WeaponType) ?? "sword", wid, (m.c as any).look).then((a) => {
           if (key !== heroKey) return a?.dispose();
           hero = a;
           if (a) scene.add(a.obj);
@@ -700,8 +722,14 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       const k = f.life / f.max,
         gy = groundY(f.x, f.y, 0);
       if (f.k === "dot")
-        addP(f.x / TS, gy + 0.2 + (f.z ?? 0) / TS + (1 - k) * 0.4, f.y / TS, f.col, Math.max(0.5, f.size * k * 0.5));
-      else if (f.k === "pt") addP(f.x / TS, gy + 0.5 + (1 - k) * 0.5, f.y / TS, f.col ?? "#fff", 0.9 * k + 0.4);
+        addP(
+          f.x / TS,
+          gy + 0.2 + (f.z ?? 0) / TS + (1 - k) * 0.4,
+          f.y / TS,
+          f.col,
+          Math.min(1, Math.max(0.35, f.size * k * 0.3)),
+        );
+      else if (f.k === "pt") addP(f.x / TS, gy + 0.5 + (1 - k) * 0.5, f.y / TS, f.col ?? "#fff", 0.5 * k + 0.25);
       else if (f.k === "ring") {
         let r = ringPool[ri];
         if (!r) {
@@ -753,16 +781,16 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     const inBurst = p.act?.k === "burst" && G.time - p.act.t0 < 1.3;
     if (m && (inBurst || (p.act?.k === "skill" && G.time - p.act.t0 < 0.7))) {
       const elc = EL[m.c.el];
-      for (let j = 0; j < (inBurst ? 90 : 40); j++) {
+      for (let j = 0; j < (inBurst ? 32 : 14); j++) {
         const a = j * 2.4 + t * (inBurst ? 4 : 2),
-          r = 0.5 + ((j * 37) % 10) / 7,
+          r = 0.9 + ((j * 37) % 10) / 6,
           hy = ((j * 13 + t * 60) % 30) / 14;
         addP(
           pos.x + Math.cos(a) * r,
           pos.y + hy,
           pos.z + Math.sin(a) * r,
           j % 4 ? elc.c2 : "#ffffff",
-          0.8 + (j % 3) * 0.2,
+          0.45 + (j % 3) * 0.12,
         );
       }
       glow.push({ x: pos.x, y: pos.y + 2.6, z: pos.z, c: new THREE.Color(elc.c), i: inBurst ? 1.4 : 0.8 });
@@ -794,6 +822,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       }
     });
 
+    updateFade();
     if (composer) composer.render();
     else gl.render(scene, camera);
     return true;
