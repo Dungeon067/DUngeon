@@ -1,5 +1,5 @@
 /**
- * Quay video, chụp ảnh và đo fps cho mốc duyệt 1 của renderer 3D (S25).
+ * Quay video, chụp ảnh và đo fps cho mốc duyệt renderer 3D toon + VRM (S25).
  * Cần dev server: pnpm dev --port 5173. Chạy: node tools/render3d/milestone.mjs <video|shots|fps> [outDir]
  * Trình duyệt headless dùng SwiftShader (GPU giả bằng CPU) nên fps đo ở đây thấp hơn máy thật có GPU.
  */
@@ -30,7 +30,8 @@ async function boot(b, w, h, { renderer = "3d", quality = "high", video } = {}) 
     const T = window.__tinhtu,
       P = T.Server.P;
     P.owned.havy = { lv: 20, cons: 0 };
-    P.party = ["havy", ...P.party.filter((x) => x !== "havy").slice(0, 3)];
+    P.owned.suongmai ??= { lv: 20, cons: 0 };
+    P.party = ["suongmai", "havy", ...P.party.filter((x) => x !== "havy" && x !== "suongmai").slice(0, 2)];
     T.Server.save();
   });
   await pg.reload();
@@ -76,63 +77,77 @@ const fillBurst = (pg) =>
     void m;
   });
 
-const DIRS8 = [
-  ["KeyS"],
-  ["KeyS", "KeyD"],
-  ["KeyD"],
-  ["KeyW", "KeyD"],
-  ["KeyW"],
-  ["KeyW", "KeyA"],
-  ["KeyA"],
-  ["KeyS", "KeyA"],
-];
+
+/** Kéo chuột phải để xoay camera (như người chơi). */
+async function orbit(pg, dx, dy = 0, steps = 30) {
+  const { w, h } = await pg.evaluate(() => ({ w: innerWidth, h: innerHeight }));
+  await pg.mouse.move(w * 0.5, h * 0.4);
+  await pg.mouse.down({ button: "right" });
+  for (let i = 1; i <= steps; i++) {
+    await pg.mouse.move(w * 0.5 + (dx * i) / steps, h * 0.4 + (dy * i) / steps);
+    await sleep(30);
+  }
+  await pg.mouse.up({ button: "right" });
+}
+const cam = (pg, o) => pg.evaluate((v) => Object.assign(window.__tinhtu.S, v), o);
 
 async function demo(pg) {
-  await tod(pg, 0.45);
-  await put(pg, 60, 55);
-  // 8 hướng chạy.
-  for (const d of DIRS8) await hold(pg, d, 650);
-  // Đứng yên thở.
-  await sleep(700);
+  await tod(pg, 0.42);
+  await cam(pg, { camYaw: 0, camPitch: 0.55, camDist: 11 });
+  await put(pg, 60, 56);
+  await sleep(800);
+  // Kiếm (Sương Mai): chạy, chạy nhanh, nhảy, lướt, 3 đòn kiếm.
+  await hold(pg, ["KeyW"], 1200);
+  await hold(pg, ["KeyD"], 900);
+  await pg.keyboard.down("KeyS");
+  await pg.keyboard.down("ShiftLeft");
+  await sleep(1300);
+  await pg.keyboard.up("ShiftLeft");
+  await pg.keyboard.up("KeyS");
+  await hold(pg, ["KeyA"], 500);
   // Nhảy lên bệ (bệ 1 bậc ở x 49..52, y 51..53).
   await put(pg, 50.5, 55.2);
   await sleep(300);
   await pg.keyboard.down("KeyW");
   await sleep(250);
   await pg.keyboard.press("Space");
-  await sleep(700);
+  await sleep(800);
   await pg.keyboard.up("KeyW");
-  await sleep(500);
-  await hold(pg, ["KeyD"], 500);
-  await sleep(300);
-  // Đi dưới cầu cao rồi vào rừng (bị cây che, hiện bóng mờ).
-  await put(pg, 55.5, 53.5);
-  await hold(pg, ["KeyW"], 2600);
-  await hold(pg, ["KeyW", "KeyD"], 700);
-  await hold(pg, ["KeyS"], 2200);
-  // Bắn cung chéo: 3 đòn theo hướng đông bắc rồi tây nam.
-  await put(pg, 60, 56);
-  await pg.keyboard.down("KeyW");
+  await sleep(400);
   await pg.keyboard.down("KeyD");
-  await sleep(120);
-  await tap(pg, "KeyJ", 3, 420);
-  await pg.keyboard.up("KeyW");
+  await pg.keyboard.press("ShiftLeft");
+  await sleep(500);
   await pg.keyboard.up("KeyD");
-  await hold(pg, ["KeyS", "KeyA"], 150);
-  await tap(pg, "KeyJ", 3, 420);
-  // Kỹ năng và nộ.
-  await tap(pg, "KeyE", 1, 900);
+  await put(pg, 60, 56);
+  await sleep(300);
+  await tap(pg, "KeyJ", 3, 450);
+  await sleep(500);
+  await tap(pg, "KeyE", 1, 1000);
   await fillBurst(pg);
   await tap(pg, "KeyQ", 1, 2600);
+  // Camera xoay: kéo chuột phải, rồi zoom.
+  await orbit(pg, 360, 40);
+  await hold(pg, ["KeyW"], 900);
+  await orbit(pg, -520, -30);
+  // Cung (Hạ Vy): 3 đòn cung, kỹ năng, nộ.
+  await tap(pg, "Digit2", 1, 900);
+  await hold(pg, ["KeyW", "KeyD"], 600);
+  await tap(pg, "KeyJ", 3, 450);
+  await hold(pg, ["KeyS", "KeyA"], 300);
+  await tap(pg, "KeyJ", 3, 450);
+  await tap(pg, "KeyE", 1, 1000);
+  await fillBurst(pg);
+  await tap(pg, "KeyQ", 1, 2800);
   // Ngày sang đêm.
-  for (let t = 0.55; t <= 1.0; t += 0.015) {
+  for (let t = 0.6; t <= 0.95; t += 0.012) {
     await tod(pg, t);
-    await sleep(70);
+    await sleep(60);
   }
   await hold(pg, ["KeyW", "KeyA"], 900);
-  await tap(pg, "KeyJ", 3, 420);
+  await tap(pg, "KeyJ", 3, 450);
   await fillBurst(pg);
-  await tap(pg, "KeyQ", 1, 2400);
+  await tap(pg, "KeyQ", 1, 2600);
+  await orbit(pg, 300, 0);
   await hold(pg, ["KeyD"], 800);
 }
 
@@ -172,28 +187,29 @@ if (mode === "video") {
     [1920, 1080],
   ]) {
     const { ctx, pg } = await boot(b, w, h);
+    // Ngày: Sương Mai chém kiếm.
     await tod(pg, 0.42);
-    await put(pg, 55.5, 51.2);
-    await hold(pg, ["KeyW", "KeyD"], 200);
-    await pg.keyboard.down("KeyW");
-    await pg.keyboard.down("KeyD");
+    await cam(pg, { camYaw: -0.5, camPitch: 0.5, camDist: 9 });
+    await put(pg, 57.5, 53.5);
+    await sleep(1200);
+    await hold(pg, ["KeyW", "KeyD"], 300);
     await pg.keyboard.press("KeyJ");
-    await sleep(140);
+    await sleep(200);
     await pg.screenshot({ path: `${out}/ngay-${w}x${h}.png` });
-    await pg.keyboard.up("KeyW");
-    await pg.keyboard.up("KeyD");
-    await tod(pg, 0.93);
+    // Đêm: Hạ Vy dùng nộ.
+    await tap(pg, "Digit2", 1, 1200);
+    await tod(pg, 0.92);
+    await cam(pg, { camYaw: 0.6, camPitch: 0.42, camDist: 7 });
     await fillBurst(pg);
     await pg.keyboard.press("KeyQ");
-    await pg.waitForFunction(() => !window.__tinhtu.S.G.cine, null, { timeout: 20000 });
-    await sleep(300);
-    await pg.keyboard.down("KeyS");
-    await pg.keyboard.down("KeyA");
-    await pg.keyboard.press("KeyJ");
-    await sleep(160);
+    await pg.waitForFunction(() => !window.__tinhtu.S.G.cine, null, { timeout: 60000 });
+    await sleep(350);
     await pg.screenshot({ path: `${out}/dem-${w}x${h}.png` });
-    await pg.keyboard.up("KeyS");
-    await pg.keyboard.up("KeyA");
+    // Cận cảnh nhân vật và nước.
+    await tod(pg, 0.36);
+    await cam(pg, { camYaw: 2.6, camPitch: 0.25, camDist: 4.5 });
+    await sleep(1500);
+    await pg.screenshot({ path: `${out}/can-canh-${w}x${h}.png` });
     await ctx.close();
   }
 } else if (mode === "fps") {

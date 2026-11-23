@@ -17,6 +17,7 @@ export interface WorldRenderer {
   resize(): void;
   /** Ẩn canvas 3D khi đang vẽ bằng 2D (đấu trường, menu). */
   hide?(): void;
+  debug?(): any;
   dispose(): void;
   stats(): { calls: number; tris: number; textures: number };
 }

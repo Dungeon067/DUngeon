@@ -46,7 +46,7 @@ export function loadSheet(id: string): Promise<Sheet | null> {
 }
 
 /** Hệ số kéo dọc để pixel trông vuông khi camera nhìn chéo (mặt billboard đứng thẳng). */
-export let STRETCH = 1.3;
+export let STRETCH = 1;
 export function setStretch(pitch: number) {
   STRETCH = 1 / Math.cos(Math.PI / 2 - pitch);
 }
