@@ -16,6 +16,13 @@ export interface PoseInput {
   /** Tay trái/phải đang rảnh (không cầm vũ khí) thì mới chỉnh dáng tay. */
   freeL: boolean;
   freeR: boolean;
+  /** Đang chạy hoạt ảnh chờ ngẫu nhiên (tay theo clip, bỏ dáng tay của lớp). */
+  anim?: boolean;
+  /** Tốc độ chạy (1 chạy, ~1.5 chạy nhanh) và độ gần đỉnh cú nhảy (0..1, co chân). */
+  spd?: number;
+  apex?: number;
+  /** Đang lướt: đổ người lao tới. */
+  dash?: boolean;
 }
 
 const D = Math.PI / 180;
@@ -31,6 +38,13 @@ export class PoseLayer {
   private wMove = 0;
   private wAct = 0;
   private wStand = 1;
+  private wHand = 1;
+  private wTuck = 0;
+  private wDash = 0;
+  private lastYaw: number | null = null;
+  private turn = 0;
+  /** Nghiêng vào khúc cua (rad, quanh trục trước mặt), actor áp lên gốc để xoay quanh bàn chân. */
+  bank = 0;
   private B: Record<string, THREE.Object3D> = {};
   private legs: Record<"l" | "r", Limb>;
   private arms: Record<"l" | "r", Limb>;
@@ -115,6 +129,15 @@ export class PoseLayer {
     this.wMove += (tgt("move") - this.wMove) * Math.min(1, dt * 8);
     this.wAct += (tgt("act") - this.wAct) * Math.min(1, dt * 10);
     this.wStand = Math.max(0, 1 - this.wMove - this.wAct - (inp.mode === "air" ? 1 : 0));
+    this.wHand += ((inp.anim ? 0 : 1) - this.wHand) * Math.min(1, dt * 6);
+    this.wTuck += ((inp.mode === "air" ? (inp.apex ?? 0) : 0) - this.wTuck) * Math.min(1, dt * 12);
+    // Tốc độ xoay hướng (rad/giây) để nghiêng vào khúc cua.
+    const yaw = this.root.rotation.y;
+    if (this.lastYaw !== null && dt > 0) {
+      const dy = Math.atan2(Math.sin(yaw - this.lastYaw), Math.cos(yaw - this.lastYaw));
+      this.turn += (dy / dt - this.turn) * Math.min(1, dt * 8);
+    }
+    this.lastYaw = yaw;
     const { dung, cho, chay, don } = this.p,
       t = this.t,
       wR = this.wRelax * this.wStand,
@@ -131,8 +154,43 @@ export class PoseLayer {
       }
       const dy = hips.position.y - this.restHips.y;
       hips.position.y = this.restHips.y + dy * (1 + (chay.nay - 1) * this.wMove);
+      // Chạy nhanh: tay vung mạnh hơn (phóng độ lệch so với tay buông).
+      const sp = inp.spd ?? 1;
+      if (sp > 1.05)
+        for (const [n, k, free] of [
+          ["leftUpperArm", 1, inp.freeL],
+          ["rightUpperArm", -1, inp.freeR],
+        ] as const) {
+          const b = this.B[n];
+          if (!b || !free) continue;
+          const down = this.dq(0, 0, -72 * k).clone();
+          const dv = down.clone().invert().multiply(b.quaternion);
+          b.quaternion.copy(down.multiply(_q.identity().slerp(dv, 1 + 0.7 * (sp - 1) * this.wMove)));
+        }
       if (inp.freeL) this.post("leftUpperArm", 0, 0, chay.mo * this.wMove);
       if (inp.freeR) this.post("rightUpperArm", 0, 0, -chay.mo * this.wMove);
+      // Đổ người theo hướng chạy.
+      const lean = chay.nghieng * Math.min(1.6, sp) * this.wMove;
+      this.pre("hips", lean * 0.45, 0, 0);
+      this.post("spine", lean * 0.4, 0, 0);
+      this.post("head", -lean * 0.5, 0, 0);
+    }
+    const bk = THREE.MathUtils.clamp(-this.turn * 0.09, -1, 1) * chay.lac * D * this.wMove;
+    this.bank += (bk - this.bank) * Math.min(1, dt * 7);
+    this.wDash += ((inp.dash ? 1 : 0) - this.wDash) * Math.min(1, dt * 14);
+    if (this.wDash > 0.01) {
+      this.pre("hips", 18 * this.wDash, 0, 0);
+      this.post("spine", 8 * this.wDash, 0, 0);
+      this.post("head", -16 * this.wDash, 0, 0);
+    }
+    // Đỉnh cú nhảy: co chân.
+    if (this.wTuck > 0.01) {
+      const w = this.wTuck;
+      this.post("leftUpperLeg", -48 * w, 0, 0);
+      this.post("rightUpperLeg", -38 * w, 0, 0);
+      this.post("leftLowerLeg", 78 * w, 0, 0);
+      this.post("rightLowerLeg", 62 * w, 0, 0);
+      this.post("spine", 8 * w, 0, 0);
     }
     // Ra đòn: dáng nặng hạ hông sâu hơn, xoay thân rộng hơn.
     if (this.wAct > 0.01) {
@@ -158,40 +216,52 @@ export class PoseLayer {
       const rq = this.root.getWorldQuaternion(new THREE.Quaternion());
       const scale = this.root.getWorldScale(_v).x || 1;
       const H = this.hipsH * scale;
-      const side = new THREE.Vector3(1, 0, 0).applyQuaternion(rq);
+      const side = new THREE.Vector3(1, 0, 0).applyQuaternion(rq),
+        fwd = new THREE.Vector3(0, 0, 1).applyQuaternion(rq),
+        up = new THREE.Vector3(0, 1, 0);
       // Thở + dồn trọng tâm (ngoài trận), nhún (trong trận).
       const br = Math.sin(t * Math.PI * 2 * dung.tho.nhip),
         sh = Math.sin(t * Math.PI * 2 * dung.doiTrong.nhip),
         bo = Math.sin(t * Math.PI * 2 * cho.nhipNhun);
-      const hy = -cho.ha * wC - cho.nhun * (0.5 + 0.5 * bo) * wC - 0.002 * Math.abs(sh) * wR;
+      // Chân trụ (+1 trái, −1 phải) đổi bên chậm; dồn trọng tâm sang chân trụ, hông bên trụ nhô cao.
+      const per = 2.6 / dung.doiTrong.nhip,
+        sup = THREE.MathUtils.clamp(1.7 * Math.sin((t * Math.PI * 2) / per + 0.6), -1, 1),
+        tr = dung.tru;
+      const tilt = dung.hong * (tr > 0 ? sup : 1);
+      const hy =
+        -cho.ha * wC - cho.nhun * (0.5 + 0.5 * bo) * wC - 0.002 * Math.abs(sh) * wR - 0.012 * tr * Math.abs(sup) * wR;
       hips.position.y += (hy * H) / scale;
-      hips.position.addScaledVector(new THREE.Vector3(sg, 0, 0), 0.008 * dung.doiTrong.bien * sh * wR * this.hipsH);
-      this.pre("hips", 0, 0, (dung.hong + 1.2 * dung.doiTrong.bien * sh) * wR);
-      this.post("spine", dung.lung * wR + cho.cui * 0.6 * wC, 0, -dung.hong * 0.6 * wR);
+      hips.position.addScaledVector(
+        new THREE.Vector3(sg, 0, 0),
+        (0.008 * dung.doiTrong.bien * sh + 0.04 * tr * sup) * wR * this.hipsH,
+      );
+      this.pre("hips", 0, 0, (tilt + 1.2 * dung.doiTrong.bien * sh) * wR);
+      this.post("spine", dung.lung * wR + cho.cui * 0.6 * wC, 0, -tilt * 0.6 * wR);
       this.post(
         "upperChest",
         -dung.tho.bien * (0.5 + 0.5 * br) * (wR + wC * 0.6) + cho.cui * 0.4 * wC,
         0,
-        -dung.vai * wR,
+        -dung.vai * (tr > 0 ? sup : 1) * wR,
       );
       this.post("head", dung.dauCui * wR - cho.cui * 0.5 * wC, 0, dung.dau * wR * (0.7 + 0.3 * Math.sin(t * 0.37)));
       const sb = 0.8 * dung.tho.bien * (0.5 + 0.5 * br) * (wR + wC * 0.6);
       this.post("leftShoulder", 0, dung.moVai * wR, sb);
       this.post("rightShoulder", 0, -dung.moVai * wR, -sb);
       // Tay đung đưa nhẹ (dáng trẻ em): cùng nhịp, như đang chờ chơi.
-      const sw = dung.tay.dua * Math.sin(t * Math.PI * 2 * dung.doiTrong.nhip * 2) * wR;
+      const wH = wR * this.wHand;
+      const sw = dung.tay.dua * Math.sin(t * Math.PI * 2 * dung.doiTrong.nhip * 2) * wH;
       if (sw) {
         if (inp.freeL) this.pre("leftUpperArm", -sw, 0, 0);
         if (inp.freeR) this.pre("rightUpperArm", -sw * 0.8, 0, 0);
       }
       // Tay rảnh: dang tay, gập khuỷu; dáng khép tay trước người.
       if (inp.freeL) {
-        this.post("leftUpperArm", 0, 0, dung.tay.mo * wR);
-        this.post("leftLowerArm", 0, -dung.tay.gap * wR, 0);
+        this.post("leftUpperArm", 0, 0, dung.tay.mo * wH);
+        this.post("leftLowerArm", 0, -dung.tay.gap * wH, 0);
       }
       if (inp.freeR) {
-        this.post("rightUpperArm", 0, 0, -dung.tay.mo * wR);
-        this.post("rightLowerArm", 0, dung.tay.gap * wR, 0);
+        this.post("rightUpperArm", 0, 0, -dung.tay.mo * wH);
+        this.post("rightLowerArm", 0, dung.tay.gap * wH, 0);
       }
       hips.updateMatrixWorld(true);
       // Chân: nới/khép theo dáng, bám mặt đất.
@@ -199,8 +269,13 @@ export class PoseLayer {
       const dys: number[] = [];
       for (const [i, s] of (["l", "r"] as const).entries()) {
         const a = ank[i];
-        const w = (dung.chan * wR + cho.chan * wC) * (s === "l" ? 1 : -1) * H;
+        const k = s === "l" ? 1 : -1,
+          free = Math.max(0, -sup * k) * (tr > 0 ? 1 : 0);
+        const w = (dung.chan * wR + cho.chan * wC) * k * H;
         a.p.addScaledVector(side, w);
+        // Chân không trụ đặt lên trước, mở mũi chân.
+        a.p.addScaledVector(fwd, dung.chanTruoc * free * wR * H);
+        a.q.premultiply(_q.setFromAxisAngle(up, dung.xoay * (0.6 + 0.6 * free) * k * wR * D));
         let dy = 0;
         if (this.ground) dy = THREE.MathUtils.clamp(this.ground(a.p.x, a.p.z) - g0, -0.3 * H, 0.3 * H) * this.wStand;
         dys.push(dy);
@@ -213,7 +288,8 @@ export class PoseLayer {
         a.p.y += dys[i];
         solveLimb(this.legs[s], a.p, a.knee.lengthSq() > 0 ? this.kneePole(a.knee, rq) : side, a.q);
       }
-      if (dung.tay.truoc > 0 && wR > 0.01 && inp.freeL && inp.freeR) this.handsFront(dung.tay.truoc * wR, rq, H);
+      if (dung.tay.truoc > 0 && wH > 0.01 && inp.freeL && inp.freeR) this.handsFront(dung.tay.truoc * wH, rq, H);
+      if (dung.tay.sau > 0 && wH > 0.01 && inp.freeL && inp.freeR) this.handsBack(dung.tay.sau * wH, rq, H);
     }
   }
 
@@ -224,6 +300,30 @@ export class PoseLayer {
   private kneePole(dir: THREE.Vector3, rq: THREE.Quaternion) {
     // Đầu gối hướng trước mặt (theo thân), hơi theo hướng gối hiện tại.
     return new THREE.Vector3(0, 0, 1).applyQuaternion(rq).addScaledVector(dir, 0.1);
+  }
+  /** Chắp hai tay nhẹ sau lưng (dáng thiếu nữ hồn nhiên). */
+  private handsBack(w: number, rq: THREE.Quaternion, H: number) {
+    const hips = this.B.hips.getWorldPosition(new THREE.Vector3());
+    const fwd = new THREE.Vector3(0, 0, 1).applyQuaternion(rq),
+      side = new THREE.Vector3(1, 0, 0).applyQuaternion(rq),
+      up = new THREE.Vector3(0, 1, 0);
+    for (const s of ["l", "r"] as const) {
+      const L = this.arms[s],
+        k = s === "l" ? 1 : -1;
+      const cur = L.c.getWorldPosition(new THREE.Vector3());
+      const tgt = hips
+        .clone()
+        .addScaledVector(fwd, -0.15 * H)
+        .addScaledVector(up, -0.02 * H + (s === "r" ? 0.02 * H : 0))
+        .addScaledVector(side, 0.035 * k * H);
+      const fing = side.clone().multiplyScalar(-k).addScaledVector(up, -0.7).addScaledVector(fwd, -0.3),
+        thumb = up.clone().addScaledVector(fwd, -0.5);
+      const f0 = new THREE.Vector3(this.v0 ? -k : k, 0, 0),
+        t0 = new THREE.Vector3(0, 0, this.v0 ? -1 : 1);
+      const hq = alignQuat(f0, t0, fing, thumb);
+      const q = L.c.getWorldQuaternion(new THREE.Quaternion()).slerp(hq, w);
+      solveLimb(L, cur.lerp(tgt, w), side.clone().multiplyScalar(k).addScaledVector(fwd, -0.6), q);
+    }
   }
   /** Hai tay khép nhẹ trước bụng (trái đặt lên phải), trang nhã. */
   private handsFront(w: number, rq: THREE.Quaternion, H: number) {

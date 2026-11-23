@@ -14,6 +14,11 @@ const P = validatePoses(posesRaw);
 const SHARED = ["relax", "walk", "run", "sprint", "dash", "jumpUp", "jumpAir", "jumpLand", "hurt", "die"];
 
 describe("S27: dáng tư thế × vũ khí", () => {
+  it("dáng trẻ em chỉ dùng hoạt ảnh chờ hồn nhiên (nhún nhảy, nhìn quanh, vươn vai)", () => {
+    for (const d of ["nu-nho", "nam-nho"] as const)
+      for (const c of P.dang[d].nghi.clip) expect(["idleHop", "idleLook", "idleStretch"], `${d}: ${c}`).toContain(c);
+  });
+
   it("đủ 8 dáng, mỗi dáng có tham số đứng / chờ / chạy / đòn", () => {
     expect(Object.keys(P.dang).sort()).toEqual([...DANG_IDS].sort());
   });
@@ -26,7 +31,8 @@ describe("S27: dáng tư thế × vũ khí", () => {
         const need = [
           h.stand,
           h.ready ?? h.stand,
-          ...(h.move ? [h.move.walk, h.move.run, h.move.sprint] : []),
+          ...(h.move ? [h.move.walk, h.move.run, h.move.sprint, h.move.stop ?? "runStop"] : ["runStop"]),
+          ...P.dang[d].nghi.clip,
           ...h.atk,
           h.charge,
           h.skill,

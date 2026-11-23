@@ -10,6 +10,9 @@
 #        tho: nhịp thở (lần/giây), bien = biên độ (độ)   doiTrong: nhịp + biên độ dồn trọng tâm
 #  cho:  thế chờ trong trận: chan (nới thêm), ha (hạ hông), cui (đổ người tới trước), nhun + nhipNhun (nhún)
 #  chay: bien = biên độ sải, nhip = nhịp bước (nhân tốc độ clip), nay = độ nảy, mo = tay xa thân khi chạy (độ)
+#        nghieng: đổ người tới trước (độ), lac: nghiêng vào khúc cua tối đa (độ)
+#  nghi: hoạt ảnh chờ ngẫu nhiên sau `sau` giây đứng yên tay không (dáng trẻ em: nhún nhảy hồn nhiên)
+#  dung.tru: dồn trọng tâm một chân (0..1), chanTruoc: chân không trụ đặt trước (H), xoay: mở mũi chân (độ), tay.sau: chắp tay sau lưng
 #  don:  nang 0..1: đòn nặng thì hạ hông và xoay thân nhiều hơn
 #  tiLe: chỉ dùng cho bảng so sánh khi chưa có mô hình riêng (co giãn chiều cao / bề ngang).
 # Vũ khí ngoài trận: thôi đánh / rời trận `cho` giây thì cất (clip `clip` nếu đứng yên, vũ khí chuyển tới chỗ `noi`),
@@ -37,18 +40,22 @@ dang:
     dung:
       {
         chan: -0.035,
+        tru: 0.3,
+        chanTruoc: 0,
+        xoay: 4,
         hong: 0,
         vai: 0,
         moVai: 0,
         lung: 1,
         dau: 7,
         dauCui: -3,
-        tay: { mo: 6, gap: 8, truoc: 0, dua: 10 },
+        tay: { mo: 6, gap: 8, truoc: 0, sau: 0, dua: 10 },
         tho: { nhip: 0.36, bien: 1.5 },
         doiTrong: { nhip: 0.32, bien: 1.6 },
       }
     cho: { chan: 0.03, ha: 0.03, cui: 8, nhun: 0.022, nhipNhun: 2.4 }
-    chay: { bien: 0.85, nhip: 1.3, nay: 1.8, mo: 4 }
+    chay: { bien: 0.85, nhip: 1.3, nay: 1.8, mo: 4, nghieng: 6, lac: 8 }
+    nghi: { sau: 5, clip: [idleHop, idleLook] }
     don: { nang: 0.2 }
     tiLe: { cao: 0.8, rong: 0.94 }
   nu-teen:
@@ -57,18 +64,22 @@ dang:
     dung:
       {
         chan: -0.02,
+        tru: 0.85,
+        chanTruoc: 0.05,
+        xoay: 14,
         hong: 1.2,
         vai: 0.8,
         moVai: 0,
         lung: 0,
         dau: 4,
         dauCui: 1,
-        tay: { mo: 3, gap: 16, truoc: 0, dua: 0 },
+        tay: { mo: 3, gap: 16, truoc: 0, sau: 0.85, dua: 0 },
         tho: { nhip: 0.27, bien: 1.1 },
         doiTrong: { nhip: 0.21, bien: 1.1 },
       }
     cho: { chan: 0.045, ha: 0.045, cui: 5, nhun: 0.008, nhipNhun: 1.7 }
-    chay: { bien: 1, nhip: 1.08, nay: 1.15, mo: 2 }
+    chay: { bien: 1, nhip: 1.08, nay: 1.15, mo: 2, nghieng: 8, lac: 10 }
+    nghi: { sau: 6, clip: [idleHair, idleLook, idleStretch] }
     don: { nang: 0.4 }
     tiLe: { cao: 1, rong: 1 }
   nu-truong-thanh:
@@ -77,18 +88,22 @@ dang:
     dung:
       {
         chan: 0.0,
+        tru: 0.6,
+        chanTruoc: 0.02,
+        xoay: 8,
         hong: 1.4,
         vai: 1,
         moVai: 2,
         lung: -1.5,
         dau: 1,
         dauCui: -1.5,
-        tay: { mo: 5, gap: 8, truoc: 0, dua: 0 },
+        tay: { mo: 5, gap: 8, truoc: 0, sau: 0, dua: 0 },
         tho: { nhip: 0.23, bien: 0.9 },
         doiTrong: { nhip: 0.17, bien: 0.9 },
       }
     cho: { chan: 0.06, ha: 0.055, cui: 4, nhun: 0.005, nhipNhun: 1.4 }
-    chay: { bien: 1.12, nhip: 0.98, nay: 0.9, mo: 3 }
+    chay: { bien: 1.12, nhip: 0.98, nay: 0.9, mo: 3, nghieng: 9, lac: 9 }
+    nghi: { sau: 7, clip: [idleLook, idleStretch, idleHair] }
     don: { nang: 0.5 }
     tiLe: { cao: 1.04, rong: 1 }
   nu-dam-dang:
@@ -97,18 +112,22 @@ dang:
     dung:
       {
         chan: -0.04,
+        tru: 0.45,
+        chanTruoc: 0.05,
+        xoay: 20,
         hong: 2.6,
         vai: 1.8,
         moVai: 1,
         lung: -2.5,
         dau: 3,
         dauCui: 2,
-        tay: { mo: 2, gap: 28, truoc: 0.85, dua: 0 },
+        tay: { mo: 2, gap: 28, truoc: 0.85, sau: 0, dua: 0 },
         tho: { nhip: 0.19, bien: 0.8 },
         doiTrong: { nhip: 0.14, bien: 0.7 },
       }
     cho: { chan: 0.05, ha: 0.04, cui: 3, nhun: 0.003, nhipNhun: 1.2 }
-    chay: { bien: 0.9, nhip: 0.92, nay: 0.6, mo: 1 }
+    chay: { bien: 0.9, nhip: 0.92, nay: 0.6, mo: 1, nghieng: 5, lac: 6 }
+    nghi: { sau: 8, clip: [idleHair, idleLook] }
     don: { nang: 0.55 }
     tiLe: { cao: 1.02, rong: 1.06 }
   nam-nho:
@@ -118,18 +137,22 @@ dang:
     dung:
       {
         chan: 0.03,
+        tru: 0.3,
+        chanTruoc: 0,
+        xoay: 10,
         hong: 0,
         vai: 0,
         moVai: 0,
         lung: 1,
         dau: 5,
         dauCui: -4,
-        tay: { mo: 10, gap: 10, truoc: 0, dua: 9 },
+        tay: { mo: 10, gap: 10, truoc: 0, sau: 0, dua: 9 },
         tho: { nhip: 0.36, bien: 1.5 },
         doiTrong: { nhip: 0.34, bien: 1.6 },
       }
     cho: { chan: 0.06, ha: 0.035, cui: 8, nhun: 0.022, nhipNhun: 2.5 }
-    chay: { bien: 0.95, nhip: 1.3, nay: 1.7, mo: 8 }
+    chay: { bien: 0.95, nhip: 1.3, nay: 1.7, mo: 8, nghieng: 7, lac: 9 }
+    nghi: { sau: 5, clip: [idleHop, idleLook, idleStretch] }
     don: { nang: 0.25 }
     tiLe: { cao: 0.8, rong: 0.96 }
   nam-teen:
@@ -138,18 +161,22 @@ dang:
     dung:
       {
         chan: 0.03,
+        tru: 0.7,
+        chanTruoc: 0.03,
+        xoay: 12,
         hong: 0.6,
         vai: 0.4,
         moVai: 0,
         lung: 2,
         dau: 2,
         dauCui: 2,
-        tay: { mo: 7, gap: 14, truoc: 0, dua: 0 },
+        tay: { mo: 7, gap: 14, truoc: 0, sau: 0, dua: 0 },
         tho: { nhip: 0.26, bien: 1 },
         doiTrong: { nhip: 0.2, bien: 1.1 },
       }
     cho: { chan: 0.075, ha: 0.05, cui: 6, nhun: 0.008, nhipNhun: 1.7 }
-    chay: { bien: 1.08, nhip: 1.1, nay: 1.1, mo: 6 }
+    chay: { bien: 1.08, nhip: 1.1, nay: 1.1, mo: 6, nghieng: 9, lac: 10 }
+    nghi: { sau: 6, clip: [idleLook, idleStretch] }
     don: { nang: 0.5 }
     tiLe: { cao: 1.03, rong: 0.98 }
   nam-truong-thanh:
@@ -158,18 +185,22 @@ dang:
     dung:
       {
         chan: 0.05,
+        tru: 0.5,
+        chanTruoc: 0.02,
+        xoay: 12,
         hong: 0.3,
         vai: 0.2,
         moVai: 3,
         lung: -1,
         dau: 0,
         dauCui: -1,
-        tay: { mo: 10, gap: 10, truoc: 0, dua: 0 },
+        tay: { mo: 10, gap: 10, truoc: 0, sau: 0, dua: 0 },
         tho: { nhip: 0.22, bien: 0.9 },
         doiTrong: { nhip: 0.16, bien: 0.8 },
       }
     cho: { chan: 0.09, ha: 0.065, cui: 5, nhun: 0.005, nhipNhun: 1.3 }
-    chay: { bien: 1.18, nhip: 0.98, nay: 0.85, mo: 9 }
+    chay: { bien: 1.18, nhip: 0.98, nay: 0.85, mo: 9, nghieng: 9, lac: 9 }
+    nghi: { sau: 7, clip: [idleLook, idleStretch] }
     don: { nang: 0.65 }
     tiLe: { cao: 1.08, rong: 1.03 }
   nam-vam-vo:
@@ -178,17 +209,21 @@ dang:
     dung:
       {
         chan: 0.09,
+        tru: 0.35,
+        chanTruoc: 0,
+        xoay: 16,
         hong: 0,
         vai: 0,
         moVai: 7,
         lung: -2.5,
         dau: 0,
         dauCui: -2,
-        tay: { mo: 22, gap: 16, truoc: 0, dua: 0 },
+        tay: { mo: 22, gap: 16, truoc: 0, sau: 0, dua: 0 },
         tho: { nhip: 0.17, bien: 1.3 },
         doiTrong: { nhip: 0.13, bien: 0.6 },
       }
     cho: { chan: 0.12, ha: 0.08, cui: 7, nhun: 0.004, nhipNhun: 1.1 }
-    chay: { bien: 1.22, nhip: 0.85, nay: 0.55, mo: 18 }
+    chay: { bien: 1.22, nhip: 0.85, nay: 0.55, mo: 18, nghieng: 8, lac: 7 }
+    nghi: { sau: 8, clip: [idleStretch, idleLook] }
     don: { nang: 1 }
     tiLe: { cao: 1.14, rong: 1.2 }

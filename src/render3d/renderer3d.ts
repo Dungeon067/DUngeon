@@ -22,6 +22,8 @@ import { getRenderable, renderObjects } from "./renderables";
 import type { WorldRenderer } from "./select";
 import { MODELS, POSES, VrmActor } from "./toon/actor";
 import { weaponOut } from "../combat/weapon-state";
+import { jumpPhysics } from "../combat/jump";
+import { HeroFx } from "./toon/motion-fx";
 import { ELEMENTS } from "../ui/tokens";
 import { FADE, fadeOccluder, toonMat } from "./toon/mat";
 import { animateMonster, buildMonster, type MonsterView } from "./toon/monsters";
@@ -194,31 +196,11 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   const fxGroup = new THREE.Group();
   scene.add(fxGroup);
 
-  // Vệt kiếm: dải nối các vị trí mũi vũ khí gần nhất.
-  const TRAIL = 14;
-  const trailPos = new Float32Array(TRAIL * 2 * 3);
-  const trailGeo = new THREE.BufferGeometry();
-  trailGeo.setAttribute("position", new THREE.BufferAttribute(trailPos, 3));
-  const trailA = new Float32Array(TRAIL * 2);
-  trailGeo.setAttribute("a", new THREE.BufferAttribute(trailA, 1));
-  const ti: number[] = [];
-  for (let i = 0; i < TRAIL - 1; i++) ti.push(i * 2, i * 2 + 1, i * 2 + 2, i * 2 + 1, i * 2 + 3, i * 2 + 2);
-  trailGeo.setIndex(ti);
-  const trailMat = new THREE.ShaderMaterial({
-    transparent: true,
-    depthWrite: false,
-    side: THREE.DoubleSide,
-    blending: THREE.AdditiveBlending,
-    uniforms: { uC: { value: new THREE.Color(0xffffff) } },
-    vertexShader:
-      "attribute float a; varying float vA; void main(){ vA=a; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }",
-    fragmentShader: "uniform vec3 uC; varying float vA; void main(){ gl_FragColor=vec4(uC*vA, vA); }",
-  });
-  const trail = new THREE.Mesh(trailGeo, trailMat);
-  trail.frustumCulled = false;
-  scene.add(trail);
-  const tipHist: THREE.Vector3[] = [],
-    baseHist: THREE.Vector3[] = [];
+  // Vệt chém, nét ấn pháp khí, hạt lướt (S27).
+  const heroFx = new HeroFx();
+  scene.add(heroFx.group);
+  let heroMoveT = 0,
+    heroStopT = -9;
 
   // Quái: mô hình toon tạm. Vật thể câu đố: renderable (bản 2D dựng thành tấm phẳng nếu chưa có bản 3D).
   const monsters = new Map<any, MonsterView>();
@@ -385,7 +367,12 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   const v3 = new THREE.Vector3();
   const toV = (x: number, y: number, zPx = 0) => v3.set(x / TS, zPx / TS, y / TS);
 
-  function heroClip(p: any, m: any): { k: string; once?: boolean; speed?: number; fade?: number } {
+  function heroClip(
+    p: any,
+    m: any,
+    idleK: string | null = null,
+    stopping = false,
+  ): { k: string; once?: boolean; speed?: number; fade?: number } {
     const T = GS.G.time,
       w = (m.c.w as WeaponType) ?? "sword",
       A = MODELS.hoatAnh[w] ?? MODELS.hoatAnh.sword;
@@ -539,7 +526,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         heroFallback?.obj.removeFromParent();
         heroFallback?.dispose();
         heroFallback = null;
-        tipHist.length = baseHist.length = 0;
+        heroFx.clear();
         VrmActor.load(m.c.id, (m.c.w as WeaponType) ?? "sword", wid, (m.c as any).look).then((a) => {
           if (key !== heroKey) return a?.dispose();
           hero = a;
@@ -559,7 +546,23 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     if (hero && m) {
       const standing = !p.moving && !p.air && p.dashT <= 0;
       hero.wfx?.want(weaponOut(p, G.enemies, G.time, POSES.vuKhi), standing, scene);
-      const c = heroClip(p, m),
+      // Nhịp hãm khi dừng chạy, hoạt ảnh chờ ngẫu nhiên khi đứng yên tay không.
+      if (p.moving) heroMoveT += dt;
+      else {
+        if (heroMoveT > 0.3 && !p.air && p.dashT <= 0) heroStopT = G.time;
+        heroMoveT = 0;
+      }
+      const relaxing =
+        m.alive &&
+        !p.moving &&
+        !p.air &&
+        p.dashT <= 0 &&
+        p.hurt <= 0 &&
+        !(p.act && G.time - p.act.t0 < 0.8) &&
+        G.time - heroStopT > 0.5 &&
+        (!hero.wfx || hero.wfx.st === "gone");
+      const idleK = hero.idleVariant(dt, relaxing);
+      const c = heroClip(p, m, idleK, G.time - heroStopT < 0.42),
         name = c.k.split("#")[0];
       if (c.k !== hero.curName && (hero.curName.split("#")[0] !== name || c.k.includes("#"))) {
         hero.play(name, { once: c.once, fade: c.fade, speed: c.speed, restart: c.k.includes("#") });
@@ -593,38 +596,16 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
                     : "ready",
         freeL: handFree || m.c.w !== "bow",
         freeR: handFree || m.c.w === "bow",
+        anim: !!idleK,
+        spd: p.moving ? (GS.holdDash && p.dashHeld > 0.25 && p.stamina > 0 ? 1.5 : 1) : 0,
+        apex: p.air && p.dashT <= 0 ? Math.max(0, 1 - Math.abs(p.vz) / (0.45 * jumpPhysics().v0)) : 0,
+        dash: p.dashT > 0,
       };
+      if (hero.wfx) hero.wfx.orbit = acting && m.c.w === "cat";
       hero.update(dt);
-      // Vệt vũ khí cận chiến khi ra đòn.
-      const melee = m.c.w !== "bow" && m.c.w !== "cat";
-      if (hero.weapon && melee && attacking) {
-        const tip = new THREE.Vector3(0, 0.95, 0),
-          base = new THREE.Vector3(0, 0.35, 0);
-        hero.weapon.localToWorld(tip);
-        hero.weapon.localToWorld(base);
-        tipHist.unshift(tip);
-        baseHist.unshift(base);
-        if (tipHist.length > TRAIL) {
-          tipHist.pop();
-          baseHist.pop();
-        }
-        trailMat.uniforms.uC.value.set(EL[m.c.el]?.c2 ?? "#ffffff");
-      } else if (tipHist.length) {
-        tipHist.pop();
-        baseHist.pop();
-      }
-      for (let i = 0; i < TRAIL; i++) {
-        const a = tipHist[Math.min(i, tipHist.length - 1)],
-          b = baseHist[Math.min(i, baseHist.length - 1)];
-        if (a && b) {
-          trailPos.set([a.x, a.y, a.z, b.x, b.y, b.z], i * 6);
-          const al = tipHist.length > 1 ? (1 - i / TRAIL) * 0.8 : 0;
-          trailA[i * 2] = al;
-          trailA[i * 2 + 1] = al * 0.2;
-        } else trailA[i * 2] = trailA[i * 2 + 1] = 0;
-      }
-      trailGeo.attributes.position.needsUpdate = true;
-      trailGeo.attributes.a.needsUpdate = true;
+      const fin = !!p.act && (p.act.k === "atk3" || p.act.k === "skill" || p.act.k === "burst");
+      heroFx.color(EL[m.c.el]?.c ?? "#ffffff", EL[m.c.el]?.c2 ?? "#ffffff");
+      heroFx.update(hero, { acting: !!attacking && acting, fin, dash: p.dashT > 0 }, dt);
     }
     if (!hero && heroFallback && m) {
       heroFallback.paint((c) =>

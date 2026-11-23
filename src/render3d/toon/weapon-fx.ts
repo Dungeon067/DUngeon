@@ -89,6 +89,10 @@ export class WeaponFx {
   private noi: VuKhiCfg["noi"]["sword"];
   private cat = false;
   private fpos: THREE.Vector3 | null = null;
+  /** Pháp khí: khi ra đòn bay vòng quanh người (renderer đặt mỗi khung). */
+  orbit = false;
+  private wOrb = 0;
+  private oa = 0;
 
   /** Pháp khí lơ lửng cạnh tay phải (bám theo tay có trễ, nhấp nhô và xoay chậm), không dính cứng vào lòng bàn tay. */
   private float(dt: number) {
@@ -99,8 +103,17 @@ export class WeaponFx {
     const hp = this.hand.getWorldPosition(new THREE.Vector3());
     const off = new THREE.Vector3(-0.13, 0.13 + 0.025 * Math.sin(t * 2.2), 0.1).multiplyScalar(sc).applyQuaternion(rq);
     const tgt = hp.add(off);
+    this.wOrb += ((this.orbit ? 1 : 0) - this.wOrb) * Math.min(1, dt * 7);
+    this.oa += dt * (1.2 + 9 * this.wOrb);
+    if (this.wOrb > 0.01) {
+      const c = this.root.getWorldPosition(new THREE.Vector3());
+      const o = new THREE.Vector3(Math.sin(this.oa) * 0.5, 1.05 + 0.1 * Math.sin(this.oa * 2), Math.cos(this.oa) * 0.5)
+        .multiplyScalar(sc)
+        .applyQuaternion(rq);
+      tgt.lerp(c.add(o), this.wOrb);
+    }
     if (!this.fpos) this.fpos = tgt.clone();
-    else this.fpos.lerp(tgt, Math.min(1, dt * 10));
+    else this.fpos.lerp(tgt, Math.min(1, dt * (10 + 14 * this.wOrb)));
     this.holder.position.copy(this.hand.worldToLocal(this.fpos.clone()));
     const bob = new THREE.Quaternion().setFromEuler(
       new THREE.Euler(0.12 * Math.sin(t * 1.3), 0.35 * Math.sin(t * 0.7), 0.08 * Math.sin(t * 1.7)),

@@ -114,10 +114,10 @@ function strike(
   f: Spec,
   o: { dur: number; tA?: number; tC?: number; tF?: number; hold?: number },
 ): ClipDef {
-  const tA = o.tA ?? 0.12,
-    tC = o.tC ?? 0.24,
-    tF = o.tF ?? 0.4,
-    h = o.hold ?? 0.55;
+  const tA = o.tA ?? 0.1,
+    tC = o.tC ?? 0.17,
+    tF = o.tF ?? 0.27,
+    h = o.hold ?? 0.6;
   return {
     dur: o.dur,
     keys: [
@@ -126,6 +126,80 @@ function strike(
       { t: tC, s: c, ease: "in" },
       { t: tF, s: f, ease: "out" },
       { t: h, s: f, ease: "inout" },
+      { t: 1, s: R, ease: "inout" },
+    ],
+  };
+}
+
+/** Xoay cả người (hông, chân, tay hệ gốc) quanh trục đứng deg độ (dương = sang trái): đòn quét vòng. */
+function spin(s: Spec, deg: number): Spec {
+  const q = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), (deg * Math.PI) / 180);
+  const r = (v: V3) => new THREE.Vector3(...v).applyQuaternion(q).toArray() as V3;
+  const h = (x: Hand | null) =>
+    x && x.sp !== "chest" ? { ...x, p: r(x.p), fing: r(x.fing), thumb: r(x.thumb), elbow: r(x.elbow) } : x;
+  const f = (x: Spec["fl"]) => ({ ...x, p: r(x.p), r: [x.r?.[0] ?? 0, (x.r?.[1] ?? 0) + deg, x.r?.[2] ?? 0] as V3 });
+  return {
+    ...s,
+    hp: r(s.hp),
+    hr: [s.hr[0], s.hr[1] + deg, s.hr[2]],
+    fl: f(s.fl),
+    fr: f(s.fr),
+    lh: h(s.lh),
+    rh: h(s.rh),
+  };
+}
+
+/** Đòn kết xoay vòng: lấy đà a, xoay một vòng (tư thế v) rồi chém kết c, giữ f rồi thu về R. */
+function spinStrike(
+  R: Spec,
+  a: Spec,
+  v: Spec,
+  c: Spec,
+  f: Spec,
+  o: { dur: number; tA: number; tS: number; tC: number; tF: number; hold: number },
+): ClipDef {
+  const N = 6,
+    st = (o.tC - o.tS) / N;
+  return {
+    dur: o.dur,
+    keys: [
+      { t: 0, s: R },
+      { t: o.tA, s: a, ease: "out" },
+      { t: o.tS, s: v, ease: "in" },
+      ...Array.from({ length: N - 1 }, (_, i) => ({
+        t: o.tS + st * (i + 1),
+        s: spin(v, 60 * (i + 1)),
+        ease: "lin" as const,
+      })),
+      { t: o.tC, s: spin(c, 360), ease: "lin" },
+      { t: o.tF, s: spin(f, 360), ease: "out" },
+      { t: o.hold, s: spin(f, 360), ease: "inout" },
+      { t: 1, s: spin(R, 360), ease: "inout" },
+    ],
+  };
+}
+
+/**
+ * Đòn nặng tay (đại kiếm): thân xoay trước, vũ khí còn ở thế lấy đà (trễ tay), rồi lưỡi mới đuổi theo thật nhanh;
+ * vung quá đà, giữ lâu rồi thu về chậm.
+ */
+function heavy(
+  R: Spec,
+  a: Spec,
+  c: Spec,
+  f: Spec,
+  o: { dur: number; tA: number; tL: number; tC: number; tF: number; hold: number },
+): ClipDef {
+  const lag = P(c, { rh: a.rh, lh: a.lh });
+  return {
+    dur: o.dur,
+    keys: [
+      { t: 0, s: R },
+      { t: o.tA, s: a, ease: "out" },
+      { t: o.tL, s: lag, ease: "inout" },
+      { t: o.tC, s: c, ease: "in" },
+      { t: o.tF, s: f, ease: "out" },
+      { t: o.hold, s: f, ease: "inout" },
       { t: 1, s: R, ease: "inout" },
     ],
   };
@@ -346,18 +420,10 @@ const CT_READY = P(STAND, {
   gr: OPEN,
   gl: LOOSE,
 });
-const ctPullR = lean(P(CT_READY, { rh: palmR([-0.22, 0.3, 0.02], [0, 0, 1], [0, 1, 0], [-0.9, -0.2, -0.3]) }), {
-  hr: [0, -26, 0],
-  hp: [0, -0.04, -0.03],
-});
 const ctPushR = lean(
   P(CT_READY, { rh: palmR([-0.06, 0.32, 0.48], [0, 0, 1], [0, 1, 0.1], [-0.6, -0.6, 0]), fl: foot(0.1, 0.2, 12) }),
   { hr: [0, 10, 0], ch: [6, 8, 0], hp: [0, -0.06, 0.06] },
 );
-const ctPullL = lean(P(CT_READY, { lh: palm([0.26, 0.28, 0.02], [0, 0, 1], [0, 1, 0], [0.9, -0.2, -0.3]) }), {
-  hr: [0, 18, 0],
-  hp: [0, -0.04, -0.02],
-});
 const ctSwL = lean(
   P(CT_READY, { lh: palm([-0.02, 0.24, 0.46], [-0.6, 0, 0.8], [0, 1, 0], [0.6, -0.6, 0]), fr: foot(-0.09, 0.04, -20) }),
   { hr: [0, -18, 0], ch: [6, -10, 0], hp: [0, -0.06, 0.05] },
@@ -378,6 +444,36 @@ const ctBothPush = lean(
     fl: foot(0.1, 0.24, 10),
   }),
   { hr: [0, 0, 0], sp: [6, 0, 0], ch: [8, 0, 0], hp: [0, -0.1, 0.08] },
+);
+/** Ấn tay: ngón trỏ và giữa duỗi, ngón áp út và út gập (kiếm chỉ). */
+const SEAL_G = { c: 1, t: 0.85, ci: 0, cm: 0, s: 0 };
+/** Ấn tay phải dựng trước mặt, tay trái đỡ dưới. */
+const ctSealR = lean(
+  P(CT_READY, {
+    rh: palmR([-0.08, 0.5, 0.24], [0.9, 0, 0.3], [0, 1, 0.1], [-0.9, -0.4, 0]),
+    lh: palm([0.06, 0.3, 0.22], [-0.3, 0.8, 0.3], [-0.4, 0.2, 1], [0.8, -0.6, 0]),
+    gr: SEAL_G,
+  }),
+  { hr: [0, -22, 0], ch: [0, -6, 0], hd: [0, 8, 0], hp: [0, -0.05, -0.02] },
+);
+const ctPushS = P(ctPushR, { gr: SEAL_G, rh: palmR([-0.02, 0.36, 0.52], [0, -0.3, 1], [0.3, 1, 0], [-0.6, -0.6, 0]) });
+const ctSealL = lean(
+  P(CT_READY, {
+    lh: palm([0.1, 0.5, 0.24], [-0.9, 0, 0.3], [0, 1, 0.1], [0.9, -0.4, 0]),
+    gl: SEAL_G,
+  }),
+  { hr: [0, 18, 0], ch: [0, 8, 0], hp: [0, -0.05, -0.02] },
+);
+const ctSwS = P(ctSwL, { gl: SEAL_G });
+/** Hai tay chắp ấn trước ngực. */
+const ctSeal2 = lean(
+  P(CT_READY, {
+    rh: palmR([-0.03, 0.42, 0.24], [1, 0, 0.1], [0, 1, 0.15], [-0.8, -0.5, 0]),
+    lh: palm([0.03, 0.42, 0.24], [-1, 0, 0.1], [0, 1, 0.15], [0.8, -0.5, 0]),
+    gr: SEAL_G,
+    gl: SEAL_G,
+  }),
+  { hr: [0, -18, 0], ch: [2, -8, 0], hd: [2, 6, 0], hp: [0, -0.07, -0.02] },
 );
 /** Kỹ năng: vẽ vòng tròn phép trước mặt bằng tay phải rồi đẩy ra. */
 const ctCircle = (a: number) =>
@@ -414,58 +510,123 @@ const ctBurst: ClipDef = {
   ],
 };
 
+/* ---------------------------------------------------------------- Đòn kết (đòn 3). */
+const sw3A = lean(swRF, { hr: [0, -50, 0], ch: [4, -20, 0], hp: [0, -0.08, -0.03] });
+const sw3V = lean(P(swRF, { fr: foot(-0.09, -0.08, -20) }), { hr: [0, -20, 0], ch: [4, -10, 0], hp: [0, -0.1, 0] });
+const sw3C = lean(P(swL, { fl: foot(0.1, 0.44, 14), fr: foot(-0.09, -0.24, -40) }), {
+  hr: [0, 34, 0],
+  ch: [4, 16, 0],
+  hp: [0, -0.14, 0.18],
+});
+const sw3F = lean(P(swCutF, { fl: foot(0.1, 0.44, 14), fr: foot(-0.09, -0.24, -40) }), {
+  hr: [0, 52, 0],
+  ch: [6, 22, 0],
+  hp: [0, -0.15, 0.19],
+});
+const gr3A = lean(grUp, { hr: [0, -42, 0], ch: [-10, -16, 0], hp: [0, -0.02, -0.07] });
+const gr3C = lean(P(grSlam, { fl: foot(0.13, 0.48, 12), fr: foot(-0.12, -0.22, -40) }), {
+  hp: [0, -0.22, 0.2],
+  hr: [0, 6, 0],
+});
+const sp2B = lean(sp2(SP_READY, grip([-0.14, 0.02, -0.1], SP_DIR, [0, -1, 0.1], [-0.8, -0.5, -0.2])), {
+  hr: [0, -40, 0],
+  hp: [0, -0.07, 0.02],
+});
+const sp2T = lean(
+  sp2(P(SP_READY, { fl: foot(0.08, 0.42, -10) }), grip([0.0, 0.14, 0.44], [0.0, 0.12, 1], [0, -1, 0], [-0.6, -0.8, 0])),
+  { hr: [0, -18, 0], sp: [10, -4, 0], ch: [8, -6, 0], hp: [0, -0.13, 0.17] },
+);
+const sp3V = lean(P(spSwR, { fl: foot(0.1, 0.14, 0) }), { hp: [0, -0.1, 0] });
+const sp3C = lean(P(spSwLF, { fl: foot(0.1, 0.36, 0), fr: foot(-0.12, -0.2, -60) }), {
+  hr: [0, 24, 0],
+  ch: [4, 22, 0],
+  hp: [0, -0.14, 0.12],
+});
+
 export const MELEE: Record<string, ClipDef> = {
   swReady: readyLoop(SW_READY),
   sw1: strike(SW_READY, swHi, swCut, swCutF, { dur: 0.55 }),
   sw2: strike(SW_READY, swL, swR, swRF, { dur: 0.55 }),
-  sw3: strike(SW_READY, swOver, swSlam, lean(swSlam, { hp: [0, -0.15, 0.12] }), {
-    dur: 0.75,
-    tA: 0.16,
-    tC: 0.28,
-    tF: 0.4,
-    hold: 0.62,
-  }),
+  sw3: spinStrike(SW_READY, sw3A, sw3V, sw3C, sw3F, { dur: 0.8, tA: 0.1, tS: 0.15, tC: 0.33, tF: 0.4, hold: 0.7 }),
   swSkill,
   swBurst,
   grReady: readyLoop(GR_READY, 2.8),
-  gr1: strike(GR_READY, grShoulder, grSweep, grSweepF, { dur: 0.75, tA: 0.16, tC: 0.28, tF: 0.48, hold: 0.62 }),
-  gr2: strike(GR_READY, grLow, grRise, grRiseF, { dur: 0.75, tA: 0.16, tC: 0.28, tF: 0.48, hold: 0.62 }),
-  gr3: strike(GR_READY, grUp, grSlam, lean(grSlam, { hp: [0, -0.22, 0.12] }), {
-    dur: 0.95,
-    tA: 0.18,
+  gr1: heavy(GR_READY, grShoulder, grSweep, lean(grSweepF, { hp: [0, -0.12, 0.06] }), {
+    dur: 0.8,
+    tA: 0.16,
+    tL: 0.24,
     tC: 0.3,
+    tF: 0.4,
+    hold: 0.66,
+  }),
+  gr2: heavy(GR_READY, grLow, grRise, grRiseF, { dur: 0.8, tA: 0.16, tL: 0.24, tC: 0.3, tF: 0.4, hold: 0.66 }),
+  gr3: heavy(GR_READY, gr3A, gr3C, lean(gr3C, { hp: [0, -0.24, 0.2] }), {
+    dur: 1.0,
+    tA: 0.2,
+    tL: 0.28,
+    tC: 0.34,
     tF: 0.42,
-    hold: 0.7,
+    hold: 0.74,
   }),
   grSkill,
   grBurst,
   spReady: readyLoop(SP_READY),
   sp1: strike(SP_READY, spBack, spThrust, lean(spThrust, { hp: [0, -0.1, 0.11] }), {
     dur: 0.5,
-    tA: 0.1,
-    tC: 0.22,
-    tF: 0.32,
+    tA: 0.08,
+    tC: 0.15,
+    tF: 0.22,
+    hold: 0.55,
   }),
-  sp2: strike(SP_READY, spSwR, spSwL, spSwLF, { dur: 0.55 }),
-  sp3: strike(SP_READY, lean(spBack, { hp: [0, -0.1, -0.08] }), spLunge, lean(spLunge, { hp: [0, -0.17, 0.17] }), {
-    dur: 0.75,
-    tA: 0.16,
-    tC: 0.26,
-    tF: 0.36,
-    hold: 0.62,
+  /** Đâm liên hoàn: hai mũi nhanh liền nhau. */
+  sp2: {
+    dur: 0.55,
+    keys: [
+      { t: 0, s: SP_READY },
+      { t: 0.07, s: spBack, ease: "out" },
+      { t: 0.13, s: spThrust, ease: "in" },
+      { t: 0.22, s: sp2B, ease: "inout" },
+      { t: 0.28, s: sp2T, ease: "in" },
+      { t: 0.36, s: lean(sp2T, { hp: [0, -0.12, 0.15] }), ease: "out" },
+      { t: 0.62, s: lean(sp2T, { hp: [0, -0.12, 0.15] }), ease: "inout" },
+      { t: 1, s: SP_READY, ease: "inout" },
+    ],
+  },
+  /** Đòn kết: quét vòng một vòng quanh người rồi dừng ở thế quét ngang bước dài. */
+  sp3: spinStrike(SP_READY, lean(spBack, { hp: [0, -0.1, -0.08] }), sp3V, sp3C, lean(sp3C, { hp: [0, -0.15, 0.13] }), {
+    dur: 0.8,
+    tA: 0.1,
+    tS: 0.15,
+    tC: 0.36,
+    tF: 0.42,
+    hold: 0.7,
   }),
   spSkill,
   spBurst,
   ctReady: readyLoop(CT_READY),
-  ct1: strike(CT_READY, ctPullR, ctPushR, ctPushR, { dur: 0.6 }),
-  ct2: strike(CT_READY, ctPullL, ctSwL, ctSwL, { dur: 0.6 }),
-  ct3: strike(CT_READY, ctBoth, ctBothPush, lean(ctBothPush, { hp: [0, -0.11, 0.09] }), {
-    dur: 0.75,
-    tA: 0.16,
-    tC: 0.28,
-    tF: 0.38,
-    hold: 0.62,
-  }),
+  ct1: strike(CT_READY, ctSealR, ctPushS, lean(ctPushS, { hp: [0, -0.07, 0.07] }), { dur: 0.6 }),
+  ct2: strike(CT_READY, ctSealL, ctSwS, lean(ctSwS, { hp: [0, -0.07, 0.06] }), { dur: 0.6 }),
+  /** Đòn kết: chắp ấn trước ngực, giơ hai tay lên, xoay người đẩy hai tay ra bước dài. */
+  ct3: {
+    dur: 0.8,
+    keys: [
+      { t: 0, s: CT_READY },
+      { t: 0.12, s: ctSeal2, ease: "out" },
+      { t: 0.24, s: ctSeal2 },
+      { t: 0.3, s: ctBoth, ease: "inout" },
+      {
+        t: 0.37,
+        s: lean(P(ctBothPush, { fl: foot(0.1, 0.36, 10) }), { hp: [0, -0.13, 0.14], hr: [0, 8, 0] }),
+        ease: "in",
+      },
+      {
+        t: 0.7,
+        s: lean(P(ctBothPush, { fl: foot(0.1, 0.36, 10) }), { hp: [0, -0.14, 0.15], hr: [0, 8, 0] }),
+        ease: "out",
+      },
+      { t: 1, s: CT_READY, ease: "inout" },
+    ],
+  },
   ctCharge: {
     dur: 1.6,
     loop: true,
@@ -486,4 +647,7 @@ export const MELEE_MOVE: Record<string, OverlayDef> = {
   spWalk: carry("walk", { r: { hold: low(-1, [0, 0.5, 0.85]), k: 0.65, grip: FIST } }),
   spRun: carry("run", { r: { hold: low(-1, [0, 0.35, 0.95]), k: 0.55, grip: FIST } }),
   spSprint: carry("sprint", { r: { hold: low(-1, [0, 0.2, -1]), k: 0.5, grip: FIST } }),
+  swStop: carry("runStop", { r: { hold: low(-1, [0, 0.35, 0.95]), k: 0.5, grip: FIST } }),
+  grStop: carry("runStop", { r: { hold: low(-1, [-0.2, 0.3, -0.9]), k: 0.6, grip: FIST } }),
+  spStop: carry("runStop", { r: { hold: low(-1, [0, 0.5, 0.85]), k: 0.6, grip: FIST } }),
 };

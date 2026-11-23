@@ -5,7 +5,7 @@
  * thả dây đặt sớm (≈ 15% clip).
  */
 import type { ClipDef, OverlayDef, Spec, Hand } from "../pose";
-import { P, STAND, FIST, OPEN, foot } from "./base";
+import { P, STAND, FIST, OPEN, foot, ANKLE_Y } from "./base";
 import { idleLoop, readyLoop, carry, add } from "./common";
 
 const HOOK = { c: 0.45, t: 0.5, ci: 0.75, cm: 0.75 };
@@ -97,29 +97,84 @@ const aim: ClipDef = {
   ],
 };
 
-/** Nộ: bước lùi, ngửa người bắn mưa tên lên trời, thả lúc màn nộ kết thúc (≈ 0.95/1.3). */
-const SKY = P(BOW_DRAW, {
-  hp: [0, -0.06, -0.04],
-  b: { spine: [-10, -8, 0], chest: [-14, -10, -2], upperChest: [-8, -4, -2], neck: [-12, 36, 0], head: [-20, 40, 6] },
-  lh: { p: [0.04, 0.78, 0.42], fing: [-0.15, 0.8, 0.6], thumb: [0.15, 0.6, -0.8], elbow: [1, -0.4, 0] },
-  rh: { p: [-0.03, 0.5, 0.02], fing: [0.35, 0.6, 0.8], thumb: [0, 0.8, -0.6], elbow: [-0.2, -0.3, -1] },
+/** Bắn chéo lên: tay cung nâng cao, ngửa người, mắt nhìn theo mũi tên. up: độ ngẩng (0..1). */
+const upDraw = (up: number, rh?: Partial<Hand>): Spec =>
+  P(BOW_DRAW, {
+    b: {
+      spine: [-4 * up, -8, 0],
+      chest: [-8 * up, -10, -2],
+      upperChest: [-4 * up, -4, -2],
+      neck: [-10 * up, 36, 0],
+      head: [6 - 22 * up, 44, 6],
+    },
+    lh: { p: [0.04, 0.42 + 0.48 * up, 0.58 - 0.24 * up], fing: [-0.15, 0.9 * up, 1], thumb: [0.15, 1, -0.9 * up] },
+    rh: { p: [-0.03, 0.45 + 0.05 * up, 0.0], fing: [0.35, 0.5 * up, 1], ...rh },
+  });
+
+/** Kỹ năng: nhún, bật lùi một nhịp kéo dây giữa không, đáp xuống bắn chéo lên trời rồi bước về. */
+const air = (s: Spec, y: number, z: number): Spec =>
+  P(s, {
+    hp: [0, y, z],
+    fl: foot(0.02, 0.1 + z * 0.6, -62, ANKLE_Y + Math.max(0, y + 0.03), 25),
+    fr: foot(-0.03, -0.12 + z * 0.8, -78, ANKLE_Y + Math.max(0, y + 0.06), 35),
+  });
+const landed = (s: Spec): Spec =>
+  P(s, { hp: [0, -0.1, -0.22], fl: foot(0.03, -0.06, -60), fr: foot(-0.05, -0.42, -80) });
+const bowSkill: ClipDef = {
+  dur: 0.75,
+  str: [
+    [0.08, 0.15],
+    [0.24, 1],
+    [0.44, 1],
+    [0.455, 0],
+    [0.85, 0.15],
+  ],
+  keys: [
+    { t: 0, s: BOW_READY },
+    { t: 0.08, s: P(BOW_READY, { hp: [0, -0.1, 0.02] }), ease: "out" },
+    { t: 0.2, s: air(upDraw(0.3, { p: [0.0, 0.46, 0.2] }), 0.1, -0.12), ease: "out" },
+    { t: 0.3, s: air(upDraw(0.55), 0.04, -0.2), ease: "in" },
+    { t: 0.36, s: landed(upDraw(0.55)), ease: "out" },
+    { t: 0.44, s: landed(upDraw(0.58, { p: [-0.045, 0.49, -0.02] })), ease: "lin" },
+    { t: 0.5, s: landed(upDraw(0.6, { p: [-0.14, 0.52, -0.14], fing: [0.2, 0.4, 1] })), ease: "out" },
+    { t: 0.7, s: P(landed(upDraw(0.6, { p: [-0.14, 0.52, -0.14] })), { gr: LET }), ease: "inout" },
+    { t: 0.86, s: P(BOW_READY, { hp: [0, -0.06, -0.1], fr: foot(-0.1, -0.2, -48) }), ease: "inout" },
+    { t: 1, s: BOW_READY, ease: "inout" },
+  ],
+};
+
+/** Nộ: lùi chân sau, hạ trọng tâm, giương cung thẳng lên trời, ngửa người kéo đầy dây, giữ rồi thả mưa tên. */
+const SKY = P(upDraw(1), {
+  hp: [0, -0.08, -0.05],
+  hr: [0, -58, 0],
+  b: { spine: [-10, -8, 0], chest: [-14, -10, -2], upperChest: [-8, -4, -2], neck: [-14, 34, 0], head: [-24, 40, 4] },
+  lh: { p: [0.05, 0.98, 0.3], fing: [-0.1, 1, 0.45], thumb: [0.12, 0.45, -1], elbow: [1, -0.3, 0] },
+  rh: { p: [-0.02, 0.52, 0.02], fing: [0.3, 0.8, 0.6], thumb: [0, 0.6, -0.8], elbow: [-0.3, -0.4, -1] },
+  fl: foot(0.04, 0.16, -50),
+  fr: foot(-0.1, -0.3, -70),
 });
+const SKY_LOOSE = P(SKY, { rh: { p: [-0.12, 0.5, -0.16], fing: [0.1, 0.6, 1] }, gr: LET });
 const burst: ClipDef = {
   dur: 1.3,
   str: [
     [0.2, 0],
-    [0.3, 1],
+    [0.36, 1],
     [0.76, 1],
     [0.775, 0],
   ],
   keys: [
     { t: 0, s: BOW_READY },
-    { t: 0.16, s: P(BOW_READY, { hp: [0, -0.12, -0.08], fr: foot(-0.1, -0.24, -48) }), ease: "out" },
-    { t: 0.4, s: P(SKY, { fr: foot(-0.1, -0.24, -48), rh: { p: [0.0, 0.62, 0.3] } }), ease: "inout" },
-    { t: 0.68, s: P(SKY, { fr: foot(-0.1, -0.24, -48) }), ease: "out" },
-    { t: 0.73, s: P(SKY, { fr: foot(-0.1, -0.24, -48) }), ease: "lin" },
-    { t: 0.78, s: P(SKY, { fr: foot(-0.1, -0.24, -48), rh: { p: [-0.12, 0.5, -0.12] }, gr: LET }), ease: "out" },
-    { t: 0.88, s: P(SKY, { fr: foot(-0.1, -0.24, -48), rh: { p: [-0.12, 0.5, -0.12] }, gr: LET }) },
+    { t: 0.14, s: P(BOW_READY, { hp: [0, -0.13, -0.08], fr: foot(-0.1, -0.3, -60) }), ease: "out" },
+    {
+      t: 0.3,
+      s: P(upDraw(0.6, { p: [0.0, 0.62, 0.3] }), { fl: SKY.fl, fr: SKY.fr, hp: [0, -0.06, -0.05] }),
+      ease: "inout",
+    },
+    { t: 0.44, s: SKY, ease: "out" },
+    { t: 0.7, s: P(SKY, { hp: [0, -0.1, -0.06] }), ease: "inout" },
+    { t: 0.76, s: P(SKY, { rh: { p: [-0.04, 0.515, 0.0] } }), ease: "lin" },
+    { t: 0.8, s: SKY_LOOSE, ease: "out" },
+    { t: 0.9, s: P(SKY_LOOSE, { hp: [0, -0.09, -0.06] }), ease: "inout" },
     { t: 1, s: BOW_READY, ease: "inout" },
   ],
 };
@@ -137,6 +192,7 @@ export const BOW: Record<string, ClipDef> = {
   bow2: shot({ lean: 3, yaw: -6 }),
   bow3: shot({ lean: -2, yaw: 4, strong: true }),
   bowAim: aim,
+  bowSkill,
   bowBurst: burst,
 };
 
@@ -145,5 +201,6 @@ export const BOW_MOVE: Record<string, OverlayDef> = {
   bowWalk: carry("walk", { l: carryBow }),
   bowRun: carry("run", { l: { ...carryBow, k: 0.45 } }),
   bowSprint: carry("sprint", { l: { ...carryBow, k: 0.35 } }),
+  bowStop: carry("runStop", { l: { ...carryBow, k: 0.5 } }),
 };
 void OPEN;

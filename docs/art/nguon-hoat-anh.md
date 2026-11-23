@@ -102,3 +102,14 @@ Renderer 2D ẩn vũ khí theo cùng luật (`src/combat/weapon-state.ts`).
 
 Khi chưa có mô hình nam của S26, bảng so sánh và video dáng nam dùng tạm "Robert" trong bộ 100Avatars R1 của Polygonal Mind
 (CC0, qua kho ToxSam/open-source-avatars), đặt cục bộ ở `public/media/models/_nam/` và không commit.
+
+## S27 – vòng tinh chỉnh sau Mốc 2
+
+Mọi khung hình đều tự dựng bằng code trong `tools/anim/s27/` (không dùng tệp hoạt ảnh tách từ game khác, không dựng lại động tác đặc trưng của nhân vật cụ thể nào). Video gameplay công khai chỉ dùng để tham khảo nhịp và cảm giác.
+
+- **Đứng thả lỏng:** lớp dáng dồn trọng tâm về một chân (`dung.tru`), chân trụ đổi bên chậm, hông bên trụ nhô nhẹ, chân còn lại đặt lên trước (`chanTruoc`) và mở mũi chân (`xoay`). `tay.sau` chắp tay sau lưng (thiếu nữ).
+- **Hoạt ảnh chờ ngẫu nhiên** (`nghi` trong `content/poses.yaml`): `idleStretch` (vươn vai), `idleLook` (nhìn quanh), `idleHair` (vén tóc), `idleHop` (nhún nhảy, dành cho dáng trẻ em). Chạy sau `nghi.sau` giây đứng yên tay không, không lặp lại clip vừa chạy.
+- **Chạy:** đổ người theo tốc độ (`chay.nghieng`), nghiêng vào khúc cua theo tốc độ xoay hướng (`chay.lac`), chạy nhanh vung tay mạnh hơn; dừng có nhịp hãm `runStop` (có bản cầm vũ khí `swStop`, `grStop`, `spStop`, `bowStop`).
+- **Lướt / nhảy:** lướt đổ người tới và tỏa hạt sáng theo nguyên tố; nhảy co chân ở đỉnh.
+- **Đòn:** lấy đà ≈ 10% clip, chạm ≈ 17%, giữ tư thế kết tới ≈ 60%. Đòn 3: kiếm và thương xoay một vòng người rồi chém / quét kết bước dài; đại kiếm thân xoay trước, lưỡi trễ theo (nặng tay); pháp khí chắp ấn rồi đẩy hai tay, pháp khí bay vòng quanh người khi ra đòn. Vệt chém của đòn kết dài và rộng hơn; pháp khí có nét ấn theo đầu ngón trỏ (`src/render3d/toon/motion-fx.ts`).
+- **Cung:** kỹ năng `bowSkill` bật lùi một nhịp rồi bắn chéo lên; nộ giương cung thẳng lên trời, ngửa người kéo đầy dây rồi thả.

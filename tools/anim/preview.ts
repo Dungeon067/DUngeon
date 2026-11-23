@@ -5,6 +5,7 @@
  */
 import * as THREE from "three";
 import { VrmActor, POSES, MODELS } from "../../src/render3d/toon/actor";
+import { HeroFx } from "../../src/render3d/toon/motion-fx";
 
 const q = new URLSearchParams(location.search);
 const id = q.get("id") ?? "havy",
@@ -36,6 +37,8 @@ const a = await VrmActor.load(id, w, null);
 if (!a) throw new Error("không tải được VRM");
 scene.add(a.obj);
 if (dang) a.setDang((POSES.dang as any)[dang]);
+// Video duyệt: rút ngắn thời gian chờ trước hoạt ảnh chờ ngẫu nhiên.
+if (q.get("nghi") && a.dang) a.dang = { ...a.dang, nghi: { ...a.dang.nghi, sau: +q.get("nghi")! } };
 a.poseIn = { mode, freeL: w !== "bow", freeR: w === "bow" };
 // Tay không (vũ khí đã cất): ẩn vũ khí, hai tay rảnh.
 if (clip === "relax" || clip.startsWith("stow") || q.get("nov")) {
@@ -86,6 +89,11 @@ function sequence(src: string) {
     charge: "Ngắm / tụ lực",
     idle: "Đứng yên",
     run: "Chạy",
+    sprint: "Chạy nhanh",
+    turn: "Chạy rẽ",
+    stop: "Dừng (nhịp hãm)",
+    dash: "Lướt",
+    jump: "Nhảy",
     ready: "Thế chờ",
   };
   const A = MODELS.hoatAnh[w as keyof typeof MODELS.hoatAnh];
@@ -102,6 +110,10 @@ function sequence(src: string) {
   lab.style.cssText = "position:fixed;left:12px;top:10px;font:600 20px sans-serif;color:#223;";
   document.body.appendChild(lab);
   if (a!.wfx) a!.wfx.color.set(q.get("col") ?? "#7fd0ff");
+  const fx = new HeroFx();
+  fx.color(q.get("col") ?? "#7fd0ff", q.get("col2") ?? q.get("col") ?? "#bfe8ff");
+  scene.add(fx.group);
+  const MOVE = new Set(["run", "sprint", "turn"]);
   const play = (c: string, o: { once?: boolean; speed?: number; fade?: number; restart?: boolean } = {}) => {
     if (c === cur && !o.restart) return;
     cur = c;
@@ -123,23 +135,55 @@ function sequence(src: string) {
     }
     const s = segs[Math.min(si, segs.length - 1)];
     const out = T - lastAct < POSES.vuKhi.cho || s.k === "charge";
-    const standing = s.k !== "run";
+    const standing = !MOVE.has(s.k) && s.k !== "dash" && s.k !== "jump";
     a!.wfx?.want(out, standing, scene);
     const armed = !a!.wfx || a!.wfx.st === "hand" || a!.wfx.st === "stowing";
+    const relaxing = s.k === "idle" && (!a!.wfx || a!.wfx.st === "gone");
+    const iv = a!.idleVariant(dt, relaxing);
+    // Lướt / nhảy: mô phỏng tại chỗ (nhảy có quỹ đạo đứng để thấy co chân ở đỉnh).
+    const JD = s.d,
+      ju = s.k === "jump" ? segT / JD : 0;
+    a!.obj.position.y =
+      (a!.obj.userData.yOff ?? 0) + (s.k === "jump" && ju < 0.8 ? 0.55 * 4 * (ju / 0.8) * (1 - ju / 0.8) : 0);
+    if (s.k === "turn") a!.obj.rotation.y += dt * 2.4;
+    else a!.obj.rotation.y *= 1 - Math.min(1, dt * 3);
     if (!WIN[s.k]) {
       if (s.k === "charge") play(A.charge);
-      else if (s.k === "run") play(armed ? (A.move?.run ?? "run") : "run");
+      else if (s.k === "run" || s.k === "turn") play(armed ? (A.move?.run ?? "run") : "run");
+      else if (s.k === "sprint") play(armed ? (A.move?.sprint ?? "sprint") : "sprint");
+      else if (s.k === "stop") play(armed ? (A.move?.stop ?? "runStop") : "runStop", { once: true, fade: 0.1 });
+      else if (s.k === "dash") play("dash", { once: true, speed: 1.3, fade: 0.06 });
+      else if (s.k === "jump")
+        play(ju < 0.4 ? "jumpUp" : ju < 0.8 ? "jumpAir" : "jumpLand", { once: ju < 0.4 || ju >= 0.8, fade: 0.08 });
       else if (a!.wfx?.clip) play(a!.wfx.clip, { once: true });
-      else play(armed ? (A.ready ?? A.stand) : "relax", { fade: armed ? 0.2 : 0.35 });
+      else if (iv) {
+        play(iv.split("#")[0], { once: true, fade: 0.35, restart: iv !== cur });
+        cur = iv;
+      } else play(armed ? (A.ready ?? A.stand) : "relax", { fade: armed ? 0.2 : 0.35 });
     }
+    const jv = s.k === "jump" && ju < 0.8 ? 1 - 2 * (ju / 0.8) : 1;
     const free = !armed;
     a!.poseIn = {
-      mode: WIN[s.k] || s.k === "charge" ? "act" : s.k === "run" ? "move" : armed ? "ready" : "relax",
+      mode:
+        WIN[s.k] || s.k === "charge"
+          ? "act"
+          : s.k === "dash" || (s.k === "jump" && ju < 0.8)
+            ? "air"
+            : MOVE.has(s.k)
+              ? "move"
+              : armed
+                ? "ready"
+                : "relax",
       freeL: free || w !== "bow",
       freeR: free || w === "bow",
+      anim: !!iv,
+      spd: s.k === "sprint" ? 1.5 : MOVE.has(s.k) ? 1 : 0,
+      apex: s.k === "jump" ? Math.max(0, 1 - Math.abs(jv) / 0.45) : 0,
+      dash: s.k === "dash",
     };
+    if (a!.wfx) a!.wfx.orbit = !!WIN[s.k] && w === "cat";
     lab.textContent =
-      (VI[s.k] ?? s.k) +
+      (iv ? `Hoạt ảnh chờ: ${iv.split("#")[0]}` : (VI[s.k] ?? s.k)) +
       (a!.wfx && !WIN[s.k]
         ? a!.wfx.st === "stowing" || a!.wfx.st === "worn"
           ? " · cất vũ khí"
@@ -152,6 +196,8 @@ function sequence(src: string) {
           ? ""
           : "");
     a!.update(dt);
+    const fin = s.k === "atk3" || s.k === "skill" || s.k === "burst";
+    fx.update(a!, { acting: !!WIN[s.k], fin, dash: s.k === "dash" }, dt);
     gl.render(scene, cam);
     T += dt;
     segT += dt;

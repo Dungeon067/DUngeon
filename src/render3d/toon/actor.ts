@@ -246,13 +246,49 @@ export class VrmActor {
 
   /** Gắn dáng tư thế (content/poses.yaml). */
   setDang(p: DangParams) {
+    this.dang = p;
     this.layer = new PoseLayer(this.vrm, p, this.restHips, this.hipsH, this.obj);
+  }
+  dang: DangParams | null = null;
+  private idle = { t: 0, wait: 0, end: 0, n: 0, cur: "", last: "", seed: 7 };
+
+  /**
+   * Hoạt ảnh chờ ngẫu nhiên (theo dáng): gọi mỗi khung khi đứng yên tay không; trả tên clip kèm "#n"
+   * khi đang chạy một hoạt ảnh chờ, null khi dùng tư thế đứng thả lỏng.
+   */
+  idleVariant(dt: number, relaxing: boolean): string | null {
+    const I = this.idle,
+      ng = this.dang?.nghi;
+    if (!ng || !relaxing) {
+      I.t = 0;
+      I.cur = "";
+      I.wait = 0;
+      return null;
+    }
+    I.t += dt;
+    if (I.cur) {
+      if (I.t < I.end) return `${I.cur}#${I.n}`;
+      I.last = I.cur;
+      I.cur = "";
+      I.t = 0;
+      I.wait = 0;
+    }
+    const rnd = () => ((I.seed = (I.seed * 16807) % 2147483647) - 1) / 2147483646;
+    if (!I.wait) I.wait = ng.sau * (0.85 + 0.5 * rnd());
+    if (I.t < I.wait) return null;
+    const pool = ng.clip.filter((c) => this.has(c) && (c !== I.last || ng.clip.length === 1));
+    if (!pool.length) return null;
+    I.cur = pool[Math.floor(rnd() * pool.length) % pool.length];
+    I.n++;
+    I.end = I.t + this.duration(I.cur) - 0.15;
+    return `${I.cur}#${I.n}`;
   }
 
   update(dt: number) {
     this.layer?.restore();
     this.mixer.update(dt);
     this.layer?.apply(dt, this.poseIn);
+    if (this.layer) this.obj.rotation.z = this.layer.bank;
     this.vrm.update(dt);
     this.wfx?.update(dt);
     if (this.bow) this.bow.update(this.wfx && this.wfx.st !== "hand" ? 0 : this.strNow());

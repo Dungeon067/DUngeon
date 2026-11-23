@@ -24,6 +24,11 @@ const Dang = z
     dung: z
       .object({
         chan: n(-0.05, 0.1),
+        /** Dồn trọng tâm về một chân (0..1), chân trụ đổi bên chậm; nghiêng hông theo chân trụ. */
+        tru: n(0, 1),
+        /** Chân không trụ đặt lên trước (H) và mở mũi chân (độ). */
+        chanTruoc: n(0, 0.08),
+        xoay: n(0, 25),
         hong: n(0, 3),
         vai: n(0, 2.5),
         /** Mở vai ra sau (độ): dáng vạm vỡ mở ngực, dáng trẻ em/thiếu nữ để 0. */
@@ -32,18 +37,32 @@ const Dang = z
         dau: n(0, 8),
         /** Ngẩng (−) / cúi (+) đầu, độ. */
         dauCui: n(-6, 8),
-        tay: z.object({ mo: n(0, 25), gap: n(0, 35), truoc: n(0, 1), dua: n(0, 12) }).strict(),
+        tay: z.object({ mo: n(0, 25), gap: n(0, 35), truoc: n(0, 1), sau: n(0, 1).default(0), dua: n(0, 12) }).strict(),
         tho: nhip,
         doiTrong: nhip,
       })
       .strict(),
     cho: z.object({ chan: n(0, 0.15), ha: n(0, 0.1), cui: n(0, 10), nhun: n(0, 0.03), nhipNhun: n(0.5, 3) }).strict(),
-    chay: z.object({ bien: n(0.6, 1.4), nhip: n(0.7, 1.35), nay: n(0.4, 1.8), mo: n(0, 20) }).strict(),
+    chay: z
+      .object({
+        bien: n(0.6, 1.4),
+        nhip: n(0.7, 1.35),
+        nay: n(0.4, 1.8),
+        mo: n(0, 20),
+        /** Đổ người tới trước khi chạy (độ) và nghiêng vào khúc cua tối đa (độ). */
+        nghieng: n(0, 20),
+        lac: n(0, 20),
+      })
+      .strict(),
+    /** Hoạt ảnh chờ ngẫu nhiên: sau `sau` giây đứng yên tay không thì chạy một clip trong danh sách. */
+    nghi: z.object({ sau: n(2, 30), clip: z.array(z.string()).min(1) }).strict(),
     don: z.object({ nang: n(0, 1) }).strict(),
     tiLe: z.object({ cao: n(0.6, 1.4), rong: n(0.8, 1.4) }).strict(),
   })
   .strict()
   .superRefine((d, ctx) => {
+    if (d.dung.tay.truoc > 0 && d.dung.tay.sau > 0)
+      ctx.addIssue({ code: "custom", message: "tay.truoc và tay.sau không dùng cùng lúc" });
     if (d.tre && (d.dung.hong > 0 || d.dung.vai > 0 || d.dung.tay.truoc > 0 || d.dung.moVai > 0))
       ctx.addIssue({
         code: "custom",

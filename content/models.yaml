@@ -25,7 +25,7 @@ hoatAnh:
     {
       stand: swReady,
       ready: swReady,
-      move: { walk: swWalk, run: swRun, sprint: swSprint },
+      move: { walk: swWalk, run: swRun, sprint: swSprint, stop: swStop },
       atk: [sw1, sw2, sw3],
       charge: swReady,
       skill: swSkill,
@@ -36,7 +36,7 @@ hoatAnh:
     {
       stand: grReady,
       ready: grReady,
-      move: { walk: grWalk, run: grRun, sprint: grSprint },
+      move: { walk: grWalk, run: grRun, sprint: grSprint, stop: grStop },
       atk: [gr1, gr2, gr3],
       charge: grReady,
       skill: grSkill,
@@ -47,7 +47,7 @@ hoatAnh:
     {
       stand: spReady,
       ready: spReady,
-      move: { walk: spWalk, run: spRun, sprint: spSprint },
+      move: { walk: spWalk, run: spRun, sprint: spSprint, stop: spStop },
       atk: [sp1, sp2, sp3],
       charge: spReady,
       skill: spSkill,
@@ -58,10 +58,10 @@ hoatAnh:
     {
       stand: bowReady,
       ready: bowReady,
-      move: { walk: bowWalk, run: bowRun, sprint: bowSprint },
+      move: { walk: bowWalk, run: bowRun, sprint: bowSprint, stop: bowStop },
       atk: [bow1, bow2, bow3],
       charge: bowAim,
-      skill: skill,
+      skill: bowSkill,
       burst: bowBurst,
       speed: 1,
     }
