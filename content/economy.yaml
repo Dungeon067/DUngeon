@@ -477,7 +477,8 @@ goiNap:
 # vndThang: tiền mua gói Đá Sao mỗi tháng, ngoài thẻ tháng và Hộ Chiếu Sao.
 # Nhân vật chủ lực là nhân vật giới hạn đầu tiên (banner ngày 1); vũ khí chủ lực là vũ khí đặc trưng của nhân vật đó.
 # mucTieu: thứ tự mục tiêu, "nvK" = chủ lực đạt Nét Sao NK, "vkK" = vũ khí chủ lực đạt RK. Chỉ ước khi banner đúng mục tiêu
-#   đang mở; ngoài ra giữ Đá Sao. uocKhac: Nét Sao muốn có cho nhân vật giới hạn khác (-1: không ước, dồn cho chủ lực).
+#   đang mở; ngoài ra giữ Đá Sao. uocKhac: Nét Sao muốn có cho nhân vật giới hạn khác (-1: không ước, dồn cho chủ lực;
+#   khi chủ lực đã xong mọi mục tiêu thì ước N0 nhân vật giới hạn mới thay vì giữ Đá Sao mãi).
 hoSo:
   - id: f2p
     ten: F2P chơi kỹ
