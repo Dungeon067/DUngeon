@@ -80,7 +80,7 @@ test.describe("video ước nguyện", () => {
     expect(errors).toEqual([]);
   });
 
-  test("thiếu video thì chạy bản code", async ({ page }) => {
+  test("thiếu video thì thử lại rồi vào thẳng phần nhận kết quả, không dùng bản code", async ({ page }) => {
     const errors = watchErrors(page);
     await page.route("**/media/cinematic/out/timeline.json", (r) => r.fulfill({ json: timeline }));
     await page.route("**/media/cinematic/out/video/**", (r) =>

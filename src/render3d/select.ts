@@ -51,19 +51,28 @@ export function deviceStrong(): boolean {
   }
 }
 
+/**
+ * Chủ dự án chốt: người chơi LUÔN chơi bản 3D, không còn lựa chọn 2D.
+ * Lớp vẽ 2D chỉ còn cho kiểm thử tự động (?e2e hoặc ?renderer=2d), không có đường nào cho người chơi vào.
+ */
 export function wants3D(): boolean {
-  try {
-    if (localStorage.getItem(FORCE_2D_KEY) === "1") return false;
-  } catch {}
   const qs = new URLSearchParams(location.search),
     q = qs.get("renderer");
-  if (q === "2d") return false;
-  if (q === "3d") return hasWebGL2();
-  // Test e2e chạy trên GPU giả lập: mặc định 2D, muốn thử 3D thì thêm ?renderer=3d.
-  if (qs.has("e2e")) return false;
-  if (settings.renderer === "2d") return false;
-  if (settings.renderer === "3d") return hasWebGL2();
-  return deviceStrong();
+  if (q === "3d") return true;
+  if (q === "2d" || qs.has("e2e")) return false;
+  return true;
+}
+/** Máy không có WebGL2: hiện thông báo thay vì lùi về 2D. */
+function showUnsupported(why: string) {
+  if (document.getElementById("no3d")) return;
+  const d = document.createElement("div");
+  d.id = "no3d";
+  d.className = "tt-root";
+  d.setAttribute("role", "alert");
+  d.style.cssText =
+    "position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;background:#070b1c;color:#f4ecd8;font:500 16px/1.5 'Be Vietnam Pro',sans-serif";
+  d.innerHTML = `<b style="font-size:20px;color:#ffe27a">Thiết bị chưa chạy được đồ họa 3D</b><span>${why}</span><span style="opacity:.75">Hãy cập nhật trình duyệt hoặc hệ điều hành, bật tăng tốc phần cứng, rồi tải lại trang.</span><button type="button" style="min-height:44px;padding:8px 20px;border-radius:10px;border:0;background:#f0c060;font-weight:700" onclick="location.reload()">Tải lại</button>`;
+  document.body.append(d);
 }
 
 export function renderer3d(): WorldRenderer | null {
@@ -72,7 +81,15 @@ export function renderer3d(): WorldRenderer | null {
 
 /** Áp dụng cài đặt hiện tại: bật hoặc tắt renderer 3D. */
 export function applyRenderer(): Promise<void> {
-  if (!wants3D() || failed) {
+  if (wants3D() && !hasWebGL2()) {
+    showUnsupported("Trình duyệt này không hỗ trợ WebGL2.");
+    return Promise.resolve();
+  }
+  if (wants3D() && failed) {
+    showUnsupported("Không khởi tạo được đồ họa 3D.");
+    return Promise.resolve();
+  }
+  if (!wants3D()) {
     active?.dispose();
     active = null;
     document.documentElement.dataset.renderer = "2d";
@@ -96,9 +113,16 @@ export function applyRenderer(): Promise<void> {
   return loading;
 }
 
+let retried = false;
+/** Mất context hoặc lỗi khởi tạo: thử dựng lại một lần, vẫn lỗi thì báo, không lùi về 2D. */
 function fail() {
-  failed = true;
   active?.dispose();
   active = null;
-  document.documentElement.dataset.renderer = "2d";
+  if (!retried) {
+    retried = true;
+    setTimeout(() => void applyRenderer(), 500);
+    return;
+  }
+  failed = true;
+  showUnsupported("Đồ họa 3D bị lỗi khi chạy.");
 }
