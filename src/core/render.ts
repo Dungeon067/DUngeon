@@ -390,7 +390,8 @@ function groundXf(r3: WorldRenderer, x: number, y: number): boolean {
     ay = (q1.y - q0.y) / TS,
     bx = (q2.x - q0.x) / TS,
     by = (q2.y - q0.y) / TS;
-  if (Math.hypot(ax, ay) > 3) return false;
+  // Chỉ bỏ khi một ô to hơn cả chiều cao màn hình (vật sát camera), không bỏ khi zoom gần.
+  if (Math.hypot(ax, ay) * TS > GS.VH) return false;
   const D = GS.DPR;
   ctx.setTransform(D * ax, D * ay, D * bx, D * by, D * (q0.x - ax * x - bx * y), D * (q0.y - ay * x - by * y));
   return true;
@@ -411,8 +412,8 @@ function drawPuzzles3d(r3: WorldRenderer, tm: number) {
       q1 = r3.project(x + TS, y, z);
     if (!q.vis || q.x < -150 || q.x > GS.VW + 150 || q.y < -150 || q.y > GS.VH + 250) continue;
     const s = Math.hypot(q1.x - q.x, q1.y - q.y) / TS;
-    // Vật quá sát camera (phóng to quá mức) sẽ phủ kín màn hình: bỏ qua.
-    if (s > 3) continue;
+    // Vật quá sát camera (một ô to hơn chiều cao màn hình) sẽ phủ kín màn hình: bỏ qua.
+    if (s * TS > GS.VH) continue;
     ctx.save();
     ctx.setTransform(GS.DPR * s, 0, 0, GS.DPR * s, GS.DPR * (q.x - s * x), GS.DPR * (q.y - s * y));
     d.f();
