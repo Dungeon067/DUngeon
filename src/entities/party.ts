@@ -1,7 +1,9 @@
 import { GS } from "../core/state";
 import { EL, byId } from "../data/content";
 import { fxBurst, fxRing } from "../entities/fx";
-import { Server, statsOf } from "../server/server";
+import { Server, investOf, statsOf } from "../server/server";
+import { ECON } from "../data/economy";
+import { weaponOf } from "../economy/core";
 import { buildHudParty } from "../ui/hud";
 import { resetFeel } from "../combat/feel";
 
@@ -10,7 +12,9 @@ export function buildParty() {
     .filter((id: string) => Server.P.owned[id])
     .map((id: string) => {
       const st = statsOf(id);
-      return { id, c: byId[id], st, hp: st.hp, maxHp: st.hp, energy: 20, skillCd: 0, alive: true };
+      const vk = investOf(id).vuKhi;
+      const stack = vk && weaponOf(vk.id, ECON).biDong.coChe ? { id: vk.id, tl: vk.tinhLuyen, tang: 0, t: 0 } : null;
+      return { id, c: byId[id], st, hp: st.hp, maxHp: st.hp, energy: 20, skillCd: 0, alive: true, stack };
     });
 }
 export function newSession(mode: string, opt = {}) {

@@ -2,7 +2,7 @@ import { sfx } from "../../../core/audio";
 import { fmt } from "../../../core/util";
 import { ITEMS } from "../../../data/menu-content";
 import { ECON } from "../../../data/economy";
-import { Server, achState, linhLucNow, shopLeft, vk } from "../../../server/server";
+import { Server, achState, linhLucNow, shopLeft, vk, wDef } from "../../../server/server";
 import { button, h, progress, toast } from "../../ds";
 import { icon } from "../../icons/icons";
 import { refreshWallets, registerScreen, rerender } from "../shell";
@@ -47,6 +47,7 @@ registerScreen("bicanh", {
     );
 
     const shop = h("ul", { class: "tt-tasks", id: "oreShop" });
+    const wName = (id: string) => wDef(id)?.ten ?? id;
     for (const it of N.cuaHang) {
       const left = shopLeft(P, it.id);
       const b = button(`Đổi · ${fmt(it.xu)} Xu`, {
@@ -67,6 +68,32 @@ registerScreen("bicanh", {
           h("div", { class: "tt" }, [
             h("b", {}, [itemName(it.id)]),
             h("small", { class: "tt-dim" }, [`Còn ${left}/${it.moiTuan} lượt tuần này · Đang có ${bagOf(it.id)}`]),
+          ]),
+          b,
+        ]),
+      );
+    }
+
+    for (const it of N.cuaHangVuKhi) {
+      const left = shopLeft(P, it.id);
+      const b = button(`Đổi · ${fmt(it.xu)} Xu`, {
+        variant: left > 0 && P.coin >= it.xu ? "primary" : "ghost",
+        icon: "xu",
+        disabled: left <= 0 || P.coin < it.xu,
+        onClick: () => {
+          if (!Server.req("buyWeaponShop", { id: it.id }).ok) return;
+          sfx("ui");
+          refreshWallets();
+          rerender();
+        },
+      });
+      b.dataset.id = it.id;
+      shop.append(
+        h("li", { class: "tt-task" + (left <= 0 ? " is-done" : "") }, [
+          icon("danh", { size: 24 }),
+          h("div", { class: "tt" }, [
+            h("b", {}, [wName(it.id)]),
+            h("small", { class: "tt-dim" }, [`Vũ khí 4★ · Còn ${left}/${it.moiTuan} lượt tuần này`]),
           ]),
           b,
         ]),

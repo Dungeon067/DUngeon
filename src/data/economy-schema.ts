@@ -124,6 +124,9 @@ const DesignSchema = z
             biCanh: z.object({ linhLuc: int.min(1), xu: int, roi: z.record(z.string(), int), luotMoiNgay: n }).strict(),
             uyThac: z.record(z.string(), int),
             cuaHang: z.array(z.object({ id: z.string().min(1), xu: int, moiTuan: int.min(1) }).strict()),
+            cuaHangVuKhi: z
+              .array(z.object({ id: z.string().min(1), xu: int, moiTuan: int.min(1) }).strict())
+              .default([]),
             phoi: z
               .object({
                 suKienMoiThang: n,
@@ -295,6 +298,9 @@ export function validateEconomy(raw: unknown, chars: { id: string; r: number }[]
   const N = t.vuKhi.nguon;
   for (const id of [...Object.keys(N.biCanh.roi), ...Object.keys(N.uyThac), ...N.cuaHang.map((x) => x.id)])
     if (!oreIds.has(id)) errors.push(`vuKhi.nguon: "${id}" không phải Quặng Tinh Luyện trong vuKhi.quang`);
+  for (const it of N.cuaHangVuKhi)
+    if (wById.size && wById.get(it.id)?.nguon !== "cuaHangTuan")
+      errors.push(`vuKhi.nguon.cuaHangVuKhi: "${it.id}" phải là vũ khí nguồn cuaHangTuan`);
   for (const [loai, id] of Object.entries(t.vuKhi.macDinh)) {
     const w = wById.get(id);
     if (!w || w.r !== 3 || w.loai !== loai) errors.push(`vuKhi.macDinh.${loai}: "${id}" phải là vũ khí 3★ cùng loại`);

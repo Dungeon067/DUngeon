@@ -385,6 +385,11 @@ Tên 26 vũ khí ước nguyện (S23). Truyện và chỉ số ở `content/wea
 | **Kiếm Sắt Lữ Khách**       | Vật phẩm | Kiếm đơn, vũ khí 3★. Bị động: Đường Xa Chân Cứng.                                       |
 | **Kính Thủy Lưu Nguyệt**    | Vật phẩm | Pháp khí, vũ khí 5★ thường trú, đặc trưng của Thủy Nguyệt. Bị động: Nguyệt Ảnh Trầm Hồ. |
 | **Lời Thề Bãi Sao**         | Vật phẩm | Kiếm đơn, vũ khí 4★ Lò Rèn. Bị động: Sao Rơi Giữ Hẹn.                                   |
+| **Nhành Mai Trước Gió**     | Vật phẩm | Kiếm đơn, vũ khí 4★ cửa hàng tuần. Bị động: Hoa Nở Trái Mùa.                            |
+| **Than Hồng Lò Khuya**      | Vật phẩm | Đại kiếm, vũ khí 4★ Lò Rèn. Bị động: Lửa Ủ Qua Đêm.                                     |
+| **Mắt Bão Ngủ Yên**         | Vật phẩm | La bàn gió bạc, pháp khí 4★ ước nguyện. Bị động tích tầng: Lặng Gió.                    |
+| **Cánh Diều Mùa Gặt**       | Vật phẩm | Cung, vũ khí 4★ sự kiện Hội Thả Diều Thư. Bị động: Sáo Diều Trên Đê.                    |
+| **Đuốc Gác Đèo Mây**        | Vật phẩm | Thương, vũ khí 4★ ước nguyện. Bị động: Lửa Canh Đèo.                                    |
 | **Mạch Ngọc Lòng Chảo**     | Vật phẩm | Thương, vũ khí 4★. Bị động: Đèn Mỏ Không Tắt.                                           |
 | **Mảnh Trăng Bến Cũ**       | Vật phẩm | Cung, vũ khí 4★ Lò Rèn. Bị động: Trăng Soi Đầu Tên.                                     |
 | **Ngự Phong Truy Vân**      | Vật phẩm | Cung, vũ khí 5★ thường trú, đặc trưng của Phong Vân. Bị động: Vân Khai Kiến Nhật.       |

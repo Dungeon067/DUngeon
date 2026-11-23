@@ -93,6 +93,7 @@ export function weaponCard(w: WeaponInst, actions: HTMLElement[] = []) {
             h("li", { class: i + 1 === w.tl ? "is-on" : "", "aria-current": i + 1 === w.tl ? "true" : undefined }, [
               h("b", {}, [`R${i + 1}`]),
               ` Tăng ${pct(v)} sát thương gây ra`,
+              stackNote(d, v),
             ]),
           ),
         ),
@@ -103,10 +104,23 @@ export function weaponCard(w: WeaponInst, actions: HTMLElement[] = []) {
   ]);
 }
 
+/** Phần mô tả tầng của bị động tích tầng, theo giá trị bị động `v` ở cùng bậc R. */
+export function stackNote(d: Weapon, v: number) {
+  const c = d.biDong.coChe;
+  if (!c) return "";
+  const k = d.biDong.satThuong > 0 ? v / d.biDong.satThuong : 1;
+  return `; cứ ${c.giay} giây không bị đánh thêm 1 tầng Lặng Gió (tối đa ${c.toiDa}), mỗi tầng +${pct(c.moiTang * k)}, bị đánh mất 1 tầng`;
+}
+
 export function nguonName(d: Weapon) {
-  return { gioiHan: "Binh Khí Tinh Tú", thuongTru: "Ước nguyện thường trú", loRen: "Lò Rèn", uocNguyen: "Ước nguyện" }[
-    d.nguon
-  ];
+  return {
+    gioiHan: "Binh Khí Tinh Tú",
+    thuongTru: "Ước nguyện thường trú",
+    loRen: "Lò Rèn",
+    uocNguyen: "Ước nguyện",
+    cuaHangTuan: "Cửa hàng tuần",
+    suKien: "Sự kiện",
+  }[d.nguon];
 }
 /** Truyện ngắn: S23 sẽ bổ sung vào content; tạm dùng mô tả dựng từ dữ liệu sẵn có. */
 export function storyOf(d: Weapon & { truyen?: string }) {

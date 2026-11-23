@@ -14,6 +14,7 @@ import {
   filterWeapons,
   holderOf,
   nguonName,
+  stackNote,
   pct,
   sortWeapons,
   statRows,
@@ -174,7 +175,7 @@ function weaponDetail(w: WeaponInst) {
       h("p", { class: "ptext" }, [
         "Tăng ",
         h("b", {}, [pct(pv[w.tl - 1]!)]),
-        " sát thương gây ra.",
+        " sát thương gây ra" + stackNote(d, pv[w.tl - 1]!) + ".",
         h("small", { class: "tt-dim" }, [` (R${w.tl}; R5: ${pct(pv[4]!)})`]),
       ]),
       h("p", { class: "tt-story" }, [storyOf(d)]),

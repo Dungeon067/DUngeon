@@ -63,8 +63,15 @@ export function weaponOf(id: string, E: Economy): Weapon {
   return w;
 }
 /** Bị động vũ khí ở bậc tinh luyện R (1–5): R1 × (1 + buocTinhLuyen × (R − 1)). */
+export const refineScale = (tinhLuyen: number, E: Economy) =>
+  1 + E.thietKe.vuKhi.buocTinhLuyen * (Math.min(5, Math.max(1, tinhLuyen)) - 1);
+/** Bị động có tích tầng được tính ở mức trung bình nửa số tầng (dùng cho Chiến Lực và mô phỏng). */
 export const passiveAt = (w: Weapon, tinhLuyen: number, E: Economy) =>
-  w.biDong.satThuong * (1 + E.thietKe.vuKhi.buocTinhLuyen * (Math.min(5, Math.max(1, tinhLuyen)) - 1));
+  (w.biDong.satThuong + (w.biDong.coChe ? (w.biDong.coChe.moiTang * w.biDong.coChe.toiDa) / 2 : 0)) *
+  refineScale(tinhLuyen, E);
+/** Phần sát thương lệch khỏi mức trung bình khi đang có `tang` tầng (dùng trong trận). */
+export const stackDelta = (w: Weapon, tinhLuyen: number, tang: number, E: Economy) =>
+  w.biDong.coChe ? w.biDong.coChe.moiTang * (tang - w.biDong.coChe.toiDa / 2) * refineScale(tinhLuyen, E) : 0;
 
 /** Hệ số chỉ số vũ khí theo cấp: heSoCap1 ở cấp 1, tăng đều tới 1 ở cấp tối đa. Không có cấp = cấp tối đa. */
 export function weaponLvScale(lv: number | undefined, E: Economy) {

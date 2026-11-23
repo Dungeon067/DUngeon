@@ -13,6 +13,8 @@ import { cur } from "../entities/party";
 import { FEEL, charFx, enemyFeel, hitstop, shake } from "../combat/feel";
 import { partyWipe, showBanner } from "../modes/session";
 import { Server } from "../server/server";
+import { ECON } from "../data/economy";
+import { stackDelta, weaponOf } from "../economy/core";
 import { buildHudParty } from "../ui/hud";
 
 /* =========================================================
@@ -55,7 +57,8 @@ export function dealRaw(e: any, dmg: number, col: string) {
 export function hitEnemy(e: any, m: any, mult: number, el: string, o: any = {}) {
   if (e.dead) return 0;
   const crit = Math.random() < m.st.crit;
-  let dmg = m.st.atk * mult * (crit ? 1 + m.st.cdmg : 1) * (1 + (m.st.dmg ?? 0)) * rand(0.95, 1.05);
+  const sd = m.stack ? stackDelta(weaponOf(m.stack.id, ECON), m.stack.tl, m.stack.tang, ECON) : 0;
+  let dmg = m.st.atk * mult * (crit ? 1 + m.st.cdmg : 1) * (1 + (m.st.dmg ?? 0) + sd) * rand(0.95, 1.05);
   const r = applyElement(e, el, m);
   dmg *= r.mult * (e.vuln > 0 ? 1.25 : 1) * (e.stun > 0 ? FEEL.poise.stunVuln : 1);
   if (Server.P.gm.one) dmg = Math.max(dmg, e.hp + 1);
@@ -184,6 +187,10 @@ export function hurtPlayer(dmg: number, col = "#ff7070") {
     return;
   }
   m.hp -= dmg;
+  if (m.stack) {
+    m.stack.tang = Math.max(0, m.stack.tang - 1);
+    m.stack.t = 0;
+  }
   p.hurt = 0.25;
   p.iframes = 0.45;
   shake("hurt");
@@ -201,5 +208,16 @@ export function hurtPlayer(dmg: number, col = "#ff7070") {
       showBanner(`${m.c.name} đã gục`);
       buildHudParty();
     } else partyWipe();
+  }
+}
+
+/** Bị động tích tầng: cứ `giay` giây không bị đánh thì thêm 1 tầng, tối đa `toiDa`. */
+export function tickStack(m: any, dt: number) {
+  const c = weaponOf(m.stack.id, ECON).biDong.coChe;
+  if (!c || m.stack.tang >= c.toiDa) return;
+  m.stack.t += dt;
+  if (m.stack.t >= c.giay) {
+    m.stack.t = 0;
+    m.stack.tang++;
   }
 }

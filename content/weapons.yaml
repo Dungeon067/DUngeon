@@ -256,3 +256,48 @@ danhSach:
     phu: { loai: tanCong, giaTri: 0 }
     biDong: { ten: Canh Đêm Bến Đò, satThuong: 0.06 }
     truyen: Cây thương gỗ lim của lính gác bến Phố Vạn Đăng, mũi sắt rèn thô. Gỗ lim nặng, rơi xuống sông là chìm, nên lính dặn nhau cầm cho chắc. Cán mòn đúng chỗ tay người gác cả đêm.
+  - id: nhanh-mai-truoc-gio
+    ten: Nhành Mai Trước Gió
+    loai: sword
+    r: 4
+    nguon: cuaHangTuan
+    tanCong: 0.3
+    phu: { loai: chiMang, giaTri: 0.1 }
+    biDong: { ten: Hoa Nở Trái Mùa, satThuong: 0.12 }
+    truyen: Thanh kiếm mảnh, chắn tay uốn như một nhành mai còn nụ. Người bán hàng rong chỉ mang nó ra chợ mỗi tuần một lần, rồi lại gói vào vải. Ai hỏi giá, ông bảo kiếm tự chọn người.
+  - id: than-hong-lo-khuya
+    ten: Than Hồng Lò Khuya
+    loai: great
+    r: 4
+    nguon: loRen
+    tanCong: 0.3
+    phu: { loai: tanCong, giaTri: 0.15 }
+    biDong: { ten: Lửa Ủ Qua Đêm, satThuong: 0.12 }
+    truyen: Đại kiếm rèn trong mẻ lửa cuối cùng trước khi lò tắt. Vân than hồng trên lưỡi không bao giờ nguội hẳn. Thợ rèn để nó gác cửa lò thay cho người canh đêm.
+  - id: mat-bao-ngu-yen
+    ten: Mắt Bão Ngủ Yên
+    loai: cat
+    r: 4
+    nguon: uocNguyen
+    tanCong: 0.3
+    phu: { loai: satThuongChiMang, giaTri: 0.2 }
+    biDong: { ten: Lặng Gió, satThuong: 0.06, coChe: { loai: tichTang, toiDa: 4, moiTang: 0.03, giay: 2 } }
+    truyen: La bàn gió bằng bạc, bốn cánh xoay quanh một viên ngọc lục nhỏ. Càng đứng yên lâu, cánh quay càng nhanh mà không phát ra tiếng. Người giữ nó học cách đợi trước khi ra tay.
+  - id: canh-dieu-mua-gat
+    ten: Cánh Diều Mùa Gặt
+    loai: bow
+    r: 4
+    nguon: suKien
+    tanCong: 0.3
+    phu: { loai: tanCong, giaTri: 0.15 }
+    biDong: { ten: Sáo Diều Trên Đê, satThuong: 0.12 }
+    truyen: Cây cung uốn từ khung một con diều không chịu rơi sau Hội Thả Diều Thư ở Lũng Vân. Dây cung căng như dây diều trước gió nồm. Mỗi phát bắn có tiếng sáo diều vi vu theo sau.
+  - id: duoc-gac-deo-may
+    ten: Đuốc Gác Đèo Mây
+    loai: spear
+    r: 4
+    nguon: uocNguyen
+    tanCong: 0.3
+    phu: { loai: chiMang, giaTri: 0.1 }
+    biDong: { ten: Lửa Canh Đèo, satThuong: 0.12 }
+    truyen: Ngọn thương của lính gác đèo, mũi bọc đồng giữ lửa như bó đuốc. Đêm sương dày, người đi đường nhìn đốm lửa ấy mà tìm lối qua đèo. Lửa chưa tắt lần nào, dù mưa đá.
