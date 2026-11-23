@@ -14,12 +14,28 @@ export const ECON_KEY = "tinhtu-econ";
 export const ECON_BASE: Economy = validateEconomy(raw, CHARS);
 const clone = <T>(o: T): T => JSON.parse(JSON.stringify(o));
 
+/** Ghép bản chỉnh với nội dung gốc: pool 5★, tên và truyện vũ khí luôn theo file; chỉ số vũ khí giữ theo bản chỉnh (khớp theo id). */
+function withContent(o: unknown) {
+  const e = withWeapons(o, WEAPONS) as any;
+  const edited: any[] = (o as any)?.thietKe?.vuKhi?.danhSach ?? [];
+  for (const w of e?.thietKe?.vuKhi?.danhSach ?? []) {
+    const p = edited.find((x) => x?.id === w.id);
+    if (typeof p?.tanCong === "number") w.tanCong = p.tanCong;
+    if (typeof p?.phu?.giaTri === "number") w.phu.giaTri = p.phu.giaTri;
+    if (typeof p?.biDong?.satThuong === "number") w.biDong.satThuong = p.biDong.satThuong;
+  }
+  if (e?.game) e.game.nhanVat5Sao = clone(ECON_BASE.game.nhanVat5Sao);
+  return e;
+}
+
 function loadOverride(): Economy {
+  const ls = typeof localStorage !== "undefined" ? localStorage : null;
   try {
-    const s = typeof localStorage !== "undefined" ? localStorage.getItem(ECON_KEY) : null;
-    if (s) return validateEconomy(withWeapons(JSON.parse(s), WEAPONS), CHARS);
+    const s = ls?.getItem(ECON_KEY);
+    if (s) return validateEconomy(withContent(JSON.parse(s)), CHARS);
   } catch {
-    /* bản chỉnh hỏng thì dùng file gốc */
+    /* bản chỉnh hỏng thì bỏ, dùng file gốc */
+    ls?.removeItem(ECON_KEY);
   }
   return clone(ECON_BASE);
 }
@@ -29,7 +45,7 @@ export const ECON: Economy = loadOverride();
 
 /** Ghi đè cấu hình (đã kiểm tra hợp lệ) và lưu lại cho lần mở sau. */
 export function setEcon(next: unknown) {
-  const v = validateEconomy(withWeapons(next, WEAPONS), CHARS);
+  const v = validateEconomy(withContent(next), CHARS);
   Object.assign(ECON, v);
   localStorage.setItem(ECON_KEY, JSON.stringify(v));
 }
