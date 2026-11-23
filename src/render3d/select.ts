@@ -39,9 +39,12 @@ export function wants3D(): boolean {
   try {
     if (localStorage.getItem(FORCE_2D_KEY) === "1") return false;
   } catch {}
-  const q = new URLSearchParams(location.search).get("renderer");
+  const qs = new URLSearchParams(location.search),
+    q = qs.get("renderer");
   if (q === "2d") return false;
   if (q === "3d") return hasWebGL2();
+  // Test e2e chạy trên GPU giả lập: mặc định 2D, muốn thử 3D thì thêm ?renderer=3d.
+  if (qs.has("e2e")) return false;
   if (settings.renderer === "2d") return false;
   return hasWebGL2();
 }
