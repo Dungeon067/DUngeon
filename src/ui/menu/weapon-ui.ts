@@ -5,7 +5,8 @@ import { ECON } from "../../data/economy";
 import type { Weapon } from "../../data/economy-schema";
 import { lvCapOf, passiveLevels, weaponStats, type WeaponInst } from "../../economy/weapons";
 import { Server, holders, wDef } from "../../server/server";
-import { h, stars, tag } from "../ds";
+import { h, lootCard, stars, tag, type LootRarity } from "../ds";
+import { portrait } from "../../art/chibi";
 import { icon } from "../icons/icons";
 import { weaponImg } from "../weapon-art";
 import "./weapons.css";
@@ -21,31 +22,53 @@ export const pct = (v: number, d = 1) => `${(v * 100).toFixed(d).replace(/\.0$/,
 export const defOf = (w: WeaponInst) => wDef(w.id)!;
 export const holderOf = (uid: string) => holders(Server.P)[uid] ?? null;
 
-/** Ô vũ khí trong lưới: ảnh trên nền theo độ hiếm, cấp, R, khóa, người đang cầm. */
+/** Chân dung nhỏ tròn của nhân vật (góc thẻ đồ). */
+export function miniPortrait(id: string) {
+  const c = document.createElement("canvas");
+  c.width = c.height = 48;
+  c.getContext("2d")!.drawImage(portrait(id, 48, 48, "head"), 0, 0);
+  return c;
+}
+
+/** Thẻ vũ khí trong lưới (thẻ đồ S24b): ảnh trên nền độ hiếm, R góc trái, khóa và người đang cầm góc phải, dải "Cấp". */
 export function weaponCell(w: WeaponInst, o: { selected?: boolean; picked?: boolean; disabled?: boolean } = {}) {
   const d = defOf(w),
     who = holderOf(w.uid);
-  const b = h(
-    "button",
-    {
-      type: "button",
-      class: "tt-wcell" + (o.selected ? " is-sel" : "") + (o.picked ? " is-picked" : ""),
-      "data-r": d.r,
-      "data-uid": w.uid,
-      "data-id": w.id,
-      "aria-pressed": String(!!(o.selected || o.picked)),
-      "aria-label": `${d.ten}, ${d.r} sao, cấp ${w.lv}, R${w.tl}${who ? `, ${byId[who]?.name} đang dùng` : ""}`,
-      disabled: o.disabled,
-    },
-    [
-      h("span", { class: "art" }, [weaponImg(w.id, 128)]),
-      h("span", { class: "lv" }, [`Cấp ${w.lv}`]),
-      h("span", { class: "tl" }, [`R${w.tl}`]),
-      w.lock ? h("span", { class: "lock", title: "Đã khóa" }, [icon("khoa", { size: 14 })]) : null,
-      who ? h("span", { class: "who", title: byId[who]?.name }, [byId[who]?.name.split(" ").pop() ?? ""]) : null,
-    ],
-  );
+  const b = lootCard({
+    rarity: d.r as LootRarity,
+    art: weaponImg(w.id, 128),
+    label: `Cấp ${w.lv}`,
+    refine: w.tl,
+    locked: w.lock,
+    holder: who ? miniPortrait(who) : null,
+    selected: o.selected,
+    picked: o.picked,
+    disabled: o.disabled,
+    ariaLabel: `${d.ten}, ${d.r} sao, cấp ${w.lv}, R${w.tl}${w.lock ? ", đã khóa" : ""}${who ? `, ${byId[who]?.name} đang dùng` : ""}`,
+  });
+  b.classList.add("tt-wcell");
+  b.dataset.uid = w.uid;
+  b.dataset.id = w.id;
   return b;
+}
+
+/** Thẻ đồ chỉ để hiển thị (Thay vũ khí, Lò Rèn, cửa hàng, kết quả). */
+export function weaponBadge(
+  id: string,
+  label: string,
+  o: { refine?: number; locked?: boolean; holder?: string | null } = {},
+) {
+  const d = wDef(id)!;
+  return lootCard({
+    rarity: d.r as LootRarity,
+    art: weaponImg(id, 128, d.ten),
+    label,
+    refine: o.refine,
+    locked: o.locked,
+    holder: o.holder ? miniPortrait(o.holder) : null,
+    static: true,
+    ariaLabel: `${d.ten}, ${d.r} sao, ${label}`,
+  });
 }
 
 /** Các dòng chỉ số của một vũ khí ở cấp hiện tại. */
@@ -64,7 +87,7 @@ export function weaponCard(w: WeaponInst, actions: HTMLElement[] = []) {
   const who = holderOf(w.uid);
   const pv = passiveLevels(d, ECON);
   return h("article", { class: "tt-wcard", "data-r": d.r, "data-uid": w.uid, "data-id": w.id }, [
-    h("div", { class: "hero" }, [weaponImg(w.id, 512, d.ten)]),
+    h("div", { class: "hero tt-loot-hero", "data-r": d.r }, [weaponImg(w.id, 512, d.ten)]),
     h("div", { class: "body" }, [
       h("p", { class: "tt-eyebrow" }, [`${TYPE_NAME(d.loai)} · ${nguonName(d)}`]),
       h("h3", { class: "tt-h2 name" }, [d.ten]),
@@ -89,6 +112,7 @@ export function weaponCard(w: WeaponInst, actions: HTMLElement[] = []) {
             h("li", { class: i + 1 === w.tl ? "is-on" : "", "aria-current": i + 1 === w.tl ? "true" : undefined }, [
               h("b", {}, [`R${i + 1}`]),
               ` Tăng ${pct(v)} sát thương gây ra`,
+              stackNote(d, v),
             ]),
           ),
         ),
@@ -99,10 +123,23 @@ export function weaponCard(w: WeaponInst, actions: HTMLElement[] = []) {
   ]);
 }
 
+/** Phần mô tả tầng của bị động tích tầng, theo giá trị bị động `v` ở cùng bậc R. */
+export function stackNote(d: Weapon, v: number) {
+  const c = d.biDong.coChe;
+  if (!c) return "";
+  const k = d.biDong.satThuong > 0 ? v / d.biDong.satThuong : 1;
+  return `; cứ ${c.giay} giây không bị đánh thêm 1 tầng Lặng Gió (tối đa ${c.toiDa}), mỗi tầng +${pct(c.moiTang * k)}, bị đánh mất 1 tầng`;
+}
+
 export function nguonName(d: Weapon) {
-  return { gioiHan: "Binh Khí Tinh Tú", thuongTru: "Ước nguyện thường trú", loRen: "Lò Rèn", uocNguyen: "Ước nguyện" }[
-    d.nguon
-  ];
+  return {
+    gioiHan: "Binh Khí Tinh Tú",
+    thuongTru: "Ước nguyện thường trú",
+    loRen: "Lò Rèn",
+    uocNguyen: "Ước nguyện",
+    cuaHangTuan: "Cửa hàng tuần",
+    suKien: "Sự kiện",
+  }[d.nguon];
 }
 /** Truyện ngắn: S23 sẽ bổ sung vào content; tạm dùng mô tả dựng từ dữ liệu sẵn có. */
 export function storyOf(d: Weapon & { truyen?: string }) {
@@ -132,3 +169,26 @@ export function compareRows(rows: { k: string; a: number; b: number; f: (v: numb
   );
 }
 export const fmtInt = (v: number) => fmt(Math.round(v));
+
+export type WSort = "lv" | "r" | "tl";
+export function sortWeapons(list: WeaponInst[], sort: WSort) {
+  const key = (w: WeaponInst) => {
+    const d = wDef(w.id)!;
+    return sort === "lv" ? [w.lv, d.r, w.tl] : sort === "tl" ? [w.tl, d.r, w.lv] : [d.r, w.lv, w.tl];
+  };
+  return [...list].sort((a, b) => {
+    const ka = key(a),
+      kb = key(b);
+    for (let i = 0; i < 3; i++) if (ka[i] !== kb[i]) return kb[i]! - ka[i]!;
+    return a.id.localeCompare(b.id) || a.uid.localeCompare(b.uid);
+  });
+}
+export function filterWeapons(list: WeaponInst[], f: { type: string; r: number; eq: "all" | "on" | "off" }) {
+  return list.filter((w) => {
+    const d = wDef(w.id)!,
+      on = !!holderOf(w.uid);
+    return (
+      (f.type === "all" || d.loai === f.type) && (!f.r || d.r === f.r) && (f.eq === "all" || (f.eq === "on") === on)
+    );
+  });
+}

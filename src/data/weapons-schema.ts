@@ -9,11 +9,27 @@ export const VuKhiSchema = z
     ten: z.string().min(1),
     loai: z.enum(["sword", "great", "cat", "bow", "spear"]),
     r: z.union([z.literal(3), z.literal(4), z.literal(5)]),
-    nguon: z.enum(["gioiHan", "thuongTru", "loRen", "uocNguyen"]),
+    nguon: z.enum(["gioiHan", "thuongTru", "loRen", "uocNguyen", "cuaHangTuan", "suKien"]),
     cua: z.string().optional(),
     tanCong: n,
     phu: z.object({ loai: z.enum(["chiMang", "satThuongChiMang", "tanCong"]), giaTri: n }).strict(),
-    biDong: z.object({ ten: z.string().min(1), satThuong: n }).strict(),
+    biDong: z
+      .object({
+        ten: z.string().min(1),
+        satThuong: n,
+        /** Bị động có cơ chế. tichTang: mỗi `giay` giây không bị đánh thì thêm 1 tầng (tối đa `toiDa`),
+         *  mỗi tầng tăng `moiTang` sát thương ở R1; bị đánh mất 1 tầng. */
+        coChe: z
+          .object({
+            loai: z.literal("tichTang"),
+            toiDa: z.number().int().min(1).max(10),
+            moiTang: z.number().positive(),
+            giay: z.number().positive(),
+          })
+          .strict()
+          .optional(),
+      })
+      .strict(),
     truyen: z.string().min(1),
   })
   .strict();
@@ -48,6 +64,8 @@ export function validateWeapons(raw: unknown, chars: { id: string; r: number; w:
       errors.push(`${w.id}: vũ khí 5★ phải là gioiHan hoặc thuongTru`);
     if (w.nguon === "gioiHan" && (w.r !== 5 || !w.cua)) errors.push(`${w.id}: vũ khí giới hạn phải 5★ và có "cua"`);
     if (w.nguon === "loRen" && w.r !== 4) errors.push(`${w.id}: vũ khí Lò Rèn phải 4★`);
+    if ((w.nguon === "cuaHangTuan" || w.nguon === "suKien") && w.r !== 4)
+      errors.push(`${w.id}: vũ khí cửa hàng tuần hoặc sự kiện phải 4★`);
     const sentences = w.truyen.split(/[.!?…]+/).filter((s) => s.trim()).length;
     if (sentences < 2 || sentences > 4) errors.push(`${w.id}: truyện phải 2–4 câu`);
     if (w.cua && chars.length) {
@@ -70,6 +88,10 @@ export function withWeapons<T>(econ: T, weapons: { danhSach: unknown[] }): T {
 /** Mô tả bị động ở bậc tinh luyện `tinhLuyen` (1–5); `buoc` là thietKe.vuKhi.buocTinhLuyen. */
 export function passiveText(tpl: string, w: Weapon, tinhLuyen: number, buoc: number): string {
   const r = Math.min(5, Math.max(1, Math.round(tinhLuyen)));
-  const v = w.biDong.satThuong * (1 + buoc * (r - 1));
-  return tpl.replace("{v}", `${(Math.round(v * 1000) / 10).toString().replace(".", ",")}%`);
+  const k = 1 + buoc * (r - 1);
+  const pc = (v: number) => `${(Math.round(v * 1000) / 10).toString().replace(".", ",")}%`;
+  const c = w.biDong.coChe;
+  if (c)
+    return `Tăng ${pc(w.biDong.satThuong * k)} sát thương gây ra. Cứ ${c.giay} giây không bị đánh, nhận 1 tầng Lặng Gió (tối đa ${c.toiDa}), mỗi tầng tăng thêm ${pc(c.moiTang * k)}; bị đánh mất 1 tầng.`;
+  return tpl.replace("{v}", pc(w.biDong.satThuong * k));
 }

@@ -118,83 +118,6 @@
   overflow: auto;
   padding: 2px;
 }
-.tt-wcell {
-  position: relative;
-  aspect-ratio: 1;
-  padding: 0;
-  border-radius: var(--tt-radius-md);
-  border: 2px solid var(--tt-r, var(--tt-line));
-  background: radial-gradient(90% 90% at 50% 40%, color-mix(in srgb, var(--tt-r) 45%, transparent), var(--tt-bg-deep));
-  color: var(--tt-text);
-  font: inherit;
-  cursor: pointer;
-  overflow: hidden;
-  transition:
-    transform var(--tt-dur-fast) var(--tt-ease-out),
-    box-shadow var(--tt-dur-fast);
-}
-.tt-wcell:hover,
-.tt-wcell:focus-visible {
-  transform: translateY(-2px);
-  box-shadow:
-    0 0 0 1px var(--tt-r),
-    0 6px 18px rgb(0 0 0 / 0.4);
-}
-.tt-wcell .art {
-  position: absolute;
-  inset: 6%;
-}
-.tt-wcell .lv,
-.tt-wcell .tl,
-.tt-wcell .who {
-  position: absolute;
-  font: var(--tt-fw-semibold) var(--tt-fs-xs) / 1.1 var(--tt-font-num);
-  text-shadow: 0 1px 2px #000;
-  padding: 1px 4px;
-}
-.tt-wcell .lv {
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background: linear-gradient(0deg, rgb(0 0 0 / 0.65), transparent);
-  text-align: left;
-}
-.tt-wcell .tl {
-  right: 2px;
-  top: 2px;
-  color: var(--tt-r5);
-}
-.tt-wcell .who {
-  left: 2px;
-  top: 2px;
-  background: rgb(0 0 0 / 0.55);
-  border-radius: var(--tt-radius-xs);
-  max-width: 70%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.tt-wcell .lock {
-  position: absolute;
-  right: 2px;
-  bottom: 2px;
-  color: var(--tt-warn);
-}
-.tt-wcell.is-picked {
-  outline: 3px solid var(--tt-ok);
-  outline-offset: -3px;
-}
-.tt-wcell.is-picked::after {
-  content: "✓";
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  font-size: 28px;
-  color: var(--tt-ok);
-  background: rgb(0 0 0 / 0.35);
-}
-
 /* Thẻ chi tiết vũ khí */
 .tt-wcard {
   display: grid;
@@ -299,8 +222,8 @@
   cursor: pointer;
 }
 .tt-wrow .art {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  flex: none;
 }
 .tt-wrow .txt {
   display: grid;
@@ -388,8 +311,7 @@
   );
 }
 .tt-forge-item .art {
-  width: 120px;
-  height: 120px;
+  width: 112px;
 }
 
 /* Banner vũ khí */
@@ -536,4 +458,15 @@
   padding: var(--tt-sp-6) var(--tt-sp-3) var(--tt-sp-2);
   margin: 0 calc(-1 * var(--tt-sp-4)) calc(-1 * var(--tt-sp-3));
   background: linear-gradient(0deg, rgb(6 10 28 / 0.85), transparent);
+}
+
+.tt-wrow .art .tt-loot,
+.tt-forge-item .art .tt-loot {
+  width: 100%;
+  min-width: 0;
+}
+.tt-task > .tt-loot {
+  width: 56px;
+  min-width: 56px;
+  flex: none;
 }

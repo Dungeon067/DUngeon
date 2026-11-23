@@ -62,4 +62,14 @@ Mục Cấp tài nguyên cấp được Quặng Tinh Luyện, Phôi Lồng Sao, 
 
 Điều khiển giữ như S10: Q/E đổi thẻ, ←/→ đổi nhân vật, tay cầm dùng D-pad + A, cảm ứng chạm. Chuyển thẻ có hiệu ứng trượt mờ và tiếng bấm (khi bật âm thanh). Kết quả ước dùng ảnh vũ khí trong hoạt ảnh dự phòng S10.
 
+### Tủ Đồ và thẻ đồ: chuyển động
+
+- **Thẻ 5★:** viền ánh kim vàng, vệt sáng lướt chéo mỗi 5,5 giây. **4★:** viền ánh tím nhạt hơn, vệt sáng mờ mỗi 8 giây.
+- **Chọn thẻ:** nảy nhẹ (0,38 giây) và tỏa sáng viền theo màu độ hiếm, kèm tiếng "pick". Đổi tab trượt trái/phải theo hướng tab, kèm tiếng "tab".
+- **Bảng chi tiết:** ảnh lớn bay lên xuống 7 px mỗi 4,5 giây, 7 hạt sáng màu nguyên tố của chủ vũ khí (hoặc người đang cầm), vòng tinh văn xoay một vòng mỗi 60 giây, sao hiện lần lượt cách nhau 0,08 giây.
+- **Nền:** lớp chòm sao lệch tối đa 14 px theo con trỏ hoặc độ nghiêng máy, cập nhật gom trong `requestAnimationFrame`.
+- **Hiệu năng:** chỉ dùng `transform` và `opacity` (chạy trên GPU), không có vòng lặp JS ngoài parallax; hạt sáng là 7 phần tử CSS.
+- **Giảm chuyển động:** Cài đặt › Hiển thị › "Giảm chuyển động (menu)" hoặc `prefers-reduced-motion` của hệ điều hành tắt toàn bộ các hiệu ứng trên (lớp `tt-calm` trên `<html>`), parallax không gắn sự kiện.
+- Thẻ đồ dùng chung cho Tủ Đồ, Thay vũ khí, Lò Rèn, cửa hàng Bí Cảnh và bảng kết quả ước (vẽ trên canvas cùng nền chéo và dải nhãn). Phần thưởng rương hiện ở dòng nhặt đồ của HUD nên giữ nguyên để không đổi bố cục HUD.
+
 Ảnh chụp ở `anh/s24/` (844×390, 1180×820, 1920×1080).

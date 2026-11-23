@@ -335,6 +335,7 @@ export const ControlsSchema = z
         colorMode: z.enum(["none", "protan", "deutan", "tritan"]),
         mouseAim: z.boolean(),
         showHints: z.boolean(),
+        reduceMotion: z.boolean(),
       })
       .strict(),
   })
