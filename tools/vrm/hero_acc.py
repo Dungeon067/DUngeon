@@ -7,7 +7,7 @@ import sys
 
 import bmesh
 import bpy
-from mathutils import Vector
+from mathutils import Matrix, Vector
 
 src, dst, cfgp = sys.argv[sys.argv.index("--") + 1 :][:3]
 cfg = json.load(open(cfgp, encoding="utf-8"))
@@ -63,14 +63,18 @@ def mat(color, shade=None, emissive=0.0):
     return m
 
 
-def finish(name, bm, weights, m, thick=0.0, smooth=True):
+def finish(name, bm, weights, m, thick=0.0, smooth=True, bevel=0.0):
     me = bpy.data.meshes.new(name)
     bm.to_mesh(me)
     bm.free()
     ob = bpy.data.objects.new(name, me)
     bpy.context.scene.collection.objects.link(ob)
-    if thick:
-        ob.modifiers.new("Solid", "SOLIDIFY").thickness = thick
+    if thick or bevel:
+        if thick:
+            ob.modifiers.new("Solid", "SOLIDIFY").thickness = thick
+        if bevel:
+            bv = ob.modifiers.new("Bevel", "BEVEL")
+            bv.width, bv.segments, bv.limit_method, bv.harden_normals = bevel, 2, "ANGLE", False
         dg = bpy.context.evaluated_depsgraph_get()
         me2 = bpy.data.meshes.new_from_object(ob.evaluated_get(dg))
         bpy.data.objects.remove(ob)
@@ -175,7 +179,7 @@ for k, e in enumerate(cfg.get("emblems", [])):
         j = (i + 1) % 6
         for a, b in ((o1, o2), (o2, i2), (i2, i1)):
             bm.faces.new((a[i], a[j], b[j], b[i]))
-    finish(f"Acc_Emblem{k}", bm, hb(e["bone"]), mat(e.get("frame", "#f2a227"), e.get("frameShade", "#a8661a")), 0, False)
+    finish(f"Acc_Emblem{k}", bm, hb(e["bone"]), mat(e.get("frame", "#f2a227"), e.get("frameShade", "#a8661a")), 0, False, r * 0.04)
     bm = bmesh.new()
     pts = e.get("points", 6)
     a, b = ring(bm, r * 0.68, r * 0.32, pts * 2, math.pi / 2, r * 0.3), ring(bm, r * 0.68, r * 0.1, pts * 2, math.pi / 2, r * 0.3)
@@ -196,6 +200,49 @@ for k, p in enumerate(cfg.get("plates", [])):
     for v in bm.verts:
         v.co = head(p["bone"]) + sem(p["pos"]) + Vector((v.co.x * abs(s.x), v.co.y * abs(s.y), v.co.z * abs(s.z)))
     finish(f"Acc_Plate{k}", bm, hb(p["bone"]), mat(p["color"], p.get("shade")), p.get("thick", 0.004), True)
+
+# ---- giáp vai nhiều lớp: các dải vỏ elip chồng nhau (lớp dưới to dần), có độ dày + vát cạnh
+for k, p in enumerate(cfg.get("pauldrons", [])):
+    # "at": xương lấy vị trí (vd. left_upper_arm), "bone": xương gắn (vd. left_shoulder, ít xoay khi hạ tay).
+    s, c0 = sem(p["scale"]), head(p.get("at", p["bone"])) + sem(p["pos"])
+    rot = Matrix.Rotation(lx * math.radians(p.get("tilt", 0)), 3, "Y")
+    lames, cols = p.get("lames", 3), p.get("colors", [["#dfe6f2", "#7d8aa8"]])
+    for li in range(lames):
+        g = 1 + p.get("grow", 0.08) * li
+        z0, z1 = p.get("top", 0.95) - li * p.get("step", 0.28), p.get("top", 0.95) - li * p.get("step", 0.28) - p.get("band", 0.42)
+        bm, U, V = bmesh.new(), 20, 4
+        a0, a1 = math.radians(p.get("arc", [-110, 110])[0]), math.radians(p.get("arc", [-110, 110])[1])
+        grid = []
+        for vi in range(V + 1):
+            z = z0 + (z1 - z0) * vi / V
+            rr = math.sqrt(max(0.0, 1 - min(z, 1) ** 2))
+            row = []
+            for ui in range(U + 1):
+                t = a0 + (a1 - a0) * ui / U
+                row.append(bm.verts.new(c0 + rot @ Vector((s.x * g * rr * math.sin(t), s.y * g * rr * math.cos(t), s.z * g * z))))
+            grid.append(row)
+        for vi in range(V):
+            for ui in range(U):
+                bm.faces.new((grid[vi][ui], grid[vi][ui + 1], grid[vi + 1][ui + 1], grid[vi + 1][ui]))
+        cc = cols[li % len(cols)]
+        finish(f"Acc_Pauldron{k}_{li}", bm, hb(p["bone"]), mat(cc[0], cc[1]), p.get("thick", 0.006), True, p.get("bevel", 0.002))
+
+# ---- khóa kim loại: khối hộp vát cạnh + ngọc lồi ở giữa
+for k, b in enumerate(cfg.get("buckles", [])):
+    nrm = sem(b.get("normal", [0, 1, 0])).normalized()
+    q = Vector((0, 0, 1)).rotation_difference(nrm)
+    c0, (w, h, d) = head(b["bone"]) + sem(b["pos"]), b["size"]
+    bm = bmesh.new()
+    bmesh.ops.create_cube(bm, size=1.0)
+    for v in bm.verts:
+        v.co = c0 + q @ Vector((v.co.x * w, v.co.y * h, v.co.z * d))
+    finish(f"Acc_Buckle{k}", bm, hb(b["bone"]), mat(b.get("color", "#f2a227"), b.get("shade", "#8a5a14")), 0, True, min(w, h, d) * 0.3)
+    bm = bmesh.new()
+    bmesh.ops.create_uvsphere(bm, u_segments=10, v_segments=6, radius=1.0)
+    gr = min(w, h) * 0.32
+    for v in bm.verts:
+        v.co = c0 + q @ Vector((v.co.x * gr, v.co.y * gr, d * 0.5 + max(0.0, v.co.z) * gr * 0.5))
+    finish(f"Acc_BuckleGem{k}", bm, hb(b["bone"]), mat(b.get("gem", "#7fe0ff"), b.get("gemShade", "#3aa6d8"), b.get("glow", 1.5)), 0, True)
 
 # ---- angel ring: matcap MToon (vòng sáng theo hướng nhìn, nằm ở phần tóc pháp tuyến hướng lên)
 hr = cfg.get("hairRing")

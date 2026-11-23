@@ -53,19 +53,45 @@
       "glow": 2.5
     }
   ],
-  "plates": [
-    {
-      "bone": "left_upper_arm",
-      "pos": [0.03, 0.0, 0.04],
-      "scale": [0.05, 0.045, 0.02],
-      "color": "#c99a3a",
-      "shade": "#6e4a17"
-    }
-  ],
   "hairRing": {
     "color": "#d6ecff",
     "ny": 0.68,
     "width": 0.14,
     "strength": 1.2
-  }
+  },
+  "pauldrons": [
+    {
+      "bone": "left_shoulder",
+      "pos": [0.015, 0.0, 0.0],
+      "scale": [0.07, 0.065, 0.06],
+      "lames": 3,
+      "top": 0.98,
+      "step": 0.26,
+      "band": 0.4,
+      "grow": 0.07,
+      "arc": [-180, 180],
+      "colors": [
+        ["#e3e9f4", "#7d8aa8"],
+        ["#f2a227", "#8a5a14"],
+        ["#2a3a8f", "#141c48"]
+      ],
+      "thick": 0.005,
+      "bevel": 0.0018,
+      "at": "left_upper_arm",
+      "tilt": -30
+    }
+  ],
+  "buckles": [
+    {
+      "bone": "spine",
+      "pos": [0.0, 0.088, -0.01],
+      "normal": [0, 1, 0],
+      "size": [0.05, 0.038, 0.012],
+      "color": "#f2a227",
+      "shade": "#8a5a14",
+      "gem": "#7fe0ff",
+      "gemShade": "#3aa6d8",
+      "glow": 1.5
+    }
+  ]
 }
