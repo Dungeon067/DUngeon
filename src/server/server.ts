@@ -48,11 +48,17 @@ export function freshProfile(): Profile {
 /** Chuyển hồ sơ cũ (v2) lên v3, giữ toàn bộ dữ liệu đã có. */
 export function migrate(old: any): Profile | null {
   if (!old || typeof old !== "object") return null;
-  if (old.v === 3) return { ...freshProfile(), ...old };
+  if (old.v === 3) return withLimitedBanner({ ...freshProfile(), ...old });
   if (old.v !== 2) return null;
   const base = freshProfile();
   const party = Array.isArray(old.party) && old.party.length ? old.party : base.party;
-  return { ...base, ...old, v: 3, party, teams: [[...party], [], [], []], team: 0 };
+  return withLimitedBanner({ ...base, ...old, v: 3, party, teams: [[...party], [], [], []], team: 0 });
+}
+/** Hồ sơ cũ có banner nổi bật không còn là 5★ giới hạn (ví dụ Lạc Hồng trước S23): chuyển về banner mặc định. */
+function withLimitedBanner(p: Profile): Profile {
+  if (!ECON.game.nhanVat5Sao.gioiHan.includes(p.cfg?.featured))
+    p.cfg = { ...DEFAULT_CFG, ...p.cfg, featured: DEFAULT_CFG.featured };
+  return p;
 }
 export function genDaily(seedKey: string) {
   const pool = DAILY_POOL;

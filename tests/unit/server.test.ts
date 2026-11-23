@@ -80,6 +80,15 @@ describe("Lưu trữ", () => {
     expect(Server.P.teams[0]).toEqual(["lachong"]);
     expect(Server.P.bag).toEqual({});
   });
+
+  it("hồ sơ cũ có banner Lạc Hồng (nay là thường trú) chuyển sang banner giới hạn mặc định", () => {
+    const old = { ...freshProfile(), cfg: { ...freshProfile().cfg, featured: "lachong", cost: 120 } };
+    localStorage.setItem("tinhtu-v3", JSON.stringify(old));
+    Server.P = null as never;
+    Server.load();
+    expect(Server.P.cfg.featured).toBe("loidinh");
+    expect(Server.P.cfg.cost).toBe(120);
+  });
 });
 
 describe("Đội lưu sẵn và dữ liệu menu (S10)", () => {
