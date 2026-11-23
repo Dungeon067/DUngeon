@@ -200,3 +200,14 @@ select.tt-input {
     padding: var(--tt-sp-4);
   }
 }
+.tt-admin-econ {
+  margin: var(--tt-sp-3) 0;
+  border: 1px solid var(--tt-line, rgba(255, 255, 255, 0.12));
+  border-radius: 10px;
+  padding: var(--tt-sp-2) var(--tt-sp-3);
+}
+.tt-admin-econ > summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: var(--tt-sp-2) 0;
+}

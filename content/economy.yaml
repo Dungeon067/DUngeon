@@ -1,0 +1,201 @@
+# Kinh tế và phân cấp sức mạnh (S19). Xem docs/economy/.
+# Game, trang Admin (/admin/#kinh-te) và công cụ mô phỏng (pnpm economy:sim) cùng đọc file này.
+# Mục "game" đang chạy trong game. Các mục còn lại ("thiet-ke") mới có trong tài liệu và mô phỏng.
+# KHÔNG có code thanh toán: mục "goiNap" chỉ dùng để mô phỏng.
+
+# ---------- Đang chạy trong game ----------
+game:
+  # Lên cấp nhân vật: Sách = sachGoc + floor(cấp / sachMoi), Xu = xuGoc + cấp × xuMoiCap.
+  capNhanVat:
+    toiDa: 60
+    sachGoc: 1
+    sachMoi: 6
+    xuGoc: 300
+    xuMoiCap: 120
+    # Máu và Tấn công tăng thêm mỗi cấp (theo chỉ số cấp 1).
+    tangMoiCap: 0.07
+  # Mỗi Nét Sao tăng Máu và Tấn công.
+  netSao:
+    tangMoiNet: 0.1
+    # Trùng khi đã N6 thì đổi thành Xu.
+    xuKhiDayN6:
+      "5": 20000
+      "4": 5000
+  chiMang:
+    "5": { tiLe: 0.25, satThuong: 0.9 }
+    "4": { tiLe: 0.15, satThuong: 0.6 }
+  # Ước nguyện ra vật phẩm 3★ thì cộng Xu.
+  xuVatPham3: 500
+  # Ước nguyện: tỉ lệ cơ bản và mốc Bảo Hộ Vận Sao nằm ở content/config.yaml (gacha).
+  uocNguyen:
+    tangMoiLuotSauMem: 0.06
+    bao4Sao: 10
+    tiLeDacBiet: 0.5
+  # Thưởng hoạt động (Đá Sao, Xu, Sách Kinh Nghiệm).
+  thuong:
+    ruong:
+      daSao: { goc: 20, buoc: 10, soBuoc: 4 }
+      xu: { goc: 1500, ngauNhien: 1500 }
+      sach: { goc: 2, ngauNhien: 3 }
+    thap:
+      daSaoMoiSao: 30
+      xuGoc: 2000
+      xuMoiTang: 400
+      sachGoc: 2
+      sachChiaTang: 3
+    hacGiao:
+      daSaoLanDauGoc: 100
+      daSaoLanDauMoiCap: 40
+      daSaoLapLai: 20
+      xuGoc: 6000
+      xuMoiCap: 3000
+      sachGoc: 6
+      sachMoiCap: 3
+    uyThac:
+      moiViec: { daSao: 30, xu: 3000 }
+      duBon: { daSao: 60, sach: 5 }
+  # Chiến Lực = (Tấn công hiệu quả × trongSoTanCong + Máu × trongSoMau) × (1 + thưởng kỹ năng).
+  # Tấn công hiệu quả = Tấn công × (1 + tỉ lệ chí mạng × sát thương chí mạng) × (1 + tăng sát thương).
+  chienLuc:
+    trongSoTanCong: 1
+    trongSoMau: 0.08
+
+# ---------- Thiết kế (tài liệu + mô phỏng, chưa có trong game) ----------
+thietKe:
+  # Cấp Hộ Tinh 1–60 của Người Ước Nguyện. Không bán, chỉ tăng theo thời gian chơi.
+  capHoTinh:
+    toiDa: 60
+    # Kinh nghiệm cần để lên cấp L: goc + L × moiCap.
+    kinhNghiem: { goc: 400, moiCap: 90 }
+    kinhNghiemMoiNgay: 1300
+    # 5 bậc danh vọng, mốc cấp bắt đầu.
+    bac:
+      - { ten: Đom Đóm, tuCap: 1 }
+      - { ten: Đèn Lồng, tuCap: 16 }
+      - { ten: Ngọn Đuốc, tuCap: 31 }
+      - { ten: Vầng Trăng, tuCap: 41 }
+      - { ten: Sao Mai, tuCap: 51 }
+  # Thiên Tượng 0–8: mạnh quái và chất lượng phần thưởng. Mở theo cấp Hộ Tinh.
+  thienTuong:
+    moTaiCapHoTinh: [1, 16, 22, 28, 34, 40, 46, 52, 58]
+    capQuaiCong: 8
+    thuongNhan: 0.12
+  # Khai Tinh 0–6: mở giới hạn cấp nhân vật. Mỗi bậc tăng Máu và Tấn công.
+  khaiTinh:
+    gioiHanCap: [20, 30, 40, 45, 50, 55, 60]
+    canCapHoTinh: [1, 12, 20, 28, 36, 42, 48]
+    tangMoiBac: 0.03
+    xu: [20000, 40000, 60000, 80000, 100000, 120000]
+    loiSao: [3, 6, 10, 16, 24, 32]
+  # Kỹ năng 1–10 (đánh thường, kỹ năng, nộ tính chung). Mức tối đa theo Khai Tinh.
+  kyNang:
+    toiDa: 10
+    toiDaTheoKhaiTinh: [1, 2, 4, 6, 7, 8, 10]
+    tangMoiCap: 0.035
+  # Vũ khí: tăng Tấn công % ở cấp tối đa, tinh luyện 1–5 tăng sát thương.
+  vuKhi:
+    "3": { tanCong: 0.2, tinhLuyen: 0.02 }
+    "4": { tanCong: 0.3, tinhLuyen: 0.03 }
+    "5": { tanCong: 0.36, tinhLuyen: 0.03 }
+  # Bảo Ấn: 4 ô. Chất lượng rơi theo Thiên Tượng (0..1). Bộ Ấn thêm sát thương khi đủ 4 ô.
+  baoAn:
+    tanCongToiDa: 0.32
+    mauToiDa: 0.24
+    boAn: 0.12
+    chatLuongTheoThienTuong: [0.3, 0.4, 0.5, 0.6, 0.7, 0.78, 0.86, 0.93, 1]
+  # Linh Lực: năng lượng để nhận thưởng Lòng Sao. Không bán.
+  linhLuc:
+    toiDa: 160
+    hoiMoiNgay: 180
+    moiLuotLongSao: 20
+    thuongMoiLuot: { sach: 5, xu: 2200, loiSao: 1.2 }
+  # Thu nhập lặp lại của người không nạp (ngoài Ủy thác đã có trong game).
+  thuNhap:
+    tuan:
+      daSao: 120
+      xu: 60000
+    thang:
+      thapKy: 600
+      suKien: 800
+      baoTri: 200
+    # Một lần: khởi đầu + rương + cốt truyện + Tháp + Hắc Giao lần đầu, chia đều trong số ngày.
+    motLan:
+      daSao: 7800
+      trongSoNgay: 45
+    # Vũ khí 4★ rèn miễn phí, tinh luyện tối đa ở ngày này.
+    vuKhi4MienPhiR5Ngay: 40
+  # Tháp Tinh Tú và cốt truyện: Chiến Lực đội yêu cầu, ước tính từ máu quái và thời gian 3★.
+  # Sát thương đội mỗi giây ≈ heSoSatThuong × (người đang ra trận + chiaSeNgoaiSan × ba người kia) × thoiGianDanh.
+  moHinhTran:
+    heSoSatThuong: 2.2
+    chiaSeNgoaiSan: 0.35
+    thoiGianDanh: 0.6
+    giayThap3Sao: 60
+    mauQuaiTB: 420
+    mauDaQuy: 3200
+  # Mốc Chiến Lực cốt truyện: chương, ngày dự kiến, cấp Hộ Tinh, Chiến Lực đội yêu cầu.
+  cotTruyen:
+    - { chuong: 1, ngay: 1, capHoTinh: 5, chienLuc: 900 }
+    - { chuong: 2, ngay: 4, capHoTinh: 15, chienLuc: 1800 }
+    - { chuong: 3, ngay: 10, capHoTinh: 22, chienLuc: 2600 }
+    - { chuong: 4, ngay: 20, capHoTinh: 30, chienLuc: 3300 }
+    - { chuong: 5, ngay: 35, capHoTinh: 38, chienLuc: 4000 }
+    - { chuong: 6, ngay: 55, capHoTinh: 44, chienLuc: 4600 }
+    - { chuong: 7, ngay: 80, capHoTinh: 50, chienLuc: 5200 }
+  # Trần chênh lệch: Chiến Lực đội người nạp nhiều ≤ tranChenhLech × người không nạp, cùng số ngày.
+  congBang:
+    tranChenhLech: 1.6
+    doiMienPhi: [suongmai, mailinh, bachvu, minhkhai]
+
+# ---------- Gói nạp đề xuất (chỉ mô phỏng, KHÔNG có thanh toán) ----------
+goiNap:
+  daSao:
+    - { id: ds1, gia: 20000, daSao: 50, thuong: 0 }
+    - { id: ds2, gia: 100000, daSao: 250, thuong: 15 }
+    - { id: ds3, gia: 300000, daSao: 750, thuong: 75 }
+    - { id: ds4, gia: 600000, daSao: 1500, thuong: 200 }
+    - { id: ds5, gia: 1000000, daSao: 2500, thuong: 400 }
+    - { id: ds6, gia: 2000000, daSao: 5000, thuong: 1000 }
+  napLanDauNhanDoi: true
+  theThang: { id: the-trang, gia: 79000, ngay: 30, daSaoNgay: 300, daSaoMoiNgay: 90 }
+  hanhTrinhMua:
+    { id: hanh-trinh, gia: 149000, ngay: 42, daSao: 680, sach: 120, xu: 300000, vuKhi4: 1, trangPhuc: 1 }
+  trangPhuc: { giaTu: 99000, giaDen: 299000 }
+  # Hạn mức nạp tối đa mỗi tài khoản mỗi tháng (bảo vệ người chơi và giữ trần chênh lệch).
+  hanMucThang: 10000000
+  # Mức mặc định người chơi tự đặt khi tạo tài khoản (có thể hạ hoặc nâng tới hạn mức).
+  hanMucTuDatMacDinh: 2000000
+  # Cảnh báo khi tổng nạp trong một ngày vượt mức này.
+  canhBaoNgay: 1000000
+
+# ---------- Ba hồ sơ người chơi để mô phỏng ----------
+# Vũ khí đội: độ hiếm và ngày tinh luyện đạt R5 (tăng đều từ R1). Người không nạp dùng vũ khí 4★ rèn miễn phí.
+hoSo:
+  - id: khong-nap
+    ten: Không nạp
+    vndThang: 0
+    theThang: false
+    hanhTrinh: false
+    vuKhi: { r: 4, r5Ngay: 40 }
+  - id: nap-it
+    ten: Nạp ít (thẻ tháng)
+    vndThang: 79000
+    theThang: true
+    hanhTrinh: false
+    vuKhi: { r: 4, r5Ngay: 40 }
+  - id: nap-nhieu
+    ten: Nạp nhiều
+    # Nạp tới hạn mức mỗi tháng: người nạp nhiều nhất có thể.
+    vndThang: 10000000
+    theThang: true
+    hanhTrinh: true
+    # Nạp nhiều: vũ khí 5★ cho cả đội, tinh luyện tới R5 ở ngày này.
+    vuKhi: { r: 5, r5Ngay: 120 }
+
+moPhong:
+  soNguoi: 100000
+  soNgay: 180
+  mocNgay: [30, 90, 180]
+  seed: 20261123
+  # Người không nạp ước banner giới hạn khi đủ lượt này (tích lũy trước), người nạp ước ngay.
+  tichLuyTruocKhiUoc: 0

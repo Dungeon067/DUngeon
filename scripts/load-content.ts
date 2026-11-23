@@ -39,3 +39,5 @@ export function loadRawMenuContent(raw: RawContent): RawMenuContent {
     enemyIds: Object.keys(raw.enemies).map((f) => f.replace(/^.*\//, "").replace(/\.yaml$/, "")),
   };
 }
+
+export const loadRawEconomy = () => read("content/economy.yaml");

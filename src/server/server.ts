@@ -2,6 +2,8 @@ import type { LogEntry, Profile } from "./types";
 import { fmt, pick, todayKey } from "../core/util";
 import { CHARS, DAILY_POOL, DEFAULT_CFG, ITEMS3, START_PROFILE, byId } from "../data/content";
 import { toast } from "../ui/toast";
+import { ECON } from "../data/economy";
+import { charStats, chienLuc, lvCost as lvCostOf, rollRarity } from "../economy/core";
 
 export const SAVE_KEY = "tinhtu-v3";
 export const OLD_SAVE_KEY = "tinhtu-v2";
@@ -125,7 +127,7 @@ export const Server = {
         P.owned[id].cons++;
         return { dup: true, cons: P.owned[id].cons };
       }
-      P.coin += c.r === 5 ? 20000 : 5000;
+      P.coin += ECON.game.netSao.xuKhiDayN6[c.r === 5 ? "5" : "4"];
       return { dup: true, cons: 6, max: true };
     }
     P.owned[id] = { lv: 1, cons: 0 };
@@ -134,34 +136,18 @@ export const Server = {
   rollOne() {
     const P = this.P,
       cfg = P.cfg;
-    P.pity5++;
-    P.pity4++;
-    let p5 = cfg.rate5 / 100;
-    if (P.pity5 >= cfg.soft) p5 += (P.pity5 - cfg.soft + 1) * 0.06;
-    if (P.pity5 >= cfg.hard) p5 = 1;
-    const r = Math.random();
+    const roll = rollRarity(P, cfg, ECON, Math.random);
     let out;
-    if (r < p5) {
-      P.pity5 = 0;
-      P.pity4 = 0;
-      let c,
-        feat = false;
-      if (P.guaranteed || Math.random() < 0.5) {
-        c = byId[cfg.featured];
-        P.guaranteed = false;
-        feat = true;
-      } else {
-        const pool = CHARS.filter((x) => x.r === 5 && x.id !== cfg.featured);
-        c = pick(pool);
-        P.guaranteed = true;
-      }
-      out = { kind: "char", id: c.id, r: 5, name: c.name, feat, ...this.grant(c.id) };
-    } else if (P.pity4 >= 10 || r < p5 + cfg.rate4 / 100) {
-      P.pity4 = 0;
+    if (roll.r === 5) {
+      let c;
+      if (roll.feat) c = byId[cfg.featured];
+      else c = pick(CHARS.filter((x) => x.r === 5 && x.id !== cfg.featured));
+      out = { kind: "char", id: c.id, r: 5, name: c.name, feat: roll.feat, ...this.grant(c.id) };
+    } else if (roll.r === 4) {
       const c = pick(CHARS.filter((x) => x.r === 4));
       out = { kind: "char", id: c.id, r: 4, name: c.name, ...this.grant(c.id) };
     } else {
-      P.coin += 500;
+      P.coin += ECON.game.xuVatPham3;
       out = { kind: "item", r: 3, name: pick(ITEMS3) };
     }
     P.history.unshift({ n: out.name, r: out.r, t: Date.now() });
@@ -281,7 +267,7 @@ export const Server = {
       if (!o) throw new Error("Bạn chưa có nhân vật này");
       let n = 0;
       for (let i = 0; i < (times || 1); i++) {
-        if (o.lv >= 60) break;
+        if (o.lv >= ECON.game.capNhanVat.toiDa) break;
         const c = lvCost(o.lv);
         if (P.books < c.books || P.coin < c.coin) break;
         P.books -= c.books;
@@ -289,7 +275,7 @@ export const Server = {
         o.lv++;
         n++;
       }
-      if (!n) throw new Error(o.lv >= 60 ? "Đã đạt cấp tối đa" : "Không đủ Sách Kinh Nghiệm hoặc Xu");
+      if (!n) throw new Error(o.lv >= ECON.game.capNhanVat.toiDa ? "Đã đạt cấp tối đa" : "Không đủ Sách Kinh Nghiệm hoặc Xu");
       return o.lv;
     },
     reward(this: any, { gems = 0, coin = 0, books = 0 }) {
@@ -304,9 +290,10 @@ export const Server = {
       const P = this.P;
       if (P.chests.includes(idx)) throw new Error("Rương này đã mở");
       P.chests.push(idx);
-      const g = 20 + Math.floor(Math.random() * 4) * 10,
-        c = 1500 + Math.floor(Math.random() * 1500),
-        b = 2 + Math.floor(Math.random() * 3);
+      const R = ECON.game.thuong.ruong,
+        g = R.daSao.goc + Math.floor(Math.random() * R.daSao.soBuoc) * R.daSao.buoc,
+        c = R.xu.goc + Math.floor(Math.random() * R.xu.ngauNhien),
+        b = R.sach.goc + Math.floor(Math.random() * R.sach.ngauNhien);
       P.gems += g;
       this.econ("vao:ruong", g);
       P.coin += c;
@@ -319,9 +306,10 @@ export const Server = {
         old = P.tower[floor] || 0,
         gain = Math.max(0, stars - old);
       P.tower[floor] = Math.max(old, stars);
-      const gems = gain * 30,
-        coin = 2000 + floor * 400,
-        books = 2 + Math.floor(floor / 3);
+      const T = ECON.game.thuong.thap,
+        gems = gain * T.daSaoMoiSao,
+        coin = T.xuGoc + floor * T.xuMoiTang,
+        books = T.sachGoc + Math.floor(floor / T.sachChiaTang);
       P.gems += gems;
       this.econ("vao:thap", gems);
       P.coin += coin;
@@ -333,9 +321,10 @@ export const Server = {
       const P = this.P,
         first = !P.boss[lv];
       P.boss[lv] = true;
-      const gems = first ? 100 + lv * 40 : 20,
-        coin = 6000 + lv * 3000,
-        books = 6 + lv * 3;
+      const B = ECON.game.thuong.hacGiao,
+        gems = first ? B.daSaoLanDauGoc + lv * B.daSaoLanDauMoiCap : B.daSaoLapLai,
+        coin = B.xuGoc + lv * B.xuMoiCap,
+        books = B.sachGoc + lv * B.sachMoiCap;
       P.gems += gems;
       this.econ("vao:boss", gems);
       P.coin += coin;
@@ -356,20 +345,22 @@ export const Server = {
       if (t.claimed) throw new Error("Đã nhận thưởng");
       if (t.prog < t.goal) throw new Error("Chưa hoàn thành");
       t.claimed = true;
-      this.P.gems += 30;
-      this.econ("vao:uy-thac", 30);
-      this.P.coin += 3000;
-      return { gems: 30, coin: 3000 };
+      const { daSao, xu } = ECON.game.thuong.uyThac.moiViec;
+      this.P.gems += daSao;
+      this.econ("vao:uy-thac", daSao);
+      this.P.coin += xu;
+      return { gems: daSao, coin: xu };
     },
     claimBonus(this: any) {
       const d = this.P.daily;
       if (d.bonus) throw new Error("Đã nhận thưởng");
       if (!d.tasks.every((t: any) => t.claimed)) throw new Error("Nhận đủ 4 nhiệm vụ trước");
       d.bonus = true;
-      this.P.gems += 60;
-      this.econ("vao:uy-thac", 60);
-      this.P.books += 5;
-      return { gems: 60, books: 5 };
+      const { daSao, sach } = ECON.game.thuong.uyThac.duBon;
+      this.P.gems += daSao;
+      this.econ("vao:uy-thac", daSao);
+      this.P.books += sach;
+      return { gems: daSao, books: sach };
     },
     // ---- admin ----
     setConfig(this: any, c: any) {
@@ -422,19 +413,15 @@ export const Server = {
   },
 };
 export function lvCost(lv: number) {
-  return { books: 1 + Math.floor(lv / 6), coin: 300 + lv * 120 };
+  return lvCostOf(lv, ECON);
 }
 export function statsOf(id: string) {
-  const c = byId[id],
-    o = Server.P.owned[id] || { lv: 1, cons: 0 };
-  const g = 1 + (o.lv - 1) * 0.07,
-    cb = 1 + o.cons * 0.1;
-  return {
-    lv: o.lv,
-    cons: o.cons,
-    hp: Math.round(c.hp * g * cb * 1.0),
-    atk: Math.round(c.atk * g * cb),
-    crit: c.r === 5 ? 0.25 : 0.15,
-    cdmg: c.r === 5 ? 0.9 : 0.6,
-  };
+  const o = Server.P.owned[id] || { lv: 1, cons: 0 };
+  const { dmg: _d, skill: _s, ...st } = charStats(byId[id], o, ECON);
+  return st;
+}
+/** Chiến Lực một nhân vật đang có (cấp và Nét Sao; vũ khí, Bảo Ấn, Khai Tinh chưa có trong game). */
+export function powerOf(id: string) {
+  const o = Server.P.owned[id] || { lv: 1, cons: 0 };
+  return chienLuc(charStats(byId[id], o, ECON), ECON);
 }

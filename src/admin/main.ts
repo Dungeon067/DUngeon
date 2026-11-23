@@ -4,7 +4,10 @@ import "../ui/ds/ds.css";
 import "./admin.css";
 import { CHARS, EL } from "../data/content";
 import { ADMIN_CFG } from "../data/menu-content";
-import { LOG_KEY, SAVE_KEY, Server } from "../server/server";
+import { stringify } from "yaml";
+import { ECON, econEdited, resetEcon, setEcon } from "../data/economy";
+import { packValue } from "../economy/core";
+import { LOG_KEY, SAVE_KEY, Server, powerOf } from "../server/server";
 import { button, field, h, tabs, tag, toggle } from "../ui/ds";
 import { icon } from "../ui/icons/icons";
 import { filterHistory } from "../ui/menu/logic";
@@ -328,9 +331,106 @@ function econ() {
         rows.map(([k, n]) => [ECON_NAME[k] ?? k, k.startsWith("ra:") ? tag("Ra", "warn") : tag("Vào", "ok"), fmt(n)]),
         [2],
       ),
+    ]),
+    ...econConfig(),
+  ];
+}
+
+const ECON_GROUP: Record<string, string> = {
+  game: "Đang chạy trong game",
+  thietKe: "Thiết kế (tài liệu và mô phỏng)",
+  goiNap: "Gói nạp đề xuất (chỉ mô phỏng)",
+  hoSo: "Ba hồ sơ mô phỏng",
+  moPhong: "Thông số mô phỏng",
+};
+function numericLeaves(o: unknown, path = "", out: [string, number][] = []) {
+  if (typeof o === "number") out.push([path, o]);
+  else if (o && typeof o === "object")
+    for (const [k, v] of Object.entries(o)) numericLeaves(v, path ? `${path}.${k}` : k, out);
+  return out;
+}
+function setPath(o: any, path: string, v: number) {
+  const ks = path.split(".");
+  let cur = o;
+  for (const k of ks.slice(0, -1)) cur = cur[k];
+  cur[ks.at(-1)!] = v;
+}
+function econConfig(): Kid[] {
+  const inputs: [string, HTMLInputElement][] = [];
+  const groups = Object.keys(ECON_GROUP).map((g) => {
+    const fields = numericLeaves((ECON as any)[g], g).map(([path, v]) => {
+      const f = field(path.slice(g.length + 1), { type: "number", value: String(v) });
+      const el = input(f);
+      el.step = "any";
+      el.dataset.path = path;
+      inputs.push([path, el]);
+      return f;
+    });
+    return h("details", { class: "tt-admin-econ", open: g === "game" }, [
+      h("summary", {}, [`${ECON_GROUP[g]} · ${fields.length} số`]),
+      h("div", { class: "tt-admin-form" }, fields),
+    ]);
+  });
+  const save = button("Lưu và áp dụng", {
+    variant: "primary",
+    icon: "xac-nhan",
+    onClick: () => {
+      const next = JSON.parse(JSON.stringify(ECON));
+      for (const [path, el] of inputs) setPath(next, path, Number(el.value));
+      try {
+        setEcon(next);
+        done("Đã lưu cấu hình kinh tế trên trình duyệt này");
+      } catch (e) {
+        done((e as Error).message.split("\n").slice(0, 2).join(" "));
+      }
+    },
+  });
+  const reset = button("Khôi phục theo economy.yaml", {
+    icon: "lam-moi",
+    onClick: () => (resetEcon(), done("Đã khôi phục cấu hình gốc")),
+  });
+  const dl = button("Tải YAML", {
+    icon: "tiep",
+    onClick: () => {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([stringify(ECON)], { type: "text/yaml" }));
+      a.download = "economy.yaml";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    },
+  });
+  const owned = Object.keys(Server.P.owned).filter((id) => CHARS.some((c) => c.id === id));
+  return [
+    card("Cấu hình kinh tế (content/economy.yaml)", [
       h("p", { class: "tt-admin-note" }, [
-        "Khung cho S19: các nguồn và vật phẩm kinh tế mới sẽ tự hiện ở đây khi server giả lập ghi thêm khóa.",
+        econEdited() ? tag("Đang dùng bản chỉnh trên trình duyệt", "warn") : tag("Đang dùng file gốc", "ok"),
+        " Bản chỉnh lưu trong trình duyệt này và áp dụng ngay cho game. Muốn đổi cho mọi người: tải YAML, chép số vào content/economy.yaml rồi chạy lại pnpm economy:sim. Không có thanh toán thật.",
       ]),
+      ...groups,
+      h("div", { class: "tt-row" }, [save, reset, dl]),
+    ]),
+    card("Chiến Lực nhân vật đang có", [
+      table(
+        ["Nhân vật", "Cấp", "Nét Sao", "Chiến Lực"],
+        owned
+          .map((id) => ({ c: CHARS.find((x) => x.id === id)!, o: Server.P.owned[id]!, p: powerOf(id) }))
+          .sort((a, b) => b.p - a.p)
+          .map(({ c, o, p }) => [c.name, String(o.lv), `N${o.cons}`, fmt(p)]),
+        [1, 3],
+      ),
+    ]),
+    card("Giá trị gói nạp đề xuất (Đá Sao mỗi 1.000 đ)", [
+      table(
+        ["Gói", "Giá (đ)", "Đá Sao", "Mỗi 1.000 đ", "Lần đầu nhân đôi"],
+        packValue(ECON).map((r) => [
+          r.id,
+          fmt(r.gia),
+          fmt(r.daSao),
+          r.moi1000.toFixed(2),
+          r.lanDau === null ? "—" : r.lanDau.toFixed(2),
+        ]),
+        [1, 2, 3, 4],
+      ),
     ]),
   ];
 }
