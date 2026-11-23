@@ -389,11 +389,13 @@ function groundXf(r3: WorldRenderer, x: number, y: number): boolean {
   const q0 = r3.project(x, y),
     q1 = r3.project(x + TS, y),
     q2 = r3.project(x, y + TS);
-  if (!q0.vis || q0.x < -300 || q0.x > GS.VW + 300 || q0.y < -300 || q0.y > GS.VH + 300) return false;
   const ax = (q1.x - q0.x) / TS,
     ay = (q1.y - q0.y) / TS,
     bx = (q2.x - q0.x) / TS,
-    by = (q2.y - q0.y) / TS;
+    by = (q2.y - q0.y) / TS,
+    // Lề cắt đủ rộng cho vùng cảnh báo bán kính tới 4 ô, dù tâm đã ra ngoài màn hình.
+    m = 300 + Math.max(Math.hypot(ax, ay), Math.hypot(bx, by)) * TS * 4;
+  if (!q0.vis || q0.x < -m || q0.x > GS.VW + m || q0.y < -m || q0.y > GS.VH + m) return false;
   // Chỉ bỏ khi một ô to hơn cả chiều cao màn hình (vật sát camera), không bỏ khi zoom gần.
   if (Math.hypot(ax, ay) * TS > GS.VH) return false;
   const D = GS.DPR;
