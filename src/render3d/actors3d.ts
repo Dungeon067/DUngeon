@@ -85,11 +85,11 @@ export class SheetSprite {
     shadows: boolean,
   ) {
     const J = sheet.json;
-    const u = 1.42 / J.worldH;
+    const u = 1.85 / J.worldH;
     this.fw = J.frame.w;
     this.fh = J.frame.h;
     const g = planeAtFeet(J.frame.w * u, J.frame.h * u, J.anchor.x * u, J.anchor.y * u);
-    const mat = new THREE.MeshLambertMaterial({ map: sheet.tex, alphaTest: 0.5, side: THREE.DoubleSide });
+    const mat = new THREE.MeshLambertMaterial({ map: sheet.tex, emissiveMap: sheet.tex, emissive: 0x777777, alphaTest: 0.5, side: THREE.DoubleSide });
     this.mesh = new THREE.Mesh(g, mat);
     this.mesh.castShadow = shadows;
     this.mesh.customDepthMaterial = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, map: sheet.tex, alphaTest: 0.5 });
@@ -146,7 +146,7 @@ export class CanvasSprite {
     this.tex.generateMipmaps = false;
     this.tex.colorSpace = THREE.SRGBColorSpace;
     const g = planeAtFeet(w / TS, h / TS, w / 2 / TS, (h - 8) / TS);
-    this.mesh = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ map: this.tex, alphaTest: 0.4, side: THREE.DoubleSide }));
+    this.mesh = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ map: this.tex, emissiveMap: this.tex, emissive: 0x777777, alphaTest: 0.4, side: THREE.DoubleSide }));
     this.mesh.castShadow = shadows;
     this.mesh.customDepthMaterial = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, map: this.tex, alphaTest: 0.4 });
     this.obj.add(this.mesh);
