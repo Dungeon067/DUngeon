@@ -492,6 +492,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     if (!camInit) camTarget.copy(want);
     camInit = true;
     camTarget.lerp(want, 1 - Math.exp(-dt * 10));
+    const look = camTarget.clone();
     let yaw = GS.camYaw ?? 0,
       pitch = Math.min(1.2, Math.max(0.2, GS.camPitch ?? 0.62));
     let dist = Math.min(24, Math.max(5, GS.camDist ?? 13));
@@ -500,27 +501,28 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       const k = 1 - Math.max(0, G.cine.t) / G.cine.max,
         w = Math.min(1, k * 5, (1 - k) * 6),
         e = w * w * (3 - 2 * w);
-      const front = Math.atan2(-(p.dirX ?? 1), p.dirY ?? 0) + 0.5 - k * 0.9;
+      // Theo hướng mặt của mô hình (hướng ra chiêu), không theo hướng chạy.
+      const front = -heroYaw + 0.5 - k * 0.9;
       const dy = Math.atan2(Math.sin(front - yaw), Math.cos(front - yaw));
       yaw += dy * e;
       pitch += (0.22 - pitch) * e;
       dist += (Math.max(4, dist * 0.42) - dist) * e;
-      camTarget.y += 0.35 * e;
+      look.y += 0.35 * e;
     }
     const dir = new THREE.Vector3(-Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), Math.cos(yaw) * Math.cos(pitch));
     if (F)
       for (let s = 1; s <= 24; s++) {
         const d = (dist * s) / 24,
-          q = camTarget.clone().addScaledVector(dir, d);
+          q = look.clone().addScaledVector(dir, d);
         if (F.at(q.x, q.z) + 0.35 > q.y) {
           dist = Math.max(2.5, d - 0.6);
           break;
         }
       }
     const shake = G.shake ? (Math.random() - 0.5) * G.shake * 0.02 : 0;
-    camera.position.copy(camTarget).addScaledVector(dir, dist);
+    camera.position.copy(look).addScaledVector(dir, dist);
     camera.position.x += shake;
-    camera.lookAt(camTarget);
+    camera.lookAt(look);
     sky.mesh.position.copy(camera.position);
     sky.mesh.visible = !arena;
 
