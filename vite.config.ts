@@ -71,6 +71,12 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
+            // Danh sách video ước nguyện đổi theo mỗi lần deploy: lấy bản mới, mất mạng mới dùng bản đã lưu.
+            urlPattern: ({ url }) => url.pathname.endsWith("/media/cinematic/out/timeline.json"),
+            handler: "NetworkFirst",
+            options: { cacheName: "tinhtu-media-index", networkTimeoutSeconds: 3 },
+          },
+          {
             urlPattern: ({ url }) => /\/(audio|media)\//.test(url.pathname),
             handler: "CacheFirst",
             options: {
