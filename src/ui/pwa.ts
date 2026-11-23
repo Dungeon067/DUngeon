@@ -1,4 +1,5 @@
 import { registerSW } from "virtual:pwa-register";
+import { flushPending } from "../core/loop";
 import { $ } from "../core/util";
 
 /* =========================================================
@@ -129,6 +130,7 @@ export function initPwa() {
       b.hidden = false;
       b.onclick = () => {
         b.disabled = true;
+        flushPending();
         void update(true);
       };
     },
