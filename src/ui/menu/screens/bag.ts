@@ -97,14 +97,15 @@ function cycle<T>(opts: [T, string][], cur: T) {
 }
 
 function openFilter() {
+  const f = { ...st.f };
   const body = h("div", { class: "tt-tudo-filter" });
   const paint = () => {
     body.replaceChildren(
       chipGroup<string>(
         "Loại",
         ["all", "sword", "great", "spear", "bow", "cat"].map((t) => [t, t === "all" ? "Tất cả" : TYPE_NAME(t)]),
-        st.f.type,
-        (v) => ((st.f.type = v), paint()),
+        f.type,
+        (v) => ((f.type = v), paint()),
       ),
       chipGroup<number>(
         "Độ hiếm",
@@ -114,8 +115,8 @@ function openFilter() {
           [4, "4★"],
           [3, "3★"],
         ],
-        st.f.r,
-        (v) => ((st.f.r = v), paint()),
+        f.r,
+        (v) => ((f.r = v), paint()),
       ),
       chipGroup<"all" | "on" | "off">(
         "Trang bị",
@@ -124,8 +125,8 @@ function openFilter() {
           ["on", "Đang dùng"],
           ["off", "Chưa dùng"],
         ],
-        st.f.eq,
-        (v) => ((st.f.eq = v), paint()),
+        f.eq,
+        (v) => ((f.eq = v), paint()),
       ),
     );
   };
@@ -133,10 +134,13 @@ function openFilter() {
   const reset = button("Bỏ lọc", { variant: "ghost", icon: "lam-moi" });
   const ok = button("Áp dụng", { variant: "primary", icon: "xac-nhan" });
   reset.addEventListener("click", () => {
-    st.f = { type: "all", r: 0, eq: "all" };
+    Object.assign(f, { type: "all", r: 0, eq: "all" });
     paint();
   });
-  ok.addEventListener("click", () => rerender());
+  ok.addEventListener("click", () => {
+    st.f = f;
+    rerender();
+  });
   openDialog({ title: "Lọc vũ khí", body: h("div", {}, [body, reset]), actions: [ok] });
 }
 
@@ -349,10 +353,13 @@ function render(host: HTMLElement, params: any = {}) {
 }
 
 /** Lớp chòm sao parallax: theo con trỏ hoặc độ nghiêng máy, gom theo khung hình; tắt khi Giảm chuyển động. */
+let skyAc: AbortController | null = null;
 function sky(host: HTMLElement) {
+  skyAc?.abort();
+  skyAc = null;
   const el = h("div", { class: "tt-tudo-sky", "aria-hidden": "true" });
   if (calm()) return el;
-  const ac = new AbortController();
+  const ac = (skyAc = new AbortController());
   let tx = 0,
     ty = 0,
     raf = 0;
