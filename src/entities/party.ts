@@ -12,10 +12,15 @@ export function buildParty() {
     .filter((id: string) => Server.P.owned[id])
     .map((id: string) => {
       const st = statsOf(id);
-      const vk = investOf(id).vuKhi;
-      const stack = vk && weaponOf(vk.id, ECON).biDong.coChe ? { id: vk.id, tl: vk.tinhLuyen, tang: 0, t: 0 } : null;
-      return { id, c: byId[id], st, hp: st.hp, maxHp: st.hp, energy: 20, skillCd: 0, alive: true, stack };
+      return { id, c: byId[id], st, hp: st.hp, maxHp: st.hp, energy: 20, skillCd: 0, alive: true, stack: stackOf(id) };
     });
+}
+/** Trạng thái tích tầng của vũ khí đang cầm; giữ số tầng cũ nếu vẫn cùng vũ khí và mức tinh luyện. */
+export function stackOf(id: string, prev: { id: string; tl: number; tang: number; t: number } | null = null) {
+  const vk = investOf(id).vuKhi;
+  if (!vk || !weaponOf(vk.id, ECON).biDong.coChe) return null;
+  if (prev && prev.id === vk.id && prev.tl === vk.tinhLuyen) return prev;
+  return { id: vk.id, tl: vk.tinhLuyen, tang: 0, t: 0 };
 }
 export function newSession(mode: string, opt = {}) {
   resetFeel();

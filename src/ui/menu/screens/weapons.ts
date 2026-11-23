@@ -9,6 +9,7 @@ import { Server, powerOf, statsOf, vk, wDef, weaponList } from "../../../server/
 import { button, h, openDialog, stars, tabs, tag } from "../../ds";
 import { icon } from "../../icons/icons";
 import { weaponImg } from "../../weapon-art";
+import { stackOf } from "../../../entities/party";
 import { renderTuDo } from "./bag";
 import { refreshWallets, openMenu, back, registerScreen, rerender } from "../shell";
 import {
@@ -75,6 +76,7 @@ function refreshParty(ids: string[]) {
     m.hp = m.alive ? Math.round((m.hp / m.maxHp) * st.hp) : m.hp;
     m.st = st;
     m.maxHp = st.hp;
+    m.stack = stackOf(id, m.stack ?? null);
   }
 }
 
@@ -541,7 +543,10 @@ function renderForge(host: HTMLElement) {
 registerScreen("weapons", {
   title: "Tủ Đồ",
   icon: "tui-do",
-  render: (host, params) => renderTuDo(host, { ...params, tab: "vu-khi" }),
+  render: (host, params) => {
+    if (params.tab === undefined) params.tab = "vu-khi";
+    renderTuDo(host, params);
+  },
 });
 registerScreen("wupgrade", { title: "Vũ khí", icon: "nang-cap", render: renderUpgrade });
 registerScreen("wswap", { title: "Thay vũ khí", icon: "danh", render: renderSwap });
