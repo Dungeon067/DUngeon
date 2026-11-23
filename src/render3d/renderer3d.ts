@@ -22,7 +22,7 @@ import { getRenderable, renderObjects } from "./renderables";
 import type { WorldRenderer } from "./select";
 import { MODELS, VrmActor } from "./toon/actor";
 import { FADE, disposeTree, fadeOccluder, toonMat } from "./toon/mat";
-import { animateMonster, buildMonster, type MonsterView } from "./toon/monsters";
+import { animateMonster, buildMonster, disposeMonster, preloadMonsters, type MonsterView } from "./toon/monsterGlb";
 import { buildSky } from "./toon/sky";
 import { buildBossArena, buildTowerArena, type Arena } from "./toon/arena";
 import { createTeleLayer } from "./toon/tele3d";
@@ -222,6 +222,8 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
 
   // Quái: mô hình toon tạm. Vật thể câu đố: renderable (bản 2D dựng thành tấm phẳng nếu chưa có bản 3D).
   const monsters = new Map<any, MonsterView>();
+  const _mp = new THREE.Vector3();
+  preloadMonsters();
   const renderables = new Map<any, { o: any; auto?: CanvasSprite }>();
   const s23 = createS23Layer(scene);
   // Đấu trường (Tháp, Hắc Giao): dựng một lần khi vào trận, dọn khi ra. Vùng cảnh báo đòn vẽ 3D trên sàn.
@@ -661,35 +663,41 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     blob.position.set(pos.x, pg + 0.02, pos.z);
     blob.scale.setScalar(L.shadow);
 
-    // Quái.
+    // Quái (GLB, S29): gần camera trước để giới hạn số quái hoạt ảnh đầy đủ.
     const seen = new Set<any>();
+    const mlive: { e: any; v: MonsterView; d: number }[] = [];
     for (const e of G.enemies) {
-      if (e.dead) continue;
+      if (e.dead && !e.isBoss) continue;
       if (Math.abs(e.x - p.x) > 1100 || Math.abs(e.y - p.y) > 1100) continue;
-      seen.add(e);
       let v = monsters.get(e);
+      if (e.dead && !v) continue;
+      seen.add(e);
       if (!v) {
-        v = buildMonster(e);
+        v = buildMonster(e, G);
         monsters.set(e, v);
         scene.add(v.obj);
         if (arena && !e.isBoss) arena.spawnFx(e.x, e.y, EL[e.el]?.c ?? "#ffffff");
       }
-      const el = lift(e);
-      v.obj.position.set(e.x / TS, groundY(e.x, e.y, el.g) + el.air / TS, e.y / TS);
-      animateMonster(v, e, t, Math.atan2(p.x - e.x, p.y - e.y));
-    }
-    // Hắc Giao bị hạ: giữ mô hình chìm dần xuống nước trong lúc chờ bảng kết quả.
-    for (const [e, v] of monsters)
-      if (e.isBoss && e.dead && !seen.has(e) && (v.deadT ?? 0) < 1) {
-        v.deadT = Math.min(1, (v.deadT ?? 0) + dt / 1.6);
-        seen.add(e);
-        animateMonster(v, e, t, 0);
+      if (!e.isBoss) {
+        const el = lift(e);
+        v.obj.position.set(e.x / TS, groundY(e.x, e.y, el.g) + el.air / TS, e.y / TS);
       }
+      _mp.set(e.x / TS, v.obj.position.y, e.y / TS);
+      mlive.push({ e, v, d: camera.position.distanceTo(_mp) });
+    }
+    // Quái vừa bị hạ (logic đã bỏ khỏi G.enemies): diễn clip chết, tan thành bụi sao rồi mới gỡ.
+    for (const [e, v] of monsters)
+      if (!seen.has(e) && e.dead && v.of === G && v.inner && (v.deadT ?? 0) < 1) {
+        seen.add(e);
+        mlive.push({ e, v, d: camera.position.distanceTo(v.obj.position) });
+      }
+    mlive.sort((a, b) => a.d - b.d);
+    mlive.forEach(({ e, v, d }, i) => {
+      if (!animateMonster(v, e, t, Math.atan2(p.x - e.x, p.y - e.y), dt, d, i, TS)) seen.delete(e);
+    });
     for (const [e, v] of monsters)
       if (!seen.has(e)) {
-        v.obj.removeFromParent();
-        v.obj.traverse((o: any) => o.geometry?.dispose());
-        for (const mm of v.mats) mm.dispose();
+        disposeMonster(v);
         monsters.delete(e);
       }
 

@@ -13,3 +13,4 @@ src-tauri/target/
 src-tauri/gen/
 __pycache__/
 .lfs-cine
+*.blend1
