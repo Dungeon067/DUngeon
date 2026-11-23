@@ -1,0 +1,189 @@
+name: release-apps
+
+# S22: build bản cài đặt Android (APK) và máy tính (Windows, macOS, Linux), đính vào GitHub Release.
+# Push tag v* thì tạo Release (tag có dấu "-", ví dụ v0.1.0-test, là pre-release).
+# Chạy tay (workflow_dispatch): chỉ build và để file ở mục Artifacts của lần chạy, trừ khi nhập tag có sẵn.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag có sẵn để đính file vào Release (bỏ trống: chỉ build)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency: release-apps-${{ github.ref }}
+
+env:
+  TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      number: ${{ steps.v.outputs.number }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG || github.ref }}
+      - id: v
+        name: Tính số phiên bản
+        run: |
+          VER="${TAG#v}"; [ -n "$VER" ] || VER="0.0.0-dev.${{ github.run_number }}"
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          echo "number=${VER%%-*}" >> "$GITHUB_OUTPUT"
+      - name: Tạo Release
+        if: env.TAG != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$TAG" >/dev/null 2>&1 && exit 0
+          PRE=""; case "$TAG" in *-*) PRE="--prerelease";; esac
+          gh release create "$TAG" $PRE --verify-tag --title "Tinh Tú $TAG" --notes-file docs/cai-dat/release-notes.md
+
+  android:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG || github.ref }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm exec cap sync android
+      - name: Build APK (ký bằng debug keystore cố định của bản thử)
+        working-directory: android
+        run: ./gradlew assembleRelease --no-daemon -PversionName=${{ needs.release.outputs.version }} -PversionCode=${{ github.run_number }}
+      - name: Đặt tên file
+        run: |
+          mkdir -p out
+          cp android/app/build/outputs/apk/release/app-release.apk "out/TinhTu_${{ needs.release.outputs.version }}_android.apk"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: out/*.apk
+      - name: Đính vào Release
+        if: env.TAG != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$TAG" out/*.apk --clobber
+
+  android-emulator:
+    # Chạy thử APK trên máy ảo Android: cài, mở, chụp màn hình. Lỗi ở đây không chặn Release.
+    needs: android
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-apk
+      - name: Bật KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          profile: pixel_6
+          disable-animations: true
+          script: |
+            adb install -r TinhTu_*.apk
+            adb shell am start -W -n vn.tinhtu.uocnguyen/.MainActivity
+            sleep 25
+            adb shell pidof vn.tinhtu.uocnguyen
+            adb exec-out screencap -p > android-emulator.png
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-emulator-screenshot
+          path: android-emulator.png
+          if-no-files-found: ignore
+
+  desktop:
+    needs: release
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            name: windows
+            args: --bundles nsis,msi
+            out: src-tauri/target/release/bundle
+          - os: macos-latest
+            name: macos
+            args: --target universal-apple-darwin --bundles dmg
+            out: src-tauri/target/universal-apple-darwin/release/bundle
+          - os: ubuntu-22.04
+            name: linux
+            args: --bundles appimage
+            out: src-tauri/target/release/bundle
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG || github.ref }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.name == 'macos' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - name: Thư viện hệ thống (Linux)
+        if: matrix.name == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+      - run: pnpm install --frozen-lockfile
+      - name: Build Tauri
+        shell: bash
+        # MSI chỉ nhận số phiên bản dạng a.b.c nên bỏ phần "-test" khi build.
+        run: pnpm tauri build ${{ matrix.args }} --config '{"version":"${{ needs.release.outputs.number }}"}'
+      - name: Đặt tên file
+        shell: bash
+        run: |
+          mkdir -p out
+          V="${{ needs.release.outputs.version }}"
+          B="${{ matrix.out }}"
+          case "${{ matrix.name }}" in
+            windows)
+              cp "$B"/nsis/*.exe "out/TinhTu_${V}_windows_x64-setup.exe"
+              cp "$B"/msi/*.msi "out/TinhTu_${V}_windows_x64.msi" ;;
+            macos)
+              cp "$B"/dmg/*.dmg "out/TinhTu_${V}_macos_universal.dmg" ;;
+            linux)
+              cp "$B"/appimage/*.AppImage "out/TinhTu_${V}_linux_x86_64.AppImage" ;;
+          esac
+          ls -la out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-${{ matrix.name }}
+          path: out/*
+      - name: Đính vào Release
+        if: env.TAG != ''
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$TAG" out/* --clobber

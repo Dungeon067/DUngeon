@@ -17,7 +17,7 @@ import {
 } from "../../src/core/settings";
 import { joyVector } from "../../src/core/input";
 import { PAD_LABEL, buttonActions, padBrand, padLabelFor, spatialPick, stick } from "../../src/core/gamepad";
-import { centerZone, itemRect, layoutProblems, toItem } from "../../src/ui/hud/geometry";
+import { PARTY_MIN_SLOT, centerZone, itemRect, layoutProblems, partyFit, toItem } from "../../src/ui/hud/geometry";
 
 beforeEach(() => {
   localStorage.clear();
@@ -199,5 +199,20 @@ describe("bố cục nút", () => {
     const back = toItem(it0, r.x + r.w / 2, r.y + r.h / 2, 932, 430, safe);
     expect(back.dx).toBeCloseTo(it0.dx, 1);
     expect(back.dy).toBeCloseTo(it0.dy, 1);
+  });
+});
+
+describe("danh sách đội", () => {
+  const safe = { t: 0, r: 62, b: 21, l: 62 };
+  const dash = { x: 844 - 62 - 50, y: 390 - 21 - 150, w: 50, h: 50 };
+  it("co ô để nằm trên nút Lướt, không chồng", () => {
+    const f = partyFit(3, 132, 48, 4, 844, 390, safe, 60, [dash]);
+    expect(f.fits).toBe(true);
+    expect(f.y + f.h).toBeLessThanOrEqual(dash.y);
+    expect(f.slotH).toBeGreaterThanOrEqual(PARTY_MIN_SLOT);
+  });
+  it("báo không vừa khi 4 ô cỡ tối thiểu vẫn chạm nút Lướt", () => {
+    const f = partyFit(4, 132, 48, 4, 844, 390, safe, 60, [{ ...dash, y: 200 }]);
+    expect(f.fits).toBe(false);
   });
 });

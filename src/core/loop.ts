@@ -1,4 +1,6 @@
+import { tickStack } from "../combat/damage";
 import { GS } from "../core/state";
+import { camRelative, dir8 } from "./facing";
 import { tryAttack, updateBuffer } from "../combat/actions";
 import { FEEL, charFx, gameDt } from "../combat/feel";
 import { cameraTarget, updateZoom } from "../core/camera";
@@ -9,6 +11,7 @@ import { held, moveAxis } from "../core/input";
 import { pollGamepad } from "../core/gamepad";
 import { updateAir, updateGround, updateWaves } from "../combat/jump";
 import { render } from "../core/render";
+import { renderer3d } from "../render3d/select";
 import { clamp, dist, lerpAng, rand } from "../core/util";
 import { EL } from "../data/content";
 import { updateBoss } from "../entities/boss";
@@ -17,6 +20,9 @@ import { fxText } from "../entities/fx";
 import { cur } from "../entities/party";
 import { towerLogic } from "../modes/tower";
 import { worldLogic } from "../modes/world";
+import { domainLogic } from "../modes/domain";
+import { pulseElement, puzzleTick } from "../world/puzzles";
+import { affinityTick } from "../ui/menu/progress";
 import { Server } from "../server/server";
 import { updateHud } from "../ui/hud";
 import { lootFeed } from "../ui/hud/feed";
@@ -41,7 +47,8 @@ export function update(dt: number) {
   const p = GS.G.p,
     m = cur();
   // movement input
-  let [mx, my] = moveAxis();
+  // Chỉ xoay theo camera khi cảnh 3D đang vẽ (đấu trường và bản 2D dùng góc nhìn cố định).
+  let [mx, my] = camRelative(...moveAxis(), renderer3d() && GS.G.map ? (GS.camYaw ?? 0) : 0);
   const ml = Math.hypot(mx, my);
   if (ml > 1) {
     mx /= ml;
@@ -51,6 +58,7 @@ export function update(dt: number) {
   if (p.moving) {
     p.dirX = mx;
     p.dirY = my;
+    if (p.atkCd <= 0) p.face8 = dir8(Math.atan2(my, mx), p.face8);
   }
   if (p.air) {
     updateAir(p, dt, GS.G.over ? 0 : mx, GS.G.over ? 0 : my);
@@ -88,6 +96,7 @@ export function update(dt: number) {
   }
   for (const pm of GS.G.party) {
     if (pm.skillCd > 0) pm.skillCd -= dt;
+    if (pm.stack) tickStack(pm, dt);
     if (Server.P.gm.nocd) {
       pm.skillCd = 0;
       pm.energy = pm.c.burst.cost;
@@ -173,7 +182,8 @@ export function update(dt: number) {
       if ((t === TL.TREE || t === TL.ROCK) && !above) pr.life = 0;
     }
     if (GS.G.bounds && (pr.x < 0 || pr.y < 0 || pr.x > GS.G.bounds.w || pr.y > GS.G.bounds.h)) pr.life = 0;
-    if (pr.own === "p") {
+    if (pr.own === "p" && pr.el && pulseElement(pr.x, pr.y, pr.r + 8, pr.el)) pr.life = 0;
+    if (pr.own === "p" && pr.life > 0) {
       for (const e of GS.G.enemies) {
         if (e.dead) continue;
         if (dist(pr.x, pr.y, e.x, e.y - (e.isBoss ? 24 : 12)) < pr.r + e.r) {
@@ -182,7 +192,7 @@ export function update(dt: number) {
           break;
         }
       }
-    } else if (dist(pr.x, pr.y, p.x, p.y - 14) < pr.r + 10) {
+    } else if (pr.own !== "p" && dist(pr.x, pr.y, p.x, p.y - 14) < pr.r + 10) {
       hurtPlayer(pr.dmg, pr.el ? EL[pr.el].c : "#ff7070");
       pr.life = 0;
     }
@@ -249,6 +259,7 @@ export function update(dt: number) {
     }
     if (f.tick <= 0) {
       f.tick = f.ti;
+      if (f.el && f.own !== "e") pulseElement(f.x, f.y, f.r, f.el);
       for (const e of GS.G.enemies) {
         if (!e.dead && dist(f.x, f.y, e.x, e.y) < f.r + e.r)
           hitEnemy(e, f.m, f.mult, f.el, { cast: f.cast, noKb: true });
@@ -324,7 +335,12 @@ export function update(dt: number) {
   GS.G.texts = GS.G.texts.filter((t: any) => t.life > 0);
   if (GS.G.banner.t > 0) GS.G.banner.t -= dt;
   // mode logic
-  if (GS.G.mode === "world") worldLogic(dt);
+  if (GS.G.mode === "world") {
+    worldLogic(dt);
+    affinityTick(dt);
+  }
+  if (GS.G.mode === "domain") domainLogic(dt);
+  if (GS.G.map?.puzzles) puzzleTick(dt);
   if (GS.G.mode === "tower") towerLogic(dt);
   // camera
   const ct = cameraTarget(dt),
@@ -345,6 +361,12 @@ export function flushPending() {
       Server.req("progress", { id: k, n: pd[k] });
       pd[k] = 0;
     }
+  }
+  // Trên đảo không có lúc "kết thúc trận": Xu và Sách KN nhặt được ghi ngay vào hồ sơ.
+  const L = GS.G.loot;
+  if (GS.G.mode === "world" && L && (L.coin || L.books)) {
+    Server.req("reward", { coin: L.coin, books: L.books });
+    L.coin = L.books = 0;
   }
 }
 export function snapCam() {
@@ -385,6 +407,7 @@ export function frame(now: number) {
 /** Lướt kèm sát thương (kỹ năng lướt), dùng cả trên mặt đất và trên không. */
 function dashHitStep(p: any) {
   if (p.dashHit) {
+    pulseElement(p.x, p.y, 50, p.dashHit.el);
     for (const e of GS.G.enemies) {
       if (e.dead || p.dashHit.set.has(e)) continue;
       if (dist(p.x, p.y, e.x, e.y) < 50 + e.r) {

@@ -1,5 +1,6 @@
 import { fbm, hash2 } from "../core/util";
 import { TERRAIN } from "../data/content";
+import { WORLD_PUZZLES } from "../data/puzzles";
 
 const terrainIndex = (id: string) =>
   Math.max(
@@ -66,6 +67,11 @@ export const START_LEDGES: { dx: number; dy: number; w: number; hgt: number; h: 
   { dx: -2, dy: 3, w: 1, hgt: 1, h: 1 },
 ];
 export const START_GAP = { dx: -2, dy: 4, len: 3 };
+/** Cầu cao (deck) gần điểm xuất phát, nối bệ 2 bậc với một cột đá; đi bộ được ở dưới gầm. */
+export const START_PILLAR = { dx: 1, dy: -6, w: 1, hgt: 2, h: 2 };
+export const START_DECKS: { dx: number; dy: number; len: number; w: number; h: number; axis: "x" | "y" }[] = [
+  { dx: -4, dy: -6, len: 5, w: 2, h: 2, axis: "x" },
+];
 export function genWorld() {
   const m = new Uint8Array(MW * MH),
     cx = MW / 2,
@@ -184,9 +190,16 @@ export function genWorld() {
     if (!far(p, chests, 7) || !far(p, allPoi, 3)) continue;
     chests.push(p);
   }
+  const puz = placePuzzles(get, set, reach, cx, cy, allPoi);
   // độ cao, địa hình, vùng (S09; định dạng ở docs/world/dinh-dang-ban-do.md)
   const keep = (t: number) => t !== TL.PATH && t !== TL.BRIDGE;
-  for (const L of START_LEDGES)
+  for (const d of START_DECKS)
+    for (let k = 0; k < d.len; k++)
+      for (let j = 0; j < d.w; j++) {
+        const i = d.axis === "x" ? (cy + d.dy + j) * MW + cx + d.dx + k : (cy + d.dy + k) * MW + cx + d.dx + j;
+        if (keep(m[i]!)) m[i] = TL.PATH;
+      }
+  for (const L of [...START_LEDGES, START_PILLAR])
     for (let y = 0; y < L.hgt; y++)
       for (let x = 0; x < L.w; x++) {
         const i = (cy + L.dy + y) * MW + cx + L.dx + x;
@@ -200,7 +213,7 @@ export function genWorld() {
     terrain = new Uint8Array(MW * MH),
     region = new Uint8Array(MW * MH);
   for (let i = 0; i < MW * MH; i++) h[i] = TILE_H[m[i]!]!;
-  for (const L of START_LEDGES)
+  for (const L of [...START_LEDGES, START_PILLAR])
     for (let y = 0; y < L.hgt; y++)
       for (let x = 0; x < L.w; x++) {
         const i = (cy + L.dy + y) * MW + cx + L.dx + x;
@@ -208,7 +221,67 @@ export function genWorld() {
       }
   for (let i = 0; i < MW * MH; i++) terrain[i] = terrainIndex(TILE_TERRAIN[m[i]!]!);
   const ledges = computeLedges(h, m);
-  // minimap
+  const mini = miniCanvas(m);
+  const decks = START_DECKS.map((d) => ({ ...d, x: cx + d.dx, y: cy + d.dy }));
+  return { m, h, terrain, region, ledges, statues, tower, gate, camps, chests, mini, cx, cy, puz, decks };
+}
+
+export interface PuzzleSpot {
+  id: string;
+  x: number;
+  y: number;
+  /** dy nhỏ nhất của vật thể (ô), để đặt NPC và cửa bí cảnh phía trên. */
+  top: number;
+}
+/**
+ * Câu đố nguyên tố trên đảo (S23): tìm ô đi tới được theo góc và bán kính khai báo trong
+ * content/puzzles.yaml, cách POI và câu đố khác, rồi dọn một khoảnh đường đất cho vật thể,
+ * NPC và cửa bí cảnh. Chạy sau khi đặt trại và rương nên vị trí cũ không đổi.
+ */
+function placePuzzles(
+  get: (x: number, y: number) => number | undefined,
+  set: (x: number, y: number, t: number) => void,
+  reach: Uint8Array,
+  cx: number,
+  cy: number,
+  pois: { x: number; y: number }[],
+): PuzzleSpot[] {
+  const out: PuzzleSpot[] = [];
+  for (const p of WORLD_PUZZLES) {
+    const xs = p.vatThe.map((v) => v.dx),
+      ys = p.vatThe.map((v) => v.dy);
+    const x0 = Math.min(...xs) - 1,
+      x1 = Math.max(...xs) + 1,
+      top = Math.min(...ys),
+      y0 = top - 3,
+      y1 = Math.max(...ys) + 1;
+    const ang = (p.dat!.goc * Math.PI) / 180;
+    let spot: { x: number; y: number } | null = null;
+    for (let k = 0; k < 80 && !spot; k++) {
+      const a = ang + (k % 2 ? 1 : -1) * Math.ceil(k / 2) * 0.04,
+        rd = p.dat!.banKinh + (k % 4 < 2 ? -1 : 1) * Math.floor(k / 4) * 0.5;
+      const x = Math.round(cx + Math.cos(a) * rd),
+        y = Math.round(cy + Math.sin(a) * rd);
+      if (x + x0 < 3 || y + y0 < 3 || x + x1 > MW - 4 || y + y1 > MH - 4) continue;
+      if (!reach[y * MW + x]) continue;
+      if (Math.hypot(x - cx, y - cy) < 9) continue;
+      if (pois.some((o) => Math.hypot(o.x - x, o.y - y) < 5)) continue;
+      if (out.some((o) => Math.hypot(o.x - x, o.y - y) < 8)) continue;
+      spot = { x, y };
+    }
+    if (!spot) throw new Error(`Không đặt được câu đố ${p.id} trên bản đồ`);
+    for (let y = y0; y <= y1; y++)
+      for (let x = x0; x <= x1; x++) {
+        const t = get(spot.x + x, spot.y + y);
+        if (t !== TL.PATH && t !== TL.BRIDGE) set(spot.x + x, spot.y + y, TL.PATH);
+      }
+    out.push({ id: p.id, ...spot, top });
+  }
+  return out;
+}
+
+/** Ảnh bản đồ nhỏ, mỗi ô một điểm ảnh. */
+export function miniCanvas(m: Uint8Array) {
   const mini = document.createElement("canvas");
   mini.width = MW;
   mini.height = MH;
@@ -234,5 +307,5 @@ export function genWorld() {
     id.data[i * 4 + 3] = 255;
   }
   mc.putImageData(id, 0, 0);
-  return { m, h, terrain, region, ledges, statues, tower, gate, camps, chests, mini, cx, cy };
+  return mini;
 }

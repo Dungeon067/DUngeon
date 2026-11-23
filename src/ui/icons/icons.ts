@@ -326,6 +326,18 @@ export const ICONS: Record<string, IconDef> = {
     label: "Khai Tinh",
     body: S("M6.6 20.4l5.4-4.2 5.4 4.2M6.6 15.4l5.4-4.2 5.4 4.2") + sparkle(12, 5.6, 3.6),
   },
+  quang: {
+    group: "tien-te",
+    label: "Quặng",
+    body: S(
+      "M7 20 4.6 13.4 8.4 7.2l3.2 2.6L14.6 4l4.8 6.2L17.6 20ZM8.4 7.2 9.8 14l-5.2-.6M9.8 14l7.8 6M9.8 14l4.8-4.2M14.6 4v5.8l4.8.4",
+    ),
+  },
+  phoi: {
+    group: "tien-te",
+    label: "Phôi",
+    body: S("M3.6 15.6 7 9h10l3.4 6.6Zm0 0V18h16.8v-2.4M7 9l2.2 6.6M17 9l-2.2 6.6M10.6 5.4l1.4-1.6 1.4 1.6M12 3.8V7"),
+  },
   "bao-an": {
     group: "trang-thai",
     label: "Bảo Ấn",

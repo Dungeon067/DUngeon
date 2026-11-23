@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CHARS } from "../../src/data/content";
+import { ECON } from "../../src/data/economy";
 import { Server } from "../../src/server/server";
 import { mockRandom } from "./helpers";
 
@@ -45,6 +46,7 @@ describe("Ước nguyện", () => {
     const lost: any = Server.rollOne();
     expect(lost.r).toBe(5);
     expect(lost.id).not.toBe(featured);
+    expect(ECON.game.nhanVat5Sao.thuongTru).toContain(lost.id);
     expect(lost.feat).toBe(false);
     expect(Server.P.guaranteed).toBe(true);
     mockRandom([0, 0.9]);
@@ -61,11 +63,13 @@ describe("Ước nguyện", () => {
     expect(Server.P.guaranteed).toBe(false);
   });
 
-  it("3★ cộng 500 Xu", () => {
+  it("3★ cộng 500 Xu và một vũ khí 3★ vào kho", () => {
     mockRandom([0.5]);
     const coin = Server.P.coin;
-    expect(Server.rollOne()).toMatchObject({ kind: "item", r: 3 });
+    const out = Server.rollOne() as { kind: string; r: number; uid: string };
+    expect(out).toMatchObject({ kind: "weapon", r: 3 });
     expect(Server.P.coin).toBe(coin + 500);
+    expect(Server.P.weapons[out.uid]).toBeTruthy();
   });
 
   it("ước 10 lần trừ 1600 Đá Sao và ghi 10 dòng lịch sử", () => {
@@ -75,6 +79,6 @@ describe("Ước nguyện", () => {
     expect(res.data).toHaveLength(10);
     expect(Server.P.gems).toBe(0);
     expect(Server.P.history).toHaveLength(10);
-    expect(CHARS.length).toBe(18);
+    expect(CHARS.length).toBe(24);
   });
 });

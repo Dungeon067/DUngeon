@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <title>Xem thử sprite pixel</title>
+    <style>
+      body {
+        background: #1d2433;
+        color: #e8ecf4;
+        font:
+          14px system-ui,
+          sans-serif;
+        margin: 16px;
+      }
+      canvas {
+        image-rendering: pixelated;
+        background: #3d6b3a;
+        border-radius: 6px;
+      }
+      .row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+      label {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Xem thử sprite pixel (S25)</h1>
+    <p>
+      Chạy <code>pnpm dev</code> rồi mở <code>/tools/sprites/preview.html?id=havy</code>. Tạo lại sheet:
+      <code>pnpm sprites</code>.
+    </p>
+    <div class="row">
+      <label
+        >Động tác
+        <select id="anim"></select
+      ></label>
+      <label
+        >Phóng
+        <select id="scale">
+          <option>2</option>
+          <option selected>3</option>
+          <option>4</option>
+        </select></label
+      >
+      <label><input type="checkbox" id="all" checked /> Cả 8 hướng</label>
+      <label
+        >Hướng
+        <select id="dir"></select
+      ></label>
+      <label>Tốc độ <input id="speed" type="range" min="0.1" max="2" step="0.1" value="1" /></label>
+    </div>
+    <canvas id="cv"></canvas>
+    <p id="info"></p>
+    <script type="module">
+      const id = new URLSearchParams(location.search).get("id") || "havy";
+      const base = `/media/sprites/${id}/`;
+      const J = await (await fetch(base + "sheet.json")).json();
+      const img = new Image();
+      img.src = base + J.image;
+      await img.decode();
+      const $ = (s) => document.getElementById(s);
+      for (const k of Object.keys(J.anims)) $("anim").add(new Option(k, k));
+      for (const d of J.dirs) $("dir").add(new Option(d, d));
+      const cv = $("cv"),
+        c = cv.getContext("2d");
+      let t0 = performance.now();
+      $("anim").onchange = () => (t0 = performance.now());
+      function frame(now) {
+        const A = J.anims[$("anim").value],
+          S = +$("scale").value,
+          dirs = $("all").checked ? J.dirs : [$("dir").value];
+        cv.width = J.frame.w * S * dirs.length;
+        cv.height = J.frame.h * S;
+        c.imageSmoothingEnabled = false;
+        const total = A.ms.reduce((a, b) => a + b, 0);
+        let ms = (now - t0) * +$("speed").value;
+        ms = A.loop ? ms % total : ms % (total + 400);
+        let i = 0;
+        while (i < A.ms.length - 1 && ms >= A.ms[i]) ms -= A.ms[i++];
+        dirs.forEach((d, k) => {
+          const [x, y] = A.frames[d][i];
+          c.drawImage(img, x, y, J.frame.w, J.frame.h, k * J.frame.w * S, 0, J.frame.w * S, J.frame.h * S);
+          c.fillStyle = "#fff";
+          c.fillText(d, k * J.frame.w * S + 4, 12);
+        });
+        $("info").textContent =
+          `${$("anim").value}: khung ${i + 1}/${A.ms.length}, ${total} ms${A.hit !== undefined ? `, ra đòn ở khung ${A.hit + 1}` : ""}`;
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+id: urae
+name: Urae
+r: 4
+el: bolt
+w: sword
+title: Kiếm Múa Gọi Sấm
+desc: Người múa kiếm của một gánh hát rong ở Purunae, đánh chiêng dẫn cả làng thoát lũ. Mỗi tiếng chiêng nổ thành vòng sấm.
+hp: 860
+atk: 92
+skill:
+  name: Chiêng Sấm Vang
+  type: nova
+  cd: 8
+  m: 2.1
+burst:
+  name: Mưa Sấm Sân Làng
+  type: blizzard
+  cost: 50
+  m: 0.75
+look:
+  hair: "#141018"
+  style: long
+  outfit: "#1f3a7a"
+  accent: "#e8e040"
+  skin: "#ecc8a8"
+  eye: "#201820"
+  coat: true
+  pants: "#f0ece0"

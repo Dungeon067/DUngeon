@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Quyền mặc định và bật/tắt toàn màn hình (F11, nút Toàn màn hình trong Cài đặt).",
+  "windows": ["main"],
+  "permissions": ["core:default", "core:window:allow-set-fullscreen", "core:window:allow-is-fullscreen"]
+}

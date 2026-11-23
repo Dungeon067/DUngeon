@@ -1,5 +1,9 @@
 # Thủy Nguyệt: Hồ sơ
 
+> **Loại 5★:** `thuong-tru` (5★ thường trú, có trong pool cố định, ra khi thua 50/50; người thường trú hệ Thủy). Đã chốt (S23). Trong truyện chỉ đi cùng tạm thời (`join_party` với `temporary: true`), không được tặng.
+
+> **Vũ khí ước nguyện đặc trưng:** Kính Thủy Lưu Nguyệt (bị động: Nguyệt Ảnh Trầm Hồ). Truyện và chỉ số: `content/weapons.yaml`, bảng ở `docs/economy/vu-khi.md`.
+
 > Hộ Tinh hệ Thủy 5★, pháp khí (chuông bạc). Danh hiệu: **Người Giữ Đền Trăng**. ID: `thuynguyet`.
 
 ## 1. Thông tin cơ bản

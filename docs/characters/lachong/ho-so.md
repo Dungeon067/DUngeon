@@ -1,5 +1,9 @@
 # Lạc Hồng: Hồ sơ
 
+> **Loại 5★:** `thuong-tru` (5★ thường trú, có trong pool cố định, ra khi thua 50/50; người thường trú hệ Hỏa). Đã chốt (S23). Trong truyện chỉ đi cùng tạm thời (`join_party` với `temporary: true`), không được tặng.
+
+> **Vũ khí ước nguyện đặc trưng:** Hồng Vũ Trường Ca (bị động: Cánh Lửa Trống Đồng). Truyện và chỉ số: `content/weapons.yaml`, bảng ở `docs/economy/vu-khi.md`.
+
 > Hộ Tinh hệ Hỏa 5★, kiếm đơn. Danh hiệu: **Hậu Duệ Chim Lạc**. ID: `lachong`.
 
 ## 1. Thông tin cơ bản

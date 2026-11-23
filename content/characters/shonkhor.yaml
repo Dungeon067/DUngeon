@@ -1,0 +1,28 @@
+id: shonkhor
+name: Shonkhor
+r: 4
+el: wind
+w: spear
+title: Người Thả Đại Bàng
+desc: Người nuôi đại bàng của Đội Cưỡi Giông, tin rằng thả ra mới là giữ. Đại bàng Khurmast lượn trên trận và lao xuống quái.
+hp: 880
+atk: 90
+skill:
+  name: Khurmast Cất Cánh
+  type: turret
+  cd: 10
+  m: 0.95
+burst:
+  name: Gió Núi Răng Sói
+  type: blizzard
+  cost: 50
+  m: 0.75
+look:
+  hair: "#3a2a1e"
+  style: short
+  outfit: "#2f8a7a"
+  accent: "#c0c8cc"
+  skin: "#d0a07a"
+  eye: "#6a4a2a"
+  coat: true
+  pants: "#3a3a3a"

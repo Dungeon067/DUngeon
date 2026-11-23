@@ -1,9 +1,11 @@
+import { renderer3d } from "../render3d/select";
 import { GS } from "../core/state";
 import { press } from "../combat/actions";
 import { cv } from "../core/canvas";
 import { $ } from "../core/util";
 import { switchTo } from "../entities/party";
 import { doInteract } from "../modes/world";
+import { dialogNext, dialogOpen } from "../ui/dialog";
 import { pause, resume } from "../ui/modal";
 import { ACTIONS, type Action } from "../data/schema";
 import { CONTROLS } from "../data/content";
@@ -50,6 +52,10 @@ export function onMapAction(f: () => void) {
 
 /** Bấm một thao tác (bàn phím, tay cầm). */
 export function actionDown(a: Action) {
+  if (dialogOpen()) {
+    if (a === "interact" || a === "attack" || a === "jump") dialogNext();
+    return;
+  }
   if (a === "pause") {
     if (GS.scene !== "play" || !GS.G) return;
     if (GS.overlay) return;
@@ -58,7 +64,7 @@ export function actionDown(a: Action) {
     return;
   }
   if (a === "map") {
-    if (GS.scene === "play" && GS.G?.mode === "world" && (!GS.paused || GS.overlay === "map")) mapToggle();
+    if (GS.scene === "play" && GS.G?.mode === "world" && (!GS.paused || GS.overlay === "menu")) mapToggle();
     return;
   }
   held[a] = true;
@@ -111,6 +117,8 @@ export function holdBtn(el: HTMLElement, down: () => void, up?: () => void) {
 /** Toạ độ thế giới của điểm trên màn hình (cùng phép biến đổi với render.ts). */
 export function screenToWorld(sx: number, sy: number) {
   const G = GS.G;
+  const r3 = renderer3d();
+  if (r3 && G.map) return r3.unproject(sx, sy);
   return { x: G.cam.x + (sx - GS.VW / 2) / GS.ZOOM, y: G.cam.y + (sy - GS.VH / 2) / GS.ZOOM };
 }
 
@@ -178,6 +186,52 @@ export function init(): void {
     GS.mouse.inside = false;
     document.body.classList.remove("cursor-enemy");
   });
+
+  /* ---------- camera 3D (S25): kéo chuột phải hoặc kéo màn hình để xoay, lăn chuột hoặc chụm hai ngón để zoom ---------- */
+  const drag = new Map<number, { x: number; y: number }>();
+  let pinch = 0;
+  cv.addEventListener("pointerdown", (e: PointerEvent) => {
+    if (!renderer3d() || GS.scene !== "play") return;
+    if (e.pointerType === "mouse" && e.button !== 2) return;
+    drag.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    pinch = 0;
+  });
+  addEventListener("pointermove", (e: PointerEvent) => {
+    const d = drag.get(e.pointerId);
+    if (!d) return;
+    if (drag.size === 1) {
+      GS.camYaw -= (e.clientX - d.x) * 0.006;
+      GS.camPitch = Math.min(1.2, Math.max(0.2, GS.camPitch + (e.clientY - d.y) * 0.004));
+    } else if (drag.size === 2) {
+      const [a, b] = [...drag.values()];
+      d.x = e.clientX;
+      d.y = e.clientY;
+      const dist = Math.hypot(a.x - b.x, a.y - b.y);
+      if (pinch) GS.camDist = Math.min(22, Math.max(6, GS.camDist * (pinch / dist)));
+      pinch = dist;
+      return;
+    }
+    d.x = e.clientX;
+    d.y = e.clientY;
+  });
+  const dragEnd = (e: PointerEvent) => {
+    drag.delete(e.pointerId);
+    pinch = 0;
+  };
+  addEventListener("pointerup", dragEnd);
+  addEventListener("pointercancel", dragEnd);
+  cv.addEventListener("contextmenu", (e: Event) => {
+    if (renderer3d()) e.preventDefault();
+  });
+  cv.addEventListener(
+    "wheel",
+    (e: WheelEvent) => {
+      if (!renderer3d() || GS.scene !== "play") return;
+      e.preventDefault();
+      GS.camDist = Math.min(22, Math.max(6, GS.camDist * (e.deltaY > 0 ? 1.1 : 1 / 1.1)));
+    },
+    { passive: false },
+  );
 
   /* ---------- cần điều khiển cảm ứng ---------- */
   const jz = $("joyZone"),

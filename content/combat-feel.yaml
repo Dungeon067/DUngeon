@@ -110,6 +110,12 @@ characters:
   kumi: { c: "#4aa8e0", c2: "#e8f6ff", particle: drop, trail: arc }
   golnar: { c: "#9fe8ff", c2: "#ffe0e6", particle: snow, trail: crescent }
   payam: { c: "#d9a441", c2: "#fff0c8", particle: shard, trail: heavy }
+  ardo: { c: "#ff7a30", c2: "#ffd98a", particle: ember, trail: heavy }
+  pruina: { c: "#9fdcff", c2: "#eaf8ff", particle: mist, trail: thrust }
+  naraa: { c: "#b878ff", c2: "#ffe8a0", particle: spark, trail: zigzag }
+  shonkhor: { c: "#5fe0b0", c2: "#e8f0f0", particle: feather, trail: thrust }
+  duri: { c: "#c8873a", c2: "#f4e0c0", particle: shard, trail: heavy }
+  urae: { c: "#e0d040", c2: "#fff8c8", particle: spark, trail: twin }
 
 # Nhảy và độ cao (S09). Một "bậc" là độ cao của một bệ đá, vẽ cao levelPx điểm ảnh.
 jump:

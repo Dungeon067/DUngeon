@@ -1,0 +1,28 @@
+id: pruina
+name: Pruina
+r: 4
+el: ice
+w: spear
+title: Người Canh Lửa
+desc: Đội Canh Lửa của Ardentia, sợ lửa nhưng luôn chạy về phía lửa. Móc thương kéo quái vào màn sương băng.
+hp: 900
+atk: 86
+skill:
+  name: Móc Sương Kéo
+  type: vortex
+  cd: 9
+  m: 0.6
+burst:
+  name: Mở Cống Bảy Vòm
+  type: tide
+  cost: 50
+  m: 3.2
+look:
+  hair: "#cfe6f0"
+  style: buns
+  outfit: "#1f4d6b"
+  accent: "#9fe8ff"
+  skin: "#f0d2b8"
+  eye: "#7fd0f0"
+  coat: true
+  pants: "#2a3a4a"

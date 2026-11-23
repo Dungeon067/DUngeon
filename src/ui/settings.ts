@@ -11,13 +11,28 @@ import {
   unboundActions,
   type ColorMode,
   type Quality,
+  type RendererPref,
 } from "../core/settings";
+import { applyRenderer } from "../render3d/select";
 import { captureNextKey } from "../core/input";
+import { Server } from "../server/server";
 import { resize } from "../core/canvas";
 import { applyVolumes } from "../core/audio";
 import { padLabelFor, padState } from "../core/gamepad";
 import { button, openDialog, slider, tabs, toast, toggle } from "./ds";
 import { onLayoutClosed, openLayoutEditor } from "./hud/layout";
+import {
+  RELEASES_URL,
+  canInstall,
+  fullscreenSupported,
+  isFullscreen,
+  isIOS,
+  isNativeApp,
+  isStandalone,
+  onInstallChange,
+  promptInstall,
+  toggleFullscreen,
+} from "./pwa";
 
 /* =========================================================
    HỘP CÀI ĐẶT (S09). Mở từ nút Cài đặt trên HUD và từ hộp Tạm dừng.
@@ -98,7 +113,17 @@ function panelGeneral() {
         ["low", "Thấp (mượt hơn trên máy yếu)"],
       ],
       settings.quality,
-      (v) => ((settings.quality = v), commit(), resize()),
+      (v) => ((settings.quality = v), commit(), resize(), void applyRenderer()),
+    ),
+    choice<RendererPref>(
+      "Lớp vẽ thế giới",
+      [
+        ["auto", "Tự chọn (3D nếu máy hỗ trợ)"],
+        ["3d", "3D (WebGL)"],
+        ["2d", "2D (bản cũ, nhẹ nhất)"],
+      ],
+      settings.renderer,
+      (v) => ((settings.renderer = v), commit(), applyRenderer()),
     ),
     pct("Cỡ chữ", settings.fontScale, (v) => ((settings.fontScale = v), commit()), { min: 80, max: 140, step: 10 }),
     choice<ColorMode>(
@@ -114,8 +139,96 @@ function panelGeneral() {
     ),
     sw("Rung màn hình khi đánh", settings.shake, (v) => ((settings.shake = v), commit())),
     sw("Rung máy khi trúng đòn (điện thoại)", settings.vibrate, (v) => ((settings.vibrate = v), commit())),
+    sw("Giảm chuyển động (menu)", settings.reduceMotion, (v) => ((settings.reduceMotion = v), commit())),
     sw("Hiện gợi ý HUD lần đầu", settings.showHints, (v) => ((settings.showHints = v), commit())),
   ]);
+}
+
+/* S22: toàn màn hình, cài PWA, tải bản cài đặt. */
+const ADMIN_UNLOCK = "tinhtu-admin-mo",
+  ADMIN_BACK = "tinhtu-admin-ve";
+/** Dòng số phiên bản; chạm 7 lần liền hiện nút Bảng quản trị. Admin mở trong cùng cửa sổ (cùng origin, cùng localStorage)
+   nên dùng được cả ở PWA màn hình chính không có thanh địa chỉ, Capacitor và Tauri. */
+function adminEntry() {
+  const adm = button("Bảng quản trị", {
+    icon: "mo-khoa",
+    onClick: () => {
+      Server.save();
+      sessionStorage.setItem(ADMIN_BACK, location.href);
+      location.assign(new URL("admin/index.html#cap-phat", document.baseURI).href);
+    },
+  });
+  adm.id = "stAdmin";
+  adm.hidden = sessionStorage.getItem(ADMIN_UNLOCK) !== "1";
+  let taps = 0,
+    last = 0;
+  const ver = button(`Phiên bản ${__APP_VERSION__}`, {
+    variant: "ghost",
+    onClick: () => {
+      const now = performance.now();
+      taps = now - last < 1500 ? taps + 1 : 1;
+      last = now;
+      if (taps < 7 || !adm.hidden) return;
+      adm.hidden = false;
+      sessionStorage.setItem(ADMIN_UNLOCK, "1");
+      toast("Đã hiện Bảng quản trị");
+      adm.focus();
+    },
+  });
+  ver.id = "stVersion";
+  return [h("div", { class: "st-row" }, [ver, adm])];
+}
+
+function panelApp() {
+  const rows: (Node | string)[] = [];
+  if (fullscreenSupported()) {
+    const fs = button(isFullscreen() ? "Thoát toàn màn hình" : "Toàn màn hình", {
+      variant: "primary",
+      onClick: () => void toggleFullscreen(),
+    });
+    fs.id = "stFullscreen";
+    const sync = () => (fs.textContent = isFullscreen() ? "Thoát toàn màn hình" : "Toàn màn hình");
+    document.addEventListener("fullscreenchange", sync);
+    document.addEventListener("webkitfullscreenchange", sync);
+    rows.push(h("div", { class: "st-row" }, [fs]));
+  }
+  if (!isStandalone()) {
+    const inst = button("Cài đặt", {
+      variant: "primary",
+      onClick: () => void promptInstall().then((ok) => ok && toast("Đã cài Tinh Tú lên máy")),
+    });
+    inst.id = "stInstall";
+    const sync = () => {
+      inst.hidden = !canInstall();
+      if (inst.isConnected) inst.dataset.mounted = "1";
+      else if (inst.dataset.mounted) off();
+    };
+    const off = onInstallChange(sync);
+    sync();
+    rows.push(h("div", { class: "st-row" }, [inst]));
+    rows.push(
+      h("p", { class: "st-note" }, [
+        isIOS()
+          ? "iPad/iPhone: mở game bằng Safari, chạm nút Chia sẻ rồi chọn “Thêm vào MH chính”. Mở Tinh Tú từ màn hình chính để chơi không còn thanh địa chỉ."
+          : "Chrome/Edge: bấm “Cài đặt” ở trên (hoặc biểu tượng cài trên thanh địa chỉ) để thêm Tinh Tú như một ứng dụng. Chơi được cả khi mất mạng.",
+      ]),
+    );
+  }
+  const a = h(
+    "a",
+    { class: "tt-btn tt-btn--secondary", id: "stReleases", href: RELEASES_URL, target: "_blank", rel: "noopener" },
+    ["Tải bản cài đặt"],
+  );
+  rows.push(h("div", { class: "st-row" }, [a]));
+  rows.push(
+    h("p", { class: "st-note" }, [
+      isNativeApp()
+        ? "Bạn đang dùng bản cài đặt. Bản mới nằm ở trang Tải bản cài đặt (GitHub Releases)."
+        : "Bản Android (APK), Windows, macOS và Linux nằm ở trang Tải bản cài đặt (GitHub Releases), miễn phí.",
+    ]),
+    ...adminEntry(),
+  );
+  return h("div", { class: "st-grid" }, rows);
 }
 
 function panelControls(close: () => void) {
@@ -231,7 +344,7 @@ function panelKeys(): HTMLElement {
 
 let openNow: (() => void) | null = null;
 let pausedBefore = false;
-export function openSettings(tab: "general" | "controls" | "keys" = "general") {
+export function openSettings(tab: "general" | "controls" | "keys" | "app" = "general") {
   if (openNow) return;
   const wasPaused = GS.paused,
     prevOverlay = GS.overlay;
@@ -242,13 +355,22 @@ export function openSettings(tab: "general" | "controls" | "keys" = "general") {
   let close: () => void = () => {};
   const show = (id: string) => {
     panels.innerHTML = "";
-    panels.append(id === "controls" ? panelControls(() => close()) : id === "keys" ? panelKeys() : panelGeneral());
+    panels.append(
+      id === "controls"
+        ? panelControls(() => close())
+        : id === "keys"
+          ? panelKeys()
+          : id === "app"
+            ? panelApp()
+            : panelGeneral(),
+    );
   };
   const tb = tabs(
     [
       { id: "general", label: "Chung", icon: "cai-dat" },
       { id: "controls", label: "Điều khiển", icon: "bang-dieu-khien" },
       { id: "keys", label: "Phím", icon: "huong-dan" },
+      { id: "app", label: "Ứng dụng", icon: "da-sao" },
     ],
     tab,
     show,

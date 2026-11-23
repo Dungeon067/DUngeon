@@ -1,46 +1,7 @@
-import { $, TAU, fmt, hash2 } from "../core/util";
+import { TAU } from "../core/util";
 import { EL } from "../data/content";
-import { startBoss } from "../modes/boss";
-import { Server } from "../server/server";
 
-export function renderBossScr() {
-  const box = $("bossLv");
-  box.innerHTML = "";
-  for (let lv = 1; lv <= 5; lv++) {
-    const done = Server.P.boss[lv],
-      unlocked = lv === 1 || Server.P.boss[lv - 1];
-    const b = document.createElement("button");
-    b.className = "floor";
-    b.disabled = !unlocked;
-    b.innerHTML = `<b>Cấp độ ${lv}</b><span class="muted">Máu ${fmt(14000 * (1 + 0.9 * (lv - 1)))}</span><span class="muted">${done ? "Đã hạ" : "Lần đầu: +" + (100 + lv * 40) + " Đá Sao"}</span>`;
-    b.onclick = () => startBoss(lv);
-    box.appendChild(b);
-  }
-  // art
-  const c = $<HTMLCanvasElement>("bossArt").getContext("2d")!,
-    W = 520,
-    H = 360;
-  const g = c.createLinearGradient(0, 0, 0, H);
-  g.addColorStop(0, "#0b1a33");
-  g.addColorStop(1, "#163a5c");
-  c.fillStyle = g;
-  c.fillRect(0, 0, W, H);
-  c.fillStyle = "rgba(120,190,255,.1)";
-  for (let i = 0; i < 8; i++) {
-    c.beginPath();
-    c.ellipse(hash2(i, 1) * W, 200 + hash2(i, 2) * 150, 80, 16, 0, 0, TAU);
-    c.fill();
-  }
-  const fake = { segs: [] as { x: number; y: number }[], ang: -0.4, phase: 1, flash: 0 };
-  for (let i = 0; i < 14; i++) {
-    const a = i * 0.45;
-    fake.segs.push({ x: 300 - i * 22, y: 230 + Math.sin(a) * 40 });
-  }
-  c.save();
-  c.translate(-30, 0);
-  drawBossWith(c, fake, 1.2);
-  c.restore();
-}
+/* Chân dung Hắc Giao vẽ bằng code, dùng cho màn Boss của menu (S10). */
 export function drawBossWith(c: any, b: any, t: any) {
   const col = "#1f3f6a",
     acc = EL.water.c;

@@ -1,0 +1,52 @@
+# Menu lớp phủ (S10). Xem docs/ux/menu.md.
+# Mục menu chính theo thứ tự hiển thị. id là tên màn trong src/ui/menu/screens/.
+# group: nhóm hiển thị; hint: dòng phụ ngắn.
+main:
+  - { id: chars, name: Nhân vật, icon: nhan-vat, group: Hồ sơ, hint: "Thông tin, Nét Sao, hồ sơ" }
+  - { id: team, name: Đội hình, icon: doi-hinh, group: Hồ sơ, hint: "4 đội lưu sẵn" }
+  - { id: wish, name: Ước nguyện, icon: uoc-nguyen, group: Ước nguyện, hint: "Bảo Hộ Vận Sao, lịch sử" }
+  - { id: bag, name: Túi đồ, icon: tui-do, group: Hành trang, hint: "Vật phẩm và câu chuyện" }
+  - { id: weapons, name: Kho vũ khí, icon: danh, group: Hành trang, hint: "Nâng cấp, tinh luyện, Lò Rèn" }
+  - { id: quests, name: Nhiệm vụ, icon: nhiem-vu, group: Hành trang, hint: "Đang làm, đã xong" }
+  - { id: map, name: Bản đồ, icon: ban-do, group: Hành trang, hint: "Dịch chuyển, đánh dấu" }
+  - { id: codex, name: Bách khoa, icon: huong-dan, group: Hành trang, hint: "Những gì đã thấy" }
+  - { id: daily, name: Ủy thác, icon: uy-thac, group: Thử thách, hint: "Việc mỗi ngày" }
+  - { id: tower, name: Tháp Tinh Tú, icon: thap, group: Thử thách, hint: "12 tầng" }
+  - { id: boss, name: Thảo phạt Hắc Giao, icon: canh-bao, group: Thử thách, hint: "Ác long dưới núi" }
+  - { id: settings, name: Cài đặt, icon: cai-dat, group: Hệ thống, hint: "Âm thanh, điều khiển" }
+# Nút thêm vào menu nhanh góc trên phải của S09 (bên trái nút bản đồ).
+quick: [wish, team, daily]
+# Chuyển màn phải xong trong thời gian này (ms). CSS dùng --tt-dur-menu.
+transitionMs: 180
+# Chặn đổi đội: có quái đang đuổi đánh trong bán kính này (px thế giới) thì không cho đổi.
+combatLock:
+  radius: 360
+  message: Không thể đổi đội khi đang chiến đấu
+# Độ thân thiết (tạm): điểm theo giây ra trận và số quái hạ khi nhân vật đó đang đánh.
+affinity:
+  perSecond: 0.05
+  perKill: 1
+  # Điểm cần để đạt mức 2..10 (mức 1 là mặc định).
+  levels: [10, 30, 60, 100, 150, 220, 300, 400, 520]
+# Mục hồ sơ đọc từ docs/characters/<id>/<file>.md, mở theo mức thân thiết.
+# perSection: mỗi phần (## …) sau phần đầu cần thêm bấy nhiêu mức.
+profile:
+  - { file: ho-so, name: Hồ sơ, level: 1, perSection: 0 }
+  - { file: ngoai-hinh, name: Ngoại hình, level: 1, perSection: 0 }
+  - { file: loi-thoai, name: Lời thoại, level: 1, perSection: 1 }
+  - { file: tieu-su, name: Tiểu sử, level: 2, perSection: 1 }
+  - { file: quan-he, name: Quan hệ, level: 3, perSection: 1 }
+  - { file: ky-nang-truyen, name: Chuyện kỹ năng, level: 4, perSection: 0 }
+  - { file: nhiem-vu-nhan-vat, name: Chuyện riêng, level: 6, perSection: 1 }
+# NPC quan trọng trên bản đồ lớn (chưa đi lại, chỉ đặt biểu tượng). at: như content/codex.yaml.
+npcs:
+  - { id: thu-vong, name: Bà Cả Thu Vọng, role: Hội Đền Trăng, at: center }
+  - { id: trum-kha, name: Bà Trùm Kha, role: Phường Đá Ngọc, at: statue:2 }
+  - { id: bay-song, name: Bà Bảy Sóng, role: Đoàn Thuyền Buôn Gió Nồm, at: "dir:200:22" }
+  - { id: cao-luy, name: Quan Trấn Thủ Cao Lũy, role: Quân Trấn Thủ, at: start }
+  - { id: ky-lam, name: Đầu Sổ Kỳ Lam, role: Người Đếm Sao, at: "dir:280:40" }
+# Bản đồ lớn: mức thu phóng.
+map:
+  zoomMin: 1
+  zoomMax: 4
+  maxMarks: 30

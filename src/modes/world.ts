@@ -8,19 +8,27 @@ import { enterPlay, showBanner } from "../modes/session";
 import { Server } from "../server/server";
 import { buildHudParty } from "../ui/hud";
 import { lootFeed } from "../ui/hud/feed";
-import { exitToMenu, updateWallets } from "../ui/screens";
+import { leaveWorld, updateWallets } from "../ui/screens";
+import { openMenu } from "../ui/menu/shell";
+import { exploreAround, rollDrop } from "../ui/menu/progress";
 import { toast } from "../ui/toast";
 import { blockedAt } from "../world/collision";
 import { TS, genWorld } from "../world/map";
+import { buildPuzzles, puzzleInteract } from "../world/puzzles";
+import { openMiniDialog } from "../ui/dialog";
+import { domainInteract, startDomain } from "./domain";
 
 export function startWorld() {
   if (!GS.WORLD) GS.WORLD = genWorld();
   GS.G = newSession("world");
   GS.G.map = GS.WORLD;
-  const s = GS.WORLD.statues[0];
-  GS.G.p.x = (s.x + 0.5) * TS;
-  GS.G.p.y = (s.y + 2.5) * TS;
-  GS.G.respawn = { x: GS.G.p.x, y: GS.G.p.y };
+  buildPuzzles(GS.WORLD);
+  const s = GS.WORLD.statues[0],
+    back = GS.worldPos;
+  GS.G.p.x = back ? back.x : (s.x + 0.5) * TS;
+  GS.G.p.y = back ? back.y : (s.y + 2.5) * TS;
+  GS.G.respawn = back ? { x: back.rx, y: back.ry } : { x: GS.G.p.x, y: GS.G.p.y };
+  GS.worldPos = null;
   // camps
   GS.WORLD.camps.forEach((c: any, i: number) => {
     const d = Math.hypot(c.x - GS.WORLD.cx, c.y - GS.WORLD.cy),
@@ -65,7 +73,9 @@ export function worldLogic(dt: number) {
   });
   check((W.tower.x + 0.5) * TS, (W.tower.y + 0.8) * TS, "tower", 0, "Vào Tháp Tinh Tú");
   check((W.gate.x + 0.5) * TS, (W.gate.y + 0.8) * TS, "gate", 0, "Vào hang Hắc Giao");
+  puzzleInteract(check);
   GS.G.interact = best;
+  exploreAround(p.x / TS, p.y / TS);
   // passive statue heal
   GS.G.healAura = false;
   for (const s of W.statues) {
@@ -92,6 +102,7 @@ export function doInteract() {
   } else if (it.kind === "chest") {
     const r = Server.req("openChest", { idx: it.i });
     if (r.ok) {
+      rollDrop("chest");
       sfx("chest");
       fxBurst(it.x, it.y - 14, "#f0c060", 30, 240, 4);
       fxRing(it.x, it.y - 10, 60, "#f0c060", 0.5, 6);
@@ -103,8 +114,13 @@ export function doInteract() {
       updateWallets();
     }
   } else if (it.kind === "tower") {
-    exitToMenu("tower");
+    openMenu("tower");
   } else if (it.kind === "gate") {
-    exitToMenu("boss");
-  }
+    openMenu("boss");
+  } else if (it.kind === "npc") {
+    openMiniDialog(GS.G.map.npcs[it.i].mini);
+  } else if (it.kind === "portal") {
+    leaveWorld();
+    startDomain(GS.G.map.portals[it.i].d);
+  } else domainInteract(it);
 }

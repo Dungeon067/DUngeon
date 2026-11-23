@@ -1,85 +1,81 @@
 # Hạ Vy: Đặc tả ngoại hình
 
-> Dùng cho tạo ảnh ở S15–S17. Giữ tinh thần bản chibi trong `content/characters/havy.yaml`: tóc xanh băng nhạt (`#a8d8f0`), **tóc ngắn ngang cằm** (`bob`), áo xanh biển (`#3e5f8a`), điểm nhấn trắng băng (`#e6f9ff`), da (`#f8dcc6`), mắt xanh băng sáng (`#8fe1ff`), **không áo khoác**.
-> Trang phục là đồ thủy thủ và người buôn trên bến Đảo Lạc. Lấy cảm hứng xa từ áo bà ba, khăn rằn, nón lá của người miền sông nước Việt, đơn giản hóa thành đồ làm việc trên thuyền.
+> Theo mẫu chủ dự án tự vẽ (S25). Bảng màu gốc nằm trong `content/characters/havy.yaml`: tóc xanh dương sáng (`#4a8ff0`), kiểu **tóc dài, mái bằng, hai lọn dài hai bên** (`longlocks`), áo khoác navy đậm (`#2a3a8f`), điểm nhấn vàng cam (`#f2a227`), da (`#fbe3d6`), mắt đỏ (`#d9262e`), **có áo khoác** (`coat: true`).
+> Phong cách fantasy phi văn hóa (xem `docs/art/pixel-chuan.md` mục 7). Tinh thần giữ nguyên: cô gái mùa hè lại mang sức mạnh băng giá.
 
 ## 1. Tổng thể
 
 - Cô gái 19 tuổi, tầm trung, thon, chân chắc. Dáng đứng hơi nghiêng người như đang giữ thăng bằng trên boong.
-- Bản chibi: đầu to khoảng 1/3 thân. Cao hơn Ngọc Thạch, thấp hơn Tuyết Lan.
-- Cảm giác chung: một buổi trưa hè trên bến, gió mát thổi ra từ hầm thuyền. Màu nắng ấm ở da và nón, màu lạnh ở tóc, mắt và tên.
+- Bản chibi pixel: đầu (tóc và mặt) chiếm khoảng 1/2 chiều cao. Khung 48×64 px, điểm neo ở chân.
+- Cảm giác chung: màu nắng ấm ở viền áo, kẹp tóc và giày; màu lạnh ở tóc, áo khoác và mũi tên. Đôi mắt đỏ là điểm nóng nhất trên người.
 
 ## 2. Đầu và mặt
 
-- **Tóc:** ngắn ngang cằm, cắt thẳng, hơi vểnh ở đuôi vì gió biển. Mái thưa lệch sang trái, để lộ trán bên phải. Hai sợi tóc mai dài hơn phần còn lại, rủ trước tai.
-- **Màu tóc:** xanh băng nhạt, chỗ bóng ngả xanh nước biển cạn. Dân bến bảo tóc cô "bạc nắng rồi hóa băng" từ năm được sao chọn.
-- **Phụ kiện tóc:** một **kẹp tóc bằng vỏ ốc trắng** giữ mái bên trái.
-- **Mặt:** trái xoan, cằm nhỏ, má hơi rám nắng ở gò. Lông mày mảnh, cong. Mũi thẳng nhỏ. Miệng rộng, khóe miệng hay nhếch lên như sắp cười. Một nốt ruồi nhỏ dưới mắt phải.
-- **Mắt:** to, hơi xếch ở đuôi, màu xanh băng sáng, đồng tử có ánh như mặt nước dưới nắng.
+- **Tóc:** dài quá vai, xanh dương sáng. **Mái bằng** cắt thẳng ngang lông mày. **Hai lọn dài** rủ trước vai, dài tới ngực.
+- **Phụ kiện tóc:** **hai kẹp tóc vuông màu vàng cam**, mỗi bên một cái, kẹp ở gốc hai lọn tóc.
+- **Mặt:** tròn, cằm nhỏ, má hồng nhạt. Miệng nhỏ, hay cười nửa miệng.
+- **Mắt:** to, **màu đỏ**, có một điểm sáng trắng ở góc trên.
 
-## 3. Trang phục (từ trong ra ngoài)
+## 3. Trang phục
 
-| Lớp           | Mô tả                                                                                                                                                                 |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Áo            | **Áo cánh kiểu bà ba** màu xanh biển, vải bông mỏng, cổ tròn, xẻ giữa cài năm khuy vải trắng. Tay áo xắn tới khuỷu. Vạt áo ngắn tới hông, hai túi nhỏ ở vạt dưới      |
-| Khăn          | **Khăn rằn ô vuông trắng băng và xanh biển** quấn quanh cổ, thắt nút lệch bên phải. Viên ngọc Băng treo ở nút khăn                                                    |
-| Đai lưng      | Dải vải buồm màu nâu, thêu ba vạch sóng trắng, vạch giữa có ngôi sao (biểu tượng của đoàn). Quấn một vòng, thắt nút bên trái, hai đuôi bay                            |
-| Quần          | Quần ống rộng màu xanh biển đậm hơn áo, xắn lên giữa bắp chân, viền gấu khâu chỉ trắng                                                                                |
-| Giày          | Dép cói quai chéo, đế dày để không trơn trên boong ướt                                                                                                                |
-| Nón           | **Nón lá nhỏ đeo sau lưng**, quai vải xanh nhạt vắt qua cổ. Vành nón có vẽ một hàng chấm trắng nhỏ như sao                                                            |
-| Phụ kiện khác | **Dây đếm người** trên cổ tay trái: sợi dây gai nâu thắt nhiều nút, có một hạt gỗ trượt được để đếm. Ống tên đeo chéo lưng bằng tre đan, quai da nâu, nằm dưới nón lá |
+| Lớp           | Mô tả                                                                                                      |
+| ------------- | ---------------------------------------------------------------------------------------------------------- |
+| Áo khoác      | **Áo khoác dài xanh navy đậm**, dài tới gối, vạt dưới xòe như chuông. Cổ áo đứng                           |
+| Viền          | **Viền tay áo và gấu áo màu vàng cam**                                                                     |
+| Cúc           | **Hai cúc hình chữ X màu đỏ** trước ngực, xếp dọc                                                          |
+| Quần, tất     | Quần bó hoặc tất dài màu tối (`#272838`)                                                                   |
+| Giày          | Giày thấp cổ màu tối, **viền vàng cam** ở đế                                                               |
+| Phụ kiện khác | **Dây đếm người** ở cổ tay trái: sợi dây đỏ thắt nhiều nút, có một hạt trượt được để đếm. Ống tên sau lưng |
 
 ## 4. Vũ khí
 
-- **Hình dạng:** cung tre dài gần bằng người cô, hai đầu hơi cong ngược. Tay cầm quấn dây gai nâu.
-- **Chất liệu:** tre già từ Rừng Trúc Mây, ghép hai lớp. Đây là cây cung của bố cô, cô thay dây và quấn lại tay cầm.
-- **Chi tiết trang trí:** ở đầu cung trên có khắc ba vạch sóng nhỏ. Dây cung màu xanh trắng phủ sương, khi giương thì tỏa hơi lạnh mờ. Gần tay cầm buộc **một quả dọi đá nhỏ màu xám** (Thạch Sơn gọt cho để dây đỡ rung).
-- **Tên:** mũi tên tre, đuôi lông chim biển trắng. Khi bắn, đầu tên phủ băng thành hình bông hoa nhỏ.
-- **Cách cầm:** tay trái cầm cung, tay phải kéo dây tới má. Khi đứng chờ, cô vác cung ngang vai sau gáy, hai tay vắt lên hai đầu cung.
+- **Hình dạng:** cung dài gần bằng người cô, hai đầu hơi cong ngược. Tay cầm quấn dây.
+- **Màu:** thân cung xanh trắng như phủ sương (`#c7e3f2`). Khi giương thì tỏa hơi lạnh mờ.
+- **Tên:** đầu tên phủ băng, bay để lại vệt tuyết nhỏ.
+- **Cách cầm:** tay trái cầm cung, tay phải kéo dây. Khi lật sprite sang hướng trái, cung đổi sang tay kia cho đúng tay.
 
 ## 5. Viên ngọc nguyên tố
 
-- Ngọc Băng hình giọt nước, cỡ đốt ngón tay cái, treo ở **nút khăn rằn trước cổ** bằng một vòng bạc nhỏ.
-- Màu xanh băng trong, lõi sáng trắng. Khi cô dùng sức sao, ngọc tỏa hơi lạnh làm khăn rằn đọng sương.
+- Ngọc Băng hình giọt nước, cỡ đốt ngón tay cái, cài **giữa cổ áo khoác** (`#7fe0ff`).
+- Khi cô dùng sức sao, ngọc tỏa hơi lạnh làm cổ áo đọng sương. Tinh Văn lộ ra khi mở cổ áo khoác.
 
 ## 6. Bảng màu
 
-| Tên           | Mã HEX    | Dùng ở                                  |
-| ------------- | --------- | --------------------------------------- |
-| Tóc xanh băng | `#a8d8f0` | Tóc (giữ theo YAML)                     |
-| Tóc bóng      | `#7fb8d8` | Chỗ tối, đuôi tóc                       |
-| Da            | `#f8dcc6` | Da (giữ theo YAML)                      |
-| Áo xanh biển  | `#3e5f8a` | Áo cánh, quần (giữ theo YAML)           |
-| Trắng băng    | `#e6f9ff` | Khăn rằn, khuy áo, viền (giữ theo YAML) |
-| Mắt xanh băng | `#8fe1ff` | Mắt (giữ theo YAML)                     |
-| Nâu buồm      | `#9a6a43` | Đai lưng, dây đếm người, quai ống tên   |
-| Lá nón        | `#d9c08a` | Nón lá, cung tre                        |
-| Bạc           | `#c8d2da` | Vòng giữ ngọc, mũi tên                  |
-| Ngọc Băng     | `#6fd0f5` | Viên ngọc, ánh Tinh Văn, băng trên tên  |
+| Tên       | Mã HEX    | Dùng ở                      |
+| --------- | --------- | --------------------------- |
+| Tóc       | `#4a8ff0` | Tóc (theo YAML `hair`)      |
+| Da        | `#fbe3d6` | Da (theo YAML `skin`)       |
+| Áo khoác  | `#2a3a8f` | Áo khoác (theo YAML)        |
+| Vàng cam  | `#f2a227` | Viền áo, kẹp tóc, viền giày |
+| Mắt       | `#d9262e` | Mắt (theo YAML `eye`)       |
+| Cúc chữ X | `#e0383a` | Hai cúc trước ngực (`mark`) |
+| Quần, tất | `#272838` | Quần, tất (`pants`)         |
+| Giày      | `#2b2230` | Giày (`shoe`)               |
+| Ngọc Băng | `#7fe0ff` | Ngọc ở cổ áo (`gem`)        |
+| Dây đếm   | `#e8503a` | Dây ở cổ tay (`cord`)       |
+| Cung      | `#c7e3f2` | Thân cung (`weaponColor`)   |
 
 ## 7. Ba chi tiết nhận diện bắt buộc
 
-1. **Nón lá nhỏ đeo sau lưng**, quai xanh nhạt vắt qua cổ.
-2. **Khăn rằn ô trắng xanh thắt lệch phải, có viên ngọc Băng hình giọt nước ở nút.**
-3. **Dây đếm người** thắt nút trên cổ tay trái, có một hạt gỗ.
+1. **Hai kẹp tóc vuông vàng cam** trên mái tóc xanh dài có hai lọn.
+2. **Áo khoác navy dài vạt xòe, viền vàng cam, hai cúc chữ X đỏ.**
+3. **Dây đếm người** ở cổ tay và **ngọc Băng** ở cổ áo.
 
 ## 8. Dáng đứng và biểu cảm
 
-- **Dáng đứng đặc trưng:** vác cung ngang vai sau gáy, hai tay vắt lên hai đầu cung, một chân hơi nhón, đầu nghiêng như đang mặc cả.
-- **Biểu cảm mặc định:** cười nửa miệng, mắt sáng, lông mày hơi nhướng.
+- **Dáng đứng đặc trưng:** cung cầm thấp bên người, vạt áo khẽ bay, đầu nghiêng như đang mặc cả.
+- **Tư thế nộ:** giương cung lên trời, vạt áo bay, xoáy tuyết quanh chân.
 - **Năm biểu cảm hội thoại:**
-  - **Bình thường:** cười mỉm, mắt nhìn thẳng, một tay đặt trên dây đếm người.
-  - **Vui:** cười lộ răng, mắt nhắm lại thành hai đường cong, nón lá bị hất lệch.
-  - **Giận:** phồng một bên má, chống tay lên hông, lông mày chụm, ngón tay trỏ giơ lên như đang đòi nợ.
-  - **Buồn:** cúi mặt, ngón tay đẩy hạt gỗ trên dây đếm người, miệng mím. Không khóc ra mặt.
-  - **Ngạc nhiên:** mắt mở to, miệng tròn, hai sợi tóc mai bay lên, tay nắm chặt quai nón.
+  - **Bình thường:** cười mỉm, một tay đặt trên dây đếm người.
+  - **Vui:** cười lộ răng, mắt nhắm thành hai đường cong.
+  - **Giận:** phồng một bên má, chống tay lên hông, ngón trỏ giơ lên như đang đòi nợ.
+  - **Buồn:** cúi mặt, ngón tay đẩy hạt trên dây đếm, miệng mím.
+  - **Ngạc nhiên:** mắt đỏ mở to, hai lọn tóc bay lên.
 
 ## 9. Những gì **không** được có
 
-- Không áo khoác, không áo choàng (YAML `coat: false`).
-- Không tóc dài, không buộc tóc hai bên, không búi.
-- Không đồ thủy thủ kiểu châu Âu (áo kẻ sọc, mũ thuyền trưởng có lưỡi trai, mỏ neo trên ngực).
+- Không trang phục truyền thống nguyên bản (áo bà ba, khăn rằn, nón lá). Bản cũ có các món này đã bỏ ở S25.
+- Không kẹp vỏ ốc, không mắt xanh, không tóc ngắn.
 - Không váy ngắn, không hở bụng, không hở vai.
 - Không cung kim loại, không nỏ, không kính ngắm.
-- Không trang phục, họa tiết hay tông màu giống cung thủ hệ Băng của bất kỳ game thương mại nào. Không hoa lan tuyết làm họa tiết (đó là dấu riêng của Tuyết Lan).
-- Không biến tóc thành màu trắng tuyết. Tóc là xanh băng nhạt.
+- Không trang phục, họa tiết hay tông màu giống cung thủ hệ Băng của bất kỳ game thương mại nào. Không hoa lan tuyết làm họa tiết (dấu riêng của Tuyết Lan).

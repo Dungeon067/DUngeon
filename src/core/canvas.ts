@@ -1,3 +1,4 @@
+import { renderer3d } from "../render3d/select";
 import { GS } from "../core/state";
 import { $, clamp } from "../core/util";
 import { settings } from "./settings";
@@ -17,6 +18,7 @@ export function resize() {
   cv.height = Math.round(GS.VH * GS.DPR);
   GS.BASE_ZOOM = clamp(Math.min(GS.VW, GS.VH) / 620, 0.72, 1.35);
   GS.ZOOM = GS.BASE_ZOOM * GS.camZoom;
+  renderer3d()?.resize();
 }
 
 export function init(): void {

@@ -2,6 +2,8 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parse } from "yaml";
 import type { RawContent } from "../src/data/schema";
+import type { RawMenuContent } from "../src/data/menu-schema";
+import { withWeapons } from "../src/data/weapons-schema";
 
 const ROOT = process.cwd();
 const readDir = (dir: string) =>
@@ -23,3 +25,24 @@ export function loadRawContent(): RawContent {
     objectives: parse(readFileSync(join(ROOT, "content/objectives.yaml"), "utf8")),
   };
 }
+
+const read = (f: string) => parse(readFileSync(join(ROOT, f), "utf8"));
+export function loadRawMenuContent(raw: RawContent): RawMenuContent {
+  const objectives = raw.objectives as { world: { id: string }[] };
+  return {
+    menu: read("content/menu.yaml"),
+    items: read("content/items.yaml"),
+    codex: read("content/codex.yaml"),
+    quests: read("content/quests.yaml"),
+    cinematic: read("content/cinematic.yaml"),
+    admin: read("content/admin.yaml"),
+    objectiveIds: objectives.world.map((o) => o.id),
+    enemyIds: Object.keys(raw.enemies).map((f) => f.replace(/^.*\//, "").replace(/\.yaml$/, "")),
+  };
+}
+
+export const loadRawPuzzles = () => read("content/puzzles.yaml");
+export const loadRawWeapons = () => read("content/weapons.yaml");
+export const loadRawModels = () => read("content/models.yaml");
+/** economy.yaml cộng danh sách vũ khí từ weapons.yaml (thietKe.vuKhi.danhSach). */
+export const loadRawEconomy = () => withWeapons(read("content/economy.yaml"), loadRawWeapons());

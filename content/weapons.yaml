@@ -1,0 +1,303 @@
+# Vũ khí (S23). Tên, bị động và truyện ở đây; chỉ số ở cấp tối đa.
+# tanCong: Tấn công % cộng vào Tấn công. phu: chỉ số phụ (chiMang, satThuongChiMang, tanCong).
+# biDong.satThuong: sát thương tăng ở R1; mỗi bậc tinh luyện thêm thietKe.vuKhi.buocTinhLuyen × R1 (economy.yaml).
+# nguon: gioiHan (banner vũ khí, đặc trưng của 5★ giới hạn), thuongTru (ra khi lệch), loRen (rèn), uocNguyen (banner, rương).
+# cua: nhân vật mà vũ khí là đặc trưng; loại vũ khí phải khớp nhân vật.
+# Truyện: 2–3 câu, khoảng 220 ký tự, theo docs/writing/huong-dan-van-phong.md mục 4.1.
+moTaBiDong: "Tăng {v} sát thương gây ra."
+danhSach:
+  # 5★ giới hạn
+  - id: thien-loi-pha-tran
+    ten: Thiên Lôi Phá Trận
+    loai: spear
+    r: 5
+    nguon: gioiHan
+    cua: loidinh
+    tanCong: 0.44
+    phu: { loai: chiMang, giaTri: 0.24 }
+    biDong: { ten: Sấm Rền Chín Tầng, satThuong: 0.24 }
+    truyen: Ngọn thương Aianga trao cho người Đảo Lạc đầu tiên chạy kịp cơn giông của bà. Cán là một ống đá sét dài, cầm lên thì nghe tiếng vó ngựa. Lính Trại Bắc nói nó gõ xuống đất chín lần thì trời mới mưa.
+  - id: tuyet-lac-vo-thanh
+    ten: Tuyết Lạc Vô Thanh
+    loai: sword
+    r: 5
+    nguon: gioiHan
+    cua: tuyetlan
+    tanCong: 0.44
+    phu: { loai: satThuongChiMang, giaTri: 0.48 }
+    biDong: { ten: Hàn Lan Tĩnh Nở, satThuong: 0.24 }
+    truyen: Lưỡi kiếm rèn ở Xưởng Rèn Shimogane bằng thép trộn một mảnh sao rơi. Rút khỏi vỏ, hoa lan băng nở dọc sống kiếm rồi rụng mà không tan. Chém xong, tuyết vẫn rơi như chưa có gì xảy ra.
+  - id: doa-hong-ngu-trong-bang
+    ten: Đóa Hồng Ngủ Trong Băng
+    loai: cat
+    r: 5
+    nguon: gioiHan
+    cua: golnar
+    tanCong: 0.44
+    phu: { loai: satThuongChiMang, giaTri: 0.48 }
+    biDong: { ten: Băng Tâm Ủ Hương, satThuong: 0.24 }
+    truyen: Một đóa hoa lựu đỏ hồng đông trong khối băng trong như kính, cất ở nhà băng sâu nhất Minashahr. Người giữ nhà băng nói hoa chưa chết, chỉ đang ngủ. Chưa ai biết hoa chờ mùa nào để nở.
+  - id: phong-dinh-vo-cuc
+    ten: Phong Đỉnh Vô Cực
+    loai: spear
+    r: 5
+    nguon: gioiHan
+    cua: takane
+    tanCong: 0.44
+    phu: { loai: chiMang, giaTri: 0.24 }
+    biDong: { ten: Nhất Phong Quá Lĩnh, satThuong: 0.24 }
+    truyen: Cây thương của người canh tuyết lở ở Shizukane, mũi mỏng như lá. Takane gõ cán xuống tuyết rồi nghe, biết lớp nào sắp trượt. Gió đỉnh núi đi qua mũi thương thì kêu như sáo.
+  - id: vo-sam-thao-nguyen
+    ten: Vó Sấm Thảo Nguyên
+    loai: bow
+    r: 5
+    nguon: gioiHan
+    cua: naraa
+    tanCong: 0.44
+    phu: { loai: chiMang, giaTri: 0.24 }
+    biDong: { ten: Lôi Mã Truy Phong, satThuong: 0.24 }
+    truyen: Cây cung sừng mẹ Naraa làm trong ba mùa cỏ ở Khokhtal. Dây cung bện từ lông bờm một con ngựa giông của Aianga. Bắn một mũi, cả Đường Đua Giông nghe tiếng vó.
+  - id: chuong-lua-van-nien
+    ten: Chuông Lửa Vạn Niên
+    loai: great
+    r: 5
+    nguon: gioiHan
+    cua: ardo
+    tanCong: 0.44
+    phu: { loai: chiMang, giaTri: 0.24 }
+    biDong: { ten: Hỏa Chung Trường Minh, satThuong: 0.24 }
+    truyen: Thanh đại kiếm đúc từ đồng của chiếc chuông nứt treo ở cửa Phường Lò Lớn. Ardo nấu lại chuông trong lửa Mons Fornax mà vẫn giữ được tiếng. Lưỡi kiếm chạm đá là cả xưởng nghe một hồi chuông.
+  - id: thuy-mac-van-thien
+    ten: Thủy Mặc Vấn Thiên
+    loai: cat
+    r: 5
+    nguon: gioiHan
+    cua: nghienthu
+    tanCong: 0.44
+    phu: { loai: chiMang, giaTri: 0.24 }
+    biDong: { ten: Bút Lạc Thành Hà, satThuong: 0.24 }
+    truyen: Nghiên đá xanh lấy từ đáy Hồ Mực ở Lũng Vân, mài bằng nước chứ không bằng thỏi mực. Nghiên Thu viết câu hỏi lên mặt nước, chữ không chìm. Có câu đã nổi ba năm mà chưa ai trả lời.
+  # 5★ thường trú
+  - id: hong-vu-truong-ca
+    ten: Hồng Vũ Trường Ca
+    loai: sword
+    r: 5
+    nguon: thuongTru
+    cua: lachong
+    tanCong: 0.38
+    phu: { loai: satThuongChiMang, giaTri: 0.4 }
+    biDong: { ten: Cánh Lửa Trống Đồng, satThuong: 0.16 }
+    truyen: Thanh kiếm của người giữ Đình Trống Đồng, chuôi bọc da trống cũ. Mỗi đêm Tết, Lạc Hồng gõ chuôi kiếm vào mặt trống một lần cho trống nhớ tiếng. Lửa trên lưỡi kiếm cháy theo nhịp trống.
+  - id: ban-thach-tran-son
+    ten: Bàn Thạch Trấn Sơn
+    loai: great
+    r: 5
+    nguon: thuongTru
+    cua: thachson
+    tanCong: 0.38
+    phu: { loai: satThuongChiMang, giaTri: 0.4 }
+    biDong: { ten: Vạn Thạch Quy Tông, satThuong: 0.16 }
+    truyen: Thanh đại kiếm đẽo từ một tấm bia vỡ trong Mùa Nước Đen. Trên lưỡi còn mờ chín cái tên không ai đọc trọn. Thợ đá Mỏ Ngọc nói nó nặng bằng lời hứa của chín người.
+  - id: kinh-thuy-luu-nguyet
+    ten: Kính Thủy Lưu Nguyệt
+    loai: cat
+    r: 5
+    nguon: thuongTru
+    cua: thuynguyet
+    tanCong: 0.38
+    phu: { loai: chiMang, giaTri: 0.2 }
+    biDong: { ten: Nguyệt Ảnh Trầm Hồ, satThuong: 0.16 }
+    truyen: Chiếc chuông bạc nhỏ đúc theo khuôn chuông Đền Trăng, quai khắc một vòng trăng non. Rung bên Hồ Gương, tiếng chuông làm mặt nước phẳng như kính. Đêm rằm, bóng trăng trong hồ đi theo tiếng chuông.
+  - id: ngu-phong-truy-van
+    ten: Ngự Phong Truy Vân
+    loai: bow
+    r: 5
+    nguon: thuongTru
+    cua: phongvan
+    tanCong: 0.38
+    phu: { loai: satThuongChiMang, giaTri: 0.4 }
+    biDong: { ten: Vân Khai Kiến Nhật, satThuong: 0.16 }
+    truyen: Cây cung làm từ một thân trúc mọc trên Đỉnh Vọng Vân, nơi gió thổi không ngừng. Người Đếm Sao dùng nó bắn tín hiệu giữa các đài. Dây cung rung khi có sao băng ở xa.
+  # 4★ Lò Rèn
+  - id: loi-the-bai-sao
+    ten: Lời Thề Bãi Sao
+    loai: sword
+    r: 4
+    nguon: loRen
+    tanCong: 0.3
+    phu: { loai: chiMang, giaTri: 0.1 }
+    biDong: { ten: Sao Rơi Giữ Hẹn, satThuong: 0.1 }
+    truyen: Thanh kiếm thép pha cát đen nhặt ở Bãi Sao Rơi. Người rèn khắc một lời hứa lên chuôi rồi bọc da kín lại. Cầm lâu, tay thấy ấm đúng chỗ có chữ.
+  - id: tieng-trong-dinh-lang
+    ten: Tiếng Trống Đình Làng
+    loai: great
+    r: 4
+    nguon: loRen
+    tanCong: 0.3
+    phu: { loai: tanCong, giaTri: 0.12 }
+    biDong: { ten: Trống Dồn Ba Hồi, satThuong: 0.1 }
+    truyen: Thanh đại kiếm đồng hun, đúc từ mẻ đồng thừa khi Đình Trống Đồng thay vành trống. Thợ đúc bảo đồng ấy đã quen tiếng trống. Vung mạnh, lưỡi kiếm ngân như hồi trống gọi làng.
+  - id: den-canh-hai-dang
+    ten: Đèn Canh Hải Đăng
+    loai: cat
+    r: 4
+    nguon: loRen
+    tanCong: 0.3
+    phu: { loai: chiMang, giaTri: 0.1 }
+    biDong: { ten: Ánh Đèn Gọi Thuyền, satThuong: 0.1 }
+    truyen: Chiếc đèn lồng sắt nhỏ, làm theo dáng ngọn đèn trên Hải Đăng Mắt Cá thời Trăm Bến. Hải đăng tắt đã lâu mà thợ Phố Vạn Đăng vẫn làm loại đèn này. Họ nói phải có người nhớ dáng của ánh sáng.
+  - id: manh-trang-ben-cu
+    ten: Mảnh Trăng Bến Cũ
+    loai: bow
+    r: 4
+    nguon: loRen
+    tanCong: 0.3
+    phu: { loai: satThuongChiMang, giaTri: 0.2 }
+    biDong: { ten: Trăng Soi Đầu Tên, satThuong: 0.1 }
+    truyen: Cây cung tre uốn cong như trăng khuyết, làm từ tre bờ Sông Sương. Người lái đò bến cũ treo nó ở mũi đò để đuổi cò. Đêm trăng, bóng cung in xuống nước như một mảnh trăng thứ hai.
+  - id: gio-bac-trai-bac
+    ten: Gió Bấc Trại Bắc
+    loai: spear
+    r: 4
+    nguon: loRen
+    tanCong: 0.3
+    phu: { loai: tanCong, giaTri: 0.12 }
+    biDong: { ten: Đứng Vững Đầu Gió, satThuong: 0.1 }
+    truyen: Cây thương cán lim, mũi sắt bịt đồng, kiểu lính Quân Trấn Thủ mang khi gác ở Trại Bắc. Gió bấc thổi ra từ cửa Hang Hắc Giao lạnh tới xương. Cán lim chưa cong lần nào.
+  # 4★ banner
+  - id: suong-som-ben-song
+    ten: Sương Sớm Bến Sông
+    loai: sword
+    r: 4
+    nguon: uocNguyen
+    tanCong: 0.3
+    phu: { loai: satThuongChiMang, giaTri: 0.2 }
+    biDong: { ten: Lưỡi Kiếm Đọng Sương, satThuong: 0.12 }
+    truyen: Thanh kiếm mỏng như lá lúa, quen tay người luyện kiếm ở Bến Sông Sương. Sáng nào lưỡi kiếm cũng đọng một hàng sương, dù đêm qua cất trong nhà. Lau đi rồi, sáng mai sương lại về.
+  - id: khuc-hat-nguoi-keo-luoi
+    ten: Khúc Hát Người Kéo Lưới
+    loai: great
+    r: 4
+    nguon: uocNguyen
+    tanCong: 0.3
+    phu: { loai: chiMang, giaTri: 0.1 }
+    biDong: { ten: Nhịp Chèo Về Bến, satThuong: 0.12 }
+    truyen: Thanh đại kiếm rộng bản như mái chèo, của một người kéo lưới Làng Vạn Lưới thời Nước Đen. Ông vừa chém sóng vừa hát cho cả thuyền theo nhịp. Bài hát còn, tên ông thì làng đã quên.
+  - id: bong-trang-ho-guong
+    ten: Bóng Trăng Hồ Gương
+    loai: cat
+    r: 4
+    nguon: uocNguyen
+    tanCong: 0.3
+    phu: { loai: satThuongChiMang, giaTri: 0.2 }
+    biDong: { ten: Mặt Hồ Không Gợn, satThuong: 0.12 }
+    truyen: Miếng ngọc bội tròn, trong như mặt Hồ Gương lúc lặng gió. Người đi Đêm Ru Bà hay đeo nó trước ngực khi hát. Thả xuống nước, ngọc không chìm cho tới hết bài ru.
+  - id: tieng-sam-dau-mua
+    ten: Tiếng Sấm Đầu Mùa
+    loai: bow
+    r: 4
+    nguon: uocNguyen
+    tanCong: 0.3
+    phu: { loai: chiMang, giaTri: 0.1 }
+    biDong: { ten: Mưa Rào Qua Đồng, satThuong: 0.12 }
+    truyen: Cây cung đen của Đội Săn Đêm, dây tẩm nhựa cây để không ướt khi mưa. Lính săn nói tiếng dây bật giống tiếng sấm đầu mùa trên Rừng Trúc Mây. Đom Đóm Lạc Lối hay bay theo nó về trại.
+  - id: mach-ngoc-long-chao
+    ten: Mạch Ngọc Lòng Chảo
+    loai: spear
+    r: 4
+    nguon: uocNguyen
+    tanCong: 0.3
+    phu: { loai: satThuongChiMang, giaTri: 0.2 }
+    biDong: { ten: Đèn Mỏ Không Tắt, satThuong: 0.12 }
+    truyen: Cây thương mũi ngọc bích, đẽo từ một mạch ngọc ở Mỏ Ngọc Lòng Chảo. Thợ Phường Đá Ngọc dùng cán gõ vách mỏ để nghe chỗ có ngọc. Gần mạch ngọc ngầm, mũi thương tự sáng lên.
+  # 3★
+  - id: kiem-sat-lu-khach
+    ten: Kiếm Sắt Lữ Khách
+    loai: sword
+    r: 3
+    nguon: uocNguyen
+    tanCong: 0.2
+    phu: { loai: tanCong, giaTri: 0 }
+    biDong: { ten: Đường Xa Chân Cứng, satThuong: 0.06 }
+    truyen: Thanh kiếm sắt bán ở chợ đêm Vạn Đăng cho người mới cập bến. Chuôi quấn dây gai, cầm lâu sẽ quen tay. Người bán nói nó đã qua nhiều bến hơn chủ của nó.
+  - id: dai-kiem-xom-mo
+    ten: Đại Kiếm Xóm Mỏ
+    loai: great
+    r: 3
+    nguon: uocNguyen
+    tanCong: 0.2
+    phu: { loai: tanCong, giaTri: 0 }
+    biDong: { ten: Tay Chai Vai Rộng, satThuong: 0.06 }
+    truyen: Thanh đại kiếm nặng, rèn vụng, của thợ đá xóm cửa Mỏ Ngọc. Ban ngày người ta dùng nó bửa đá, tối dựng ở góc nhà. Lưỡi mẻ nhiều chỗ, chỗ nào cũng có một câu chuyện.
+  - id: vo-chep-thay-do
+    ten: Vở Chép Thầy Đồ
+    loai: cat
+    r: 3
+    nguon: uocNguyen
+    tanCong: 0.2
+    phu: { loai: tanCong, giaTri: 0 }
+    biDong: { ten: Nét Chữ Nết Người, satThuong: 0.06 }
+    truyen: Cuốn vở giấy dó học trò Phố Vạn Đăng chép chữ theo thầy đồ. Trang đầu có một chữ viết lại mười lần, lần cuối mới thẳng. Gió lật tới trang nào, phép đi theo trang ấy.
+  - id: cung-tre-dau-lang
+    ten: Cung Tre Đầu Làng
+    loai: bow
+    r: 3
+    nguon: uocNguyen
+    tanCong: 0.2
+    phu: { loai: tanCong, giaTri: 0 }
+    biDong: { ten: Mắt Người Đi Săn, satThuong: 0.06 }
+    truyen: Cây cung tre trẻ con Làng Vạn Lưới làm để đuổi chim sẻ ngoài ruộng. Dây bằng sợi gai, bắn xa chừng ba thửa ruộng. Lớn lên, nhiều người vẫn giữ cây cung đầu tiên của mình.
+  - id: thuong-go-lim
+    ten: Thương Gỗ Lim
+    loai: spear
+    r: 3
+    nguon: uocNguyen
+    tanCong: 0.2
+    phu: { loai: tanCong, giaTri: 0 }
+    biDong: { ten: Canh Đêm Bến Đò, satThuong: 0.06 }
+    truyen: Cây thương gỗ lim của lính gác bến Phố Vạn Đăng, mũi sắt rèn thô. Gỗ lim nặng, rơi xuống sông là chìm, nên lính dặn nhau cầm cho chắc. Cán mòn đúng chỗ tay người gác cả đêm.
+  - id: nhanh-mai-truoc-gio
+    ten: Nhành Mai Trước Gió
+    loai: sword
+    r: 4
+    nguon: cuaHangTuan
+    tanCong: 0.3
+    phu: { loai: chiMang, giaTri: 0.1 }
+    biDong: { ten: Hoa Nở Trái Mùa, satThuong: 0.12 }
+    truyen: Thanh kiếm mảnh, chắn tay uốn như một nhành mai còn nụ. Người bán hàng rong chỉ mang nó ra chợ mỗi tuần một lần, rồi lại gói vào vải. Ai hỏi giá, ông bảo kiếm tự chọn người.
+  - id: than-hong-lo-khuya
+    ten: Than Hồng Lò Khuya
+    loai: great
+    r: 4
+    nguon: loRen
+    tanCong: 0.3
+    phu: { loai: tanCong, giaTri: 0.15 }
+    biDong: { ten: Lửa Ủ Qua Đêm, satThuong: 0.12 }
+    truyen: Đại kiếm rèn trong mẻ lửa cuối cùng trước khi lò tắt. Vân than hồng trên lưỡi không bao giờ nguội hẳn. Thợ rèn để nó gác cửa lò thay cho người canh đêm.
+  - id: mat-bao-ngu-yen
+    ten: Mắt Bão Ngủ Yên
+    loai: cat
+    r: 4
+    nguon: uocNguyen
+    tanCong: 0.3
+    phu: { loai: satThuongChiMang, giaTri: 0.2 }
+    biDong: { ten: Lặng Gió, satThuong: 0.06, coChe: { loai: tichTang, toiDa: 4, moiTang: 0.03, giay: 2 } }
+    truyen: La bàn gió bằng bạc, bốn cánh xoay quanh một viên ngọc lục nhỏ. Càng đứng yên lâu, cánh quay càng nhanh mà không phát ra tiếng. Người giữ nó học cách đợi trước khi ra tay.
+  - id: canh-dieu-mua-gat
+    ten: Cánh Diều Mùa Gặt
+    loai: bow
+    r: 4
+    nguon: suKien
+    tanCong: 0.3
+    phu: { loai: tanCong, giaTri: 0.15 }
+    biDong: { ten: Sáo Diều Trên Đê, satThuong: 0.12 }
+    truyen: Cây cung uốn từ khung một con diều không chịu rơi sau Hội Thả Diều Thư ở Lũng Vân. Dây cung căng như dây diều trước gió nồm. Mỗi phát bắn có tiếng sáo diều vi vu theo sau.
+  - id: duoc-gac-deo-may
+    ten: Đuốc Gác Đèo Mây
+    loai: spear
+    r: 4
+    nguon: uocNguyen
+    tanCong: 0.3
+    phu: { loai: chiMang, giaTri: 0.1 }
+    biDong: { ten: Lửa Canh Đèo, satThuong: 0.12 }
+    truyen: Ngọn thương của lính gác đèo, mũi bọc đồng giữ lửa như bó đuốc. Đêm sương dày, người đi đường nhìn đốm lửa ấy mà tìm lối qua đèo. Lửa chưa tắt lần nào, dù mưa đá.

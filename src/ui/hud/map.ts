@@ -2,8 +2,9 @@ import { GS } from "../../core/state";
 import { $, TAU, dist } from "../../core/util";
 import { Server } from "../../server/server";
 import { MH, MW, TS } from "../../world/map";
+import { isMiniTarget, miniTargetXY, puzzleMarks } from "../../world/puzzle-marks";
 
-/* Bản đồ nhỏ (góc trên trái) và bản đồ lớn có chú giải (chạm bản đồ nhỏ, nút Bản đồ hoặc phím M). */
+/* Bản đồ nhỏ (góc trên trái). Bản đồ lớn là màn "map" của menu S10 (src/ui/menu/screens/map.ts). */
 
 const MARK = {
   statue: { c: "#9fe8ff", label: "Bia Đá: hồi phục, lưu điểm hồi sinh" },
@@ -14,21 +15,28 @@ const MARK = {
   you: { c: "#ffffff", label: "Vị trí của bạn" },
   target: { c: "#7dffb2", label: "Mục tiêu hiện tại" },
   ledge: { c: "#b9a27a", label: "Bệ đá, gờ cao (nhảy lên được)" },
+  puzzle: { c: "#c9a6ff", label: "Câu đố nguyên tố (xám: đã giải)" },
+  domain: { c: "#ff9a5a", label: "Cửa bí cảnh (màu nguyên tố, xám: đã xong)" },
+  quest: { c: "#ffe27a", label: "Quest mini" },
 } as const;
 
 function targetPoints(): [number, number][] {
   const M = GS.G.map,
     t = GS.G.objTarget;
   if (!M || !t) return [];
+  if (isMiniTarget(t)) {
+    const xy = miniTargetXY(t, M);
+    return xy ? [xy] : [];
+  }
   if (t === "statue") return M.statues.map((s: any) => [s.x + 0.5, s.y + 0.5]);
-  if (t === "tower") return [[M.tower.x + 0.5, M.tower.y + 0.5]];
-  if (t === "gate") return [[M.gate.x + 0.5, M.gate.y + 0.5]];
+  if (t === "tower") return M.tower ? [[M.tower.x + 0.5, M.tower.y + 0.5]] : [];
+  if (t === "gate") return M.gate ? [[M.gate.x + 0.5, M.gate.y + 0.5]] : [];
   if (t === "chest") {
     const p = GS.G.p;
     let best: any = null,
       bd = Infinity;
     M.chests.forEach((ch: any, i: number) => {
-      if (Server.P.chests.includes(i as any) || Server.P.chests.includes(String(i))) return;
+      if (Server.P.chests.includes(i)) return;
       const d = dist(ch.x, ch.y, p.x / TS, p.y / TS);
       if (d < bd) {
         bd = d;
@@ -48,8 +56,14 @@ function drawMarks(c: CanvasRenderingContext2D, P: Dot, mark: (x: number, y: num
   M.chests.forEach((ch: any, i: any) => {
     if (!Server.P.chests.includes(i)) P(ch.x + 0.5, ch.y + 0.5, MARK.chest.c, big ? 3.5 : 3);
   });
-  P(M.tower.x + 0.5, M.tower.y + 0.5, MARK.tower.c, big ? 7 : 6);
-  P(M.gate.x + 0.5, M.gate.y + 0.5, MARK.gate.c, big ? 7 : 6);
+  if (M.tower) P(M.tower.x + 0.5, M.tower.y + 0.5, MARK.tower.c, big ? 7 : 6);
+  if (M.gate) P(M.gate.x + 0.5, M.gate.y + 0.5, MARK.gate.c, big ? 7 : 6);
+  for (const k of puzzleMarks(M)) {
+    if (k.kind === "quest" && k.done) continue;
+    const r = k.kind === "domain" ? 5 : k.kind === "quest" ? 4 : 3;
+    P(k.x, k.y, "#000", r + 1.5);
+    P(k.x, k.y, k.col, r);
+  }
   for (const e of GS.G.enemies) if (!e.dead && dist(e.x, e.y, p.x, p.y) < 900) P(e.x / TS, e.y / TS, MARK.enemy.c, 2.2);
   c.lineWidth = 2;
   for (const [x, y] of targetPoints()) {
@@ -130,69 +144,4 @@ export function drawMini() {
   c.fill();
   c.restore();
   c.restore();
-}
-
-function drawBig() {
-  const cv = $<HTMLCanvasElement>("bigMapCv"),
-    c = cv.getContext("2d")!,
-    S = cv.width,
-    sc = S / MW,
-    p = GS.G.p,
-    M = GS.G.map;
-  c.clearRect(0, 0, S, S);
-  c.imageSmoothingEnabled = false;
-  c.drawImage(M.mini, 0, 0, MW * sc, MH * sc);
-  const at = (x: number, y: number) => [x * sc, y * sc] as const;
-  const P = (x: number, y: number, col: string, r = 4) => {
-    const [X, Y] = at(x, y);
-    c.fillStyle = col;
-    c.beginPath();
-    c.arc(X, Y, r, 0, TAU);
-    c.fill();
-  };
-  c.fillStyle = MARK.ledge.c;
-  for (const l of M.ledges ?? []) c.fillRect(l.x * sc + sc * 0.3, l.y * sc + sc * 0.3, sc * 0.4, sc * 0.4);
-  const mark = (x: number, y: number) => {
-    const [X, Y] = at(x, y);
-    c.arc(X, Y, 11, 0, TAU);
-    c.stroke();
-  };
-  drawMarks(c, P, mark, true);
-  P(p.x / TS, p.y / TS, "#000", 7);
-  P(p.x / TS, p.y / TS, MARK.you.c, 5);
-}
-
-let lastFocus: HTMLElement | null = null;
-export function toggleBigMap(force?: boolean) {
-  const el = $("bigMap");
-  const open = force ?? el.hidden;
-  if (open) {
-    if (!GS.G?.map || GS.paused) return;
-    lastFocus = document.activeElement as HTMLElement | null;
-    $("bigMapLegend").innerHTML = Object.values(MARK)
-      .map((m) => `<li><i style="--c:${m.c}"></i>${m.label}</li>`)
-      .join("");
-    drawBig();
-    el.hidden = false;
-    GS.paused = true;
-    GS.overlay = "map";
-    $("bigMapClose").focus();
-  } else if (GS.overlay === "map") {
-    el.hidden = true;
-    GS.paused = false;
-    GS.overlay = null;
-    lastFocus?.focus?.();
-  }
-}
-export function initBigMap() {
-  $("bigMapClose").addEventListener("click", () => toggleBigMap(false));
-  $("bigMap").addEventListener("click", (e) => {
-    if (e.target === $("bigMap")) toggleBigMap(false);
-  });
-  addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && GS.overlay === "map") {
-      e.stopPropagation();
-      toggleBigMap(false);
-    }
-  });
 }

@@ -1,5 +1,9 @@
 # Golnar: Hồ sơ
 
+> **Loại 5★:** `gioi-han` (5★ giới hạn, chỉ ra ở banner theo kỳ, có thể quay lại ở kỳ sau). Đã chốt (S23). Truyện chính không tặng nhân vật này, chỉ cho xuất hiện như NPC hoặc khách mời, không vào đội.
+
+> **Vũ khí ước nguyện đặc trưng:** Đóa Hồng Ngủ Trong Băng (bị động: Băng Tâm Ủ Hương). Truyện và chỉ số: `content/weapons.yaml`, bảng ở `docs/economy/vu-khi.md`.
+
 > Hộ Tinh hệ Băng, pháp khí, 5★. Danh hiệu trong game: **Người Giữ Nhà Băng**.
 > Nguồn đối chiếu: `docs/world/03-dia-ly.md` mục 6 (Golbaran, Hội Đồng Giếng, Kênh Ngầm Dài, Ngày Mưa Hoa), `docs/world/07-hac-giao-va-hoi-mat-na.md` mục 2.5.4, `docs/world/11-dat-ten.md` mục 2, `docs/characters/havy/`.
 

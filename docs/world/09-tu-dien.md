@@ -328,3 +328,103 @@ Tên trong bảng là tên đang dùng. Tên cũ đã đổi có ghi chú ở đ
 | **Yukiakari**         | Địa danh  | Thủ đô Shizukane, "Thành Tuyết Sáng".                                        |
 | **Yukiran**           | Nhân vật  | Tên gốc tiếng Shizukane của Tuyết Lan (雪蘭, lan tuyết).                     |
 | **Yukiyo**            | Trấn Tinh | Trấn Tinh hệ Băng của Shizukane, đã thề im lặng, chỉ nói bằng hoa văn tuyết. |
+
+## Bổ sung S06
+
+Tên riêng do S06 (cốt truyện Mở đầu, Chương 1, nhiệm vụ phụ Đảo Lạc) thêm vào. Chi tiết ở `docs/story/`.
+
+| Tên                       | Loại      | Định nghĩa                                                                            |
+| ------------------------- | --------- | ------------------------------------------------------------------------------------- |
+| **Bà Hạnh**               | Nhân vật  | Người đánh mõ báo canh ở Làng Vạn Lưới, bà nội Út Gạo, thuộc câu hát cũ về Bà Lưới.   |
+| **Bà Hiền**               | Nhân vật  | Thợ chọn ngọc ở Mỏ Ngọc, mẹ Ngọc Thạch.                                               |
+| **Bà Ngoan**              | Nhân vật  | Thợ làm đèn lồng ở Phố Cũ, bà ngoại Mai Linh.                                         |
+| **Bà Tám Lụa**            | Nhân vật  | Thợ vá buồm ở bến Làng Vạn Lưới, mẹ Hạ Vy.                                            |
+| **Bà Tư Bánh**            | Nhân vật  | Bán Bánh Trống ở chợ đêm Phố Vạn Đăng.                                                |
+| **Bánh Trống**            | Vật phẩm  | Bánh nếp nướng in hoa văn mặt trống đồng, món chợ đêm Vạn Đăng. Hồi máu nhỏ.          |
+| **Bé Sen**                | Nhân vật  | Cô bé tám tuổi ở Phố Vạn Đăng, nuôi con dế Tách Rè.                                   |
+| **Bia Đá Dốc Cát**        | Địa danh  | Bia Đá ở đầu dốc từ Bãi Sao Rơi lên phố, tắt nhiều năm, sáng lại đêm Tết NS 1350.     |
+| **Cai Tôn**               | Nhân vật  | Cai lính Quân Trấn Thủ gác cửa Hang Hắc Giao, mê Bánh Trống.                          |
+| **Cần Câu Tre**           | Vật phẩm  | Cần câu tre già Rừng Trúc Mây, quà của Hai Khoác.                                     |
+| **Chợ đêm Vạn Đăng**      | Địa danh  | Chợ họp mỗi tối dưới mái đèn lồng ở Phố Vạn Đăng, gần bến buôn.                       |
+| **Cò**                    | Nhân vật  | Con trai Lão Neo, mất ngoài biển mùa đông NS 1339; hay làm diều hình cá.              |
+| **Diều Cá Của Cò**        | Vật phẩm  | Con diều giấy hình cá Cò làm, tìm thấy trên gác nhà Lão Neo. Vật kỷ niệm.             |
+| **Dùi Mõ Vạn Lưới**       | Vật phẩm  | Dùi mõ làm từ gỗ mõ cũ của Bà Hạnh. Vật kỷ niệm.                                      |
+| **Đèn Cá Nhỏ**            | Vật phẩm  | Đèn lồng giấy hình cá, mắt bằng cát sáng, quà của Bà Ngoan. Đồ trang trí.             |
+| **Đèn Sét Của Minh Khải** | Vật phẩm  | Ngọn đèn sét Minh Khải để lại cho Người Ước Nguyện, soi được dưới nước đen.           |
+| **Đinh Bảo**              | Nhân vật  | Thợ mỏ ở Mỏ Ngọc, bố Ngọc Thạch.                                                      |
+| **Hai Khoác**             | Nhân vật  | Ngư dân Vạn Lưới thích kể chuyện phóng đại, nấu cháo cá cho cả làng.                  |
+| **Kẹo Mạch Nha**          | Vật phẩm  | Kẹo Tết của Bà Tư. Hồi máu nhỏ.                                                       |
+| **Lá Sáo Trúc**           | Vật phẩm  | Quà của Ông Sáo, mở bản nhạc "Sông Sương".                                            |
+| **Lõi Sao Cạn**           | Vật phẩm  | Hai lõi sao của Bia Đông và Bia Tây sau khi bị dùng làm mỏng phong ấn; Thạch Sơn giữ. |
+| **Mảnh Buồm Gió Nồm**     | Vật phẩm  | Mảnh vải buồm thừa Tám Lụa gửi cho Hạ Vy. Vật kỷ niệm.                                |
+| **Ngọc Thô**              | Vật phẩm  | Ngọc chưa mài ở Mỏ Ngọc, nguyên liệu Khai Tinh hệ Thổ.                                |
+| **Ông Ngồi**              | Biệt danh | Biệt danh Bạch Vũ đặt cho Hộ Vệ Đá Cổ ở Bia Đông.                                     |
+| **Ông Lạc Thành**         | Nhân vật  | Người giữ trống đã nghỉ của Đình Trống Đồng, bố Lạc Hồng, tay run từ NS 1344.         |
+| **Ông Sáo**               | Nhân vật  | Lái đò Sông Sương, thổi sáo tan sương.                                                |
+| **Rương Lộc Tết**         | Vật phẩm  | Rương quà Tết người Vạn Đăng đặt dọc đường cho người lỡ đường đêm Tết.                |
+| **Sách Kinh Nghiệm**      | Vật phẩm  | Sách tăng kinh nghiệm cho Hộ Tinh (tên gọi trong truyện của "sách" ở `startProfile`). |
+| **Tách Rè**               | Sinh vật  | Con dế màu đồng biết "hát" của Bé Sen.                                                |
+| **Thầy Đồ Khiêm**         | Nhân vật  | Thầy đồ viết câu đối và dạy chữ cho trẻ ở Đình Trống Đồng.                            |
+| **Trại Bắc**              | Địa danh  | Trại của Quân Trấn Thủ cạnh lối vào Hang Hắc Giao; nơi Lão Neo bị giữ sau Chương 1.   |
+| **Út Gạo**                | Nhân vật  | Ngư dân trẻ Vạn Lưới, cháu Bà Hạnh, từng đeo mặt nạ trắng của Hội Bất Nguyện.         |
+| **Yêu Rừng Lớn**          | Quái      | Biến thể to của Yêu Rừng (`goblin_lon`), nhiều máu, chậm.                             |
+
+## Bổ sung S23: vũ khí
+
+Tên 26 vũ khí ước nguyện (S23). Truyện và chỉ số ở `content/weapons.yaml`, bảng đầy đủ ở `docs/economy/vu-khi.md`.
+
+| Tên                         | Loại     | Định nghĩa                                                                              |
+| --------------------------- | -------- | --------------------------------------------------------------------------------------- |
+| **Bàn Thạch Trấn Sơn**      | Vật phẩm | Đại kiếm, vũ khí 5★ thường trú, đặc trưng của Thạch Sơn. Bị động: Vạn Thạch Quy Tông.   |
+| **Bóng Trăng Hồ Gương**     | Vật phẩm | Pháp khí, vũ khí 4★. Bị động: Mặt Hồ Không Gợn.                                         |
+| **Chuông Lửa Vạn Niên**     | Vật phẩm | Đại kiếm, vũ khí 5★ giới hạn, đặc trưng của Ardo. Bị động: Hỏa Chung Trường Minh.       |
+| **Cung Tre Đầu Làng**       | Vật phẩm | Cung, vũ khí 3★. Bị động: Mắt Người Đi Săn.                                             |
+| **Gió Bấc Trại Bắc**        | Vật phẩm | Thương, vũ khí 4★ Lò Rèn. Bị động: Đứng Vững Đầu Gió.                                   |
+| **Hồng Vũ Trường Ca**       | Vật phẩm | Kiếm đơn, vũ khí 5★ thường trú, đặc trưng của Lạc Hồng. Bị động: Cánh Lửa Trống Đồng.   |
+| **Khúc Hát Người Kéo Lưới** | Vật phẩm | Đại kiếm, vũ khí 4★. Bị động: Nhịp Chèo Về Bến.                                         |
+| **Kiếm Sắt Lữ Khách**       | Vật phẩm | Kiếm đơn, vũ khí 3★. Bị động: Đường Xa Chân Cứng.                                       |
+| **Kính Thủy Lưu Nguyệt**    | Vật phẩm | Pháp khí, vũ khí 5★ thường trú, đặc trưng của Thủy Nguyệt. Bị động: Nguyệt Ảnh Trầm Hồ. |
+| **Lời Thề Bãi Sao**         | Vật phẩm | Kiếm đơn, vũ khí 4★ Lò Rèn. Bị động: Sao Rơi Giữ Hẹn.                                   |
+| **Nhành Mai Trước Gió**     | Vật phẩm | Kiếm đơn, vũ khí 4★ cửa hàng tuần. Bị động: Hoa Nở Trái Mùa.                            |
+| **Than Hồng Lò Khuya**      | Vật phẩm | Đại kiếm, vũ khí 4★ Lò Rèn. Bị động: Lửa Ủ Qua Đêm.                                     |
+| **Mắt Bão Ngủ Yên**         | Vật phẩm | La bàn gió bạc, pháp khí 4★ ước nguyện. Bị động tích tầng: Lặng Gió.                    |
+| **Cánh Diều Mùa Gặt**       | Vật phẩm | Cung, vũ khí 4★ sự kiện Hội Thả Diều Thư. Bị động: Sáo Diều Trên Đê.                    |
+| **Đuốc Gác Đèo Mây**        | Vật phẩm | Thương, vũ khí 4★ ước nguyện. Bị động: Lửa Canh Đèo.                                    |
+| **Mạch Ngọc Lòng Chảo**     | Vật phẩm | Thương, vũ khí 4★. Bị động: Đèn Mỏ Không Tắt.                                           |
+| **Mảnh Trăng Bến Cũ**       | Vật phẩm | Cung, vũ khí 4★ Lò Rèn. Bị động: Trăng Soi Đầu Tên.                                     |
+| **Ngự Phong Truy Vân**      | Vật phẩm | Cung, vũ khí 5★ thường trú, đặc trưng của Phong Vân. Bị động: Vân Khai Kiến Nhật.       |
+| **Phong Đỉnh Vô Cực**       | Vật phẩm | Thương, vũ khí 5★ giới hạn, đặc trưng của Takane. Bị động: Nhất Phong Quá Lĩnh.         |
+| **Sương Sớm Bến Sông**      | Vật phẩm | Kiếm đơn, vũ khí 4★. Bị động: Lưỡi Kiếm Đọng Sương.                                     |
+| **Thiên Lôi Phá Trận**      | Vật phẩm | Thương, vũ khí 5★ giới hạn, đặc trưng của Lôi Đình. Bị động: Sấm Rền Chín Tầng.         |
+| **Thương Gỗ Lim**           | Vật phẩm | Thương, vũ khí 3★. Bị động: Canh Đêm Bến Đò.                                            |
+| **Thủy Mặc Vấn Thiên**      | Vật phẩm | Pháp khí, vũ khí 5★ giới hạn, đặc trưng của Nghiên Thu. Bị động: Bút Lạc Thành Hà.      |
+| **Tiếng Sấm Đầu Mùa**       | Vật phẩm | Cung, vũ khí 4★. Bị động: Mưa Rào Qua Đồng.                                             |
+| **Tiếng Trống Đình Làng**   | Vật phẩm | Đại kiếm, vũ khí 4★ Lò Rèn. Bị động: Trống Dồn Ba Hồi.                                  |
+| **Tuyết Lạc Vô Thanh**      | Vật phẩm | Kiếm đơn, vũ khí 5★ giới hạn, đặc trưng của Tuyết Lan. Bị động: Hàn Lan Tĩnh Nở.        |
+| **Vó Sấm Thảo Nguyên**      | Vật phẩm | Cung, vũ khí 5★ giới hạn, đặc trưng của Naraa. Bị động: Lôi Mã Truy Phong.              |
+| **Vở Chép Thầy Đồ**         | Vật phẩm | Pháp khí, vũ khí 3★. Bị động: Nét Chữ Nết Người.                                        |
+| **Đèn Canh Hải Đăng**       | Vật phẩm | Pháp khí, vũ khí 4★ Lò Rèn. Bị động: Ánh Đèn Gọi Thuyền.                                |
+| **Đóa Hồng Ngủ Trong Băng** | Vật phẩm | Pháp khí, vũ khí 5★ giới hạn, đặc trưng của Golnar. Bị động: Băng Tâm Ủ Hương.          |
+| **Đại Kiếm Xóm Mỏ**         | Vật phẩm | Đại kiếm, vũ khí 3★. Bị động: Tay Chai Vai Rộng.                                        |
+
+## Bổ sung S23: bí cảnh và quest mini
+
+| Tên                        | Loại     | Giải thích                                                                                                                                    |
+| -------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Lò Đèn Phố Cũ**          | Địa danh | Bí cảnh Hỏa ở Phố Vạn Đăng. Lò nung đèn lồng bỏ hoang dưới hàng đèn Phố Cũ. Thợ đèn xưa nung men ở đây, giờ chỉ còn băng đọng và dây leo khô. |
+| **Giếng Đền Trăng**        | Địa danh | Bí cảnh Thủy ở Hồ Gương và Đền Trăng. Giếng đá sau Đền Trăng, nối ngầm với Hồ Gương. Hội Đền Trăng đóng giếng từ khi mặt hồ thôi phẳng lặng.  |
+| **Hầm Ngọc Cũ**            | Địa danh | Bí cảnh Thổ ở Mỏ Ngọc Lòng Chảo. Đường hầm phía tây Mỏ Ngọc, đóng từ năm sập hầm. Vách đá còn vết búa của thợ mỏ đời trước.                   |
+| **Hang Gió Trúc Mây**      | Địa danh | Bí cảnh Phong ở Rừng Trúc Mây. Khe núi giữa Rừng Trúc Mây, gió lùa qua thành tiếng sáo. Người trong làng bảo Yêu Rừng giữ cửa hang.           |
+| **Bốn Đèn Canh Ven Biển**  | Nhiệm vụ | Quest mini của Bà Hạnh ở Làng Vạn Lưới.                                                                                                       |
+| **Ruộng Khô Đầu Làng**     | Nhiệm vụ | Quest mini của Út Gạo ở Làng Vạn Lưới.                                                                                                        |
+| **Bậc Đá Lên Đài Đếm Sao** | Nhiệm vụ | Quest mini của Đầu Sổ Kỳ Lam ở Đỉnh Vọng Vân.                                                                                                 |
+| **Cối Gió Bơm Nước**       | Nhiệm vụ | Quest mini của Hai Khoác ở Bến Sông Sương.                                                                                                    |
+| **Đèn Mỏ Thứ Bảy**         | Nhiệm vụ | Quest mini của Ông Đinh Bảo ở Mỏ Ngọc Lòng Chảo.                                                                                              |
+| **Lối Gai Rừng Trúc**      | Nhiệm vụ | Quest mini của Bé Sen ở Rừng Trúc Mây.                                                                                                        |
+| **Lửa Chắn Hàng Đèn**      | Nhiệm vụ | Quest mini của Bà Ngoan ở Phố Vạn Đăng.                                                                                                       |
+| **Cầu Gãy Sông Sương**     | Nhiệm vụ | Quest mini của Ông Sáo ở Bến Sông Sương.                                                                                                      |
+| **Sương Độc Vịnh Khơi**    | Nhiệm vụ | Quest mini của Lão Neo ở Vịnh Khơi và Làng Chìm.                                                                                              |
+| **Hơi Nóng Nâng Bệ**       | Nhiệm vụ | Quest mini của Bà Cả Thu Vọng ở Hồ Gương và Đền Trăng.                                                                                        |
+| **Gió Lan Lửa Đình**       | Nhiệm vụ | Quest mini của Thầy Đồ Khiêm ở Đình Trống Đồng.                                                                                               |
+| **Mây Chắn Tường Nứt**     | Nhiệm vụ | Quest mini của Cai Tôn ở Trại Bắc.                                                                                                            |
+| **Sương Giá Bờ Hồ**        | Nhiệm vụ | Quest mini của Bà Tám Lụa ở Hồ Gương và Đền Trăng.                                                                                            |

@@ -1,7 +1,9 @@
 import { GS } from "../core/state";
 import { EL, byId } from "../data/content";
 import { fxBurst, fxRing } from "../entities/fx";
-import { Server, statsOf } from "../server/server";
+import { Server, investOf, statsOf } from "../server/server";
+import { ECON } from "../data/economy";
+import { weaponOf } from "../economy/core";
 import { buildHudParty } from "../ui/hud";
 import { resetFeel } from "../combat/feel";
 
@@ -10,8 +12,15 @@ export function buildParty() {
     .filter((id: string) => Server.P.owned[id])
     .map((id: string) => {
       const st = statsOf(id);
-      return { id, c: byId[id], st, hp: st.hp, maxHp: st.hp, energy: 20, skillCd: 0, alive: true };
+      return { id, c: byId[id], st, hp: st.hp, maxHp: st.hp, energy: 20, skillCd: 0, alive: true, stack: stackOf(id) };
     });
+}
+/** Trạng thái tích tầng của vũ khí đang cầm; giữ số tầng cũ nếu vẫn cùng vũ khí và mức tinh luyện. */
+export function stackOf(id: string, prev: { id: string; tl: number; tang: number; t: number } | null = null) {
+  const vk = investOf(id).vuKhi;
+  if (!vk || !weaponOf(vk.id, ECON).biDong.coChe) return null;
+  if (prev && prev.id === vk.id && prev.tl === vk.tinhLuyen) return prev;
+  return { id: vk.id, tl: vk.tinhLuyen, tang: 0, t: 0 };
 }
 export function newSession(mode: string, opt = {}) {
   resetFeel();
