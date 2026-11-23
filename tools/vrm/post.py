@@ -314,6 +314,70 @@ if cfg.get("skirtColliders"):
                 j.drag_force = max(j.drag_force, cfg.get("skirtDrag", 0.35))
                 j.gravity_power = max(j.gravity_power, cfg.get("skirtGravity", 0.15))
 
+fc = cfg.get("face", {})
+face_ob = bpy.data.objects.get("Face")
+if fc is not False and face_ob:
+    # Chuẩn mặt anime: mặt sáng đều, pháp tuyến mượt theo elipsoid, viền mỏng, không viền mũi/giữa mặt.
+    me = face_ob.data
+    skin = {i for i, m in enumerate(me.materials) if m and "Face_00_SKIN" in m.name}
+    mw = face_ob.matrix_world
+    pts = [mw @ me.vertices[vi].co for p in me.polygons if p.material_index in skin for vi in p.vertices]
+    lo = Vector([min(q[i] for q in pts) for i in range(3)])
+    hi = Vector([max(q[i] for q in pts) for i in range(3)])
+    c0, rad = (lo + hi) / 2, (hi - lo) / 2
+    eye_h = (eye.z - c0.z) / rad.z
+
+    def ell(q):
+        return ((q.x - c0.x) / rad.x, (q.y - c0.y) * fy / rad.y, (q.z - c0.z) / rad.z)
+
+    base = [Vector(n.vector) for n in me.corner_normals]
+    out = []
+    for p in me.polygons:
+        for li in p.loop_indices:
+            n = base[li]
+            if p.material_index in skin:
+                q = mw @ me.vertices[me.loops[li].vertex_index].co
+                u, w, h = ell(q)
+                en = Vector(((q.x - c0.x) / rad.x**2, (q.y - c0.y) / rad.y**2, (q.z - c0.z) / rad.z**2)).normalized()
+                k = fc.get("normalMix", 0.75) * max(0.0, min(1.0, (w + 0.2) / 0.6)) * max(0.0, min(1.0, (h + 0.95) / 0.3))
+                n = (mw.to_3x3().inverted() @ (n.lerp(en, k))).normalized() if k > 0 else n
+            out.append(n)
+    me.normals_split_custom_set(out)
+    for m in bpy.data.materials:
+        if "Face_00_SKIN" not in m.name:
+            continue
+        x = m.vrm_addon_extension.mtoon1.extensions.vrmc_materials_mtoon
+        x.shading_shift_factor = fc.get("shift", 0.92)
+        x.shading_toony_factor = fc.get("toony", 0.95)
+        sc = Vector(x.shade_color_factor)
+        x.shade_color_factor = list(sc.lerp(Vector((1.0, 0.86, 0.84)), fc.get("shadeLift", 0.55)))
+        x.outline_width_factor = x.outline_width_factor * fc.get("outline", 0.45)
+        img = x.outline_width_multiply_texture.index.source
+        if img is None or img.get("tt_masked"):
+            continue
+        W, H = img.size
+        px = [0.0] * (W * H * 4)
+        img.pixels.foreach_get(px)
+        uvl = me.uv_layers.active.data
+        for t in me.loop_triangles:
+            if t.material_index not in skin:
+                continue
+            qs = [ell(mw @ me.vertices[v].co) for v in t.vertices]
+            if not all(abs(u) < 0.5 and w > 0.15 and h < eye_h + 0.05 for u, w, h in qs):
+                continue
+            uv = [uvl[li].uv for li in t.loops]
+            x0, x1 = int(min(a.x for a in uv) * W) - 2, int(max(a.x for a in uv) * W) + 2
+            y0, y1 = int(min(a.y for a in uv) * H) - 2, int(max(a.y for a in uv) * H) + 2
+            for yy in range(max(0, y0), min(H, y1 + 1)):
+                for xx in range(max(0, x0), min(W, x1 + 1)):
+                    o = (yy * W + xx) * 4
+                    px[o] = px[o + 1] = px[o + 2] = 0.0
+        img.pixels.foreach_set(px)
+        img.update()
+        img.pack()
+        img["tt_masked"] = True
+    print("FACE OK", tuple(round(v, 3) for v in c0), tuple(round(v, 3) for v in rad), round(eye_h, 2))
+
 bpy.ops.wm.save_as_mainfile(filepath=blend)
 bpy.ops.export_scene.vrm(filepath=dst)
 print("POST OK", [g.vrm_name for g in sb.collider_groups], [(s.vrm_name, len(s.collider_groups)) for s in sb.springs][:9])
