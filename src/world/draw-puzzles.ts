@@ -13,7 +13,8 @@ import { TS } from "./map";
 
 /* Vẽ vật thể câu đố, ký hiệu nguyên tố mờ khi đến gần, NPC quest mini, cửa và rương bí cảnh (S23). */
 
-type Q = { y: number; f: () => void }[];
+/** `at`: điểm chân vật trên bản đồ, để renderer 3D chiếu bản vẽ 2D đúng chỗ. */
+type Q = { y: number; f: () => void; at?: [number, number] }[];
 
 const shadow = (X: number, Y: number, w: number) => {
   ctx.fillStyle = "rgba(0,0,0,.25)";
@@ -391,6 +392,7 @@ export function queuePuzzles(dr: Q, vis: (x: number, y: number) => boolean, tm: 
       if (!vis(o.x, o.y)) continue;
       const d = Math.hypot(o.x - p.x, o.y - p.y);
       dr.push({
+        at: [o.x, o.y],
         y: o.y + (o.def.chan || o.loai === "cau" || o.loai === "bangMat" || o.loai === "luongGio" ? -30 : 0),
         f: () => {
           drawObj(o, tm);
@@ -398,18 +400,25 @@ export function queuePuzzles(dr: Q, vis: (x: number, y: number) => boolean, tm: 
         },
       });
     }
-  for (const n of (W.npcs ?? []) as Npc[]) if (vis(n.x, n.y)) dr.push({ y: n.y, f: () => drawNpc(n, tm) });
-  for (const g of (W.portals ?? []) as Portal[]) if (vis(g.x, g.y)) dr.push({ y: g.y, f: () => drawGate(g, tm) });
+  for (const n of (W.npcs ?? []) as Npc[])
+    if (vis(n.x, n.y)) dr.push({ at: [n.x, n.y], y: n.y, f: () => drawNpc(n, tm) });
+  for (const g of (W.portals ?? []) as Portal[])
+    if (vis(g.x, g.y)) dr.push({ at: [g.x, g.y], y: g.y, f: () => drawGate(g, tm) });
   if (W.domain) {
     const s = W.rooms[0],
       X = (DX + 0.5) * TS,
       Y = (s.cy - 1.2) * TS;
-    dr.push({ y: Y, f: () => drawPortal(X, Y, tm, "#9fe8ff", "Lối ra") });
+    dr.push({ at: [X, Y], y: Y, f: () => drawPortal(X, Y, tm, "#9fe8ff", "Lối ra") });
     const r = W.rooms[W.rooms.length - 1],
       done = Server.P.puz.domains[W.domain.id]?.done,
       cx = (r.cx + 0.5) * TS,
       cy = (r.cy + 0.6) * TS;
-    dr.push({ y: cy, f: () => drawChest(cx, cy, !!done) });
-    if (done) dr.push({ y: (r.cy - 2) * TS, f: () => drawPortal(cx, (r.cy - 2) * TS, tm, "#9fe8ff", "Lối ra") });
+    dr.push({ at: [cx, cy], y: cy, f: () => drawChest(cx, cy, !!done) });
+    if (done)
+      dr.push({
+        at: [cx, (r.cy - 2) * TS],
+        y: (r.cy - 2) * TS,
+        f: () => drawPortal(cx, (r.cy - 2) * TS, tm, "#9fe8ff", "Lối ra"),
+      });
   }
 }

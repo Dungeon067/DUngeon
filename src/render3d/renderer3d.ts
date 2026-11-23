@@ -229,6 +229,10 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     const W = GS.G.map;
     if (worldOf === W) return;
     world?.removeFromParent();
+    world?.traverse((o: any) => {
+      o.geometry?.dispose();
+      for (const m of [o.material].flat()) m?.dispose?.();
+    });
     world = new THREE.Group();
     world.add(buildTerrain(W, atlas, { shadows: Q.shadows }));
     const P = buildProps(W, { shadows: Q.shadows }, (i) => Server.P.chests.includes(i));

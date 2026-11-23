@@ -15,6 +15,7 @@ import { drawMenuBg } from "../ui/menuBg";
 import { drawArena, drawChest, drawPortal, drawRock, drawStatue, drawTile, drawTree } from "../world/draw";
 import { MH, MW, TL, TS } from "../world/map";
 import { queuePuzzles } from "../world/draw-puzzles";
+import { groundAt } from "../world/collision";
 
 export function render() {
   const tm = performance.now() / 1000;
@@ -347,6 +348,7 @@ export function render() {
 /** Lớp 2D đè lên cảnh 3D: chữ sát thương theo vị trí chiếu, viền tối, băng chữ, cắt cảnh. */
 function render3dOverlay(r3: WorldRenderer, tm: number) {
   ctx.clearRect(0, 0, GS.VW, GS.VH);
+  drawPuzzles3d(r3, tm);
   ctx.textAlign = "center";
   for (const t of GS.G.texts) {
     const k = t.life / t.max,
@@ -362,6 +364,28 @@ function render3dOverlay(r3: WorldRenderer, tm: number) {
   }
   ctx.globalAlpha = 1;
   drawScreenOverlays(tm);
+}
+
+/** Câu đố, NPC quest mini, cửa bí cảnh (S23) chưa có bản 3D: chiếu bản vẽ 2D lên đúng điểm chân trong cảnh 3D. */
+function drawPuzzles3d(r3: WorldRenderer, tm: number) {
+  const dr: Parameters<typeof queuePuzzles>[0] = [],
+    hw = GS.VW / GS.ZOOM,
+    hh = GS.VH / GS.ZOOM;
+  queuePuzzles(dr, (x, y) => Math.abs(x - GS.G.cam.x) < hw && Math.abs(y - GS.G.cam.y) < hh * 1.4, tm);
+  dr.sort((a, b) => a.y - b.y);
+  for (const d of dr) {
+    if (!d.at) continue;
+    const [x, y] = d.at,
+      z = groundAt(x, y),
+      q = r3.project(x, y, z),
+      q1 = r3.project(x + TS, y, z);
+    if (!q.vis) continue;
+    const s = Math.hypot(q1.x - q.x, q1.y - q.y) / TS;
+    ctx.save();
+    ctx.setTransform(GS.DPR * s, 0, 0, GS.DPR * s, GS.DPR * (q.x - s * x), GS.DPR * (q.y - s * y));
+    d.f();
+    ctx.restore();
+  }
 }
 
 function drawScreenOverlays(tm: number) {
