@@ -53,7 +53,13 @@ function lerpTod(t: number) {
     k = (t - a[0]) / (b[0] - a[0] || 1);
   const ca = new THREE.Color(a[1]).lerp(new THREE.Color(b[1]), k),
     sa = new THREE.Color(a[3]).lerp(new THREE.Color(b[3]), k);
-  return { sky: ca, sun: a[2] + (b[2] - a[2]) * k, sunCol: sa, amb: (a[4] + (b[4] - a[4]) * k) / 100, night: t < 0.25 || t > 0.78 };
+  return {
+    sky: ca,
+    sun: a[2] + (b[2] - a[2]) * k,
+    sunCol: sa,
+    amb: (a[4] + (b[4] - a[4]) * k) / 100,
+    night: t < 0.25 || t > 0.78,
+  };
 }
 
 /** Giờ trong ngày: ?tod=0.5 hoặc GS.tod ép giờ; không thì một ngày = 8 phút chơi, bắt đầu buổi sáng. */
@@ -67,7 +73,8 @@ export function timeOfDay(): number {
 
 const TiltShift = {
   uniforms: { tDiffuse: { value: null }, amount: { value: 1.6 }, res: { value: new THREE.Vector2(1, 1) } },
-  vertexShader: "varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }",
+  vertexShader:
+    "varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }",
   fragmentShader: `uniform sampler2D tDiffuse; uniform float amount; uniform vec2 res; varying vec2 vUv;
     void main(){ float d = smoothstep(0.22, 0.5, abs(vUv.y-0.52)); vec4 c = vec4(0.0); float r = d*amount;
       for(int i=-2;i<=2;i++){ for(int j=-2;j<=2;j++){ c += texture2D(tDiffuse, vUv + vec2(float(i),float(j))*r/res); } }
@@ -79,10 +86,24 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   const cv = document.createElement("canvas");
   cv.id = "game3d";
   cv.setAttribute("aria-hidden", "true");
-  Object.assign(cv.style, { position: "fixed", inset: "0", width: "100%", height: "100%", imageRendering: "pixelated", pointerEvents: "none", zIndex: "0" });
+  Object.assign(cv.style, {
+    position: "fixed",
+    inset: "0",
+    width: "100%",
+    height: "100%",
+    imageRendering: "pixelated",
+    pointerEvents: "none",
+    zIndex: "0",
+  });
   host.parentElement!.insertBefore(cv, host);
-  const gl = new THREE.WebGLRenderer({ canvas: cv, antialias: false, powerPreference: "high-performance", stencil: false });
+  const gl = new THREE.WebGLRenderer({
+    canvas: cv,
+    antialias: false,
+    powerPreference: "high-performance",
+    stencil: false,
+  });
   gl.outputColorSpace = THREE.SRGBColorSpace;
+  gl.info.autoReset = false;
   cv.addEventListener("webglcontextlost", (e) => {
     e.preventDefault();
     onLost();
@@ -121,7 +142,10 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     hero: SheetSprite | null = null,
     heroFallback: CanvasSprite | null = null;
   let heroSheet: Sheet | null = null;
-  const blob = new THREE.Mesh(new THREE.CircleGeometry(0.32, 12), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.3, depthWrite: false }));
+  const blob = new THREE.Mesh(
+    new THREE.CircleGeometry(0.32, 12),
+    new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.3, depthWrite: false }),
+  );
   blob.rotation.x = -Math.PI / 2;
   scene.add(blob);
   const fxGroup = new THREE.Group();
@@ -134,7 +158,11 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
 
   // Hạt pixel 3D (dùng chung cho mọi hiệu ứng).
   const MAXP = 600;
-  const parts = new THREE.InstancedMesh(new THREE.BoxGeometry(0.07, 0.07, 0.07), new THREE.MeshBasicMaterial({ color: 0xffffff, fog: false }), MAXP);
+  const parts = new THREE.InstancedMesh(
+    new THREE.BoxGeometry(0.07, 0.07, 0.07),
+    new THREE.MeshBasicMaterial({ color: 0xffffff, fog: false }),
+    MAXP,
+  );
   parts.frustumCulled = false;
   scene.add(parts);
   const ringPool: THREE.Mesh[] = [];
@@ -242,6 +270,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     const dt = Math.min(0.05, t - lastT || 0.016);
     lastT = t;
     cv.style.display = "block";
+    gl.info.reset();
     syncWorld();
     const G = GS.G,
       p = G.p,
@@ -253,7 +282,11 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     const dist = (vis * 0.5) / Math.tan((FOV * Math.PI) / 360) / 1.05;
     const tx = G.cam.x / TS + shake,
       tz = (G.cam.y + 20) / TS;
-    camera.position.set(tx + Math.sin(GS.camYaw) * Math.cos(PITCH) * dist, gy + Math.sin(PITCH) * dist, tz + Math.cos(GS.camYaw) * Math.cos(PITCH) * dist);
+    camera.position.set(
+      tx + Math.sin(GS.camYaw) * Math.cos(PITCH) * dist,
+      gy + Math.sin(PITCH) * dist,
+      tz + Math.cos(GS.camYaw) * Math.cos(PITCH) * dist,
+    );
     camera.lookAt(tx, gy, tz);
     (scene.fog as THREE.Fog).near = dist * 1.5;
     (scene.fog as THREE.Fog).far = dist * 3.4;
@@ -306,7 +339,15 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       hero.mesh.visible = !(p.iframes > 0 && p.hurt > 0 && Math.floor(t * 20) % 2);
     } else if (heroFallback && m) {
       heroFallback.paint((c) =>
-        drawChibi(c, m.c, 0, 0, 1.12, { fx: p.fx, back: p.back, walk: p.walk, moving: p.moving, atk: p.atkAnim, t, noShadow: true }),
+        drawChibi(c, m.c, 0, 0, 1.12, {
+          fx: p.fx,
+          back: p.back,
+          walk: p.walk,
+          moving: p.moving,
+          atk: p.atkAnim,
+          t,
+          noShadow: true,
+        }),
       );
       heroFallback.obj.position.copy(pos);
     }
@@ -321,7 +362,10 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
           tex = heroSheet.fx.tex.clone();
         tex.needsUpdate = true;
         tex.repeat.set(F.w / tex.image.width, F.h / tex.image.height);
-        swirl = new THREE.Mesh(new THREE.PlaneGeometry(F.w / 30, F.h / 30), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, fog: false }));
+        swirl = new THREE.Mesh(
+          new THREE.PlaneGeometry(F.w / 30, F.h / 30),
+          new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, fog: false }),
+        );
         swirl.userData.F = F;
         scene.add(swirl);
       }
@@ -369,7 +413,8 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       live.add(r.obj);
       let e = renderables.get(r.obj);
       if (!e) {
-        if (def.build3d) e = { o: def.build3d({ THREE, toWorld: (x, y, zh = 0) => ({ x: x / TS, y: zh * LV, z: y / TS }) }, r.obj) };
+        if (def.build3d)
+          e = { o: def.build3d({ THREE, toWorld: (x, y, zh = 0) => ({ x: x / TS, y: zh * LV, z: y / TS }) }, r.obj) };
         else {
           const sz = def.size ?? { w: 64, h: 64 },
             auto = new CanvasSprite(sz.w, sz.h, Q.shadows, false);
@@ -442,12 +487,21 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     };
     for (const f of G.fx) {
       const k = f.life / f.max;
-      if (f.k === "dot") addP(f.x / TS, 0.1 + (f.z ?? 0) / TS + (1 - k) * 0.3, f.y / TS, f.col, Math.max(0.4, f.size * k * 0.4));
+      if (f.k === "dot")
+        addP(f.x / TS, 0.1 + (f.z ?? 0) / TS + (1 - k) * 0.3, f.y / TS, f.col, Math.max(0.4, f.size * k * 0.4));
       else if (f.k === "pt") addP(f.x / TS, 0.3 + (1 - k) * 0.4, f.y / TS, f.col ?? "#fff", 0.8 * k + 0.3);
       else if (f.k === "ring") {
         let r = ringPool[ri];
         if (!r) {
-          r = new THREE.Mesh(new THREE.RingGeometry(0.9, 1, 24), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, depthWrite: false, side: THREE.DoubleSide }));
+          r = new THREE.Mesh(
+            new THREE.RingGeometry(0.9, 1, 24),
+            new THREE.MeshBasicMaterial({
+              color: 0xffffff,
+              transparent: true,
+              depthWrite: false,
+              side: THREE.DoubleSide,
+            }),
+          );
           r.rotation.x = -Math.PI / 2;
           ringPool.push(r);
           fxGroup.add(r);
@@ -462,10 +516,18 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         mat.opacity = k;
         if (k > 0.5) glow.push({ x: f.x / TS, y: 0.6, z: f.y / TS, c: new THREE.Color(f.col), i: 2 * k });
       } else if (f.k === "slash" || f.k === "arrowRain" || f.k === "meteor") {
-        for (let j = 0; j < 6; j++) addP(f.x / TS + Math.sin(j * 2.1 + f.x) * 0.5 * (1 - k), 0.4 + j * 0.08, f.y / TS + Math.cos(j * 1.7) * 0.3, f.col ?? "#fff", 0.6);
+        for (let j = 0; j < 6; j++)
+          addP(
+            f.x / TS + Math.sin(j * 2.1 + f.x) * 0.5 * (1 - k),
+            0.4 + j * 0.08,
+            f.y / TS + Math.cos(j * 1.7) * 0.3,
+            f.col ?? "#fff",
+            0.6,
+          );
         glow.push({ x: f.x / TS, y: 0.6, z: f.y / TS, c: new THREE.Color(f.col ?? "#fff"), i: 1.2 * k });
       } else if (f.k === "bolt") {
-        for (let j = 0; j < 14; j++) addP(f.x / TS + (Math.sin(j * 7.3 + (f.seed ?? 0)) * 0.2), j * 0.35, f.y / TS, j % 3 ? f.col : "#ffffff", 1);
+        for (let j = 0; j < 14; j++)
+          addP(f.x / TS + Math.sin(j * 7.3 + (f.seed ?? 0)) * 0.2, j * 0.35, f.y / TS, j % 3 ? f.col : "#ffffff", 1);
         glow.push({ x: f.x / TS, y: 1.2, z: f.y / TS, c: new THREE.Color(f.col), i: 4 * k });
       }
     }
@@ -474,9 +536,16 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       for (let j = 0; j < 40; j++) {
         const a = j * 2.4 + t * 2,
           r = 0.4 + ((j * 37) % 10) / 8;
-        addP(pos.x + Math.cos(a) * r, pos.y + ((j * 13 + t * 60) % 30) / 18, pos.z + Math.sin(a) * r * 0.7, j % 4 ? "#d8f6ff" : "#ffffff", 0.7);
+        addP(
+          pos.x + Math.cos(a) * r,
+          pos.y + ((j * 13 + t * 60) % 30) / 18,
+          pos.z + Math.sin(a) * r * 0.7,
+          j % 4 ? "#d8f6ff" : "#ffffff",
+          0.7,
+        );
       }
-    for (const fl of G.fields) glow.push({ x: fl.x / TS, y: 0.4, z: fl.y / TS, c: new THREE.Color(EL[fl.el].c), i: 1.5 });
+    for (const fl of G.fields)
+      glow.push({ x: fl.x / TS, y: 0.4, z: fl.y / TS, c: new THREE.Color(EL[fl.el].c), i: 1.5 });
     parts.count = pi;
     parts.instanceMatrix.needsUpdate = true;
     if (parts.instanceColor) parts.instanceColor.needsUpdate = true;

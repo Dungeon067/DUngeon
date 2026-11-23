@@ -88,7 +88,9 @@ function swirl(i: number, n: number): Grid {
     }
   for (let k = 0; k < 6; k++) {
     const t = (k / 6) * Math.PI * 2 + i * 0.7;
-    g.stamp(Math.round(28 + Math.cos(t) * 20) - 1, Math.round(22 + Math.sin(t) * 8) - 1, [".#.", "###", ".#."], { "#": [2] });
+    g.stamp(Math.round(28 + Math.cos(t) * 20) - 1, Math.round(22 + Math.sin(t) * 8) - 1, [".#.", "###", ".#."], {
+      "#": [2],
+    });
   }
   return g;
 }
