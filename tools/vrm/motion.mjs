@@ -4,8 +4,13 @@
 // node tools/vrm/motion.mjs <id> <thư mục>   (FPS=24 W=1280 H=720)
 import { chromium } from "@playwright/test";
 import { execFileSync } from "node:child_process";
-import { mkdirSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, rmSync } from "node:fs";
 const [id = "havy", out = "/tmp/motion"] = process.argv.slice(2);
+// Không có file riêng thì game thay bằng mẫu tạm: dừng để video không ghi nhầm trang phục.
+if (!existsSync(`public/media/models/${id}/model.vrm`)) {
+  console.error(`thiếu public/media/models/${id}/model.vrm`);
+  process.exit(1);
+}
 const URL0 = process.env.URL ?? "http://127.0.0.1:5173/";
 const FPS = +(process.env.FPS ?? 24),
   W = +(process.env.W ?? 1280),
