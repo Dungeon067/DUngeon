@@ -349,6 +349,20 @@ export function render() {
 function render3dOverlay(r3: WorldRenderer, tm: number) {
   ctx.clearRect(0, 0, GS.VW, GS.VH);
   drawPuzzles3d(r3, tm);
+  // Vùng cảnh báo đòn và sóng xung kích: bản vẽ 2D chiếu lên mặt đất quanh điểm của nó.
+  ctx.save();
+  if (groundXf(r3, GS.G.p.x, GS.G.p.y)) drawWaves(ctx);
+  ctx.restore();
+  for (const e of GS.G.enemies) {
+    if (e.dead) continue;
+    ctx.save();
+    if (groundXf(r3, e.x, e.y)) {
+      if (e.isBoss) drawBossTele(e);
+      else drawTele(e);
+    }
+    ctx.restore();
+  }
+  ctx.setTransform(GS.DPR, 0, 0, GS.DPR, 0, 0);
   ctx.textAlign = "center";
   for (const t of GS.G.texts) {
     const k = t.life / t.max,
@@ -364,6 +378,22 @@ function render3dOverlay(r3: WorldRenderer, tm: number) {
   }
   ctx.globalAlpha = 1;
   drawScreenOverlays(tm);
+}
+
+/** Đặt phép biến đổi affine của mặt đất quanh (x, y): vẽ tọa độ thế giới 2D lên mặt đất 3D. */
+function groundXf(r3: WorldRenderer, x: number, y: number): boolean {
+  const q0 = r3.project(x, y),
+    q1 = r3.project(x + TS, y),
+    q2 = r3.project(x, y + TS);
+  if (!q0.vis || q0.x < -300 || q0.x > GS.VW + 300 || q0.y < -300 || q0.y > GS.VH + 300) return false;
+  const ax = (q1.x - q0.x) / TS,
+    ay = (q1.y - q0.y) / TS,
+    bx = (q2.x - q0.x) / TS,
+    by = (q2.y - q0.y) / TS;
+  if (Math.hypot(ax, ay) > 3) return false;
+  const D = GS.DPR;
+  ctx.setTransform(D * ax, D * ay, D * bx, D * by, D * (q0.x - ax * x - bx * y), D * (q0.y - ay * x - by * y));
+  return true;
 }
 
 /** Câu đố, NPC quest mini, cửa bí cảnh (S23) chưa có bản 3D: chiếu bản vẽ 2D lên đúng điểm chân trong cảnh 3D. */
