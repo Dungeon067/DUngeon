@@ -55,11 +55,11 @@ test.describe("máy tính", () => {
     await boot(page);
     await expect(page.locator("#sHub")).toHaveCount(0);
     await expect(page.getByText("Admin", { exact: false })).toHaveCount(0);
-    const pos = await page.evaluate(() => [window.__tinhtu.S.G.p.x, window.__tinhtu.S.G.p.y]);
-
+    // Click lấy tiêu điểm là một đòn đánh thường (có thể nhích bước), nên chốt vị trí khi menu đã mở.
     await page.locator("#game").click({ position: { x: 300, y: 200 } });
     await page.keyboard.press("Escape");
     await expect(menu(page)).toBeVisible();
+    const pos = await page.evaluate(() => [window.__tinhtu.S.G.p.x, window.__tinhtu.S.G.p.y]);
     await msOk(page);
     expect(await screen(page)).toBe("main");
     expect(await S(page, "paused")).toBe(true);
