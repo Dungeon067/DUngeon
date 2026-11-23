@@ -30,3 +30,4 @@ hoatAnh:
 nhanVat:
   havy: { height: 1.55, dang: nu-teen }
   suongmai: { height: 1.56, dang: nu-teen }
+  mailinh: { height: 1.4, dang: nu-nho }
