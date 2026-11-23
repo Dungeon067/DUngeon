@@ -1,0 +1,440 @@
+# Bảo Ấn (S31): 5 ô, độ hiếm 3★–5★, chỉ số chính và phụ, 8 Bộ Ấn, Bí Cảnh Bảo Ấn, phân rã và đổi.
+# Thiết kế: docs/economy/bao-an.md. Kiểm tra: src/data/bao-an-schema.ts (pnpm content:check).
+# Bảo Ấn KHÔNG bán bằng tiền: không gói nạp, không cửa hàng Đá Sao nào có Bảo Ấn hay nguyên liệu Bảo Ấn.
+# Phần trăm ghi dạng thập phân (0.18 = 18%).
+
+# ---------- Chỉ số ----------
+# kieu: "so" = cộng thẳng, "pct" = phần trăm. nhom dùng cho bộ lọc và màn so sánh.
+chiSo:
+  hp: { ten: Máu, kieu: so }
+  atk: { ten: Tấn công, kieu: so }
+  def: { ten: Phòng thủ, kieu: so }
+  hpPct: { ten: Máu, kieu: pct }
+  atkPct: { ten: Tấn công, kieu: pct }
+  defPct: { ten: Phòng thủ, kieu: pct }
+  tinhThong: { ten: Tinh thông nguyên tố, kieu: so }
+  hoiNl: { ten: Hồi năng lượng, kieu: pct }
+  chiMang: { ten: Tỉ lệ chí mạng, kieu: pct }
+  stcm: { ten: Sát thương chí mạng, kieu: pct }
+  triLieu: { ten: Trị liệu, kieu: pct }
+  stHoa: { ten: Sát thương Hỏa, kieu: pct }
+  stThuy: { ten: Sát thương Thủy, kieu: pct }
+  stPhong: { ten: Sát thương Phong, kieu: pct }
+  stLoi: { ten: Sát thương Lôi, kieu: pct }
+  stTho: { ten: Sát thương Thổ, kieu: pct }
+  stBang: { ten: Sát thương Băng, kieu: pct }
+  stMoc: { ten: Sát thương Mộc, kieu: pct }
+  stVatLy: { ten: Sát thương vật lý, kieu: pct }
+
+# ---------- 5 ô ----------
+# chinh: chỉ số chính có thể ra ở ô này và trọng số tung (ô cố định chỉ có một).
+o:
+  - id: hoa
+    ten: Hoa Sao
+    chinh: { hp: 1 }
+  - id: long
+    ten: Lông Vũ
+    chinh: { atk: 1 }
+  - id: den
+    ten: Đèn Canh
+    chinh: { atkPct: 26, hpPct: 26, defPct: 26, tinhThong: 11, hoiNl: 11 }
+  - id: chen
+    ten: Chén Ngọc
+    chinh:
+      {
+        atkPct: 19,
+        hpPct: 19,
+        defPct: 18,
+        tinhThong: 3,
+        stHoa: 5,
+        stThuy: 5,
+        stPhong: 5,
+        stLoi: 5,
+        stTho: 5,
+        stBang: 5,
+        stMoc: 5,
+        stVatLy: 6,
+      }
+  - id: mien
+    ten: Vành Miện
+    chinh: { atkPct: 22, hpPct: 22, defPct: 22, tinhThong: 4, chiMang: 10, stcm: 10, triLieu: 10 }
+
+# ---------- Độ hiếm và cấp ----------
+# capToiDa: cấp nâng tối đa. dongBanDau: số dòng phụ lúc rơi [ít, nhiều] và tỉ lệ ra số nhiều.
+doHiem:
+  "3": { capToiDa: 12, dongBanDau: [3, 4], tiLeNhieu: 0.1 }
+  "4": { capToiDa: 16, dongBanDau: [3, 4], tiLeNhieu: 0.15 }
+  "5": { capToiDa: 20, dongBanDau: [3, 4], tiLeNhieu: 0.2 }
+# Cứ mỗi mocCap cấp: thêm 1 dòng phụ nếu còn dưới 4 dòng, đủ 4 thì tăng ngẫu nhiên 1 dòng đã có.
+mocCap: 4
+
+# Chỉ số chính ở cấp tối đa của Bảo Ấn 5★. Bản 4★, 3★ nhân heSoDoHiem.
+# Cấp 0 bằng heSoCap0 lần, tăng đều tới 1 ở cấp tối đa của độ hiếm đó.
+chinh:
+  giaTri:
+    hp: 1100
+    atk: 72
+    hpPct: 0.18
+    atkPct: 0.18
+    defPct: 0.225
+    tinhThong: 72
+    hoiNl: 0.2
+    chiMang: 0.12
+    stcm: 0.24
+    triLieu: 0.14
+    stHoa: 0.18
+    stThuy: 0.18
+    stPhong: 0.18
+    stLoi: 0.18
+    stTho: 0.18
+    stBang: 0.18
+    stMoc: 0.18
+    stVatLy: 0.225
+  heSoDoHiem: { "3": 0.6, "4": 0.8, "5": 1 }
+  heSoCap0: 0.2
+
+# Chỉ số phụ: giá trị một lần tung ở bậc cao nhất (5★). Mỗi lần tung chọn một trong bốn bậc.
+phu:
+  giaTriToiDa:
+    hp: 120
+    atk: 8
+    def: 10
+    hpPct: 0.024
+    atkPct: 0.024
+    defPct: 0.03
+    tinhThong: 10
+    hoiNl: 0.027
+    chiMang: 0.016
+    stcm: 0.032
+  bac: [0.7, 0.8, 0.9, 1]
+  heSoDoHiem: { "3": 0.6, "4": 0.8, "5": 1 }
+  # Trọng số chọn dòng mới (bỏ dòng trùng chỉ số chính và dòng đã có).
+  trongSo: { hp: 6, atk: 6, def: 6, hpPct: 4, atkPct: 4, defPct: 4, tinhThong: 4, hoiNl: 4, chiMang: 3, stcm: 3 }
+
+# ---------- Kinh nghiệm, phân rã, đổi ----------
+kinhNghiem:
+  # Kinh nghiệm cần để lên từ cấp L lên L+1: goc + moiCap × L. Tổng 3★ 0→12 = 37.200; 4★ 0→16 = 88.000; 5★ 0→20 = 154.400.
+  theoDoHiem:
+    "3": { goc: 900, moiCap: 400 }
+    "4": { goc: 1600, moiCap: 520 }
+    "5": { goc: 2400, moiCap: 560 }
+  # Mỗi điểm kinh nghiệm tốn chừng này Xu.
+  xuMoiKinhNghiem: 0.1
+  # Dùng một Bảo Ấn làm nguyên liệu: kinh nghiệm gốc theo độ hiếm + 80% kinh nghiệm nó đã có.
+  nguyenLieuGoc: { "3": 420, "4": 1260, "5": 2520 }
+  hoanLai: 0.8
+  # Sáp Ấn: vật phẩm kinh nghiệm (id trùng content/items.yaml).
+  sap:
+    - { id: sap-an-tho, r: 3, kinhNghiem: 500 }
+    - { id: sap-an, r: 4, kinhNghiem: 2500 }
+    - { id: sap-an-sao, r: 5, kinhNghiem: 10000 }
+
+# Phân rã: đổi Bảo Ấn thừa (không khóa, không đang trang bị) thành Bụi Ấn và Sáp Ấn.
+phanRa:
+  buiAn: { "3": 1, "4": 3, "5": 10 }
+  # Thêm Bụi Ấn theo mỗi mốc cấp đã nâng (+4, +8 ...).
+  buiMoiMoc: { "3": 0, "4": 1, "5": 2 }
+  # Phần kinh nghiệm đã dồn trả lại dưới dạng Sáp Ấn (làm tròn xuống theo Sáp lớn nhất trước).
+  hoanKinhNghiem: 0.6
+  sapGoc: { "3": { sap-an-tho: 1 }, "4": { sap-an-tho: 2 }, "5": { sap-an: 1 } }
+
+# Đổi Bụi Ấn lấy Bảo Ấn 5★ cấp 0. Giới hạn mỗi tuần (làm mới thứ Hai) để không phá cân bằng.
+doi:
+  - { id: theo-o, ten: Ấn Chọn Ô, chon: [bo, o], buiAn: 120, moiTuan: 3 }
+  - { id: theo-chinh, ten: Ấn Chọn Chính, chon: [bo, o, chinh], buiAn: 300, moiTuan: 1 }
+
+# Hồ sơ mới (và save cũ khi chuyển đổi) nhận sẵn ít đồ để thử.
+khoiDau:
+  sap: { sap-an-tho: 20, sap-an: 4 }
+  buiAn: 0
+  # Một bộ 3★ của Đêm Hội Vạn Đăng đủ 5 ô, cấp 0, để thử ngay khi mở tính năng.
+  bao: [{ bo: dem-hoi-van-dang, r: 3 }]
+
+# ---------- Bí Cảnh Bảo Ấn ----------
+biCanh:
+  # Mở ở cấp Hộ Tinh này. Mỗi lượt tốn Linh Lực; Thiên Tượng càng cao thì đồ càng hiếm.
+  moCapHoTinh: 18
+  linhLuc: 20
+  xu: 1800
+  # Số Bảo Ấn rơi mỗi lượt theo Thiên Tượng 0..8: {r3, r4, r5} là kỳ vọng (phần lẻ là xác suất thêm 1 món).
+  roi:
+    - { r3: 2.0, r4: 0.4, r5: 0 }
+    - { r3: 2.0, r4: 0.8, r5: 0 }
+    - { r3: 1.6, r4: 1.0, r5: 0.1 }
+    - { r3: 1.4, r4: 1.1, r5: 0.25 }
+    - { r3: 1.2, r4: 1.2, r5: 0.4 }
+    - { r3: 1.0, r4: 1.3, r5: 0.6 }
+    - { r3: 0.8, r4: 1.3, r5: 0.8 }
+    - { r3: 0.6, r4: 1.2, r5: 1.0 }
+    - { r3: 0.4, r4: 1.2, r5: 1.1 }
+  # Sáp Ấn rơi kèm mỗi lượt (cộng thêm sapMoiTT mỗi bậc Thiên Tượng, tính theo sap-an-tho).
+  sap: { sap-an-tho: 2, sap-an: 1 }
+  sapMoiTT: 0.25
+  danhSach:
+    - id: ham-den-pho-cu
+      ten: Hầm Đèn Phố Cũ
+      vung: Phố Vạn Đăng
+      bo: [dem-hoi-van-dang, dinh-trong-goi-lang]
+      quai: [slime, goblin, golem]
+    - id: vet-sao-bai-cat
+      ten: Vết Sao Bãi Cát
+      vung: Bãi Sao Rơi
+      bo: [ho-muoi-guong-troi, vet-chay-duong-dua]
+      quai: [archer, goblin, golem]
+    - id: day-ho-guong
+      ten: Đáy Hồ Gương
+      vung: Hồ Gương
+      bo: [dem-ram-den-trang, lan-tuyet-ranmori]
+      quai: [slime, shaman, golem]
+    - id: hang-gio-truc-may
+      ten: Hang Gió Trúc Mây
+      vung: Rừng Trúc Mây
+      bo: [dieu-do-huong-gio, gach-men-nha-chua-xong]
+      quai: [goblin, archer, shaman]
+
+# ---------- Chiến Lực ----------
+# Quy các chỉ số mới về Chiến Lực (công thức ở content/economy.yaml game.chienLuc):
+# Phòng thủ tính như Máu × heSoPhongThu; Tinh thông, Hồi năng lượng, Trị liệu quy ra tăng sát thương.
+chienLuc:
+  heSoPhongThu: 3
+  tinhThongRaSatThuong: 0.0008
+  hoiNlRaSatThuong: 0.25
+  triLieuRaSatThuong: 0.3
+  # Chỉ số gốc Phòng thủ nhân vật ở cấp tối đa = Máu × tiLePhongThuGoc (để quy %Phòng thủ).
+  tiLePhongThuGoc: 0.06
+
+# ---------- Mô phỏng (pnpm economy:sim) ----------
+moPhong:
+  # Số người cày Bảo Ấn ảo (chung cho mọi hồ sơ: Bảo Ấn không phụ thuộc tiền).
+  soNguoi: 400
+  # Linh Lực dành cho Bí Cảnh Bảo Ấn mỗi ngày sau khi mở (lấy bớt từ Lòng Sao).
+  luotMoiNgay: 3
+  # Bộ chủ lực săn (4 món) và bộ phụ (2 món); chỉ số chủ lực ưa thích theo ô.
+  boChinh: dem-hoi-van-dang
+  boPhu: lan-tuyet-ranmori
+  uaThich:
+    den: [atkPct]
+    chen: [stLoi]
+    mien: [chiMang, stcm]
+  phuUaThich: [chiMang, stcm, atkPct, atk, hoiNl]
+
+# ---------- 8 Bộ Ấn ----------
+# hieuUng: chữ hiện trong game. chienLuc: giá trị quy đổi (giả định thời gian hiệu lực trung bình) cho Chiến Lực
+# và mô phỏng; khóa là chỉ số trong chiSo hoặc "dmg" (tăng sát thương chung), "doiAtkPct" (cả đội %Tấn công).
+bo:
+  - id: dem-hoi-van-dang
+    ten: Đêm Hội Vạn Đăng
+    vung: Phố Vạn Đăng
+    vaiTro: Sát thương nộ
+    mau: ["#ff8a3a", "#ffd27a"]
+    hai:
+      hieuUng: "Tăng 20% sát thương nộ."
+      chienLuc: { dmg: 0.06 }
+    bon:
+      hieuUng: "Sau khi dùng nộ, đánh thường và trọng kích tăng 30% sát thương trong 8 giây."
+      chienLuc: { dmg: 0.1 }
+    mon:
+      hoa:
+        ten: Hoa Giấy Đèn Lồng
+        truyen: "Bông hoa xếp từ giấy dán đèn lồng ở Phố Vạn Đăng. Đứa bé làm nó thức trọn đêm hội để kịp tặng người bán đèn. Cánh hoa vẫn ấm như vừa đứng cạnh bấc."
+      long:
+        ten: Lông Cánh Pháo Hoa
+        truyen: "Chiếc lông chim cháy sém một mép, rơi xuống chợ đêm sau loạt pháo cuối. Không ai biết con chim nào bay qua đúng lúc ấy. Mép cháy còn lấp lánh như bụi pháo."
+      den:
+        ten: Đèn Canh Chợ Đêm
+        truyen: "Ngọn đèn nhỏ người gác chợ đêm treo đầu sạp để đếm giờ. Dầu cạn một nấc là qua một canh. Có đêm đèn cạn mà chợ chưa ai muốn về."
+      chen:
+        ten: Chén Rượu Mừng Hội
+        truyen: "Chén ngọc mỏng dùng mời khách trong đêm hội đèn. Rót nước vào thì đáy chén hiện một chấm sáng như đèn ở xa. Chủ quán nói chén chưa từng vỡ, dù rơi bao lần."
+      mien:
+        ten: Vành Đèn Kết Hoa
+        truyen: "Vành tóc kết mười hai chiếc đèn bé bằng hạt đậu, đội cho người múa mở đêm hội. Khi người múa xoay, đèn kéo thành một vòng sáng. Chiếc đèn thứ mười ba không biết ai thêm vào."
+  - id: ho-muoi-guong-troi
+    ten: Hồ Muối Gương Trời
+    vung: Hồ Muối Gương Trời
+    vaiTro: Phản ứng nguyên tố
+    mau: ["#b47bff", "#e8f0ff"]
+    hai:
+      hieuUng: "Tăng 60 Tinh thông nguyên tố."
+      chienLuc: { tinhThong: 60 }
+    bon:
+      hieuUng: "Tăng 30% sát thương do phản ứng gây ra. Bốc Hơi và Tan Chảy tăng thêm 12%."
+      chienLuc: { dmg: 0.09 }
+    mon:
+      hoa:
+        ten: Hoa Muối Đầu Mùa
+        truyen: "Bông hoa kết từ tinh thể muối trên mặt hồ ở Khokhtal. Mỗi mùa giông nó mọc lại đúng chỗ cũ. Nhìn nghiêng thấy trong cánh hoa có một tia sét nhỏ nằm im."
+      long:
+        ten: Lông Chim Lội Muối
+        truyen: "Chiếc lông trắng của loài chim lội nông kiếm ăn trên hồ muối. Sét đánh ngay cạnh mà chim không bay. Lông vẫn còn mùi nắng và mùi mặn."
+      den:
+        ten: Đèn Đo Giông
+        truyen: "Ngọn đèn thủy tinh người chăn ngựa đặt giữa hồ để đoán giông. Lửa trong đèn nghiêng trước khi gió tới. Có lần nó nghiêng về phía không có gió nào."
+      chen:
+        ten: Chén Nước Hai Trời
+        truyen: "Chén ngọc múc nước hồ, nhìn vào thấy cả bầu trời lẫn đáy hồ. Người Khokhtal đưa nó mời khách mới tới. Uống xong ai cũng nói nước ngọt, dù hồ thì mặn."
+      mien:
+        ten: Vành Muối Kết Tinh
+        truyen: "Vành tóc kết bằng muối hồ đã cứng như đá. Người về đầu cuộc đua giông được đội nó một ngày. Sau ngày ấy vành tự tan thành nước."
+  - id: dinh-trong-goi-lang
+    ten: Đình Trống Gọi Làng
+    vung: Đình Trống Đồng
+    vaiTro: Tăng sức đội sau nộ
+    mau: ["#e8b456", "#7a3a14"]
+    hai:
+      hieuUng: "Tăng 15% Tấn công."
+      chienLuc: { atkPct: 0.15 }
+    bon:
+      hieuUng: "Dùng nộ thì cả đội tăng 18% Tấn công trong 12 giây. Hiệu ứng này không cộng dồn."
+      chienLuc: { doiAtkPct: 0.1 }
+    mon:
+      hoa:
+        ten: Hoa Đồng Mặt Trống
+        truyen: "Bông hoa mười hai cánh gõ từ miếng đồng thừa khi đúc trống. Người thợ giữ nó trong túi suốt đời. Áp tai vào hoa sẽ nghe một tiếng trống rất xa."
+      long:
+        ten: Lông Chim Lạc Bay Xuôi
+        truyen: "Chiếc lông gò theo vòng chim Lạc trên mặt trống cổ ở Đình Trống Đồng. Các con chim ấy bay ngược chiều kim đồng hồ, chỉ một con bay xuôi. Chiếc lông này là của con chim đó."
+      den:
+        ten: Đèn Canh Hội Đồng
+        truyen: "Ngọn đèn đặt giữa bàn mỗi khi Hội Đồng họp ở Đình Trống. Đèn tắt là phải thôi cãi nhau mà đi ngủ. Nghe nói có lần ai đó lén thêm dầu."
+      chen:
+        ten: Chén Nước Ba Hồi
+        truyen: "Chén ngọc đựng nước đặt trước trống, mỗi hồi trống nước gợn một vòng. Người già nhìn vòng nước mà đoán giờ. Ba hồi dồn thì nước dâng tới miệng chén mà không tràn."
+      mien:
+        ten: Vành Khăn Người Gõ
+        truyen: "Vành khăn đỏ của người gõ trống mở hội. Khăn thấm mồ hôi bao đời mà màu không phai. Người đội nó tự nhiên đứng thẳng lưng hơn."
+  - id: dieu-do-huong-gio
+    ten: Diều Đo Hướng Gió
+    vung: Thiên Diên Thành
+    vaiTro: Hồi năng lượng đội
+    mau: ["#4cf0c0", "#e0f4ff"]
+    hai:
+      hieuUng: "Tăng 20% Hồi năng lượng."
+      chienLuc: { hoiNl: 0.2 }
+    bon:
+      hieuUng: "Kỹ năng trúng địch thì cả đội hồi 2 năng lượng. Mỗi 6 giây chỉ một lần."
+      chienLuc: { hoiNl: 0.15 }
+    mon:
+      hoa:
+        ten: Hoa Giấy Đuôi Diều
+        truyen: "Bông hoa giấy buộc ở đuôi một con diều trên mái Thiên Diên Thành. Gió đổi hướng thì hoa quay trước cả diều. Dây buộc đứt đã lâu mà hoa vẫn không bay đi."
+      long:
+        ten: Lông Hạc Chép Gió
+        truyen: "Chiếc lông hạc người chép sổ dùng làm ngòi để ghi hướng gió. Nét viết bằng nó tự nghiêng theo gió hôm ấy. Trang cuối còn một nét chưa nghiêng về đâu."
+      den:
+        ten: Đèn Gió Tầng Chín
+        truyen: "Ngọn đèn giấy bồi treo ở tầng trên cùng Các Nghe Gió. Gió lùa qua cửa sổ làm lửa thì thầm thành tiếng. Người giữ các nói đèn đang kể lại những gì gió vừa nghe."
+      chen:
+        ten: Chén Ngọc Hứng Mây
+        truyen: "Chén ngọc mỏng đặt ngoài mái để hứng hơi mây buổi sớm. Đầy chén là đủ mài một thỏi mực. Mực mài bằng nước mây viết không bao giờ nhòe."
+      mien:
+        ten: Vành Dây Diều Bạc
+        truyen: "Vành tóc bện từ sợi dây diều bạc đã thả qua nghìn mùa gió. Người đội nó biết gió sắp đổi trước khi lá rung. Có một nút thắt chưa ai cởi được."
+  - id: vet-chay-duong-dua
+    ten: Vệt Cháy Đường Đua
+    vung: Đường Đua Giông
+    vaiTro: Sát thương trọng kích
+    mau: ["#ffd24a", "#8a5cff"]
+    hai:
+      hieuUng: "Tăng 18% sát thương trọng kích."
+      chienLuc: { dmg: 0.05 }
+    bon:
+      hieuUng: "Trọng kích trúng địch cho 1 tầng Vó Giông trong 6 giây, tối đa 3 tầng. Mỗi tầng tăng 10% sát thương trọng kích và 3% tỉ lệ chí mạng trọng kích."
+      chienLuc: { dmg: 0.08, chiMang: 0.03 }
+    mon:
+      hoa:
+        ten: Hoa Cỏ Sau Sét
+        truyen: "Bông hoa cỏ mọc dọc vệt cháy trên Đường Đua Giông. Sét đánh xong mới nở, nở xong thì gió cuốn đi. Ai nhặt được một bông trước khi nó bay là được đua thêm vòng."
+      long:
+        ten: Lông Bờm Ngựa Giông
+        truyen: "Một túm bờm ngựa giông buộc lại như lông chim. Sờ vào tê tay như kiến bò. Người cưỡi cài nó sau tai để ngựa nghe lời hơn."
+      den:
+        ten: Đèn Đếm Vòng Đua
+        truyen: "Ngọn đèn đồng đặt ở vạch đích, mỗi vòng đua thắp thêm một bấc. Đèn có chín bấc mà chưa ai thắp đủ. Bấc thứ chín lại đen như đã từng cháy."
+      chen:
+        ten: Chén Sữa Mừng Đích
+        truyen: "Chén ngọc đựng sữa ngựa mời người về tới đích. Người về sau cũng được uống, chỉ là uống sau. Đáy chén khắc một vó ngựa đang nhấc lên."
+      mien:
+        ten: Vành Đá Sét Nóng
+        truyen: "Vành tóc gắn những ống đá sét nhặt trên Đồi Đá Sét. Đội lâu thì tóc dựng lên một chút. Thợ bạc nói đá còn giữ tiếng sấm của năm nó rơi."
+  - id: gach-men-nha-chua-xong
+    ten: Gạch Men Nhà Chưa Xong
+    vung: Nhà Chưa Xong
+    vaiTro: Khiên, che chắn
+    mau: ["#3fb4ff", "#d8243a"]
+    hai:
+      hieuUng: "Khiên tạo ra bền thêm 30%."
+      chienLuc: { hpPct: 0.1 }
+    bon:
+      hieuUng: "Nhân vật đang có khiên tăng 20% sát thương gây ra."
+      chienLuc: { dmg: 0.1 }
+    mon:
+      hoa:
+        ten: Hoa Lựu Trên Gạch
+        truyen: "Bông hoa lựu vẽ men đỏ trên một viên gạch vỡ ở Nhà Chưa Xong. Ostad Khesht giữ lại mảnh có hoa. Ông nói căn phòng thiếu nó sẽ không ấm."
+      long:
+        ten: Lông Chim Mái Vòm
+        truyen: "Chiếc lông của loài chim làm tổ trên mái vòm Minashahr. Chim tha gạch vụn về xây tổ như học theo chủ nhà. Lông có ánh men xanh, rửa mãi không trôi."
+      den:
+        ten: Đèn Đất Nung Khắc Tên
+        truyen: "Ngọn đèn đất nung đặt trước mỗi phòng mới xây xong. Đèn cháy hết dầu thì phòng có người ở. Có một ngọn chưa ai châm, trước căn phòng bị khóa."
+      chen:
+        ten: Chén Men Ốc Đảo
+        truyen: "Chén ngọc tráng men xanh múc nước từ Kênh Ngầm Dài. Thợ gạch uống một chén rồi mới vào ca. Nước trong chén mát tới tận chiều."
+      mien:
+        ten: Vành Vữa Đông Nhanh
+        truyen: "Vành tóc bằng vữa trộn bột men, cứng hơn cả gạch nung. Thợ xây đội nó khi trèo lên mái vòm. Có người ngã từ trên cao, vành vỡ, còn người thì không sao."
+  - id: dem-ram-den-trang
+    ten: Đêm Rằm Đền Trăng
+    vung: Hồ Gương và Đền Trăng
+    vaiTro: Trị liệu
+    mau: ["#bfe8ff", "#f2f0f8"]
+    hai:
+      hieuUng: "Tăng 15% trị liệu."
+      chienLuc: { triLieu: 0.15 }
+    bon:
+      hieuUng: "Mỗi lần hồi máu cho đồng đội, cả đội tăng 12% sát thương trong 6 giây."
+      chienLuc: { dmg: 0.08 }
+    mon:
+      hoa:
+        ten: Hoa Súng Hồ Gương
+        truyen: "Bông hoa súng bạc chỉ nở trên Hồ Gương đêm rằm. Hái lên rồi thì nó không bao giờ khép. Người Đền Trăng đặt nó cạnh người ốm cho dễ ngủ."
+      long:
+        ten: Lông Cò Đứng Bờ
+        truyen: "Chiếc lông của con cò đứng canh bờ hồ suốt đêm. Người giữ đền nói nó canh giấc ngủ của Bà Khơi. Đặt lông lên mặt nước mà nước không gợn."
+      den:
+        ten: Đèn Trăng Mở Cửa
+        truyen: "Ngọn đèn bạc thắp lên khi Đền Trăng mở cửa trong cho khách. Ánh đèn màu trăng, soi vào vết thương thì đỡ rát. Đèn chỉ cháy tới lúc trăng lặn."
+      chen:
+        ten: Chén Nước Chuông Bạc
+        truyen: "Chén ngọc hứng nước dưới chiếc chuông bạc của đền. Tiếng chuông làm nước dịu lại, uống vào thấy lòng nhẹ đi. Người giữ đền chưa bao giờ uống chén ấy cho mình."
+      mien:
+        ten: Vành Trăng Người Giữ
+        truyen: "Vành bạc mỏng của Người Giữ Đền Trăng, mỗi đời khắc thêm một vòng trăng. Vành đã có ba mươi mốt vòng. Vòng mới nhất khắc còn vụng."
+  - id: lan-tuyet-ranmori
+    ten: Lan Tuyết Rừng Ranmori
+    vung: Ranmori
+    vaiTro: Giảm kháng của địch
+    mau: ["#9be8ff", "#3a5a78"]
+    hai:
+      hieuUng: "Tăng 15% sát thương nguyên tố."
+      chienLuc: { dmg: 0.15 }
+    bon:
+      hieuUng: "Kỹ năng trúng địch làm giảm 15% kháng nguyên tố của nó trong 10 giây."
+      chienLuc: { dmg: 0.1 }
+    mon:
+      hoa:
+        ten: Lan Tuyết Không Tan
+        truyen: "Bông lan tuyết hái ở rìa rừng Ranmori. Lan tuyết chỉ nở ở nơi từng có người khóc. Bông này nở trên một tảng đá không ai ngồi."
+      long:
+        ten: Lông Cú Tuyết Tùng
+        truyen: "Chiếc lông của con cú làm tổ trong rừng tuyết tùng. Cú bay không một tiếng, chỉ có tuyết rơi khỏi cành. Lông lạnh như vừa nhặt dưới tuyết."
+      den:
+        ten: Đèn Băng Đường Thư
+        truyen: "Ngọn đèn băng ở trạm nghỉ cuối Đường Thư Núi. Người đưa thư thắp nó để báo đã qua núi an toàn. Lửa trong đèn màu xanh, đặt tay vào không thấy nóng."
+      chen:
+        ten: Chén Ngọc Tôi Kiếm
+        truyen: "Chén ngọc ở Xưởng Rèn Shimogane, thợ dùng để nhúng thử lưỡi kiếm mới tôi. Nước trong chén không bao giờ sôi. Mép chén có một vết mẻ hình hoa lan."
+      mien:
+        ten: Vành Tuyết Không Lời
+        truyen: "Vành tuyết kết trên đỉnh Núi Không Lời, nơi không có gió. Ai nói một lời thật lòng ở đó thì nó rơi xuống tay. Vành không tan, nhưng nặng dần nếu người đội nói dối."
