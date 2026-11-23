@@ -90,8 +90,35 @@ const DesignSchema = z
             bao4Sao: int.min(1),
             tiLeNoiBat: pct,
             laBanSao: int,
+            gia: int.min(1),
+            noiBat: z.tuple([z.string().min(1), z.string().min(1)]),
           })
           .strict(),
+        cap: z
+          .object({
+            toiDa: int.min(2),
+            gioiHan: z.array(int.min(1)).length(7),
+            heSoCap1: pct,
+            kinhNghiem: z.object({ goc: int.min(1), moiCap: int }).strict(),
+            xuMoiKinhNghiem: n,
+            kinhNghiemVuKhi: z.array(int).length(3),
+            dotPha: z.object({ quang: z.array(int).length(6), xu: z.array(int).length(6) }).strict(),
+          })
+          .strict(),
+        quang: z
+          .array(
+            z
+              .object({
+                id: z.string().min(1),
+                r: z.union([z.literal(3), z.literal(4), z.literal(5)]),
+                kinhNghiem: int.min(1),
+              })
+              .strict(),
+          )
+          .length(3),
+        loRen: z.object({ nguyenLieu: z.string().min(1), so: int.min(1), xu: int }).strict(),
+        macDinh: z.record(z.enum(["sword", "great", "cat", "bow", "spear"]), z.string().min(1)),
+        khoiDau: z.record(z.string(), int),
         danhSach: z.array(VuKhiSchema).min(1),
       })
       .strict(),
@@ -231,6 +258,20 @@ export function validateEconomy(raw: unknown, chars: { id: string; r: number }[]
   if (wb.mem > wb.cung) errors.push("vuKhi.banner.mem phải ≤ cung");
   const wids = t.vuKhi.danhSach.map((w) => w.id);
   if (new Set(wids).size !== wids.length) errors.push("vuKhi.danhSach: id trùng");
+  const wById = new Map(t.vuKhi.danhSach.map((w) => [w.id, w]));
+  for (const id of wb.noiBat) {
+    const w = wById.get(id);
+    if (!w || w.r !== 5 || w.nguon !== "gioiHan")
+      errors.push(`vuKhi.banner.noiBat: "${id}" phải là vũ khí 5★ giới hạn`);
+  }
+  if (wb.noiBat[0] === wb.noiBat[1]) errors.push("vuKhi.banner.noiBat: hai vũ khí phải khác nhau");
+  const wc = t.vuKhi.cap;
+  if (!mono(wc.gioiHan) || wc.gioiHan.at(-1) !== wc.toiDa)
+    errors.push("vuKhi.cap.gioiHan phải tăng dần và kết thúc bằng vuKhi.cap.toiDa");
+  for (const [loai, id] of Object.entries(t.vuKhi.macDinh)) {
+    const w = wById.get(id);
+    if (!w || w.r !== 3 || w.loai !== loai) errors.push(`vuKhi.macDinh.${loai}: "${id}" phải là vũ khí 3★ cùng loại`);
+  }
   const pools = e.game.nhanVat5Sao;
   for (const id of pools.thuongTru)
     if (pools.gioiHan.includes(id)) errors.push(`nhanVat5Sao: "${id}" không được nằm ở cả hai pool`);

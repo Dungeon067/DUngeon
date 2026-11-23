@@ -4,6 +4,7 @@ import "./chars";
 import "./team";
 import "./wish";
 import "./bag";
+import "./weapons";
 import "./quests";
 import "./map";
 import "./codex";

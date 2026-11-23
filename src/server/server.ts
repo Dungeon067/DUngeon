@@ -1,10 +1,21 @@
-import type { LogEntry, Profile, PuzzleSave } from "./types";
+import type { LogEntry, Profile, PuzzleSave, WeaponBannerCfg } from "./types";
 import { DOMAINS, MINI, PZ } from "../data/puzzles";
 import { fmt, pick, todayKey } from "../core/util";
-import { CHARS, DAILY_POOL, DEFAULT_CFG, ITEMS3, START_PROFILE, byId } from "../data/content";
+import { CHARS, DAILY_POOL, DEFAULT_CFG, START_PROFILE, byId } from "../data/content";
 import { toast } from "../ui/toast";
 import { ECON } from "../data/economy";
-import { charStats, chienLuc, lvCost as lvCostOf, rollRarity } from "../economy/core";
+import { charStats, chienLuc, lvCost as lvCostOf, rollRarity, rollWeapon, type Invest } from "../economy/core";
+import type { Economy, Weapon } from "../data/economy-schema";
+import {
+  addExp,
+  ascendCost,
+  defaultWeaponFor,
+  fodderExp,
+  lvCapOf,
+  newWeapon,
+  previewExp,
+  type WeaponInst,
+} from "../economy/weapons";
 
 export const SAVE_KEY = "tinhtu-v3";
 export const OLD_SAVE_KEY = "tinhtu-v2";
@@ -14,7 +25,60 @@ export const LOG_KEY = "tinhtu-log";
 export const FOG = 5;
 export const FOG_N = 22;
 
-export function freshProfile(): Profile {
+/** Đọc qua hàm để bản chỉnh Admin (setEcon/reloadEcon) có hiệu lực ngay. */
+export const vk = () => ECON.thietKe.vuKhi;
+export const weaponList = () => vk().danhSach;
+export const wDef = (id: string): Weapon | undefined => vk().danhSach.find((w) => w.id === id);
+
+export function defaultWcfg(): WeaponBannerCfg {
+  const b = vk().banner;
+  return { rate5: b.tiLe5, rate4: b.tiLe4, soft: b.mem, hard: b.cung, cost: b.gia, featured: [...b.noiBat] };
+}
+
+/** Thêm một bản vũ khí vào kho, trả về bản vừa thêm. */
+export function addWeapon(P: Profile, id: string): WeaponInst {
+  if (!wDef(id)) throw new Error(`Không có vũ khí "${id}"`);
+  const uid = "w" + ++P.wSeq;
+  return (P.weapons[uid] = newWeapon(uid, id));
+}
+
+/** uid → id nhân vật đang cầm. */
+export function holders(P: Profile) {
+  const m: Record<string, string> = {};
+  for (const [cid, o] of Object.entries(P.owned)) if (o.vk) m[o.vk] = cid;
+  return m;
+}
+
+/**
+ * Bước chuyển đổi S24 (kho vũ khí). Idempotent và không phụ thuộc số phiên bản, nên chạy sau mọi bước chuyển
+ * phiên bản khác (kể cả của S23): thiếu kho thì tạo kèm nguyên liệu khởi đầu, nhân vật thiếu vũ khí hợp lệ thì
+ * trang bị vũ khí 3★ mặc định theo loại.
+ */
+export function ensureWeapons(P: Profile): Profile {
+  if (!P.weapons || typeof P.weapons !== "object") {
+    P.weapons = {};
+    P.bag = P.bag ?? {};
+    for (const [k, n] of Object.entries(vk().khoiDau)) P.bag[k] = (P.bag[k] ?? 0) + n;
+  }
+  P.wSeq = Math.max(P.wSeq ?? 0, ...Object.keys(P.weapons).map((u) => Number(u.slice(1)) || 0));
+  P.wPity = Object.assign({ pity5: 0, pity4: 0, guaranteed: false, laBan: 0 }, P.wPity);
+  P.wPick = P.wPick ?? null;
+  P.wHistory = Array.isArray(P.wHistory) ? P.wHistory : [];
+  P.wcfg = { ...defaultWcfg(), ...P.wcfg };
+  const used = new Set<string>();
+  for (const [cid, o] of Object.entries(P.owned)) {
+    const c = byId[cid];
+    if (!c) continue;
+    const w = o.vk ? P.weapons[o.vk] : undefined;
+    if (!w || !wDef(w.id) || wDef(w.id)!.loai !== c.w || used.has(o.vk!))
+      o.vk = addWeapon(P, defaultWeaponFor(c.w, ECON)).uid;
+    used.add(o.vk!);
+  }
+  return P;
+}
+
+/** Hồ sơ gốc chưa có phần vũ khí (S24 bổ sung qua ensureWeapons). */
+function baseProfile(): Profile {
   const party = [...START_PROFILE.party];
   return {
     v: 3,
@@ -45,7 +109,7 @@ export function freshProfile(): Profile {
     econ: {},
     quits: [],
     puz: freshPuz(),
-  };
+  } as unknown as Profile;
 }
 export const freshPuz = (): PuzzleSave => ({ solved: [], talked: [], mini: [], domains: {} });
 const arr = (v: any) => (Array.isArray(v) ? v.filter((x) => typeof x === "string") : []);
@@ -62,20 +126,38 @@ function withPuz(p: Profile): Profile {
   p.puz = { solved: arr(o.solved), talked: arr(o.talked), mini: arr(o.mini), domains };
   return p;
 }
-/** Chuyển hồ sơ cũ (v2) lên v3, giữ toàn bộ dữ liệu đã có. */
+export function freshProfile(): Profile {
+  return ensureWeapons(baseProfile());
+}
+/** Chuyển hồ sơ cũ (v2) lên v3, giữ toàn bộ dữ liệu đã có; cuối cùng bổ sung kho vũ khí (S24). */
 export function migrate(old: any): Profile | null {
   if (!old || typeof old !== "object") return null;
-  if (old.v === 3) return withPuz(withLimitedBanner({ ...freshProfile(), ...old }));
+  if (old.v === 3) return ensureWeapons(withPuz(withLimitedBanner({ ...baseProfile(), ...old })));
   if (old.v !== 2) return null;
-  const base = freshProfile();
+  const base = baseProfile();
   const party = Array.isArray(old.party) && old.party.length ? old.party : base.party;
-  return withPuz(withLimitedBanner({ ...base, ...old, v: 3, party, teams: [[...party], [], [], []], team: 0 }));
+  return ensureWeapons(
+    withPuz(withLimitedBanner({ ...base, ...old, v: 3, party, teams: [[...party], [], [], []], team: 0 })),
+  );
 }
 /** Hồ sơ cũ có banner nổi bật không còn là 5★ giới hạn (ví dụ Lạc Hồng trước S23): chuyển về banner mặc định. */
 function withLimitedBanner(p: Profile): Profile {
   if (!ECON.game.nhanVat5Sao.gioiHan.includes(p.cfg?.featured))
     p.cfg = { ...DEFAULT_CFG, ...p.cfg, featured: DEFAULT_CFG.featured };
   return p;
+}
+/** Số liệu banner vũ khí sau khi áp cấu hình Admin. */
+function wEcon(c: WeaponBannerCfg): Economy {
+  const banner = {
+    ...vk().banner,
+    tiLe5: c.rate5,
+    tiLe4: c.rate4,
+    mem: c.soft,
+    cung: c.hard,
+    gia: c.cost,
+    noiBat: c.featured,
+  };
+  return { ...ECON, thietKe: { ...ECON.thietKe, vuKhi: { ...vk(), banner } } };
 }
 export function genDaily(seedKey: string) {
   const pool = DAILY_POOL;
@@ -153,7 +235,7 @@ export const Server = {
       P.coin += ECON.game.netSao.xuKhiDayN6[c.r === 5 ? "5" : "4"];
       return { dup: true, cons: 6, max: true };
     }
-    P.owned[id] = { lv: 1, cons: 0 };
+    P.owned[id] = { lv: 1, cons: 0, vk: addWeapon(P, defaultWeaponFor(c.w, ECON)).uid };
     return { dup: false, cons: 0 };
   },
   rollOne() {
@@ -174,11 +256,51 @@ export const Server = {
       out = { kind: "char", id: c.id, r: 4, name: c.name, ...this.grant(c.id) };
     } else {
       P.coin += ECON.game.xuVatPham3;
-      out = { kind: "item", r: 3, name: pick(ITEMS3) };
+      const w = addWeapon(P, pick(weaponList().filter((x) => x.r === 3)).id);
+      out = { kind: "weapon", r: 3, id: w.id, uid: w.uid, name: wDef(w.id)!.ten };
     }
     P.history.unshift({ n: out.name, r: out.r, t: Date.now() });
     if (P.history.length > 100) P.history.pop();
     return out;
+  },
+  /** Một lượt banner Binh Khí Tinh Tú. */
+  rollWeaponOne() {
+    const P = this.P,
+      c = P.wcfg;
+    const res = rollWeapon(P.wPity, wEcon(c), Math.random);
+    let id: string;
+    if (res.r === 5) {
+      if (res.kind === "thuong") id = pick(weaponList().filter((w) => w.r === 5 && w.nguon === "thuongTru")).id;
+      else if (P.wPick && c.featured.includes(P.wPick))
+        id = res.kind === "chon" ? P.wPick : c.featured.find((x) => x !== P.wPick)!;
+      else {
+        id = pick(c.featured);
+        P.wPity.laBan = 0;
+      }
+    } else if (res.r === 4) id = pick(weaponList().filter((w) => w.r === 4 && w.nguon === "uocNguyen")).id;
+    else id = pick(weaponList().filter((w) => w.r === 3)).id;
+    const w = addWeapon(P, id),
+      def = wDef(id)!;
+    const out = { kind: "weapon", r: def.r, id, uid: w.uid, name: def.ten, feat: res.r === 5 && res.kind !== "thuong" };
+    P.wHistory.unshift({ n: def.ten, r: def.r, t: Date.now(), id });
+    if (P.wHistory.length > 100) P.wHistory.pop();
+    return out;
+  },
+  /** Vũ khí theo uid, báo lỗi nếu không có. */
+  wget(uid: string): WeaponInst {
+    const w = this.P.weapons[uid];
+    if (!w) throw new Error("Không có vũ khí này");
+    return w;
+  },
+  /** Kiểm tra một vũ khí có dùng làm nguyên liệu được không. */
+  fodder(uid: string, target: string, confirm: boolean) {
+    if (uid === target) throw new Error("Không dùng chính vũ khí đang nâng cấp làm nguyên liệu");
+    const m = this.wget(uid);
+    if (m.lock) throw new Error("Vũ khí đã khóa, mở khóa trước khi dùng làm nguyên liệu");
+    const h = holders(this.P)[uid];
+    if (h) throw new Error(`Vũ khí đang được ${byId[h]?.name ?? h} trang bị`);
+    if (wDef(m.id)!.r >= 4 && !confirm) throw new Error("Cần xác nhận khi dùng vũ khí 4★/5★ làm nguyên liệu");
+    return m;
   },
   /** Ghi Đá Sao vào/ra theo nguồn để trang Admin thống kê kinh tế. */
   econ(key: string, n: number) {
@@ -211,6 +333,111 @@ export const Server = {
       for (let i = 0; i < n; i++) out.push(this.rollOne());
       this.bumpDaily("wish", n);
       return out;
+    },
+    // ---- vũ khí (S24) ----
+    wPull(this: any, { count }: any) {
+      const n = count === 10 ? 10 : 1,
+        P = this.P,
+        cost = P.wcfg.cost * n;
+      if (P.gems < cost) throw new Error(`Không đủ Đá Sao: cần ${fmt(cost)}, đang có ${fmt(P.gems)}`);
+      P.gems -= cost;
+      this.econ("ra:uoc-vu-khi", cost);
+      const out = [];
+      for (let i = 0; i < n; i++) out.push(this.rollWeaponOne());
+      this.bumpDaily("wish", n);
+      return out;
+    },
+    /** La Bàn Sao: chọn trước một trong hai vũ khí nổi bật. Đổi lựa chọn thì điểm La Bàn về 0. */
+    wPick(this: any, { id }: any) {
+      const P = this.P;
+      if (id !== null && !P.wcfg.featured.includes(id)) throw new Error("Chỉ chọn được vũ khí nổi bật của đợt này");
+      if (P.wPick !== id) P.wPity.laBan = 0;
+      P.wPick = id;
+      return { pick: id, laBan: P.wPity.laBan };
+    },
+    equipWeapon(this: any, { char, uid, swap }: any) {
+      const P = this.P,
+        o = P.owned[char],
+        c = byId[char];
+      if (!o || !c) throw new Error("Bạn chưa có nhân vật này");
+      const w = this.wget(uid);
+      if (wDef(w.id)!.loai !== c.w) throw new Error("Vũ khí không đúng loại của nhân vật");
+      if (o.vk === uid) return { char, uid, from: null };
+      const from = holders(P)[uid] ?? null;
+      if (from && !swap) throw new Error(`Vũ khí đang ở ${byId[from]?.name ?? from}, cần xác nhận đổi`);
+      if (from) {
+        P.owned[from].vk = o.vk;
+        if (!P.owned[from].vk) P.owned[from].vk = addWeapon(P, defaultWeaponFor(byId[from].w, ECON)).uid;
+      }
+      o.vk = uid;
+      return { char, uid, from };
+    },
+    lockWeapon(this: any, { uid, lock }: any) {
+      const w = this.wget(uid);
+      w.lock = !!lock;
+      return w.lock;
+    },
+    /** Nâng cấp bằng Quặng Tinh Luyện và vũ khí khác. Tốn Xu theo kinh nghiệm thực nhận. */
+    upgradeWeapon(this: any, { uid, ores = {}, mats = [], confirm = false }: any) {
+      const P = this.P,
+        w = this.wget(uid);
+      if (w.lv >= lvCapOf(w, ECON)) throw new Error("Đã chạm giới hạn cấp, cần đột phá");
+      let exp = 0;
+      const oreUse: [string, number][] = [];
+      for (const [id, raw] of Object.entries(ores)) {
+        const k = Math.floor(Number(raw));
+        if (!k) continue;
+        const q = vk().quang.find((x) => x.id === id);
+        if (!q || k < 0) throw new Error("Nguyên liệu không hợp lệ");
+        if ((P.bag[id] ?? 0) < k) throw new Error("Không đủ quặng");
+        exp += k * q.kinhNghiem;
+        oreUse.push([id, k]);
+      }
+      const list: string[] = [...new Set<string>(Array.isArray(mats) ? mats : [])];
+      for (const m of list) exp += fodderExp(this.fodder(m, uid, confirm), ECON);
+      if (!exp) throw new Error("Chưa chọn nguyên liệu");
+      const pv = previewExp(w, exp, ECON),
+        cost = Math.ceil(pv.used * vk().cap.xuMoiKinhNghiem);
+      if (P.coin < cost) throw new Error(`Không đủ Xu: cần ${fmt(cost)}`);
+      P.coin -= cost;
+      for (const [id, k] of oreUse) P.bag[id] -= k;
+      for (const m of list) delete P.weapons[m];
+      addExp(w, exp, ECON);
+      return { lv: w.lv, exp: w.exp, used: pv.used, coin: cost };
+    },
+    ascendWeapon(this: any, { uid }: any) {
+      const P = this.P,
+        w = this.wget(uid),
+        c = ascendCost(w, ECON);
+      if (!c) throw new Error("Đã đột phá tối đa");
+      if (w.lv < lvCapOf(w, ECON)) throw new Error(`Cần đạt cấp ${lvCapOf(w, ECON)} trước khi đột phá`);
+      if ((P.bag[c.quangId] ?? 0) < c.quang) throw new Error("Không đủ Quặng Tinh Luyện Sao");
+      if (P.coin < c.xu) throw new Error(`Không đủ Xu: cần ${fmt(c.xu)}`);
+      P.bag[c.quangId] -= c.quang;
+      P.coin -= c.xu;
+      w.khai++;
+      return { khai: w.khai, cap: lvCapOf(w, ECON) };
+    },
+    /** Tinh luyện bằng một bản trùng của cùng vũ khí. */
+    refineWeapon(this: any, { uid, mat, confirm = false }: any) {
+      const w = this.wget(uid);
+      if (w.tl >= 5) throw new Error("Đã tinh luyện tối đa R5");
+      const m = this.fodder(mat, uid, confirm);
+      if (m.id !== w.id) throw new Error("Cần bản trùng của cùng vũ khí");
+      delete this.P.weapons[mat];
+      w.tl = Math.min(5, w.tl + m.tl);
+      return { tl: w.tl };
+    },
+    forgeWeapon(this: any, { id }: any) {
+      const P = this.P,
+        def = wDef(id),
+        F = vk().loRen;
+      if (!def || def.nguon !== "loRen") throw new Error("Lò Rèn chỉ rèn vũ khí 4★ của Lò Rèn");
+      if ((P.bag[F.nguyenLieu] ?? 0) < F.so) throw new Error("Không đủ Phôi Lòng Sao");
+      if (P.coin < F.xu) throw new Error(`Không đủ Xu: cần ${fmt(F.xu)}`);
+      P.bag[F.nguyenLieu] -= F.so;
+      P.coin -= F.xu;
+      return addWeapon(P, id);
     },
     setParty(this: any, { party }: any) {
       if (!Array.isArray(party) || party.length < 1 || party.length > 4) throw new Error("Đội cần từ 1 đến 4 người");
@@ -482,6 +709,35 @@ export const Server = {
       if (k === "gems") this.econ("vao:admin", a);
       return this.P[k];
     },
+    setWConfig(this: any, c: any) {
+      const P = this.P,
+        cfg = { ...P.wcfg };
+      for (const k of ["rate5", "rate4", "soft", "hard", "cost"] as const) {
+        const v = Number(c[k] ?? cfg[k]);
+        if (!isFinite(v) || v < 0) throw new Error(`Giá trị "${k}" không hợp lệ`);
+        cfg[k] = v;
+      }
+      if (cfg.rate5 > 100 || cfg.rate4 > 100) throw new Error("Tỉ lệ tối đa 100%");
+      if (cfg.soft > cfg.hard || cfg.hard < 1) throw new Error("Lượt tăng tỉ lệ phải ≤ lượt chắc chắn");
+      if (c.featured) {
+        const f = c.featured;
+        if (!Array.isArray(f) || f.length !== 2 || f[0] === f[1])
+          throw new Error("Cần đúng 2 vũ khí nổi bật khác nhau");
+        for (const id of f)
+          if (wDef(id)?.r !== 5 || wDef(id)?.nguon !== "gioiHan") throw new Error("Vũ khí nổi bật phải là 5★ giới hạn");
+        if ([...f].sort().join() !== [...cfg.featured].sort().join()) {
+          P.wPick = null;
+          P.wPity.laBan = 0;
+          P.wPity.guaranteed = false;
+        }
+        cfg.featured = [f[0], f[1]];
+      }
+      P.wcfg = cfg;
+      return cfg;
+    },
+    giveWeapon(this: any, { id }: any) {
+      return addWeapon(this.P, id);
+    },
     giveChar(this: any, { id }: any) {
       if (!byId[id]) throw new Error("Không có nhân vật này");
       return this.grant(id);
@@ -510,13 +766,18 @@ export const Server = {
 export function lvCost(lv: number) {
   return lvCostOf(lv, ECON);
 }
-export function statsOf(id: string) {
+/** Đầu tư của một nhân vật để tính chỉ số: cấp, Nét Sao và vũ khí đang trang bị. */
+export function investOf(id: string, vkOverride?: string | null): Invest {
   const o = Server.P.owned[id] || { lv: 1, cons: 0 };
-  const { dmg: _d, skill: _s, ...st } = charStats(byId[id], o, ECON);
+  const uid = vkOverride === undefined ? o.vk : vkOverride;
+  const w = uid ? Server.P.weapons?.[uid] : undefined;
+  return { lv: o.lv, cons: o.cons, vuKhi: w ? { id: w.id, tinhLuyen: w.tl, lv: w.lv } : null };
+}
+export function statsOf(id: string, vk?: string | null) {
+  const { skill: _s, ...st } = charStats(byId[id], investOf(id, vk), ECON);
   return st;
 }
-/** Chiến Lực một nhân vật đang có (cấp và Nét Sao; vũ khí, Bảo Ấn, Khai Tinh chưa có trong game). */
-export function powerOf(id: string) {
-  const o = Server.P.owned[id] || { lv: 1, cons: 0 };
-  return chienLuc(charStats(byId[id], o, ECON), ECON);
+/** Chiến Lực một nhân vật đang có (cấp, Nét Sao, vũ khí; Bảo Ấn và Khai Tinh chưa có trong game). */
+export function powerOf(id: string, vk?: string | null) {
+  return chienLuc(charStats(byId[id], investOf(id, vk), ECON), ECON);
 }

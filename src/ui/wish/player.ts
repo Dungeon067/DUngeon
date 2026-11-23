@@ -3,7 +3,8 @@ import { byId } from "../../data/content";
 import { CINEMATIC } from "../../data/menu-content";
 import { hasProfile, loadProfile } from "../../data/profiles";
 import { plain } from "../../data/markdown";
-import { Server } from "../../server/server";
+import { Server, wDef } from "../../server/server";
+import { preloadWeaponArt } from "../weapon-art";
 import { createCinematic } from "./cinematic";
 import type { CineItem } from "./cinematic";
 
@@ -21,7 +22,9 @@ export function normalize(list: any[]): CineItem[] {
   return list.map((x) =>
     x.kind === "char"
       ? { kind: "char", id: x.id, r: x.r, name: x.name, feat: !!x.feat, isNew: !x.dup }
-      : { kind: "item", r: 3, name: typeof x.name === "string" ? x.name : String(x.name?.n ?? x.name), k: "sword" },
+      : x.kind === "weapon"
+        ? { kind: "item", r: x.r, name: x.name, k: wDef(x.id)?.loai ?? "sword", wid: x.id, feat: !!x.feat }
+        : { kind: "item", r: 3, name: typeof x.name === "string" ? x.name : String(x.name?.n ?? x.name), k: "sword" },
   );
 }
 
@@ -127,7 +130,7 @@ export async function playWish(raw: any[], onDone?: () => void) {
   done = onDone ?? null;
   const fx = $("wishFx");
   fx.hidden = false;
-  await preloadLines(list);
+  await Promise.all([preloadLines(list), preloadWeaponArt(list.flatMap((x) => (x.wid ? [x.wid] : [])))]);
   const best = Math.max(...list.map((x) => x.r));
   const src = CINEMATIC.videos[String(best)];
   if (src && (await playVideo(src))) {

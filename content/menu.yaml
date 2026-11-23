@@ -6,6 +6,7 @@ main:
   - { id: team, name: Đội hình, icon: doi-hinh, group: Hồ sơ, hint: "4 đội lưu sẵn" }
   - { id: wish, name: Ước nguyện, icon: uoc-nguyen, group: Ước nguyện, hint: "Bảo Hộ Vận Sao, lịch sử" }
   - { id: bag, name: Túi đồ, icon: tui-do, group: Hành trang, hint: "Vật phẩm và câu chuyện" }
+  - { id: weapons, name: Kho vũ khí, icon: danh, group: Hành trang, hint: "Nâng cấp, tinh luyện, Lò Rèn" }
   - { id: quests, name: Nhiệm vụ, icon: nhiem-vu, group: Hành trang, hint: "Đang làm, đã xong" }
   - { id: map, name: Bản đồ, icon: ban-do, group: Hành trang, hint: "Dịch chuyển, đánh dấu" }
   - { id: codex, name: Bách khoa, icon: huong-dan, group: Hành trang, hint: "Những gì đã thấy" }

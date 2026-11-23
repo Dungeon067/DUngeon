@@ -5,6 +5,7 @@
 import { drawChibi } from "../../art/chibi";
 import { byId as GAME_BY_ID } from "../../data/content";
 import { CINEMATIC } from "../../data/menu-content";
+import { weaponBitmap } from "../weapon-art";
 
 export interface CineItem {
   kind: "char" | "item";
@@ -12,6 +13,8 @@ export interface CineItem {
   r: 3 | 4 | 5;
   name: string;
   k?: string;
+  /** id vũ khí (S24): có ảnh thì vẽ ảnh thay cho biểu tượng. */
+  wid?: string;
   feat?: boolean;
   isNew?: boolean;
 }
@@ -1316,7 +1319,19 @@ export function createCinematic(cv: HTMLCanvasElement, hooks: CineHooks) {
     X.stroke();
     X.restore();
   }
-  function drawItemIcon(k: any, x: any, y: any, s: any, col: any) {
+  function drawItemIcon(k: any, x: any, y: any, s: any, col: any, wid?: string) {
+    const im = wid ? weaponBitmap(wid) : null;
+    if (im) {
+      X.save();
+      X.translate(x, y);
+      X.globalCompositeOperation = "lighter";
+      blob(0, 0, s * 0.9, col, 0.5);
+      X.globalCompositeOperation = "source-over";
+      const d = s * 1.25;
+      X.drawImage(im, -d / 2, -d / 2, d, d);
+      X.restore();
+      return;
+    }
     X.save();
     X.translate(x, y);
     X.rotate(-0.6);
@@ -1580,7 +1595,7 @@ export function createCinematic(cv: HTMLCanvasElement, hooks: CineHooks) {
     } else {
       const enter = ease.out(clamp(S.t / 0.5, 0, 1));
       const s = Math.min(W, H) * 0.42;
-      drawItemIcon(it.k, cx + (1 - enter) * 80, cy, s, col);
+      drawItemIcon(it.k, cx + (1 - enter) * 80, cy, s, col, it.wid);
       X.textAlign = "center";
       const tx = land ? cx : W / 2,
         ty = land ? H * 0.86 : H * 0.74;
@@ -1590,7 +1605,13 @@ export function createCinematic(cv: HTMLCanvasElement, hooks: CineHooks) {
       X.fillText(it.name, tx, ty);
       X.font = `600 14px "Be Vietnam Pro",sans-serif`;
       X.fillStyle = col;
-      X.fillText("★★★ · đổi thành 500 Xu", tx, ty + 30);
+      X.fillText(
+        it.wid
+          ? `${"★".repeat(it.r)} · BINH KHÍ${it.feat ? " NỔI BẬT" : ""}${it.r === 3 ? " · +500 Xu" : ""}`
+          : "★★★ · đổi thành 500 Xu",
+        tx,
+        ty + 30,
+      );
       X.globalAlpha = 1;
     }
     drawParts();
@@ -1656,7 +1677,7 @@ export function createCinematic(cv: HTMLCanvasElement, hooks: CineHooks) {
       else {
         X.fillStyle = "#1d2a44";
         X.fillRect(0, 0, cwF, ch);
-        drawItemIcon(it.k, cwF / 2, ch * 0.42, cwF * 0.8, col);
+        drawItemIcon(it.k, cwF / 2, ch * 0.42, cwF * 0.8, col, it.wid);
       }
       if (front) {
         const vg = X.createLinearGradient(0, ch * 0.55, 0, ch);

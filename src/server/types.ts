@@ -1,8 +1,12 @@
+import type { WeaponInst } from "../economy/weapons";
+import type { WeaponPity } from "../economy/core";
 import type { Config } from "../data/schema";
 
 export interface OwnedChar {
   lv: number;
   cons: number;
+  /** uid vũ khí đang trang bị (trong Profile.weapons). */
+  vk?: string;
 }
 
 export interface DailyTask {
@@ -62,12 +66,29 @@ export interface Profile {
   quits: { mode: string; t: number; at: string }[];
   /** S23: câu đố đã giải, quest mini đã nhận/xong, tiến độ bí cảnh (room = số phòng đã qua). */
   puz: PuzzleSave;
+  /** S24: kho vũ khí theo uid, bộ đếm uid, banner Binh Khí Tinh Tú (Bảo Hộ Vận Sao, La Bàn Sao, lịch sử riêng). */
+  weapons: Record<string, WeaponInst>;
+  wSeq: number;
+  wPity: WeaponPity;
+  /** Vũ khí La Bàn Sao đang chọn (một trong hai vũ khí nổi bật), null = chưa chọn. */
+  wPick: string | null;
+  wHistory: { n: string; r: number; t: number; id: string }[];
+  wcfg: WeaponBannerCfg;
 }
 export interface PuzzleSave {
   solved: string[];
   talked: string[];
   mini: string[];
   domains: Record<string, { room: number; done: boolean }>;
+}
+
+export interface WeaponBannerCfg {
+  rate5: number;
+  rate4: number;
+  soft: number;
+  hard: number;
+  cost: number;
+  featured: [string, string];
 }
 
 export interface LogEntry {

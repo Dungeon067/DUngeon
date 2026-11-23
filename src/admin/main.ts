@@ -7,7 +7,7 @@ import { ADMIN_CFG } from "../data/menu-content";
 import { stringify } from "yaml";
 import { ECON, econEdited, econForYaml, resetEcon, setEcon } from "../data/economy";
 import { packValue } from "../economy/core";
-import { LOG_KEY, SAVE_KEY, Server, powerOf } from "../server/server";
+import { LOG_KEY, SAVE_KEY, Server, powerOf, weaponList } from "../server/server";
 import { button, field, h, tabs, tag, toggle } from "../ui/ds";
 import { icon } from "../ui/icons/icons";
 import { filterHistory } from "../ui/menu/logic";
@@ -166,7 +166,45 @@ function wish() {
     },
   });
   const hist = filterHistory(P.history, histR);
+  const wc = P.wcfg;
+  const wf = {
+    rate5: field("Tỉ lệ 5★ (%)", { type: "number", value: String(wc.rate5) }),
+    rate4: field("Tỉ lệ 4★ (%)", { type: "number", value: String(wc.rate4) }),
+    soft: field("Bắt đầu tăng tỉ lệ từ lượt", { type: "number", value: String(wc.soft) }),
+    hard: field("Chắc chắn 5★ ở lượt", { type: "number", value: String(wc.hard) }),
+    cost: field("Giá một lần ước (Đá Sao)", { type: "number", value: String(wc.cost) }),
+  };
+  const wsel = [0, 1].map((i) => {
+    const sel = h("select", { class: "tt-input", id: `admWFeat${i}` });
+    for (const w of weaponList().filter((x) => x.r === 5 && x.nguon === "gioiHan"))
+      sel.add(new Option(w.ten, w.id, false, w.id === wc.featured[i]));
+    return sel;
+  });
+  const wsave = button("Lưu banner vũ khí", {
+    variant: "primary",
+    icon: "xac-nhan",
+    onClick: () => {
+      const r = Server.req("setWConfig", {
+        ...Object.fromEntries(Object.entries(wf).map(([k, v]) => [k, input(v).value])),
+        featured: wsel.map((x) => x.value),
+      });
+      if (r.ok) done("Đã lưu banner Binh Khí Tinh Tú");
+    },
+  });
+  wsave.id = "admWSave";
   return [
+    card("Banner vũ khí: Binh Khí Tinh Tú", [
+      h("p", { class: "tt-dim" }, [
+        `Bảo Hộ Vận Sao vũ khí: ${P.wPity.pity5}/${wc.hard} · La Bàn Sao ${P.wPity.laBan} · ${P.wHistory.length} lần ước. Đổi đôi nổi bật sẽ xóa La Bàn Sao và Bảo Hộ 75/25.`,
+      ]),
+      h("div", { class: "tt-admin-form" }, [
+        ...Object.values(wf),
+        ...wsel.map((sel, i) =>
+          h("div", { class: "tt-field" }, [h("label", { for: sel.id }, [`Vũ khí nổi bật ${i + 1} (5★)`]), sel]),
+        ),
+      ]),
+      wsave,
+    ]),
     card("Cấu hình", [
       h("div", { class: "tt-admin-form" }, [
         ...Object.values(f),

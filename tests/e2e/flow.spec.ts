@@ -159,7 +159,7 @@ test.describe("máy tính", () => {
     await page.mouse.up();
     await expect.poll(cur).not.toBe(b);
 
-    for (const name of ["Chỉ số", "Kỹ năng", "Nét Sao", "Hồ sơ"]) {
+    for (const name of ["Vũ Khí", "Bảo Ấn", "Nét Sao", "Kỹ Năng", "Hồ Sơ"]) {
       await page.keyboard.press("e");
       await expect(page.getByRole("tab", { name })).toHaveAttribute("aria-selected", "true");
     }
