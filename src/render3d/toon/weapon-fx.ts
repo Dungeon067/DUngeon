@@ -102,7 +102,9 @@ export class WeaponFx {
     if (!this.fpos) this.fpos = tgt.clone();
     else this.fpos.lerp(tgt, Math.min(1, dt * 10));
     this.holder.position.copy(this.hand.worldToLocal(this.fpos.clone()));
-    const bob = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.12 * Math.sin(t * 1.3), 0.35 * Math.sin(t * 0.7), 0.08 * Math.sin(t * 1.7)));
+    const bob = new THREE.Quaternion().setFromEuler(
+      new THREE.Euler(0.12 * Math.sin(t * 1.3), 0.35 * Math.sin(t * 0.7), 0.08 * Math.sin(t * 1.7)),
+    );
     setWorldQuat(this.holder, rq.multiply(this.handQuat).multiply(bob));
   }
   private t2 = 0;

@@ -94,7 +94,7 @@ function sequence(src: string) {
     return { k, d: d ? +d : WIN[k] / (k.startsWith("atk") ? A.speed : 1) };
   });
   let T = 0,
-    lastAct = -99,
+    lastAct = 0,
     si = -1,
     segT = 0,
     cur = "";

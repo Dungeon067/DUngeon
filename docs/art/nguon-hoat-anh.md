@@ -68,3 +68,37 @@ Các đòn sau được khung hóa bằng code trên xương humanoid VRM (`tool
 
 Chạy `pnpm anim:author` sau mỗi lần chạy `tools/anim/extract.ts` (extract ghi đè `humanoid.json`).
 Xem trước: `pnpm dev` rồi mở `/tools/anim/preview.html?w=great&clip=great2`.
+
+## S27: dáng tư thế và bộ clip theo vũ khí
+
+Bộ clip S27 được khung hóa bằng code (IK hai khớp trên khung xương VRM chuẩn hóa), tự dựng, thuộc dự án:
+
+- Công cụ: `tools/anim/pose.ts` (tư thế theo vị trí bàn tay / bàn chân, nội suy, IK, nướng clip, chồng lớp lên clip di chuyển).
+- Clip: `tools/anim/s27/` — `unarmed.ts` (đứng tay không `relax`, cất vũ khí `stowBackR`, `stowBackL`, `stowHip`),
+  `bow.ts` (cung), `melee.ts` (kiếm `sw*`, đại kiếm `gr*`, thương `sp*`, pháp khí `ct*`).
+- Nướng vào `humanoid.json`: `pnpm anim:s27` (chạy sau `extract.ts` và `pnpm anim:author`).
+- Lớp dáng (`content/poses.yaml`, `src/render3d/toon/pose-layer.ts`) cộng lên clip lúc chạy game: thở, dồn trọng tâm,
+  độ rộng chân, nghiêng hông / vai, vị trí tay, dáng đầu, biên độ / nhịp / độ nảy bước chạy, độ nặng khi ra đòn,
+  IK chân bám đất. Không có bộ clip riêng cho từng dáng.
+- Dây cung: dịch đỉnh lưới `string` của GLB cung theo tay phải, mũi tên dựng lúc chạy (`src/render3d/toon/bow-rig.ts`),
+  độ căng dây theo từng clip (`str` trong `tools/anim/s27/bow.ts`).
+
+### Vũ khí ngoài trận (cấu hình `vuKhi` trong `content/poses.yaml`)
+
+Thôi đánh và không còn quái gần quá `cho` giây (mặc định 2,5 giây): đứng yên thì chạy clip cất ngắn, vũ khí chuyển ra chỗ đeo,
+giữ một nhịp rồi tan thành hạt sáng màu nguyên tố của nhân vật (`src/render3d/toon/weapon-fx.ts`). Sau đó tay không, đứng / chạy thả lỏng.
+Đánh thường, kỹ năng hoặc nộ: vũ khí hiện lại trong tay ngay khung đầu, hạt sáng tụ nhanh, không làm chậm đòn.
+Renderer 2D ẩn vũ khí theo cùng luật (`src/combat/weapon-state.ts`).
+
+| Vũ khí   | Chỗ cất                 | Clip cất    |
+| -------- | ----------------------- | ----------- |
+| Kiếm     | bên hông trái           | `stowHip`   |
+| Đại kiếm | sau lưng, chuôi qua vai | `stowBackR` |
+| Thương   | sau lưng, chéo          | `stowBackR` |
+| Cung     | sau lưng, chéo          | `stowBackL` |
+| Pháp khí | tan ngay cạnh tay       | (không)     |
+
+### Mẫu VRM nam dùng thử (không đưa vào repo)
+
+Khi chưa có mô hình nam của S26, bảng so sánh và video dáng nam dùng tạm "Robert" trong bộ 100Avatars R1 của Polygonal Mind
+(CC0, qua kho ToxSam/open-source-avatars), đặt cục bộ ở `public/media/models/_nam/` và không commit.

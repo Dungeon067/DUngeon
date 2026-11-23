@@ -28,7 +28,12 @@ const lean = (s: Spec, o: Partial<{ hp: V3; hr: V3; sp: V3; ch: V3; hd: V3 }>) =
     hr: o.hr ?? s.hr,
     b: { ...s.b, ...(o.sp && { spine: o.sp }), ...(o.ch && { chest: o.ch }), ...(o.hd && { head: o.hd }) },
   });
-const LGUARD: Hand = { p: [0.16, 0.12, 0.16], fing: [-0.2, 0.7, 0.6], thumb: [-0.3, 0.3, -0.6], elbow: [0.7, -0.6, -0.3] };
+const LGUARD: Hand = {
+  p: [0.16, 0.12, 0.16],
+  fing: [-0.2, 0.7, 0.6],
+  thumb: [-0.3, 0.3, -0.6],
+  elbow: [0.7, -0.6, -0.3],
+};
 const LBACK: Hand = { p: [0.24, 0.02, -0.08], fing: [0.3, -0.6, -0.5], thumb: [-0.4, 0, 0.6], elbow: [0.6, 0, -0.6] };
 
 /* ---------------------------------------------------------------- Kiếm: nhanh gọn, một tay. */
@@ -186,10 +191,11 @@ const grSweepF = lean(
   gr2(P(grSweep, {}), grip([0.3, 0.0, 0.16], [0.9, -0.25, -0.2], [0.2, 0, -1], [-0.2, -1, 0.2]), [0.4, -0.8, 0.4]),
   { hr: [0, 40, 0], ch: [6, 24, 0], hp: [0, -0.1, 0.05] },
 );
-const grLow = lean(
-  gr2(GR_READY, grip([0.2, -0.16, 0.18], [0.6, -0.6, -0.4], [0.4, 0.6, 0.6], [-0.3, -1, 0.2])),
-  { hr: [0, 24, 0], ch: [8, 14, 0], hp: [0, -0.1, 0.02] },
-);
+const grLow = lean(gr2(GR_READY, grip([0.2, -0.16, 0.18], [0.6, -0.6, -0.4], [0.4, 0.6, 0.6], [-0.3, -1, 0.2])), {
+  hr: [0, 24, 0],
+  ch: [8, 14, 0],
+  hp: [0, -0.1, 0.02],
+});
 const grRise = lean(
   gr2(
     P(GR_READY, { fr: foot(-0.11, 0.06, -30) }),
@@ -197,10 +203,12 @@ const grRise = lean(
   ),
   { hr: [0, -30, 0], sp: [-4, 0, 0], ch: [-6, -16, 0], hp: [0, -0.04, 0.06] },
 );
-const grRiseF = lean(
-  gr2(grRise, grip([-0.22, 0.58, 0.06], [-0.4, 0.6, -0.7], [-0.3, 0.7, 0.6], [-0.8, 0, -0.3])),
-  { hr: [0, -36, 0], sp: [-6, 0, 0], ch: [-8, -18, 0], hp: [0, -0.03, 0.05] },
-);
+const grRiseF = lean(gr2(grRise, grip([-0.22, 0.58, 0.06], [-0.4, 0.6, -0.7], [-0.3, 0.7, 0.6], [-0.8, 0, -0.3])), {
+  hr: [0, -36, 0],
+  sp: [-6, 0, 0],
+  ch: [-8, -18, 0],
+  hp: [0, -0.03, 0.05],
+});
 const grUp = lean(
   gr2(GR_READY, grip([-0.04, 0.74, -0.06], [0.0, 0.2, -0.98], [0, 1, 0.2], [-0.7, 0.4, 0]), [0.7, 0.4, 0]),
   { hr: [0, -12, 0], sp: [-8, 0, 0], ch: [-10, -4, 0], hp: [0, 0.01, -0.05] },
@@ -266,7 +274,10 @@ const spSwR = lean(sp2(SP_READY, grip([-0.08, 0.12, 0.1], [-0.6, 0.2, 0.75], [-0
   hp: [0, -0.05, 0],
 });
 const spSwL = lean(
-  sp2(P(SP_READY, { fl: foot(0.1, 0.22, 0) }), grip([0.02, 0.1, 0.16], [0.75, 0.1, 0.6], [0.6, 0, -0.7], [-0.5, -0.9, 0])),
+  sp2(
+    P(SP_READY, { fl: foot(0.1, 0.22, 0) }),
+    grip([0.02, 0.1, 0.16], [0.75, 0.1, 0.6], [0.6, 0, -0.7], [-0.5, -0.9, 0]),
+  ),
   { hr: [0, 10, 0], ch: [4, 18, 0], hp: [0, -0.09, 0.05] },
 );
 const spSwLF = lean(sp2(spSwL, grip([0.08, 0.1, 0.06], [0.95, 0.1, 0.05], [0.1, 0, -1], [-0.4, -0.9, 0.2])), {
@@ -380,7 +391,11 @@ const ctSkill: ClipDef = {
   dur: 0.75,
   keys: [
     { t: 0, s: CT_READY },
-    ...[0, 1, 2, 3, 4].map((i) => ({ t: 0.08 + i * 0.07, s: ctCircle(Math.PI * (0.5 + i * 0.5)), ease: "lin" as const })),
+    ...[0, 1, 2, 3, 4].map((i) => ({
+      t: 0.08 + i * 0.07,
+      s: ctCircle(Math.PI * (0.5 + i * 0.5)),
+      ease: "lin" as const,
+    })),
     { t: 0.52, s: ctPushR, ease: "in" },
     { t: 0.7, s: ctPushR },
     { t: 1, s: CT_READY, ease: "inout" },
@@ -403,17 +418,34 @@ export const MELEE: Record<string, ClipDef> = {
   swReady: readyLoop(SW_READY),
   sw1: strike(SW_READY, swHi, swCut, swCutF, { dur: 0.55 }),
   sw2: strike(SW_READY, swL, swR, swRF, { dur: 0.55 }),
-  sw3: strike(SW_READY, swOver, swSlam, lean(swSlam, { hp: [0, -0.15, 0.12] }), { dur: 0.75, tA: 0.16, tC: 0.28, tF: 0.4, hold: 0.62 }),
+  sw3: strike(SW_READY, swOver, swSlam, lean(swSlam, { hp: [0, -0.15, 0.12] }), {
+    dur: 0.75,
+    tA: 0.16,
+    tC: 0.28,
+    tF: 0.4,
+    hold: 0.62,
+  }),
   swSkill,
   swBurst,
   grReady: readyLoop(GR_READY, 2.8),
   gr1: strike(GR_READY, grShoulder, grSweep, grSweepF, { dur: 0.75, tA: 0.16, tC: 0.28, tF: 0.48, hold: 0.62 }),
   gr2: strike(GR_READY, grLow, grRise, grRiseF, { dur: 0.75, tA: 0.16, tC: 0.28, tF: 0.48, hold: 0.62 }),
-  gr3: strike(GR_READY, grUp, grSlam, lean(grSlam, { hp: [0, -0.22, 0.12] }), { dur: 0.95, tA: 0.18, tC: 0.3, tF: 0.42, hold: 0.7 }),
+  gr3: strike(GR_READY, grUp, grSlam, lean(grSlam, { hp: [0, -0.22, 0.12] }), {
+    dur: 0.95,
+    tA: 0.18,
+    tC: 0.3,
+    tF: 0.42,
+    hold: 0.7,
+  }),
   grSkill,
   grBurst,
   spReady: readyLoop(SP_READY),
-  sp1: strike(SP_READY, spBack, spThrust, lean(spThrust, { hp: [0, -0.1, 0.11] }), { dur: 0.5, tA: 0.1, tC: 0.22, tF: 0.32 }),
+  sp1: strike(SP_READY, spBack, spThrust, lean(spThrust, { hp: [0, -0.1, 0.11] }), {
+    dur: 0.5,
+    tA: 0.1,
+    tC: 0.22,
+    tF: 0.32,
+  }),
   sp2: strike(SP_READY, spSwR, spSwL, spSwLF, { dur: 0.55 }),
   sp3: strike(SP_READY, lean(spBack, { hp: [0, -0.1, -0.08] }), spLunge, lean(spLunge, { hp: [0, -0.17, 0.17] }), {
     dur: 0.75,
@@ -427,14 +459,23 @@ export const MELEE: Record<string, ClipDef> = {
   ctReady: readyLoop(CT_READY),
   ct1: strike(CT_READY, ctPullR, ctPushR, ctPushR, { dur: 0.6 }),
   ct2: strike(CT_READY, ctPullL, ctSwL, ctSwL, { dur: 0.6 }),
-  ct3: strike(CT_READY, ctBoth, ctBothPush, lean(ctBothPush, { hp: [0, -0.11, 0.09] }), { dur: 0.75, tA: 0.16, tC: 0.28, tF: 0.38, hold: 0.62 }),
-  ctCharge: { dur: 1.6, loop: true, keys: [0, 0.25, 0.5, 0.75, 1].map((t, i) => ({ t, s: ctCircle(Math.PI * 2 * t + (i ? 0 : 0)) })) },
+  ct3: strike(CT_READY, ctBoth, ctBothPush, lean(ctBothPush, { hp: [0, -0.11, 0.09] }), {
+    dur: 0.75,
+    tA: 0.16,
+    tC: 0.28,
+    tF: 0.38,
+    hold: 0.62,
+  }),
+  ctCharge: {
+    dur: 1.6,
+    loop: true,
+    keys: [0, 0.25, 0.5, 0.75, 1].map((t, i) => ({ t, s: ctCircle(Math.PI * 2 * t + (i ? 0 : 0)) })),
+  },
   ctSkill,
   ctBurst,
 };
 
-const low = (k: 1 | -1, blade: V3): Hand =>
-  grip([k * 0.2, -0.04, 0.12], blade, [0, -0.3, 1], [k * 0.4, 0, -1]);
+const low = (k: 1 | -1, blade: V3): Hand => grip([k * 0.2, -0.04, 0.12], blade, [0, -0.3, 1], [k * 0.4, 0, -1]);
 export const MELEE_MOVE: Record<string, OverlayDef> = {
   swWalk: carry("walk", { r: { hold: low(-1, [0, 0.35, 0.95]), k: 0.55, grip: FIST } }),
   swRun: carry("run", { r: { hold: low(-1, [0, 0.2, 1]), k: 0.45, grip: FIST } }),

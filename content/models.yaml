@@ -21,9 +21,39 @@ camVuKhi:
   cat: { bone: rightHand, pos: [-0.06, 0.14, 0.02], rot: [0, 0, 0], scale: 0.6, at: 0 }
 # Clip hoạt ảnh theo loại vũ khí (tên clip trong public/media/anim/humanoid.json, xem tools/anim/recipes.ts).
 hoatAnh:
-  sword: { stand: swReady, ready: swReady, move: { walk: swWalk, run: swRun, sprint: swSprint }, atk: [sw1, sw2, sw3], charge: swReady, skill: swSkill, burst: swBurst, speed: 1 }
-  great: { stand: grReady, ready: grReady, move: { walk: grWalk, run: grRun, sprint: grSprint }, atk: [gr1, gr2, gr3], charge: grReady, skill: grSkill, burst: grBurst, speed: 0.75 }
-  spear: { stand: spReady, ready: spReady, move: { walk: spWalk, run: spRun, sprint: spSprint }, atk: [sp1, sp2, sp3], charge: spReady, skill: spSkill, burst: spBurst, speed: 1 }
+  sword:
+    {
+      stand: swReady,
+      ready: swReady,
+      move: { walk: swWalk, run: swRun, sprint: swSprint },
+      atk: [sw1, sw2, sw3],
+      charge: swReady,
+      skill: swSkill,
+      burst: swBurst,
+      speed: 1,
+    }
+  great:
+    {
+      stand: grReady,
+      ready: grReady,
+      move: { walk: grWalk, run: grRun, sprint: grSprint },
+      atk: [gr1, gr2, gr3],
+      charge: grReady,
+      skill: grSkill,
+      burst: grBurst,
+      speed: 0.75,
+    }
+  spear:
+    {
+      stand: spReady,
+      ready: spReady,
+      move: { walk: spWalk, run: spRun, sprint: spSprint },
+      atk: [sp1, sp2, sp3],
+      charge: spReady,
+      skill: spSkill,
+      burst: spBurst,
+      speed: 1,
+    }
   bow:
     {
       stand: bowReady,
@@ -35,6 +65,7 @@ hoatAnh:
       burst: bowBurst,
       speed: 1,
     }
-  cat: { stand: ctReady, ready: ctReady, atk: [ct1, ct2, ct3], charge: ctCharge, skill: ctSkill, burst: ctBurst, speed: 1 }
+  cat:
+    { stand: ctReady, ready: ctReady, atk: [ct1, ct2, ct3], charge: ctCharge, skill: ctSkill, burst: ctBurst, speed: 1 }
 nhanVat:
   havy: { height: 1.55 }
