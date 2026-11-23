@@ -1,5 +1,7 @@
 const n=`# Takane: Hồ sơ
 
+> **Loại 5★:** \`gioi-han\` (5★ giới hạn, chỉ ra ở banner theo kỳ, có thể quay lại ở kỳ sau). Đề xuất S06, chờ chủ dự án duyệt; truyện chính không tặng nhân vật này, chỉ cho xuất hiện như NPC hoặc khách mời, không vào đội.
+
 > Hộ Tinh hệ Phong, thương, 5★. Danh hiệu trong game: **Người Canh Tuyết Lở**.
 > Nguồn đối chiếu: \`docs/world/03-dia-ly.md\` mục 4 (Shizukane, Tuyết Lở Lớn, Vết Tuyết Lở), \`docs/world/07-hac-giao-va-hoi-mat-na.md\` mục 2.5.3, \`docs/world/11-dat-ten.md\` mục 2, \`docs/characters/tuyetlan/\`.
 
