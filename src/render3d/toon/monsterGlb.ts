@@ -185,11 +185,14 @@ function play(v: MonsterView, name: string, ts = 1, fade = 0.14) {
     return;
   }
   a.reset().setEffectiveTimeScale(ts).setEffectiveWeight(1).fadeIn(fade).play();
+  if (name === "attack") a.time = ATTACK_IN[v.id] ?? 0;
   if (v.act && v.act !== a) v.act.fadeOut(fade);
   v.cur = name;
   v.act = a;
 }
 const dur = (v: MonsterView, n: string) => v.acts.get(n)?.getClip().duration ?? 0.5;
+/** Clip `attack` có đoạn vung lên trùng với `tele`: sau tele thì vào thẳng nhịp ra đòn, khớp lúc AI gây sát thương. */
+const ATTACK_IN: Record<string, number> = { golem: 0.35 };
 
 /** Chọn clip theo trạng thái AI; trả về [tên clip, tốc độ]. */
 function choose(v: MonsterView, e: any, dt: number): [string, number] {
@@ -233,7 +236,7 @@ function choose(v: MonsterView, e: any, dt: number): [string, number] {
   }
   if (v.hadTele) {
     v.hadTele = false;
-    v.lock = { name: "attack", t: dur(v, "attack") };
+    v.lock = { name: "attack", t: dur(v, "attack") - (ATTACK_IN[v.id] ?? 0) };
   } else if (hit && !v.lock) v.lock = { name: "hurt", t: dur(v, "hurt") };
   if (v.lock) return [v.lock.name, 1];
   const walk = e.walk ?? 0,
