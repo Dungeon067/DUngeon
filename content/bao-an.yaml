@@ -206,7 +206,7 @@ chienLuc:
 # ---------- Mô phỏng (pnpm economy:sim) ----------
 moPhong:
   # Số người cày Bảo Ấn ảo (chung cho mọi hồ sơ: Bảo Ấn không phụ thuộc tiền).
-  soNguoi: 400
+  soNguoi: 200
   # Linh Lực dành cho Bí Cảnh Bảo Ấn mỗi ngày sau khi mở (lấy bớt từ Lòng Sao).
   luotMoiNgay: 3
   # Bộ chủ lực săn (4 món) và bộ phụ (2 món); chỉ số chủ lực ưa thích theo ô.

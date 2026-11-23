@@ -76,7 +76,12 @@ export const RES_CAP = 999_999_999_999;
 export const TEST_MAX = 9_000_000_000;
 export const capRes = (n: number) => (Number.isFinite(n) ? Math.min(RES_CAP, Math.max(0, Math.floor(n))) : 0);
 /** Vật phẩm Admin cấp được: Quặng Tinh Luyện và Phôi Lồng Sao. Chưa có vé ước trong game. */
-export const grantItems = () => [...vk().quang.map((q) => q.id), vk().loRen.nguyenLieu];
+export const grantItems = () => [
+  ...vk().quang.map((q) => q.id),
+  vk().loRen.nguyenLieu,
+  ...BA.kinhNghiem.sap.map((s) => s.id),
+  "bui-an",
+];
 
 const DAY_MS = 86_400_000;
 /** Linh Lực hiện có: hồi hoiMoiNgay mỗi ngày tới toiDa. */

@@ -6,6 +6,7 @@ import "./wish";
 import "./bag";
 import "./weapons";
 import "./bi-canh";
+import "./bao-an";
 import "./quests";
 import "./map";
 import "./codex";

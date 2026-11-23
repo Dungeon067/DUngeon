@@ -59,16 +59,18 @@ export function gainOf(b: BaoAnBonus, E: Economy, base = { hp: 12000, atk: 900 }
   return atk * crit * (1 + b.dmg) * Math.sqrt(hp);
 }
 
-const flowCache = new WeakMap<object, BaoAnFlow>();
+/** Kết quả chỉ phụ thuộc seed, số ngày, lịch Thiên Tượng và chí mạng gốc: bản sao ECON đổi chỗ khác vẫn dùng lại được. */
+const flowCache = new Map<string, BaoAnFlow>();
 export function baoAnFlow(E: Economy, days = E.moPhong.soNgay, C = simBaoAn()): BaoAnFlow {
-  const hit = flowCache.get(E);
-  if (hit && hit.bonus.length > days) return hit;
   const M = C.moPhong,
     B = C.biCanh;
   const dom = B.danhSach.find((d) => d.bo.includes(M.boChinh))!;
   let openDay = 0;
   while (openDay <= days && hoTinhLevel(openDay, E) < B.moCapHoTinh) openDay++;
   const ttOf = Array.from({ length: days + 1 }, (_, d) => caps(hoTinhLevel(d, E), E).thienTuong);
+  const key = JSON.stringify([days, E.moPhong.seed, openDay, ttOf, E.game.chiMang["5"], C === cached ? 0 : C]);
+  const hit = flowCache.get(key);
+  if (hit) return hit;
   const sapExp = Object.fromEntries(C.kinhNghiem.sap.map((s) => [s.id, s.kinhNghiem]));
   const expOfSap = (s: Record<string, number>, k = 1) =>
     Object.entries(s).reduce((t, [id, n]) => t + (sapExp[id] ?? 0) * n * k, 0);
@@ -78,11 +80,24 @@ export function baoAnFlow(E: Economy, days = E.moPhong.soNgay, C = simBaoAn()): 
     return !u || u.includes(a.chinh);
   };
   /** Điểm tiềm năng: đúng chỉ số chính, độ hiếm, các dòng phụ có ích. */
+  const scores = new Map<BaoAnInst, number>();
   const score = (a: BaoAnInst) => {
+    const hit = scores.get(a);
+    if (hit !== undefined) return hit;
     let s = (goodMain(a) ? 10 : 0) + a.r * 3 + (a.bo === M.boChinh ? 2 : 0);
     for (const p of a.phu) if (useful.has(p.k)) s += (p.v / C.phu.giaTriToiDa[p.k]!) * 1.5;
+    scores.set(a, s);
     return s;
   };
+  const fresh = Object.fromEntries(
+    ([3, 4, 5] as BaRarity[]).map((r) => {
+      const y = dismantleYield(
+        C,
+        rollBaoAn(C, "y", { bo: M.boChinh, o: "hoa", r }, () => 0),
+      );
+      return [r, { bui: y.bui, exp: expOfSap(y.sap) }];
+    }),
+  ) as Record<BaRarity, { bui: number; exp: number }>;
   const N = M.soNguoi,
     perDay: BaoAnBonus[][] = Array.from({ length: days + 1 }, () => []),
     perMax: number[][] = Array.from({ length: days + 1 }, () => []);
@@ -102,13 +117,21 @@ export function baoAnFlow(E: Economy, days = E.moPhong.soNgay, C = simBaoAn()): 
       bui += y.bui;
       exp += expOfSap(y.sap);
     };
+    let dirty = true;
     const keep = (a: BaoAnInst) => {
       const tab = a.bo === M.boChinh ? main : any;
       const cur = tab[a.o];
       if (!cur || score(a) > score(cur)) {
         tab[a.o] = a;
-        if (cur) scrap(cur);
-      } else scrap(a);
+        dirty = true;
+        if (cur) {
+          scrap(cur);
+          scores.delete(cur);
+        }
+      } else {
+        scrap(a);
+        scores.delete(a);
+      }
     };
     const loadout = () => {
       const four = SLOT_IDS.filter((o) => main[o]).sort((x, y) => score(main[y]!) - score(main[x]!));
@@ -124,15 +147,25 @@ export function baoAnFlow(E: Economy, days = E.moPhong.soNgay, C = simBaoAn()): 
     };
     for (const x of C.khoiDau.bao)
       for (const o of SLOT_IDS) keep(rollBaoAn(C, `s${seq++}`, { bo: x.bo, o, r: x.r as BaRarity }, rng));
+    let capped = false;
     const levelUp = () => {
+      if (exp <= 0 || (capped && !dirty)) return;
+      capped = true;
       for (const a of loadout()) {
-        if (exp <= 0) break;
         if (a.lv >= capOf(C, a.r)) continue;
+        capped = false;
+        if (exp <= 0) break;
         const { used } = addExp(C, a, exp, rng);
+        if (!used) continue;
         exp -= used;
         xu -= used * C.kinhNghiem.xuMoiKinhNghiem;
+        scores.delete(a);
+        dirty = true;
       }
     };
+    let items: BaoAnInst[] = [],
+      bonusNow: BaoAnBonus = { ...NO_BONUS },
+      maxNow = 0;
     levelUp();
     for (let d = 0; d <= days; d++) {
       if (d >= openDay && d > 0) {
@@ -150,9 +183,11 @@ export function baoAnFlow(E: Economy, days = E.moPhong.soNgay, C = simBaoAn()): 
             for (let i = 0; i < n; i++) {
               const bo = dom.bo[Math.floor(rng() * dom.bo.length)]!,
                 o = SLOT_IDS[Math.floor(rng() * SLOT_IDS.length)]!;
-              const a = rollBaoAn(C, `s${seq++}`, { bo, o, r }, rng);
-              if (r < 5 && Object.values(main).every((m) => m!.r >= r)) scrap(a);
-              else keep(a);
+              if (r < 5 && Object.values(main).every((m) => m!.r >= r)) {
+                // Món mới cấp 0 đem phân rã ngay: sản lượng chỉ phụ thuộc độ hiếm, khỏi tung chỉ số.
+                bui += fresh[r].bui;
+                exp += fresh[r].exp;
+              } else keep(rollBaoAn(C, `s${seq++}`, { bo, o, r }, rng));
             }
           }
         }
@@ -170,15 +205,21 @@ export function baoAnFlow(E: Economy, days = E.moPhong.soNgay, C = simBaoAn()): 
           }
         levelUp();
       }
-      const items = loadout();
-      perDay[d]!.push(items.length ? bonusOf(C, items, "bolt") : { ...NO_BONUS });
-      perMax[d]!.push(items.filter((a) => a.r === 5 && a.lv >= capOf(C, 5)).length);
+      if (dirty) {
+        items = loadout();
+        bonusNow = items.length ? bonusOf(C, items, "bolt") : { ...NO_BONUS };
+        maxNow = items.filter((a) => a.r === 5 && a.lv >= capOf(C, 5)).length;
+        dirty = false;
+      }
+      perDay[d]!.push(bonusNow);
+      perMax[d]!.push(maxNow);
       if (pi === 0) xuDay[d] = xu;
     }
     xuNet += xu;
   }
   void xuNet;
-  const med = <T>(xs: T[], key: (x: T) => number) => xs.slice().sort((a, b) => key(a) - key(b))[xs.length >> 1]!;
+  const med = <T>(xs: T[], key: (x: T) => number) =>
+    xs.map((x) => [key(x), x] as const).sort((a, b) => a[0] - b[0])[xs.length >> 1]![1];
   const bonus = perDay.map((xs) => med(xs, (b) => gainOf(b, E)));
   const res: BaoAnFlow = {
     openDay,
@@ -187,6 +228,7 @@ export function baoAnFlow(E: Economy, days = E.moPhong.soNgay, C = simBaoAn()): 
     xu: xuDay,
     max5: perMax.map((xs) => med(xs, (x) => x)),
   };
-  flowCache.set(E, res);
+  if (flowCache.size > 32) flowCache.clear();
+  flowCache.set(key, res);
   return res;
 }

@@ -4,6 +4,7 @@ import { flushPending } from "../core/loop";
 import { $ } from "../core/util";
 import { startBoss } from "../modes/boss";
 import { startTower } from "../modes/tower";
+import { startBaoAn } from "../modes/bao-an";
 import { exitToMenu } from "../ui/screens";
 import { openMenu } from "./menu/shell";
 
@@ -44,12 +45,16 @@ export function init(): void {
       const g = GS.G;
       if (g.mode === "tower") startTower(g.tower.floor);
       else if (g.mode === "boss") startBoss(g.opt.lv);
+      else if (g.mode === "baoan") startBaoAn(g.ba.id, g.ba.tt);
     } else if (act === "next") {
       closeModal();
       startTower(GS.G.tower.floor + 1);
     } else if (act === "bnext") {
       closeModal();
       startBoss(GS.G.opt.lv + 1);
+    } else if (act === "bamenu") {
+      closeModal();
+      exitToMenu("baoan");
     } else if (act === "close") closeModal();
   });
 }

@@ -14,6 +14,7 @@ main:
   - { id: daily, name: Ủy thác, icon: uy-thac, group: Thử thách, hint: "Việc mỗi ngày" }
   - { id: tower, name: Tháp Tinh Tú, icon: thap, group: Thử thách, hint: "12 tầng" }
   - { id: boss, name: Thảo phạt Hắc Giao, icon: canh-bao, group: Thử thách, hint: "Ác long dưới núi" }
+  - { id: baoan, name: Bí Cảnh Bảo Ấn, icon: bao-an, group: Thử thách, hint: "Cày Mảnh Sao bằng Linh Lực" }
   - { id: settings, name: Cài đặt, icon: cai-dat, group: Hệ thống, hint: "Âm thanh, điều khiển" }
 # Nút thêm vào menu nhanh góc trên phải của S09 (bên trái nút bản đồ).
 quick: [wish, team, daily]
