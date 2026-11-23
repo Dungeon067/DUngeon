@@ -63,6 +63,10 @@ def square_frame(size, inner, depth, bevel):
 
 head = arm.data.bones["J_Bip_C_Head"]
 head_pos = arm.matrix_world @ head.head_local
+eye = arm.matrix_world @ arm.data.bones["J_Adj_L_FaceEye"].head_local
+fy = 1.0 if eye.y > head_pos.y else -1.0
+print("AXES", tuple(round(v, 3) for v in eye), fy)
+lx = 1.0 if (arm.matrix_world @ arm.data.bones["J_Bip_L_UpperArm"].head_local).x > 0 else -1.0
 hair = [o for o in bpy.data.objects if o.type == "MESH" and o.name.startswith("Hair")]
 for k, p in enumerate(cfg.get("pins", [])):
     side = p.get("side", 1)
@@ -73,7 +77,7 @@ for k, p in enumerate(cfg.get("pins", [])):
     if "ray" in p:
         # đặt kẹp lên bề mặt tóc: bắn tia từ ngoài vào tâm đầu theo góc phương vị/độ cao
         az, z = math.radians(p["ray"][0]) * side, p["ray"][1]
-        d = Vector((math.sin(az), -math.cos(az), 0))
+        d = Vector((lx * math.sin(az), fy * math.cos(az), 0))
         c = head_pos + Vector((0, 0, z))
         hit, nrm = None, None
         for h in hair:
@@ -85,9 +89,10 @@ for k, p in enumerate(cfg.get("pins", [])):
                 if hit is None or (w - c).length > (hit - c).length:
                     hit, nrm = w, (mw.to_3x3() @ n).normalized()
         assert hit is not None, "không bắn trúng tóc"
+        print("PIN", side, tuple(round(v, 3) for v in hit), tuple(round(v, 2) for v in nrm), tuple(round(v, 3) for v in head_pos))
         if nrm.dot(d) < 0:
             nrm.negate()
-        yv = (Matrix.Rotation(-side * math.radians(p.get("turn", 0)), 3, "Z") @ nrm).normalized()
+        yv = (Matrix.Rotation(-side * lx * fy * math.radians(p.get("turn", 0)), 3, "Z") @ nrm).normalized()
         xv = Vector((0, 0, 1)).cross(yv).normalized()
         zv = yv.cross(xv)
         rot = Matrix((xv, yv, zv)).transposed().to_4x4() @ Euler(
