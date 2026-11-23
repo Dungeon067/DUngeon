@@ -129,6 +129,6 @@ def make(arm, *_):
     a.clip("fan", 1.0, fan, loop=False)
     a.clip("rain", 1.0, rain, loop=False)
     a.clip("charge", 0.6, charge)
-    a.clip("roar", 1.6, roar, loop=False)
+    a.clip("roar", 1.1, roar, loop=False)
     a.clip("summon", 1.0, summon, loop=False)
     return a

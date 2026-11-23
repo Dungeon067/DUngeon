@@ -105,7 +105,7 @@ Tổng: 6 loại hiện có (5 quái và Hắc Giao) và 17 loại mới.
 Hồ sơ đầy đủ ở `07-hac-giao-va-hoi-mat-na.md`. Phần dưới chỉ ghi phần sinh vật học và chiến đấu.
 
 - **Vùng sống:** Hang Hắc Giao, nối thông xuống Biển Lặng.
-- **Tập tính:** con giao (rồng nước không sừng) đen dài hàng trăm sải, thân bằng Nguyện Cặn đông lại. Nó không ăn, không ngủ, chỉ cuộn mình và **thì thầm** những lời ước chưa ai nghe.
+- **Tập tính:** con giao đen dài hàng trăm sải, thân bằng Nguyện Cặn đông lại. Giao vốn là rồng nước không sừng; sau khi hút Nguyện Cặn, đầu nó mọc đôi sừng cong ngả về sau, ánh xanh như vảy. Nó không ăn, không ngủ, chỉ cuộn mình và **thì thầm** những lời ước chưa ai nghe.
 - **Nguy hiểm:** 5.
 - **Nguyên tố:** Thủy ở giai đoạn 1. Khi mất một nửa sức, lớp lời ước giận dữ nhất trong nó bùng ra thành sấm, nó chuyển sang **Lôi** và nhanh hơn. Đây là lý do trong truyện của giai đoạn 2 trong game.
 - **Điểm yếu:** giai đoạn 1 yếu với Lôi (Điện Cảm) và Băng (Đóng Băng). Giai đoạn 2 yếu với Băng (Siêu Dẫn) và Thổ (Kết Tinh làm khiên).
