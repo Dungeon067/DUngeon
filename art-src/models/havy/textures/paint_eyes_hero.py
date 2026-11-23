@@ -35,6 +35,23 @@ col = col * (1 - pup) + np.array([35, 2, 10]) * pup
 # Lớp 4: vòng sáng (cam vàng) quanh đồng tử, đậm ở nửa dưới
 ring = np.exp(-((r - 0.55) / 0.06) ** 2) * np.clip(0.35 + dy, 0, 1)
 col = col + (np.array([255, 200, 140]) - col) * (0.8 * ring)[..., None]
+# Lớp 5: bông tuyết nhỏ 6 cánh (xanh băng) quanh đồng tử, mỗi cánh có 2 nhánh
+snow = np.zeros((H, W))
+for cx, cy in eyes:
+    u, v = (xx - cx) / RX, (yy - cy) / RY
+    for k in range(6):
+        ang = np.pi / 2 + k * np.pi / 3
+        ax, ay = np.cos(ang), np.sin(ang)
+        along, perp = u * ax + v * ay, np.abs(-u * ay + v * ax)
+        on = (along > 0.34) & (along < 0.74)
+        snow = np.maximum(snow, np.where(on, np.exp(-(perp / 0.022) ** 2), 0))
+        for b0 in (0.5, 0.62):
+            for sg in (-1, 1):
+                bx, by = np.cos(ang + sg * 0.75), np.sin(ang + sg * 0.75)
+                pu, pv = u - ax * b0, v - ay * b0
+                ba, bp = pu * bx + pv * by, np.abs(-pu * by + pv * bx)
+                snow = np.maximum(snow, np.where((ba > 0) & (ba < 0.12), np.exp(-(bp / 0.018) ** 2), 0))
+col = col + (np.array([170, 235, 255]) - col) * (0.38 * snow)[..., None]
 out = np.concatenate([col, a[..., 3:]], -1)
 Image.fromarray(np.clip(out, 0, 255).astype(np.uint8)).save('havy_hero_eye_iris.png')
 
