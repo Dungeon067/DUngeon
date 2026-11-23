@@ -15,7 +15,7 @@ const n=`# Hạ Vy: Hồ sơ
 | Phe           | **Đoàn Thuyền Buôn Gió Nồm**: cung thủ canh thuyền, kiêm người giữ lạnh hầm hàng                                                                                   |
 | Gia đình      | Mẹ **Tám Lụa**, thợ vá buồm của đoàn, em ruột Bà Bảy Sóng. Bố **Lương Khoa**, cung thủ canh thuyền, mất tích ở Vịnh Khơi năm NS 1340. Dì ruột **Bà Bảy Sóng**      |
 | Được sao chọn | Giữa mùa hè NS 1346, năm 15 tuổi, trong một đêm cô ngồi làm lạnh hầm cá cho thuyền nan của làng chài                                                               |
-| Tinh Văn      | Trên xương quai xanh bên trái: một tinh thể băng hình thoi nằm giữa ba vạch sóng, giống biểu tượng của đoàn. Ánh xanh băng. Lộ ra khi cô nới khăn rằn              |
+| Tinh Văn      | Trên xương quai xanh bên trái: một tinh thể băng hình thoi nằm giữa ba vạch sóng, giống biểu tượng của đoàn. Ánh xanh băng. Lộ ra khi cô mở cổ áo khoác            |
 | Chòm sao      | **Chòm Hầm Băng**: sáu sao xếp thành miệng hầm thuyền vuông, giữa có một sao trắng như cục đá lạnh. Mọc giữa trời vào mùa hè, khi không ai ngờ. Xem \`cung-menh.md\` |
 | Chiều cao     | Tầm trung. Cao hơn Ngọc Thạch nửa cái đầu, thấp hơn Tuyết Lan. Dáng thon, chân chắc vì quen đứng trên boong lắc                                                    |
 | Món thích     | **Bún Cá Vạn Lưới** ăn ngay trên bến lúc sáng sớm. Trái cây cô tự ướp lạnh rồi bán cho trẻ con trên bến, giá một Xu ba miếng                                       |
