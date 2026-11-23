@@ -28,7 +28,10 @@ for (const [id, v] of Object.entries(tl.variants)) {
     delete tl.variants[id];
     continue;
   }
-  for (const f of [...Object.values(v.video).flat(), ...v.audio]) (copy(f), n++);
+  for (const f of [...Object.values(v.video).flat(), ...v.audio]) {
+    copy(f);
+    n++;
+  }
 }
 mkdirSync(DST, { recursive: true });
 writeFileSync(join(DST, "timeline.json"), JSON.stringify(tl));
