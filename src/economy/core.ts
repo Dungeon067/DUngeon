@@ -18,7 +18,7 @@ export interface Invest {
   khai?: number;
   kyNang?: number;
   /** Vũ khí theo id trong thietKe.vuKhi.danhSach, tinh luyện 1–5. */
-  vuKhi?: { id: string; tinhLuyen: number } | null;
+  vuKhi?: { id: string; tinhLuyen: number; lv?: number } | null;
   /** Chất lượng Bảo Ấn 0..1 (đủ bộ 4 ô khi > 0). */
   baoAn?: number;
 }
@@ -66,6 +66,14 @@ export function weaponOf(id: string, E: Economy): Weapon {
 export const passiveAt = (w: Weapon, tinhLuyen: number, E: Economy) =>
   w.biDong.satThuong * (1 + E.thietKe.vuKhi.buocTinhLuyen * (Math.min(5, Math.max(1, tinhLuyen)) - 1));
 
+/** Hệ số chỉ số vũ khí theo cấp: heSoCap1 ở cấp 1, tăng đều tới 1 ở cấp tối đa. Không có cấp = cấp tối đa. */
+export function weaponLvScale(lv: number | undefined, E: Economy) {
+  const c = E.thietKe.vuKhi.cap;
+  if (lv === undefined) return 1;
+  const l = Math.min(c.toiDa, Math.max(1, lv));
+  return c.heSoCap1 + ((1 - c.heSoCap1) * (l - 1)) / (c.toiDa - 1);
+}
+
 export function charStats(b: BaseChar, s: Invest, E: Economy): Stats {
   const G = E.game,
     T = E.thietKe;
@@ -74,8 +82,9 @@ export function charStats(b: BaseChar, s: Invest, E: Economy): Stats {
     kt = 1 + (s.khai ?? 0) * T.khaiTinh.tangMoiBac;
   const w = s.vuKhi ? weaponOf(s.vuKhi.id, E) : null;
   const ba = s.baoAn ?? 0;
-  const ph = (k: Weapon["phu"]["loai"]) => (w && w.phu.loai === k ? w.phu.giaTri : 0);
-  const atkPct = 1 + (w ? w.tanCong : 0) + ph("tanCong") + ba * T.baoAn.tanCongToiDa,
+  const ws = w ? weaponLvScale(s.vuKhi!.lv, E) : 0;
+  const ph = (k: Weapon["phu"]["loai"]) => (w && w.phu.loai === k ? w.phu.giaTri * ws : 0);
+  const atkPct = 1 + (w ? w.tanCong * ws : 0) + ph("tanCong") + ba * T.baoAn.tanCongToiDa,
     hpPct = 1 + ba * T.baoAn.mauToiDa;
   const cm = G.chiMang[rk(b.r)];
   return {

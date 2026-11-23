@@ -63,11 +63,13 @@ describe("Ước nguyện", () => {
     expect(Server.P.guaranteed).toBe(false);
   });
 
-  it("3★ cộng 500 Xu", () => {
+  it("3★ cộng 500 Xu và một vũ khí 3★ vào kho", () => {
     mockRandom([0.5]);
     const coin = Server.P.coin;
-    expect(Server.rollOne()).toMatchObject({ kind: "item", r: 3 });
+    const out = Server.rollOne() as { kind: string; r: number; uid: string };
+    expect(out).toMatchObject({ kind: "weapon", r: 3 });
     expect(Server.P.coin).toBe(coin + 500);
+    expect(Server.P.weapons[out.uid]).toBeTruthy();
   });
 
   it("ước 10 lần trừ 1600 Đá Sao và ghi 10 dòng lịch sử", () => {

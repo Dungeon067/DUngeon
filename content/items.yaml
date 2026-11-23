@@ -63,6 +63,30 @@ drops:
       pool:
         - loi-sao-bia-dong
 items:
+  - id: quang-tinh-luyen-tho
+    name: Quặng Tinh Luyện Thô
+    type: nguyen-lieu
+    rarity: 3
+    region: Đảo Lạc
+    story: Cục quặng sẫm nhặt ở bãi sông sau mùa lũ. Thợ rèn làng nung lên rồi rắc vào lò để thép nhớ thêm chút lửa.
+  - id: quang-tinh-luyen
+    name: Quặng Tinh Luyện
+    type: nguyen-lieu
+    rarity: 4
+    region: Marevia
+    story: Quặng đã lọc qua ba lò, gõ vào nghe tiếng ngân dài. Dùng để đánh thức một món binh khí còn ngủ.
+  - id: quang-tinh-luyen-sao
+    name: Quặng Tinh Luyện Sao
+    type: nguyen-lieu
+    rarity: 5
+    region: Marevia
+    story: Quặng lấy từ nơi sao rơi, lạnh tay dù để cạnh lửa. Binh khí muốn vượt giới hạn cũ phải có nó.
+  - id: phoi-long-sao
+    name: Phôi Lòng Sao
+    type: nguyen-lieu
+    rarity: 4
+    region: Đảo Lạc
+    story: Thỏi kim loại mang về từ Lòng Sao, còn ấm như vừa ra lò. Đủ tám thỏi, Lò Rèn sẽ đúc nên một binh khí mới.
   - id: sach-kinh-nghiem
     name: Sách Kinh Nghiệm
     type: nguyen-lieu
