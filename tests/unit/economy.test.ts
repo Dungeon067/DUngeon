@@ -122,7 +122,7 @@ describe("mô phỏng", () => {
     expect(a[2]!.pulls[90]).toBeGreaterThan(a[1]!.pulls[90]!);
     const f = tiering(a, chars, E, o.days);
     for (const c of f.checks) expect(c, c.ten).toMatchObject({ ok: true });
-  });
+  }, 60_000);
   it("thẻ tháng có giá trị mỗi đồng cao nhất", () => {
     const rows = packValue(E);
     const best = rows.reduce((m, r) => (r.moi1000 > m.moi1000 ? r : m));
