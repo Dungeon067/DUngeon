@@ -35,7 +35,15 @@ export function readyLoop(s: Spec, dur = 2.4, amp = 1): ClipDef {
       hp: [s.hp[0], s.hp[1] - 0.008 * amp * k, s.hp[2]],
       b: { ...s.b, chest: add(s.b.chest, [1.2 * k * amp, 0, 0]), head: add(s.b.head, [-0.8 * k * amp, 0, 0]) },
     });
-  return { dur, loop: true, keys: [{ t: 0, s: b(0) }, { t: 0.5, s: b(1) }, { t: 1, s: b(0) }] };
+  return {
+    dur,
+    loop: true,
+    keys: [
+      { t: 0, s: b(0) },
+      { t: 0.5, s: b(1) },
+      { t: 1, s: b(0) },
+    ],
+  };
 }
 
 export const add = (a: [number, number, number] | undefined, d: [number, number, number]): [number, number, number] => [
@@ -50,7 +58,11 @@ export const add = (a: [number, number, number] | undefined, d: [number, number,
  */
 export function carry(
   from: string,
-  opts: { l?: { hold: Hand; k: number; grip: Grip }; r?: { hold: Hand; k: number; grip: Grip }; fx?: (r: Rig, f: number) => void },
+  opts: {
+    l?: { hold: Hand; k: number; grip: Grip };
+    r?: { hold: Hand; k: number; grip: Grip };
+    fx?: (r: Rig, f: number) => void;
+  },
 ): OverlayDef {
   return {
     from,

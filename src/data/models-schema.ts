@@ -16,6 +16,9 @@ export const ModelsSchema = z.object({
   hoatAnh: perType(
     z.object({
       stand: z.string(),
+      /** S27: thế chờ trong trận và di chuyển khi đang cầm vũ khí (ngoài trận dùng relax / walk / run / sprint tay không). */
+      ready: z.string().optional(),
+      move: z.object({ walk: z.string(), run: z.string(), sprint: z.string() }).optional(),
       atk: z.array(z.string()).length(3),
       charge: z.string(),
       skill: z.string(),

@@ -15,17 +15,17 @@ const LH_DOWN: Hand = { p: [0.2, -0.04, 0.06], fing: [0.2, -0.5, 0.9], thumb: [0
 /** Ngoài trận: cung hạ cạnh người, tay phải buông tự nhiên. */
 export const BOW_RELAX: Spec = P(STAND, { lh: LH_DOWN, gl: FIST });
 
-/** Trong trận: nghiêng người, cung chéo trước bụng, tay phải đặt hờ ở dây. */
+/** Trong trận: nghiêng người, cung dựng nghiêng ở tay trái hạ thấp ngang hông, tay phải đặt hờ ở dây. */
 export const BOW_READY: Spec = P(STAND, {
   hp: [0, -0.04, 0],
   hr: [0, -32, 0],
   b: { spine: [2, -6, 0], chest: [3, -6, 0], upperChest: [1, 0, 0], neck: [0, 18, 0], head: [4, 24, 0] },
   fl: foot(0.07, 0.12, -22),
   fr: foot(-0.1, -0.1, -48),
-  lh: { p: [0.14, 0.1, 0.36], fing: [-0.35, -0.25, 1], thumb: [0.75, 0.65, 0.1], elbow: [1, -0.6, 0] },
-  rh: { p: [0.0, 0.08, 0.2], fing: [0.5, 0, 1], thumb: [0, 1, 0.2], elbow: [-0.6, -0.7, -0.4] },
+  lh: { p: [0.2, 0.0, 0.24], fing: [-0.45, -0.1, 1], thumb: [0.25, 1, 0.45], elbow: [1, -0.3, -0.6] },
+  rh: { p: [0.06, 0.08, 0.17], fing: [0.6, -0.2, 0.8], thumb: [0, 1, 0.2], elbow: [-0.6, -0.7, -0.4] },
   gl: FIST,
-  gr: HOOK,
+  gr: { c: 0.35, t: 0.4, ci: 0.55, cm: 0.55 },
 });
 
 /** Đầy dây: vai trái về mục tiêu, tay phải neo cạnh cằm, khuỷu phải ngang vai. */
@@ -42,7 +42,11 @@ export const BOW_DRAW: Spec = P(STAND, {
 });
 const HALF = P(BOW_DRAW, { rh: { p: [0.0, 0.42, 0.25] }, hr: [0, -55, 0] });
 /** Vừa thả: tay phải bật ra sau dọc má, ngón mở; tay cung giữ hướng. */
-const LOOSE_S = P(BOW_DRAW, { rh: { p: [-0.1, 0.46, -0.12], fing: [0.2, 0.2, 1] }, gr: LET, lh: { p: [0.04, 0.41, 0.6] } });
+const LOOSE_S = P(BOW_DRAW, {
+  rh: { p: [-0.1, 0.46, -0.12], fing: [0.2, 0.2, 1] },
+  gr: LET,
+  lh: { p: [0.04, 0.41, 0.6] },
+});
 
 /** Bắn nhanh: rút – neo – thả – giữ dáng – về thế chờ. v: biến thể thân. */
 function shot(v: { lean: number; yaw: number; strong?: boolean }): ClipDef {
@@ -55,15 +59,24 @@ function shot(v: { lean: number; yaw: number; strong?: boolean }): ClipDef {
   const follow = v.strong
     ? P(tw(LOOSE_S), { hp: [0, -0.06, -0.05], rh: { p: [-0.16, 0.44, -0.2] }, b: { chest: [-4, -10, -2] } })
     : tw(LOOSE_S);
+  // Rút nhanh, giữ đầy dây một nhịp rõ ràng (căng dây về cằm), thả, giữ dáng rồi về thế chờ.
+  const full = v.strong ? 0.2 : 0.14,
+    rel = v.strong ? 0.4 : 0.32;
   return {
     dur: v.strong ? 0.9 : 0.7,
+    str: [
+      [0, 0.15],
+      [0.03, 1],
+      [rel, 1],
+      [rel + 0.015, 0],
+    ],
     keys: [
       { t: 0, s: BOW_READY },
-      { t: 0.06, s: tw(HALF), ease: "out" },
-      { t: 0.12, s: tw(BOW_DRAW), ease: "out" },
-      { t: v.strong ? 0.2 : 0.15, s: tw(BOW_DRAW), ease: "lin" },
-      { t: v.strong ? 0.25 : 0.19, s: follow, ease: "out" },
-      { t: 0.5, s: follow, ease: "inout" },
+      { t: full * 0.5, s: tw(HALF), ease: "out" },
+      { t: full, s: tw(BOW_DRAW), ease: "out" },
+      { t: rel, s: tw(P(BOW_DRAW, { rh: { p: [-0.045, 0.45, -0.02] } })), ease: "lin" },
+      { t: rel + 0.05, s: follow, ease: "out" },
+      { t: 0.62, s: follow, ease: "inout" },
       { t: 1, s: BOW_READY, ease: "inout" },
     ],
   };
@@ -73,6 +86,10 @@ function shot(v: { lean: number; yaw: number; strong?: boolean }): ClipDef {
 const aim: ClipDef = {
   dur: 1.6,
   loop: true,
+  str: [
+    [0, 1],
+    [1, 1],
+  ],
   keys: [
     { t: 0, s: BOW_DRAW },
     { t: 0.5, s: P(BOW_DRAW, { rh: { p: [-0.035, 0.452, -0.01] }, hp: [0, -0.034, 0] }) },
@@ -89,6 +106,12 @@ const SKY = P(BOW_DRAW, {
 });
 const burst: ClipDef = {
   dur: 1.3,
+  str: [
+    [0.2, 0],
+    [0.3, 1],
+    [0.76, 1],
+    [0.775, 0],
+  ],
   keys: [
     { t: 0, s: BOW_READY },
     { t: 0.16, s: P(BOW_READY, { hp: [0, -0.12, -0.08], fr: foot(-0.1, -0.24, -48) }), ease: "out" },
@@ -103,7 +126,13 @@ const burst: ClipDef = {
 
 export const BOW: Record<string, ClipDef> = {
   bowRelax: idleLoop(BOW_RELAX),
-  bowReady: readyLoop(BOW_READY),
+  bowReady: {
+    ...readyLoop(BOW_READY),
+    str: [
+      [0, 0.15],
+      [1, 0.15],
+    ],
+  },
   bow1: shot({ lean: 0, yaw: 0 }),
   bow2: shot({ lean: 3, yaw: -6 }),
   bow3: shot({ lean: -2, yaw: 4, strong: true }),

@@ -1,4 +1,6 @@
 import { GS } from "../core/state";
+import { weaponOut } from "../combat/weapon-state";
+import { POSES } from "../data/poses";
 import { beginLifted, drawShadow, drawWaves } from "./render-z";
 import { drawChibi } from "../art/chibi";
 import { drawBoss, drawEnemy } from "../art/enemy";
@@ -197,6 +199,7 @@ export function render() {
           atk: p.atkAnim,
           t: tm,
           noShadow: true,
+          noWeapon: !weaponOut(p, GS.G.enemies, GS.G.time, POSES.vuKhi),
         });
         ctx.globalAlpha = 1;
         if (p.shield > 0) {

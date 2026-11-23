@@ -37,6 +37,11 @@ if (!a) throw new Error("không tải được VRM");
 scene.add(a.obj);
 if (dang) a.setDang((POSES.dang as any)[dang]);
 a.poseIn = { mode, freeL: w !== "bow", freeR: w === "bow" };
+// Tay không (vũ khí đã cất): ẩn vũ khí, hai tay rảnh.
+if (clip === "relax" || clip.startsWith("stow") || q.get("nov")) {
+  if (a.weapon && clip === "relax") a.weapon.visible = false;
+  a.poseIn = { mode, freeL: true, freeR: true };
+}
 // Mô phỏng dáng khi chưa có mô hình riêng: co giãn cao/ngang.
 a.obj.scale.multiply(new THREE.Vector3(sc[1], sc[0], sc[1]));
 a.obj.position.y = a.obj.userData.yOff ?? 0;
@@ -59,6 +64,7 @@ const act = (a as any).actions.get(clip) as THREE.AnimationAction;
     a.layer.apply(0, a.poseIn);
   }
   a.vrm.update(0);
+  a.bow?.update(a.strNow());
   gl.render(scene, cam);
   return true;
 };

@@ -6,20 +6,22 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { VRMLoaderPlugin, VRMUtils, type VRM } from "@pixiv/three-vrm";
 import modelsRaw from "../../../content/models.yaml";
-import posesRaw from "../../../content/poses.yaml";
-import { validatePoses, type DangParams } from "../../data/poses-schema";
+import { POSES } from "../../data/poses";
+import type { DangParams } from "../../data/poses-schema";
+import { WeaponFx } from "./weapon-fx";
 import { PoseLayer, type PoseInput } from "./pose-layer";
+import { BowRig } from "./bow-rig";
 import { validateModels, type WeaponType } from "../../data/models-schema";
 import { outlineMat, toonMat } from "./mat";
 
 export const MODELS = validateModels(modelsRaw);
-export const POSES = validatePoses(posesRaw);
+export { POSES };
 const base = (import.meta as any).env?.BASE_URL ?? "/";
 const loader = new GLTFLoader();
 loader.register((p) => new VRMLoaderPlugin(p));
 const glbLoader = new GLTFLoader();
 
-type ClipData = { n: number; bones: Record<string, { q: number[][] }>; hips: number[][] };
+type ClipData = { n: number; bones: Record<string, { q: number[][] }>; hips: number[][]; str?: number[] };
 let animLib: Promise<{ fps: number; clips: Record<string, ClipData> } | null> | null = null;
 function loadAnims() {
   return (animLib ??= fetch(`${base}media/anim/humanoid.json`)
@@ -92,6 +94,10 @@ export class VrmActor {
   poseIn: PoseInput = { mode: "relax", freeL: true, freeR: true };
   restHips: THREE.Vector3;
   hipsH: number;
+  bow: BowRig | null = null;
+  wfx: WeaponFx | null = null;
+  private strs = new Map<string, number[]>();
+  private fps: number;
   constructor(
     public vrm: VRM,
     public wtype: WeaponType,
@@ -107,6 +113,7 @@ export class VrmActor {
     const hipsH = Math.max(0.3, hipsN.getWorldPosition(new THREE.Vector3()).y);
     this.restHips = restHips;
     this.hipsH = hipsH;
+    this.fps = fps;
     const v0 = vrm.meta?.metaVersion === "0";
     for (const [name, c] of Object.entries(clips)) {
       const times = Array.from({ length: c.n }, (_, i) => i / fps);
@@ -124,6 +131,7 @@ export class VrmActor {
       ]);
       tracks.push(new THREE.VectorKeyframeTrack(`${hipsN.name}.position`, times, pv));
       this.actions.set(name, this.mixer.clipAction(new THREE.AnimationClip(name, -1, tracks)));
+      if (c.str) this.strs.set(name, c.str);
     }
     this.obj.add(vrm.scene);
   }
@@ -190,6 +198,13 @@ export class VrmActor {
         holder.add(w);
         bone.add(holder);
         a.weapon = holder;
+        const str = w.getObjectByName("string") as THREE.Mesh | undefined,
+          gr = w.getObjectByName("grip"),
+          nock =
+            vrm.humanoid.getNormalizedBoneNode("rightMiddleProximal") ??
+            vrm.humanoid.getNormalizedBoneNode("rightHand");
+        if (wtype === "bow" && str?.isMesh && gr && nock) a.bow = new BowRig(str, gr, nock, a.obj);
+        a.wfx = new WeaponFx(vrm, holder, wtype, POSES.vuKhi, (n) => a.duration(n), grip.scale);
       }
     }
     return a;
@@ -216,6 +231,15 @@ export class VrmActor {
     this.curName = name;
   }
 
+  /** Độ kéo dây cung của clip đang chạy (rãnh str), 0 nếu clip không có. */
+  strNow() {
+    const a = this.cur;
+    if (!a) return 0;
+    const s = this.strs.get(a.getClip().name);
+    if (!s) return 0;
+    return s[Math.min(s.length - 1, Math.max(0, Math.round(a.time * this.fps)))];
+  }
+
   duration(name: string) {
     return this.actions.get(name)?.getClip().duration ?? 0.5;
   }
@@ -230,9 +254,12 @@ export class VrmActor {
     this.mixer.update(dt);
     this.layer?.apply(dt, this.poseIn);
     this.vrm.update(dt);
+    this.wfx?.update(dt);
+    if (this.bow) this.bow.update(this.wfx && this.wfx.st !== "hand" ? 0 : this.strNow());
   }
 
   dispose() {
+    this.wfx?.dispose();
     this.mixer.stopAllAction();
     this.obj.removeFromParent();
     VRMUtils.deepDispose(this.vrm.scene);

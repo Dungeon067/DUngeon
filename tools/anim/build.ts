@@ -5,11 +5,12 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { bake, overlay, Rig, type ClipDef, type OverlayDef } from "./pose";
 import { BOW, BOW_MOVE } from "./s27/bow";
+import { UNARMED } from "./s27/unarmed";
 
 const FILE = "public/media/anim/humanoid.json";
 const lib = JSON.parse(readFileSync(FILE, "utf8"));
 const names = Object.keys(lib.clips.idle.bones);
-const ALL: Record<string, ClipDef> = { ...BOW };
+const ALL: Record<string, ClipDef> = { ...UNARMED, ...BOW };
 const OVER: Record<string, OverlayDef> = { ...BOW_MOVE };
 const rig = new Rig();
 for (const [n, c] of Object.entries(ALL)) {

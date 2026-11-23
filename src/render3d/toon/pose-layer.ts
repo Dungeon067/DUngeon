@@ -131,6 +131,8 @@ export class PoseLayer {
       }
       const dy = hips.position.y - this.restHips.y;
       hips.position.y = this.restHips.y + dy * (1 + (chay.nay - 1) * this.wMove);
+      if (inp.freeL) this.post("leftUpperArm", 0, 0, chay.mo * this.wMove);
+      if (inp.freeR) this.post("rightUpperArm", 0, 0, -chay.mo * this.wMove);
     }
     // Ra đòn: dáng nặng hạ hông sâu hơn, xoay thân rộng hơn.
     if (this.wAct > 0.01) {
@@ -163,17 +165,25 @@ export class PoseLayer {
         bo = Math.sin(t * Math.PI * 2 * cho.nhipNhun);
       const hy = -cho.ha * wC - cho.nhun * (0.5 + 0.5 * bo) * wC - 0.002 * Math.abs(sh) * wR;
       hips.position.y += (hy * H) / scale;
-      hips.position.addScaledVector(
-        new THREE.Vector3(sg, 0, 0),
-        (0.008 * dung.doiTrong.bien * sh * wR * this.hipsH),
-      );
+      hips.position.addScaledVector(new THREE.Vector3(sg, 0, 0), 0.008 * dung.doiTrong.bien * sh * wR * this.hipsH);
       this.pre("hips", 0, 0, (dung.hong + 1.2 * dung.doiTrong.bien * sh) * wR);
       this.post("spine", dung.lung * wR + cho.cui * 0.6 * wC, 0, -dung.hong * 0.6 * wR);
-      this.post("upperChest", -dung.tho.bien * (0.5 + 0.5 * br) * (wR + wC * 0.6) + cho.cui * 0.4 * wC, 0, -dung.vai * wR);
-      this.post("head", -cho.cui * 0.5 * wC, 0, dung.dau * wR * (0.7 + 0.3 * Math.sin(t * 0.37)));
+      this.post(
+        "upperChest",
+        -dung.tho.bien * (0.5 + 0.5 * br) * (wR + wC * 0.6) + cho.cui * 0.4 * wC,
+        0,
+        -dung.vai * wR,
+      );
+      this.post("head", dung.dauCui * wR - cho.cui * 0.5 * wC, 0, dung.dau * wR * (0.7 + 0.3 * Math.sin(t * 0.37)));
       const sb = 0.8 * dung.tho.bien * (0.5 + 0.5 * br) * (wR + wC * 0.6);
-      this.post("leftShoulder", 0, 0, sb);
-      this.post("rightShoulder", 0, 0, -sb);
+      this.post("leftShoulder", 0, dung.moVai * wR, sb);
+      this.post("rightShoulder", 0, -dung.moVai * wR, -sb);
+      // Tay đung đưa nhẹ (dáng trẻ em): cùng nhịp, như đang chờ chơi.
+      const sw = dung.tay.dua * Math.sin(t * Math.PI * 2 * dung.doiTrong.nhip * 2) * wR;
+      if (sw) {
+        if (inp.freeL) this.pre("leftUpperArm", -sw, 0, 0);
+        if (inp.freeR) this.pre("rightUpperArm", -sw * 0.8, 0, 0);
+      }
       // Tay rảnh: dang tay, gập khuỷu; dáng khép tay trước người.
       if (inp.freeL) {
         this.post("leftUpperArm", 0, 0, dung.tay.mo * wR);
@@ -236,7 +246,15 @@ export class PoseLayer {
         t0 = new THREE.Vector3(0, 0, this.v0 ? -1 : 1);
       const hq = alignQuat(f0, t0, fing, thumb);
       const q = L.c.getWorldQuaternion(new THREE.Quaternion()).slerp(hq, w);
-      solveLimb(L, cur.lerp(tgt, w), side.clone().multiplyScalar(k * 0.4).addScaledVector(fwd, -1), q);
+      solveLimb(
+        L,
+        cur.lerp(tgt, w),
+        side
+          .clone()
+          .multiplyScalar(k * 0.4)
+          .addScaledVector(fwd, -1),
+        q,
+      );
     }
   }
 }

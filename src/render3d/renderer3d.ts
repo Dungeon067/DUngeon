@@ -20,7 +20,9 @@ import { TS } from "../world/map";
 import { CanvasSprite } from "./actors3d";
 import { getRenderable, renderObjects } from "./renderables";
 import type { WorldRenderer } from "./select";
-import { MODELS, VrmActor } from "./toon/actor";
+import { MODELS, POSES, VrmActor } from "./toon/actor";
+import { weaponOut } from "../combat/weapon-state";
+import { ELEMENTS } from "../ui/tokens";
 import { FADE, fadeOccluder, toonMat } from "./toon/mat";
 import { animateMonster, buildMonster, type MonsterView } from "./toon/monsters";
 import { buildSky } from "./toon/sky";
@@ -404,11 +406,17 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       return p.vz > 0 ? { k: "jumpUp", once: true, fade: 0.08 } : { k: "jumpAir", fade: 0.2 };
     }
     if (p._landT !== undefined && T - p._landT < 0.22) return { k: "jumpLand", once: true, speed: 1.4, fade: 0.06 };
+    // S27: cầm vũ khí thì dùng thế chờ / chạy theo vũ khí; đã cất thì tay không thả lỏng.
+    const armed = !hero!.wfx || hero!.wfx.st === "hand" || hero!.wfx.st === "stowing";
     if (p.moving) {
-      const sprint = GS.holdDash && p.dashHeld > 0.25 && p.stamina > 0;
-      return sprint ? { k: "sprint", fade: 0.2 } : { k: "run", fade: 0.18, speed: p.atkAnim > 0 ? 0.6 : 1 };
+      const sprint = GS.holdDash && p.dashHeld > 0.25 && p.stamina > 0,
+        mv = armed ? A.move : undefined;
+      return sprint
+        ? { k: mv?.sprint ?? "sprint", fade: 0.2 }
+        : { k: mv?.run ?? "run", fade: 0.18, speed: p.atkAnim > 0 ? 0.6 : 1 };
     }
-    return { k: A.stand, fade: 0.25 };
+    if (hero!.wfx?.clip) return { k: hero!.wfx.clip, once: true, fade: 0.12 };
+    return armed ? { k: A.ready ?? A.stand, fade: 0.25 } : { k: "relax", fade: 0.35 };
   }
 
   let lastT = 0;
@@ -535,8 +543,12 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         VrmActor.load(m.c.id, (m.c.w as WeaponType) ?? "sword", wid, (m.c as any).look).then((a) => {
           if (key !== heroKey) return a?.dispose();
           hero = a;
-          if (a) scene.add(a.obj);
-          else {
+          if (a) {
+            const dg = (m.c as any).dang as keyof typeof POSES.dang | undefined;
+            a.setDang(POSES.dang[dg ?? "nu-teen"] ?? POSES.dang["nu-teen"]);
+            if (a.wfx) a.wfx.color.set(ELEMENTS[m.c.el as keyof typeof ELEMENTS]?.c ?? "#ffffff");
+            scene.add(a.obj);
+          } else {
             // Không tải được VRM (mất mạng, file hỏng): vẽ chibi 2D lên tấm phẳng để nhân vật không biến mất.
             heroFallback = new CanvasSprite(80, 96, Q.shadows);
             scene.add(heroFallback.obj);
@@ -545,6 +557,8 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       }
     }
     if (hero && m) {
+      const standing = !p.moving && !p.air && p.dashT <= 0;
+      hero.wfx?.want(weaponOut(p, G.enemies, G.time, POSES.vuKhi), standing, scene);
       const c = heroClip(p, m),
         name = c.k.split("#")[0];
       if (c.k !== hero.curName && (hero.curName.split("#")[0] !== name || c.k.includes("#"))) {
@@ -562,6 +576,24 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       hero.obj.rotation.y = heroYaw;
       hero.obj.position.set(pos.x, pos.y + (hero.obj.userData.yOff ?? 0), pos.z);
       hero.obj.visible = !(p.iframes > 0 && p.hurt > 0 && Math.floor(t * 20) % 2);
+      const acting = !!p.act && ACT_WIN[p.act.k] !== undefined && G.time - p.act.t0 < ACT_WIN[p.act.k];
+      const handFree = !hero.wfx || hero.wfx.st !== "hand";
+      hero.poseIn = {
+        mode:
+          !m.alive || p.hurt > 0 || p.dashT > 0
+            ? "air"
+            : acting
+              ? "act"
+              : p.air
+                ? "air"
+                : p.moving
+                  ? "move"
+                  : handFree
+                    ? "relax"
+                    : "ready",
+        freeL: handFree || m.c.w !== "bow",
+        freeR: handFree || m.c.w === "bow",
+      };
       hero.update(dt);
       // Vệt vũ khí cận chiến khi ra đòn.
       const melee = m.c.w !== "bow" && m.c.w !== "cat";
@@ -604,6 +636,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
           atk: p.atkAnim,
           t,
           noShadow: true,
+          noWeapon: !weaponOut(p, G.enemies, G.time, POSES.vuKhi),
         }),
       );
       heroFallback.obj.position.copy(pos);

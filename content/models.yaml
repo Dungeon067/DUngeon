@@ -24,7 +24,17 @@ hoatAnh:
   sword: { stand: swordIdle, atk: [sword1, sword2, sword3], charge: cast, skill: skill, burst: burst, speed: 1 }
   great: { stand: swordIdle, atk: [great1, great2, great3], charge: cast, skill: skill, burst: burst, speed: 0.75 }
   spear: { stand: idle, atk: [spear1, spear2, spear3], charge: cast, skill: skill, burst: burst, speed: 1 }
-  bow: { stand: idle, atk: [bow1, bow2, bow3], charge: bowAim, skill: skill, burst: bowBurst, speed: 1 }
+  bow:
+    {
+      stand: bowReady,
+      ready: bowReady,
+      move: { walk: bowWalk, run: bowRun, sprint: bowSprint },
+      atk: [bow1, bow2, bow3],
+      charge: bowAim,
+      skill: skill,
+      burst: bowBurst,
+      speed: 1,
+    }
   cat: { stand: idle, atk: [cat1, cat2, cat3], charge: cast, skill: skill, burst: burst, speed: 1 }
 nhanVat:
   havy: { height: 1.55 }

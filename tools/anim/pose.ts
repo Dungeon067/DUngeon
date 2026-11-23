@@ -59,6 +59,8 @@ export interface ClipDef {
   dur: number;
   loop?: boolean;
   keys: PKey[];
+  /** Dây cung theo tay phải (0 nghỉ, 1 kéo theo tay), đường gấp khúc [tỉ lệ, giá trị]; có thì hiện mũi tên trên cung. */
+  str?: [number, number][];
   /** Chỉnh thêm theo thời gian (giây, tỉ lệ 0..1) sau nội suy, trước IK. */
   fx?: (s: Spec, f: number, sec: number) => void;
 }
@@ -92,7 +94,13 @@ export function P(base: Spec, over: DeepPartial<Spec> = {}): Spec {
   merge(o, over);
   return o;
 }
-export type DeepPartial<T> = { [K in keyof T]?: T[K] extends any[] ? T[K] : T[K] extends object | null ? DeepPartial<NonNullable<T[K]>> | null : T[K] };
+export type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends any[]
+    ? T[K]
+    : T[K] extends object | null
+      ? DeepPartial<NonNullable<T[K]>> | null
+      : T[K];
+};
 
 // ---------- Khung xương ----------
 type RigJson = { hipsHeight: number; bones: Record<string, { parent: string | null; pos: V3 }> };
@@ -190,7 +198,8 @@ export class Rig {
   setFrame(c: ClipData, i: number) {
     this.reset();
     const j = Math.min(c.n - 1, i);
-    for (const [n, tr] of Object.entries(c.bones)) this.bones[n]?.quaternion.fromArray(tr.q[Math.min(tr.q.length - 1, j)]);
+    for (const [n, tr] of Object.entries(c.bones))
+      this.bones[n]?.quaternion.fromArray(tr.q[Math.min(tr.q.length - 1, j)]);
     this.bones.hips.position.fromArray(c.hips[Math.min(c.hips.length - 1, j)]);
     this.root.updateMatrixWorld(true);
   }
@@ -249,12 +258,18 @@ export function mix(s0: Spec, s1: Spec, s2: Spec, s3: Spec, u: number): Spec {
       d = get(s3);
     if (b && c) set(crV(a ?? b, b, c, d ?? c, u));
   };
-  pv((s) => s.hp, (v) => (out.hp = v));
+  pv(
+    (s) => s.hp,
+    (v) => (out.hp = v),
+  );
   out.hr = slerpE(s1.hr, s2.hr, u);
   const names = new Set([...Object.keys(s1.b), ...Object.keys(s2.b)]);
   for (const n of names) out.b[n] = slerpE(s1.b[n] ?? [0, 0, 0], s2.b[n] ?? [0, 0, 0], u);
   for (const k of ["fl", "fr"] as const) {
-    pv((s) => s[k].p, (v) => (out[k].p = v));
+    pv(
+      (s) => s[k].p,
+      (v) => (out[k].p = v),
+    );
     out[k].r = slerpE(s1[k].r ?? [0, 0, 0], s2[k].r ?? [0, 0, 0], u);
     out[k].toe = (s1[k].toe ?? 0) + ((s2[k].toe ?? 0) - (s1[k].toe ?? 0)) * u;
     if (s1[k].knee || s2[k].knee) out[k].knee = lerpV(s1[k].knee ?? [0, 0, 1], s2[k].knee ?? [0, 0, 1], u);
@@ -280,7 +295,13 @@ export function mix(s0: Spec, s1: Spec, s2: Spec, s3: Spec, u: number): Spec {
     const a = s1[k],
       b = s2[k];
     const l = (x?: number, y?: number, d = 0) => (x ?? d) + ((y ?? d) - (x ?? d)) * u;
-    out[k] = { c: l(a.c, b.c), t: l(a.t, b.t), s: l(a.s, b.s), ci: l(a.ci ?? a.c, b.ci ?? b.c), cm: l(a.cm ?? a.c, b.cm ?? b.c) };
+    out[k] = {
+      c: l(a.c, b.c),
+      t: l(a.t, b.t),
+      s: l(a.s, b.s),
+      ci: l(a.ci ?? a.c, b.ci ?? b.c),
+      cm: l(a.cm ?? a.c, b.cm ?? b.c),
+    };
   }
   return out;
 }
@@ -301,6 +322,18 @@ export interface ClipData {
   n: number;
   bones: Record<string, { q: number[][] }>;
   hips: number[][];
+  str?: number[];
+}
+/** Nội suy đường gấp khúc [x, y] tại f. */
+export function pw(pts: [number, number][], f: number) {
+  if (f <= pts[0][0]) return pts[0][1];
+  for (let i = 1; i < pts.length; i++)
+    if (f <= pts[i][0]) {
+      const [x0, y0] = pts[i - 1],
+        [x1, y1] = pts[i];
+      return y0 + ((y1 - y0) * (f - x0)) / Math.max(1e-6, x1 - x0);
+    }
+  return pts[pts.length - 1][1];
 }
 
 /** Nướng clip ở fps cho trước thành dữ liệu humanoid.json. */
@@ -336,6 +369,7 @@ export function bake(c: ClipDef, fps: number, names: string[], rig = new Rig()):
     rig.apply(s);
     for (const b of names) out.bones[b].q.push(rig.bones[b].quaternion.toArray().map((v) => +v.toFixed(4)));
     out.hips.push(rig.bones.hips.position.toArray().map((v) => +v.toFixed(4)));
+    if (c.str) (out.str ??= []).push(+pw(c.str, f).toFixed(3));
   }
   return out;
 }

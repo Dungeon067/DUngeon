@@ -4,76 +4,191 @@
 # dáng trẻ em (tre: true) chỉ dùng tư thế hồn nhiên: không nghiêng hông, không đặt tay trước người.
 #  dung: đứng yên ngoài trận   chan: nới (+) / khép (−) mỗi bàn chân theo chiều ngang
 #        hong / vai: nghiêng hông / vai (vai ngược chiều hông)   lung: ngả lưng (+ cúi, − thẳng)   dau: nghiêng đầu
-#        tay: mo = dang cánh tay khỏi người, gap = gập khuỷu, truoc = đưa hai tay khép nhẹ trước người (0..1)
+#        moVai: mở vai ra sau   dauCui: cúi (+) / ngẩng (−) đầu
+#        tay: mo = dang cánh tay khỏi người, gap = gập khuỷu, truoc = đưa hai tay khép nhẹ trước người (0..1),
+#             dua = tay đung đưa nhẹ khi đứng (độ, dáng trẻ em)
 #        tho: nhịp thở (lần/giây), bien = biên độ (độ)   doiTrong: nhịp + biên độ dồn trọng tâm
 #  cho:  thế chờ trong trận: chan (nới thêm), ha (hạ hông), cui (đổ người tới trước), nhun + nhipNhun (nhún)
-#  chay: bien = biên độ sải, nhip = nhịp bước (nhân tốc độ clip), nay = độ nảy
+#  chay: bien = biên độ sải, nhip = nhịp bước (nhân tốc độ clip), nay = độ nảy, mo = tay xa thân khi chạy (độ)
 #  don:  nang 0..1: đòn nặng thì hạ hông và xoay thân nhiều hơn
 #  tiLe: chỉ dùng cho bảng so sánh khi chưa có mô hình riêng (co giãn chiều cao / bề ngang).
+# Vũ khí ngoài trận: thôi đánh / rời trận `cho` giây thì cất (clip `clip` nếu đứng yên, vũ khí chuyển tới chỗ `noi`),
+# giữ `giu` giây rồi tan thành hạt sáng theo nguyên tố trong `tan` giây. Đánh thường / kỹ năng / nộ: hiện lại trong tay
+# ngay khung đầu (tụ hạt `hien` giây, không làm chậm đòn). gan: khoảng cách quái (px logic) được tính là đang trong trận.
+# noi: xương VRM chuẩn hóa, pos (m, hệ xương ở tư thế chữ T: +X trái, +Y lên, +Z trước), rot (độ, XYZ).
+vuKhi:
+  cho: 2.5
+  gan: 420
+  giu: 0.35
+  tan: 0.6
+  hien: 0.14
+  hat: { so: 48, coDo: 0.05, bay: 0.5 }
+  noi:
+    sword: { bone: hips, pos: [0.15, 0.02, 0.02], rot: [-125, 0, 0], clip: stowHip, luc: 0.55 }
+    great: { bone: upperChest, pos: [-0.12, 0.12, -0.15], rot: [0, 0, -150], clip: stowBackR, luc: 0.5 }
+    spear: { bone: upperChest, pos: [-0.05, 0.02, -0.15], rot: [0, 0, -140], clip: stowBackR, luc: 0.5 }
+    bow: { bone: upperChest, pos: [0.04, 0.0, -0.13], rot: [0, 0, 150], clip: stowBackL, luc: 0.5 }
+    cat: { bone: rightHand, pos: [-0.06, 0.14, 0.02], rot: [0, 0, 0], luc: 0 }
 dang:
   nu-nho:
     ten: Nữ nhỏ (dáng trẻ em)
     gioi: nu
     tre: true
-    dung: { chan: 0, hong: 0, vai: 0, lung: 0, dau: 4, tay: { mo: 9, gap: 12, truoc: 0 }, tho: { nhip: 0.34, bien: 1.4 }, doiTrong: { nhip: 0.28, bien: 1.3 } }
-    cho: { chan: 0.03, ha: 0.03, cui: 6, nhun: 0.016, nhipNhun: 2.2 }
-    chay: { bien: 1, nhip: 1.15, nay: 1.5 }
+    dung:
+      {
+        chan: -0.035,
+        hong: 0,
+        vai: 0,
+        moVai: 0,
+        lung: 1,
+        dau: 7,
+        dauCui: -3,
+        tay: { mo: 6, gap: 8, truoc: 0, dua: 10 },
+        tho: { nhip: 0.36, bien: 1.5 },
+        doiTrong: { nhip: 0.32, bien: 1.6 },
+      }
+    cho: { chan: 0.03, ha: 0.03, cui: 8, nhun: 0.022, nhipNhun: 2.4 }
+    chay: { bien: 0.85, nhip: 1.3, nay: 1.8, mo: 4 }
     don: { nang: 0.2 }
     tiLe: { cao: 0.8, rong: 0.94 }
   nu-teen:
     ten: Thiếu nữ
     gioi: nu
-    dung: { chan: -0.01, hong: 1, vai: 0.5, lung: 0, dau: 2, tay: { mo: 4, gap: 14, truoc: 0 }, tho: { nhip: 0.27, bien: 1 }, doiTrong: { nhip: 0.21, bien: 1 } }
-    cho: { chan: 0.04, ha: 0.045, cui: 5, nhun: 0.006, nhipNhun: 1.6 }
-    chay: { bien: 1, nhip: 1.05, nay: 1.1 }
+    dung:
+      {
+        chan: -0.02,
+        hong: 1.2,
+        vai: 0.8,
+        moVai: 0,
+        lung: 0,
+        dau: 4,
+        dauCui: 1,
+        tay: { mo: 3, gap: 16, truoc: 0, dua: 0 },
+        tho: { nhip: 0.27, bien: 1.1 },
+        doiTrong: { nhip: 0.21, bien: 1.1 },
+      }
+    cho: { chan: 0.045, ha: 0.045, cui: 5, nhun: 0.008, nhipNhun: 1.7 }
+    chay: { bien: 1, nhip: 1.08, nay: 1.15, mo: 2 }
     don: { nang: 0.4 }
     tiLe: { cao: 1, rong: 1 }
   nu-truong-thanh:
     ten: Nữ trưởng thành
     gioi: nu
-    dung: { chan: -0.005, hong: 1, vai: 0.6, lung: -0.5, dau: 0, tay: { mo: 3, gap: 10, truoc: 0 }, tho: { nhip: 0.23, bien: 0.9 }, doiTrong: { nhip: 0.18, bien: 0.9 } }
-    cho: { chan: 0.05, ha: 0.05, cui: 4, nhun: 0.004, nhipNhun: 1.4 }
-    chay: { bien: 1.05, nhip: 1, nay: 1 }
+    dung:
+      {
+        chan: 0.0,
+        hong: 1.4,
+        vai: 1,
+        moVai: 2,
+        lung: -1.5,
+        dau: 1,
+        dauCui: -1.5,
+        tay: { mo: 5, gap: 8, truoc: 0, dua: 0 },
+        tho: { nhip: 0.23, bien: 0.9 },
+        doiTrong: { nhip: 0.17, bien: 0.9 },
+      }
+    cho: { chan: 0.06, ha: 0.055, cui: 4, nhun: 0.005, nhipNhun: 1.4 }
+    chay: { bien: 1.12, nhip: 0.98, nay: 0.9, mo: 3 }
     don: { nang: 0.5 }
     tiLe: { cao: 1.04, rong: 1 }
   nu-dam-dang:
     ten: Nữ đằm thắm (điềm tĩnh, nữ tính)
     gioi: nu
-    dung: { chan: -0.02, hong: 1.8, vai: 1, lung: -1, dau: 1.5, tay: { mo: 2, gap: 24, truoc: 0.7 }, tho: { nhip: 0.2, bien: 0.8 }, doiTrong: { nhip: 0.15, bien: 0.8 } }
+    dung:
+      {
+        chan: -0.04,
+        hong: 2.6,
+        vai: 1.8,
+        moVai: 1,
+        lung: -2.5,
+        dau: 3,
+        dauCui: 2,
+        tay: { mo: 2, gap: 28, truoc: 0.85, dua: 0 },
+        tho: { nhip: 0.19, bien: 0.8 },
+        doiTrong: { nhip: 0.14, bien: 0.7 },
+      }
     cho: { chan: 0.05, ha: 0.04, cui: 3, nhun: 0.003, nhipNhun: 1.2 }
-    chay: { bien: 0.95, nhip: 0.95, nay: 0.8 }
+    chay: { bien: 0.9, nhip: 0.92, nay: 0.6, mo: 1 }
     don: { nang: 0.55 }
     tiLe: { cao: 1.02, rong: 1.06 }
   nam-nho:
     ten: Nam nhỏ (dáng trẻ em)
     gioi: nam
     tre: true
-    dung: { chan: 0.02, hong: 0, vai: 0, lung: 0, dau: 3, tay: { mo: 10, gap: 10, truoc: 0 }, tho: { nhip: 0.34, bien: 1.4 }, doiTrong: { nhip: 0.3, bien: 1.3 } }
-    cho: { chan: 0.05, ha: 0.035, cui: 7, nhun: 0.016, nhipNhun: 2.3 }
-    chay: { bien: 1.05, nhip: 1.15, nay: 1.5 }
+    dung:
+      {
+        chan: 0.03,
+        hong: 0,
+        vai: 0,
+        moVai: 0,
+        lung: 1,
+        dau: 5,
+        dauCui: -4,
+        tay: { mo: 10, gap: 10, truoc: 0, dua: 9 },
+        tho: { nhip: 0.36, bien: 1.5 },
+        doiTrong: { nhip: 0.34, bien: 1.6 },
+      }
+    cho: { chan: 0.06, ha: 0.035, cui: 8, nhun: 0.022, nhipNhun: 2.5 }
+    chay: { bien: 0.95, nhip: 1.3, nay: 1.7, mo: 8 }
     don: { nang: 0.25 }
     tiLe: { cao: 0.8, rong: 0.96 }
   nam-teen:
     ten: Thiếu niên
     gioi: nam
-    dung: { chan: 0.02, hong: 0.5, vai: 0.3, lung: 0, dau: 1, tay: { mo: 6, gap: 12, truoc: 0 }, tho: { nhip: 0.26, bien: 1 }, doiTrong: { nhip: 0.2, bien: 1 } }
-    cho: { chan: 0.07, ha: 0.05, cui: 6, nhun: 0.006, nhipNhun: 1.6 }
-    chay: { bien: 1.05, nhip: 1.05, nay: 1.05 }
+    dung:
+      {
+        chan: 0.03,
+        hong: 0.6,
+        vai: 0.4,
+        moVai: 0,
+        lung: 2,
+        dau: 2,
+        dauCui: 2,
+        tay: { mo: 7, gap: 14, truoc: 0, dua: 0 },
+        tho: { nhip: 0.26, bien: 1 },
+        doiTrong: { nhip: 0.2, bien: 1.1 },
+      }
+    cho: { chan: 0.075, ha: 0.05, cui: 6, nhun: 0.008, nhipNhun: 1.7 }
+    chay: { bien: 1.08, nhip: 1.1, nay: 1.1, mo: 6 }
     don: { nang: 0.5 }
     tiLe: { cao: 1.03, rong: 0.98 }
   nam-truong-thanh:
     ten: Nam trưởng thành
     gioi: nam
-    dung: { chan: 0.035, hong: 0.3, vai: 0.2, lung: 0, dau: 0, tay: { mo: 8, gap: 10, truoc: 0 }, tho: { nhip: 0.22, bien: 0.9 }, doiTrong: { nhip: 0.17, bien: 0.8 } }
-    cho: { chan: 0.08, ha: 0.06, cui: 5, nhun: 0.004, nhipNhun: 1.3 }
-    chay: { bien: 1.1, nhip: 1, nay: 0.9 }
+    dung:
+      {
+        chan: 0.05,
+        hong: 0.3,
+        vai: 0.2,
+        moVai: 3,
+        lung: -1,
+        dau: 0,
+        dauCui: -1,
+        tay: { mo: 10, gap: 10, truoc: 0, dua: 0 },
+        tho: { nhip: 0.22, bien: 0.9 },
+        doiTrong: { nhip: 0.16, bien: 0.8 },
+      }
+    cho: { chan: 0.09, ha: 0.065, cui: 5, nhun: 0.005, nhipNhun: 1.3 }
+    chay: { bien: 1.18, nhip: 0.98, nay: 0.85, mo: 9 }
     don: { nang: 0.65 }
     tiLe: { cao: 1.08, rong: 1.03 }
   nam-vam-vo:
     ten: Nam vạm vỡ (to cao)
     gioi: nam
-    dung: { chan: 0.06, hong: 0, vai: 0, lung: -1, dau: 0, tay: { mo: 15, gap: 14, truoc: 0 }, tho: { nhip: 0.18, bien: 1.1 }, doiTrong: { nhip: 0.14, bien: 0.7 } }
-    cho: { chan: 0.1, ha: 0.07, cui: 6, nhun: 0.003, nhipNhun: 1.1 }
-    chay: { bien: 1.1, nhip: 0.9, nay: 0.7 }
+    dung:
+      {
+        chan: 0.09,
+        hong: 0,
+        vai: 0,
+        moVai: 7,
+        lung: -2.5,
+        dau: 0,
+        dauCui: -2,
+        tay: { mo: 22, gap: 16, truoc: 0, dua: 0 },
+        tho: { nhip: 0.17, bien: 1.3 },
+        doiTrong: { nhip: 0.13, bien: 0.6 },
+      }
+    cho: { chan: 0.12, ha: 0.08, cui: 7, nhun: 0.004, nhipNhun: 1.1 }
+    chay: { bien: 1.22, nhip: 0.85, nay: 0.55, mo: 18 }
     don: { nang: 1 }
     tiLe: { cao: 1.14, rong: 1.2 }

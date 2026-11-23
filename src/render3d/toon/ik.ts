@@ -15,10 +15,7 @@ const m0 = new THREE.Matrix4(),
 
 function frame(dir: THREE.Vector3, side: THREE.Vector3, out: THREE.Matrix4) {
   const x = v0.copy(dir).normalize();
-  const y = v1
-    .copy(side)
-    .addScaledVector(x, -side.dot(x))
-    .normalize();
+  const y = v1.copy(side).addScaledVector(x, -side.dot(x)).normalize();
   const z = v2.crossVectors(x, y);
   return out.makeBasis(x, y, z);
 }
