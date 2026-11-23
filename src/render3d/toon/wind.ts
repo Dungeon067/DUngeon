@@ -26,6 +26,8 @@ export interface WindEnv {
   huong?: number;
   nguon?: WindSrc[];
   mieng?: { x: number; z: number }[];
+  /** Lướt: hướng ngược hướng lướt (XZ), độ dài 0..1 theo độ tắt dần. */
+  luot?: { x: number; z: number };
 }
 
 const TAU = Math.PI * 2;
@@ -69,6 +71,10 @@ export class WindField {
     for (const m of env.mieng ?? []) {
       const d = Math.hypot(p.x - m.x, p.z - m.z) / c.mieng.banKinh;
       if (d < 1) out.y += c.mieng.luc * (1 - d * d) * (0.85 + 0.15 * Math.sin(t * 7));
+    }
+    if (env.luot) {
+      out.x += env.luot.x * c.luot.luc;
+      out.z += env.luot.z * c.luot.luc;
     }
     if (out.length() > c.lucToiDa) out.setLength(c.lucToiDa);
     return out;

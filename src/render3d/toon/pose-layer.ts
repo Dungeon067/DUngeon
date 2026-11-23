@@ -40,7 +40,6 @@ export class PoseLayer {
   private wStand = 1;
   private wHand = 1;
   private wTuck = 0;
-  private wDash = 0;
   private lastYaw: number | null = null;
   private turn = 0;
   /** Nghiêng vào khúc cua (rad, quanh trục trước mặt), actor áp lên gốc để xoay quanh bàn chân. */
@@ -179,19 +178,14 @@ export class PoseLayer {
     }
     const bk = THREE.MathUtils.clamp(-this.turn * 0.09, -1, 1) * chay.lac * D * this.wMove;
     this.bank += (bk - this.bank) * Math.min(1, dt * 7);
-    this.wDash += ((inp.dash ? 1 : 0) - this.wDash) * Math.min(1, dt * 14);
-    if (this.wDash > 0.01) {
-      this.pre("hips", 18 * this.wDash, 0, 0);
-      this.post("spine", 8 * this.wDash, 0, 0);
-      this.post("head", -16 * this.wDash, 0, 0);
-    }
+    // Lướt: clip `dash` / `dashAir` đã đổ người từ hông, thân trên thẳng; lớp này không gập thêm.
     // Đỉnh cú nhảy: co chân.
     if (this.wTuck > 0.01) {
       const w = this.wTuck;
-      this.post("leftUpperLeg", -48 * w, 0, 0);
-      this.post("rightUpperLeg", -38 * w, 0, 0);
-      this.post("leftLowerLeg", 78 * w, 0, 0);
-      this.post("rightLowerLeg", 62 * w, 0, 0);
+      this.post("leftUpperLeg", -40 * w, 0, 0);
+      this.post("rightUpperLeg", -30 * w, 0, 0);
+      this.post("leftLowerLeg", 66 * w, 0, 0);
+      this.post("rightLowerLeg", 52 * w, 0, 0);
       this.post("spine", 8 * w, 0, 0);
     }
     // Ra đòn: dáng nặng hạ hông sâu hơn, xoay thân rộng hơn.

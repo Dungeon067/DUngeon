@@ -206,6 +206,8 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   // Gió cho tóc, vải (S27): gió nền theo vùng và độ cao, field hệ Phong (lốc xoáy, bão), xung chiêu, miệng gió đã mở.
   const wind = new WindField(POSES.gio),
     fieldLife = new WeakMap<object, number>();
+  let dashW = 0;
+  const dashDir = new THREE.Vector2();
   const heroWind = (h: VrmActor, at: THREE.Vector3, dt: number) => {
     const G = GS.G,
       W = G.map;
@@ -223,7 +225,15 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     for (const st of W?.puzzles ?? [])
       for (const o of st.objs) if (o.def.nang && o.done) mieng.push({ x: o.x / TS, z: o.y / TS });
     const vung = REGIONS[cellAt(W, G.p.x, G.p.y).r]?.id;
-    wind.sample(h.cloth.wind, at, G.time, { vung, cao: at.y, nguon, mieng });
+    const p = G.p;
+    if (p.dashT > 0) {
+      dashW = 1;
+      dashDir.set(p.dvx, p.dvy);
+      if (dashDir.lengthSq() < 1e-6) dashDir.set(p.dirX, p.dirY);
+      dashDir.normalize();
+    } else dashW = Math.max(0, dashW - dt / POSES.gio.luot.tat);
+    const luot = dashW > 0 ? { x: -dashDir.x * dashW, z: -dashDir.y * dashW } : undefined;
+    wind.sample(h.cloth.wind, at, G.time, { vung, cao: at.y, nguon, mieng, luot });
   };
 
   // Quái: mô hình toon tạm. Vật thể câu đố: renderable (bản 2D dựng thành tấm phẳng nếu chưa có bản 3D).
@@ -411,7 +421,8 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       }
     }
     if (p.hurt > 0) return { k: "hurt", once: true, fade: 0.06 };
-    if (p.dashT > 0) return { k: "dash", once: true, speed: 1.3, fade: 0.06 };
+    // Lướt ≈ 0,25 giây (clip 0,3 giây, kết ở sải chạy để nối thẳng vào chạy); trên không thì thân thẳng, thu gọn.
+    if (p.dashT > 0) return { k: p.air ? "dashAir" : "dash", once: true, speed: 1.2, fade: 0.04 };
     if (p.air) {
       p._landT = T;
       return p.vz > 0 ? { k: "jumpUp", once: true, fade: 0.08 } : { k: "jumpAir", fade: 0.2 };

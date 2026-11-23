@@ -8,11 +8,12 @@ import { BOW, BOW_MOVE } from "./s27/bow";
 import { UNARMED } from "./s27/unarmed";
 import { MELEE, MELEE_MOVE } from "./s27/melee";
 import { MOVE_BASE, upright } from "./s27/move";
+import { SHARED_CLIPS } from "./s27/shared";
 
 const FILE = "public/media/anim/humanoid.json";
 const lib = JSON.parse(readFileSync(FILE, "utf8"));
 const names = Object.keys(lib.clips.idle.bones);
-const ALL: Record<string, ClipDef> = { ...UNARMED, ...BOW, ...MELEE };
+const ALL: Record<string, ClipDef> = { ...SHARED_CLIPS, ...UNARMED, ...BOW, ...MELEE };
 const OVER: Record<string, OverlayDef> = { ...BOW_MOVE, ...MELEE_MOVE };
 const rig = new Rig();
 for (const n of MOVE_BASE) {

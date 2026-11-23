@@ -103,6 +103,8 @@ const Gio = z
     doCao: z.object({ tu: n(0, 200), moiM: n(0, 1), toiDa: n(0, 2) }).strict(),
     nhieu: z.object({ bien: n(0, 1), goc: n(0, 60), nhip: n(0.05, 5) }).strict(),
     mieng: z.object({ luc: n(0, 4), banKinh: n(0.2, 5) }).strict(),
+    /** Gió ngược hướng lướt (tóc, dải vải bay ra sau); `tat`: giây tắt dần sau lướt. */
+    luot: z.object({ luc: n(0, 4), tat: n(0.05, 2) }).strict(),
     xung: z.record(Xung),
     trongSo: z
       .object({ ...(Object.fromEntries(VAI.map((k) => [k, n(0, 2)])) as Record<Vai, z.ZodNumber>), nguc: n(0, 0) })

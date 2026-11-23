@@ -37,6 +37,17 @@ const floor = new THREE.Mesh(
 );
 floor.rotation.x = -Math.PI / 2;
 scene.add(floor);
+// move=1: nhân vật di chuyển thật (chạy, lướt), camera đi theo, sàn lưới để thấy tốc độ.
+const moving = !!q.get("move");
+if (moving) {
+  floor.visible = false;
+  const grid = new THREE.GridHelper(400, 400, 0x8796ad, 0x9dabbf);
+  grid.position.y = 0.002;
+  const base = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshBasicMaterial({ color: 0xb4c0d1 }));
+  base.rotation.x = -Math.PI / 2;
+  scene.add(base, grid);
+}
+const camOff = cam.position.clone();
 const a = await VrmActor.load(id, w, null);
 if (q.get("cloth") === "0" && a) a.cloth.off = true;
 (window as any).__a = a;
@@ -178,6 +189,7 @@ function sequence(src: string) {
     stop: "Dừng (nhịp hãm)",
     dash: "Lướt",
     jump: "Nhảy",
+    jumpdash: "Nhảy + lướt trên không",
     ready: "Thế chờ",
     vortex: "Bạch Vũ dùng Lốc Xoáy Lông Vũ cạnh Hạ Vy",
     vent: "Đứng trên miệng gió",
@@ -188,7 +200,8 @@ function sequence(src: string) {
     const [k, d] = x.split(":");
     return { k, d: d ? +d : WIN[k] / (k.startsWith("atk") ? A.speed : 1) };
   });
-  let vAge = 9;
+  let vAge = 9,
+    luotW = 0;
   let T = 0,
     lastAct = q.get("nov") ? -99 : 0,
     si = -1,
@@ -201,6 +214,7 @@ function sequence(src: string) {
   const fx = new HeroFx();
   fx.color(q.get("col") ?? "#7fd0ff", q.get("col2") ?? q.get("col") ?? "#bfe8ff");
   scene.add(fx.group);
+  (window as any).__fx = fx;
   const MOVE = new Set(["run", "sprint", "turn", "nguoc"]);
   const play = (c: string, o: { once?: boolean; speed?: number; fade?: number; restart?: boolean } = {}) => {
     if (c === cur && !o.restart) return;
@@ -229,16 +243,40 @@ function sequence(src: string) {
     }
     const s = segs[Math.min(si, segs.length - 1)];
     const out = T - lastAct < POSES.vuKhi.cho || s.k === "charge";
-    const standing = !MOVE.has(s.k) && s.k !== "dash" && s.k !== "jump";
+    const JUMP = s.k === "jump" || s.k === "jumpdash";
+    const standing = !MOVE.has(s.k) && s.k !== "dash" && !JUMP;
     a!.wfx?.want(out, standing, scene);
     const armed = !a!.wfx || a!.wfx.st === "hand" || a!.wfx.st === "stowing";
     const relaxing = s.k === "idle" && (!a!.wfx || a!.wfx.st === "gone");
     const iv = a!.idleVariant(dt, relaxing);
     // Lướt / nhảy: mô phỏng tại chỗ (nhảy có quỹ đạo đứng để thấy co chân ở đỉnh).
     const JD = s.d,
-      ju = s.k === "jump" ? segT / JD : 0;
+      ju = JUMP ? segT / JD : 0;
+    // Nhảy + lướt trên không: lên (0–0,35), lướt giữ độ cao (0,35–0,6), rơi (0,6–0,9), đáp.
+    const jd = s.k === "jumpdash",
+      adash = jd && ju >= 0.35 && ju < 0.6,
+      jh = (u: number) => 0.55 * 4 * u * (1 - u);
     a!.obj.position.y =
-      (a!.obj.userData.yOff ?? 0) + (s.k === "jump" && ju < 0.8 ? 0.55 * 4 * (ju / 0.8) * (1 - ju / 0.8) : 0);
+      (a!.obj.userData.yOff ?? 0) +
+      (jd
+        ? ju < 0.35
+          ? jh(ju / 0.7)
+          : ju < 0.6
+            ? 0.55
+            : ju < 0.9
+              ? jh(0.5 + (ju - 0.6) / 0.6)
+              : 0
+        : s.k === "jump" && ju < 0.8
+          ? jh(ju / 0.8)
+          : 0);
+    const dashing = s.k === "dash" || adash;
+    if (moving) {
+      const v = dashing ? 11 : s.k === "sprint" ? 6.5 : MOVE.has(s.k) ? 4.6 : JUMP ? 3 : 0;
+      const f = new THREE.Vector3(Math.sin(a!.obj.rotation.y), 0, Math.cos(a!.obj.rotation.y));
+      a!.obj.position.addScaledVector(f, v * dt);
+      cam.position.set(a!.obj.position.x + camOff.x, camOff.y, a!.obj.position.z + camOff.z);
+      cam.lookAt(a!.obj.position.x, ty, a!.obj.position.z);
+    }
     if (s.k === "turn") a!.obj.rotation.y += dt * 2.4;
     else a!.obj.rotation.y *= 1 - Math.min(1, dt * 3);
     if (!WIN[s.k]) {
@@ -246,7 +284,13 @@ function sequence(src: string) {
       else if (s.k === "run" || s.k === "turn" || s.k === "nguoc") play(armed ? (A.move?.run ?? "run") : "run");
       else if (s.k === "sprint") play(armed ? (A.move?.sprint ?? "sprint") : "sprint");
       else if (s.k === "stop") play(armed ? (A.move?.stop ?? "runStop") : "runStop", { once: true, fade: 0.1 });
-      else if (s.k === "dash") play("dash", { once: true, speed: 1.3, fade: 0.06 });
+      else if (s.k === "dash") play("dash", { once: true, speed: 0.3 / s.d, fade: 0.04 });
+      else if (jd)
+        play(ju < 0.35 ? "jumpUp" : adash ? "dashAir" : ju < 0.9 ? "jumpAir" : "jumpLand", {
+          once: ju < 0.35 || adash || ju >= 0.9,
+          speed: adash ? 0.3 / (0.25 * JD) : 1,
+          fade: adash ? 0.04 : 0.08,
+        });
       else if (s.k === "jump")
         play(ju < 0.4 ? "jumpUp" : ju < 0.8 ? "jumpAir" : "jumpLand", { once: ju < 0.4 || ju >= 0.8, fade: 0.08 });
       else if (a!.wfx?.clip) play(a!.wfx.clip, { once: true });
@@ -255,13 +299,13 @@ function sequence(src: string) {
         cur = iv;
       } else play(armed ? (A.ready ?? A.stand) : "relax", { fade: armed ? 0.2 : 0.35 });
     }
-    const jv = s.k === "jump" && ju < 0.8 ? 1 - 2 * (ju / 0.8) : 1;
+    const jv = jd ? (ju < 0.35 ? 1 - ju / 0.35 : adash ? 1 : ju < 0.9 ? (ju - 0.6) / 0.3 : 1) : s.k === "jump" && ju < 0.8 ? 1 - 2 * (ju / 0.8) : 1;
     const free = !armed;
     a!.poseIn = {
       mode:
         WIN[s.k] || s.k === "charge"
           ? "act"
-          : s.k === "dash" || (s.k === "jump" && ju < 0.8)
+          : dashing || (s.k === "jump" && ju < 0.8) || (jd && ju < 0.9)
             ? "air"
             : MOVE.has(s.k)
               ? "move"
@@ -272,8 +316,8 @@ function sequence(src: string) {
       freeR: free || w === "bow",
       anim: !!iv,
       spd: s.k === "sprint" ? 1.5 : MOVE.has(s.k) ? 1 : 0,
-      apex: s.k === "jump" ? Math.max(0, 1 - Math.abs(jv) / 0.45) : 0,
-      dash: s.k === "dash",
+      apex: JUMP && !adash ? Math.max(0, 1 - Math.abs(jv) / 0.45) : 0,
+      dash: dashing,
     };
     if (a!.wfx) a!.wfx.orbit = !!WIN[s.k] && w === "cat";
     lab.textContent =
@@ -291,6 +335,7 @@ function sequence(src: string) {
           : "");
     // Gió: nền theo vùng; chạy ngược gió = gió thổi ngược hướng mặt (-Z); lốc xoáy giữa hai người; miệng gió dưới chân.
     vAge += dt;
+    luotW = dashing ? 1 : Math.max(0, luotW - dt / POSES.gio.luot.tat);
     const vc = { x: bp[0] * 0.45, z: bp[1] * 0.45 };
     const nguon: WindSrc[] = vAge < 2.5 ? [{ k: "vortex", x: vc.x, z: vc.z, age: vAge, life: 2.5 }] : [];
     const e: WindEnv = {
@@ -298,6 +343,7 @@ function sequence(src: string) {
       huong: s.k === "nguoc" ? -90 : env.huong,
       nguon,
       mieng: s.k === "vent" ? [{ x: 0, z: 0 }] : [],
+      luot: luotW > 0 ? { x: -Math.sin(a!.obj.rotation.y) * luotW, z: -Math.cos(a!.obj.rotation.y) * luotW } : undefined,
     };
     wind.tick(dt);
     wind.sample(a!.cloth.wind, a!.obj.position, T, e);
@@ -328,7 +374,7 @@ function sequence(src: string) {
     (window as any).clothDev = a!.cloth.maxDev;
     (window as any).segK = s.k;
     const fin = s.k === "atk3" || s.k === "skill" || s.k === "burst";
-    fx.update(a!, { acting: !!WIN[s.k], fin, dash: s.k === "dash" }, dt);
+    fx.update(a!, { acting: !!WIN[s.k], fin, dash: dashing }, dt);
     gl.render(scene, cam);
     T += dt;
     segT += dt;
