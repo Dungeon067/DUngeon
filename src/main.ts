@@ -14,6 +14,7 @@ import { initLayoutEditor } from "./ui/hud/layout";
 import { initRotate } from "./ui/hud/rotate";
 import { initHints } from "./ui/hud/hints";
 import { applyDocumentSettings } from "./core/settings";
+import { initPwa } from "./ui/pwa";
 
 /* =========================================================
    BOOT
@@ -40,6 +41,7 @@ initRotate();
 initHints();
 initModal();
 initMenuShell();
+initPwa();
 // Trang Admin (tab khác) vừa ghi hồ sơ: đọc lại để game thấy ngay.
 addEventListener("storage", (e) => {
   if (e.key === ECON_KEY) {

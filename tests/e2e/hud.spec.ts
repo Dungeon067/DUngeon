@@ -131,7 +131,10 @@ test.describe("cầm dọc", () => {
 for (const [w, h] of [
   [844, 390],
   [932, 430],
+  [1000, 460],
   [1180, 820],
+  [1366, 1024],
+  [1920, 1080],
 ] as const)
   test.describe(`HUD ${w}×${h}`, () => {
     test.use({ ...PHONE, viewport: { width: w, height: h }, isMobile: w < 1000 });
@@ -141,7 +144,15 @@ for (const [w, h] of [
       page,
     }, info) => {
       const errors = watchErrors(page);
+      // S22: đội đủ 4 người (ô thứ 4 từng bị nút Lướt, Nhảy đè ở 1000×460)
+      await page.addInitScript(() => {
+        if (localStorage.getItem("tinhtu-v3")) return;
+        const party = ["suongmai", "mailinh", "bachvu", "lachong"];
+        const owned = Object.fromEntries(party.map((id) => [id, { lv: 1, cons: 0 }]));
+        localStorage.setItem("tinhtu-v3", JSON.stringify({ v: 3, owned, party, teams: [party, [], [], []], team: 0 }));
+      });
       await enterWorld(page);
+      await expect(page.locator("#hudParty .hud-slot")).toHaveCount(4);
       await page.waitForTimeout(600);
       const R = await rects(page);
       expect(R.length).toBeGreaterThan(8);
@@ -163,6 +174,8 @@ for (const [w, h] of [
       );
       expect(unnamed).toEqual([]);
       await page.screenshot({ path: info.outputPath(`hud-${w}x${h}.png`) });
+      if (process.env.CHUP_ANH === "1")
+        await page.screenshot({ path: `docs/cai-dat/anh/hud-${w}x${h}.jpg`, quality: 80 });
       expect(errors).toEqual([]);
     });
   });

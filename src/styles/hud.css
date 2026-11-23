@@ -116,23 +116,40 @@ body.cursor-enemy #joyZone {
 }
 
 /* ---------- phải giữa: đội hình ---------- */
+/* top, --slot-h, --slot-gap do layout.ts (layoutParty) tính để không chồng cụm nút dưới phải. */
 .hud-party {
   position: absolute;
   right: var(--safe-r);
   top: 50%;
-  transform: translateY(-58%);
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: var(--slot-gap, 5px);
 }
 .hud-slot {
   position: relative;
   width: clamp(132px, 19vw, 176px);
+  height: var(--slot-h, 48px);
+  min-height: 0;
   --en: 0;
   --sw: 0;
 }
+.hud-party--compact {
+  display: grid;
+  grid-template-columns: repeat(2, 48px);
+}
+.hud-party--compact .hud-slot {
+  width: 48px;
+  padding: 0;
+  justify-content: center;
+}
+.hud-party--compact .hud-slot .nm,
+.hud-party--compact .hud-slot .k {
+  display: none;
+}
 .hud-slot .tt-portrait {
   position: relative;
+  /* chân dung đặt --ps trong style riêng; ô bị thu (--slot-k < 1) thì thu theo */
+  --ps: calc(42px * var(--slot-k, 1)) !important;
 }
 /* vòng năng lượng nộ quanh chân dung */
 .hud-slot .hud-en {
@@ -141,7 +158,8 @@ body.cursor-enemy #joyZone {
   top: 50%;
   width: 46px;
   height: 46px;
-  transform: translateY(-50%);
+  transform: translateY(-50%) scale(var(--slot-k, 1));
+  transform-origin: left center;
   border-radius: 50%;
   background: conic-gradient(var(--tt-bronze-hi) calc(var(--en) * 360deg), rgb(255 255 255 / 0.1) 0);
   -webkit-mask: radial-gradient(circle, transparent 20px, #000 21px);
@@ -834,13 +852,6 @@ html[data-color-mode="tritan"] #game {
 }
 
 /* ---------- màn thấp (điện thoại ngang 390–430 px) ---------- */
-@media (max-height: 520px) {
-  .hud-party {
-    top: calc(var(--safe-t) + 52px);
-    transform: none;
-    gap: 3px;
-  }
-}
 @media (max-height: 440px) {
   .hud-obj {
     font-size: 11px;
@@ -848,7 +859,6 @@ html[data-color-mode="tritan"] #game {
   }
   .hud-slot {
     width: 128px;
-    min-height: 44px;
   }
   .hud-slot .nm > span {
     font-size: 11px;

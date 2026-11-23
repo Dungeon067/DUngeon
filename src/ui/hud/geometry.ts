@@ -78,3 +78,45 @@ export function layoutProblems(
       if (overlaps(ents[i]![1], ents[j]![1])) out.push(`${ents[i]![0]} chồng ${ents[j]![0]}`);
   return out;
 }
+
+export interface PartyFit extends Rect {
+  slotH: number;
+  gap: number;
+  /** false nếu dù thu ô về cỡ chạm tối thiểu vẫn không vừa chỗ giữa menu nhanh và cụm nút. */
+  fits: boolean;
+}
+/** Ô đội hình không thấp hơn cỡ chạm tối thiểu 44 px. */
+export const PARTY_MIN_SLOT = 44;
+/**
+ * Đặt cột đội hình ở cạnh phải giữa màn: dưới menu nhanh (top), trên mọi nút cụm dưới phải
+ * nằm cùng cột. Thiếu chỗ thì thu ô và khe, giữ ô ≥ 44 px.
+ */
+export function partyFit(
+  n: number,
+  slotW: number,
+  slotH: number,
+  gap: number,
+  vw: number,
+  vh: number,
+  safe: Safe,
+  top: number,
+  buttons: Rect[],
+  pad = 8,
+): PartyFit {
+  const x = vw - safe.r - slotW;
+  let bottom = vh - safe.b;
+  for (const b of buttons)
+    if (b.x < x + slotW && x < b.x + b.w && b.y + b.h / 2 > vh * 0.4) bottom = Math.min(bottom, b.y - pad);
+  const avail = bottom - top;
+  const need = (h: number, g: number) => n * h + Math.max(0, n - 1) * g;
+  let g = gap,
+    h = slotH;
+  if (need(h, g) > avail) {
+    g = Math.min(gap, 3);
+    h = Math.max(PARTY_MIN_SLOT, Math.floor((avail - Math.max(0, n - 1) * g) / Math.max(1, n)));
+    h = Math.min(slotH, h);
+  }
+  const total = need(h, g);
+  const y = Math.max(top, Math.min(vh * 0.46 - total / 2, bottom - total));
+  return { x, y, w: slotW, h: total, slotH: h, gap: g, fits: total <= avail + 0.5 };
+}
