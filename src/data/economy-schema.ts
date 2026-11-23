@@ -14,6 +14,7 @@ const GameSchema = z
     chiMang: byRarity(z.object({ tiLe: pct, satThuong: n }).strict()),
     xuVatPham3: int,
     uocNguyen: z.object({ tangMoiLuotSauMem: pct, bao4Sao: int.min(1), tiLeDacBiet: pct }).strict(),
+    nhanVat5Sao: z.object({ thuongTru: z.array(z.string()).min(1), gioiHan: z.array(z.string()).min(1) }).strict(),
     thuong: z
       .object({
         ruong: z
@@ -49,6 +50,21 @@ const GameSchema = z
   })
   .strict();
 
+const WeaponSchema = z
+  .object({
+    id: z.string().min(1),
+    ten: z.string().min(1),
+    loai: z.enum(["sword", "great", "cat", "bow", "spear"]),
+    r: z.union([z.literal(3), z.literal(4), z.literal(5)]),
+    nguon: z.enum(["gioiHan", "thuongTru", "loRen", "uocNguyen"]),
+    cua: z.string().optional(),
+    tanCong: n,
+    phu: z.object({ loai: z.enum(["chiMang", "satThuongChiMang", "tanCong"]), giaTri: n }).strict(),
+    biDong: z.object({ ten: z.string().min(1), satThuong: n }).strict(),
+  })
+  .strict();
+export type Weapon = z.infer<typeof WeaponSchema>;
+
 const DesignSchema = z
   .object({
     capHoTinh: z
@@ -71,8 +87,23 @@ const DesignSchema = z
       .strict(),
     kyNang: z.object({ toiDa: int.min(1), toiDaTheoKhaiTinh: z.array(int).length(7), tangMoiCap: n }).strict(),
     vuKhi: z
-      .object({ "3": z.object({ tanCong: n, tinhLuyen: n }).strict() })
-      .merge(byRarity(z.object({ tanCong: n, tinhLuyen: n }).strict()))
+      .object({
+        buocTinhLuyen: n,
+        loRenR5Ngay: int.min(1),
+        banner: z
+          .object({
+            tiLe5: n,
+            tiLe4: n,
+            mem: int.min(1),
+            cung: int.min(1),
+            tangMoiLuotSauMem: pct,
+            bao4Sao: int.min(1),
+            tiLeNoiBat: pct,
+            laBanSao: int,
+          })
+          .strict(),
+        danhSach: z.array(WeaponSchema).min(1),
+      })
       .strict(),
     baoAn: z
       .object({ tanCongToiDa: n, mauToiDa: n, boAn: n, chatLuongTheoThienTuong: z.array(pct).length(9) })
@@ -90,7 +121,6 @@ const DesignSchema = z
         tuan: z.object({ daSao: int, xu: int }).strict(),
         thang: z.object({ thapKy: int, suKien: int, baoTri: int }).strict(),
         motLan: z.object({ daSao: int, trongSoNgay: int.min(1) }).strict(),
-        vuKhi4MienPhiR5Ngay: int,
       })
       .strict(),
     moHinhTran: z
@@ -103,8 +133,23 @@ const DesignSchema = z
         mauDaQuy: n,
       })
       .strict(),
-    cotTruyen: z.array(z.object({ chuong: int, ngay: int, capHoTinh: int, chienLuc: int }).strict()).min(1),
-    congBang: z.object({ tranChenhLech: z.number().min(1), doiMienPhi: z.array(z.string()).length(4) }).strict(),
+    phanTang: z
+      .object({
+        doiMienPhi: z.array(z.string()).length(4),
+        thuong: z.array(z.object({ ten: z.string().min(1), ngay: int.min(1), chienLuc: int }).strict()).min(1),
+        thapThuong: int.min(1).max(12),
+        hanThuong: int.min(1),
+        doDe: z.object({ vuaDu: z.number().min(1), de: z.number().min(1), ratNhe: z.number().min(1) }).strict(),
+        dinh: z
+          .object({
+            capQuaiThem: int,
+            heSoMau: z.number().positive(),
+            heSoDiemToiDa: z.number().min(1),
+            f2pChamDinh: z.tuple([int, int]),
+          })
+          .strict(),
+      })
+      .strict(),
   })
   .strict();
 
@@ -114,7 +159,7 @@ const ShopSchema = z
     daSao: z.array(PackSchema).min(1),
     napLanDauNhanDoi: z.boolean(),
     theThang: z.object({ id: z.string(), gia: int, ngay: int.min(1), daSaoNgay: int, daSaoMoiNgay: int }).strict(),
-    hanhTrinhMua: z
+    hoChieuSao: z
       .object({
         id: z.string(),
         gia: int,
@@ -127,7 +172,7 @@ const ShopSchema = z
       })
       .strict(),
     trangPhuc: z.object({ giaTu: int, giaDen: int }).strict(),
-    hanMucThang: int.min(1),
+    hanMucDuoi18: int,
     hanMucTuDatMacDinh: int,
     canhBaoNgay: int,
   })
@@ -139,8 +184,9 @@ const ProfileSchema = z
     ten: z.string(),
     vndThang: int,
     theThang: z.boolean(),
-    hanhTrinh: z.boolean(),
-    vuKhi: z.object({ r: z.union([z.literal(3), z.literal(4), z.literal(5)]), r5Ngay: int.min(1) }).strict(),
+    hoChieu: z.boolean(),
+    mucTieu: z.array(z.string().regex(/^(nv[0-6]|vk[1-5])$/, "dạng nv0–nv6 hoặc vk1–vk5")).min(1),
+    uocKhac: z.number().int().min(-1).max(6),
   })
   .strict();
 
@@ -149,14 +195,13 @@ export const EconomySchema = z
     game: GameSchema,
     thietKe: DesignSchema,
     goiNap: ShopSchema,
-    hoSo: z.array(ProfileSchema).length(3),
+    hoSo: z.array(ProfileSchema).min(2),
     moPhong: z
       .object({
         soNguoi: int.min(1),
         soNgay: int.min(1),
         mocNgay: z.array(int.min(1)).min(1),
         seed: int,
-        tichLuyTruocKhiUoc: int,
       })
       .strict(),
   })
@@ -166,7 +211,7 @@ export type Economy = z.infer<typeof EconomySchema>;
 
 const mono = (a: number[]) => a.every((v, i) => i === 0 || v >= a[i - 1]!);
 
-/** Kiểm tra economy.yaml. `chars` để đối chiếu đội miễn phí là nhân vật 4★ có thật. */
+/** Kiểm tra economy.yaml. `chars` để đối chiếu đội miễn phí 4★ và hai pool 5★ với nhân vật có thật. */
 export function validateEconomy(raw: unknown, chars: { id: string; r: number }[] = []): Economy {
   const res = EconomySchema.safeParse(raw);
   if (!res.success) {
@@ -186,15 +231,39 @@ export function validateEconomy(raw: unknown, chars: { id: string; r: number }[]
   if (!mono(t.capHoTinh.bac.map((b) => b.tuCap)) || t.capHoTinh.bac[0]!.tuCap !== 1)
     errors.push("capHoTinh.bac phải bắt đầu từ cấp 1 và tăng dần");
   if (!mono(e.goiNap.daSao.map((p) => p.gia))) errors.push("goiNap.daSao phải xếp theo giá tăng dần");
-  if (chars.length)
-    for (const id of t.congBang.doiMienPhi) {
+  if (!mono(t.phanTang.thuong.map((x) => x.ngay))) errors.push("phanTang.thuong phải xếp theo ngày tăng dần");
+  const dd = t.phanTang.doDe;
+  if (!(dd.vuaDu <= dd.de && dd.de <= dd.ratNhe)) errors.push("phanTang.doDe phải vuaDu ≤ de ≤ ratNhe");
+  const [c0, c1] = t.phanTang.dinh.f2pChamDinh;
+  if (c0 > c1) errors.push("phanTang.dinh.f2pChamDinh phải [từ, đến] tăng dần");
+  const wb = t.vuKhi.banner;
+  if (wb.mem > wb.cung) errors.push("vuKhi.banner.mem phải ≤ cung");
+  const wids = t.vuKhi.danhSach.map((w) => w.id);
+  if (new Set(wids).size !== wids.length) errors.push("vuKhi.danhSach: id trùng");
+  const pools = e.game.nhanVat5Sao;
+  for (const id of pools.thuongTru)
+    if (pools.gioiHan.includes(id)) errors.push(`nhanVat5Sao: "${id}" không được nằm ở cả hai pool`);
+  for (const w of t.vuKhi.danhSach) {
+    if (w.nguon === "gioiHan" && (w.r !== 5 || !w.cua))
+      errors.push(`vuKhi ${w.id}: vũ khí giới hạn phải 5★ và có "cua"`);
+    if (w.nguon === "loRen" && w.r !== 4) errors.push(`vuKhi ${w.id}: vũ khí Lò Rèn phải 4★`);
+  }
+  for (const id of pools.gioiHan)
+    if (!t.vuKhi.danhSach.some((w) => w.nguon === "gioiHan" && w.cua === id))
+      errors.push(`vuKhi: nhân vật giới hạn "${id}" chưa có vũ khí đặc trưng`);
+  if (chars.length) {
+    const check = (where: string, id: string, r: number) => {
       const c = chars.find((x) => x.id === id);
-      if (!c) errors.push(`congBang.doiMienPhi: không có nhân vật "${id}"`);
-      else if (c.r !== 4) errors.push(`congBang.doiMienPhi: "${id}" phải là 4★`);
-    }
-  for (const p of e.hoSo)
-    if (p.vndThang > e.goiNap.hanMucThang) errors.push(`hoSo ${p.id}: vndThang vượt goiNap.hanMucThang`);
-  if (e.goiNap.hanMucTuDatMacDinh > e.goiNap.hanMucThang) errors.push("goiNap.hanMucTuDatMacDinh vượt hanMucThang");
+      if (!c) errors.push(`${where}: không có nhân vật "${id}"`);
+      else if (c.r !== r) errors.push(`${where}: "${id}" phải là ${r}★`);
+    };
+    for (const id of t.phanTang.doiMienPhi) check("phanTang.doiMienPhi", id, 4);
+    for (const id of [...pools.thuongTru, ...pools.gioiHan]) check("game.nhanVat5Sao", id, 5);
+    for (const c of chars)
+      if (c.r === 5 && !pools.thuongTru.includes(c.id) && !pools.gioiHan.includes(c.id))
+        errors.push(`game.nhanVat5Sao: nhân vật 5★ "${c.id}" chưa thuộc pool nào`);
+  }
+  if (e.goiNap.hanMucDuoi18 > e.goiNap.hanMucTuDatMacDinh) errors.push("goiNap.hanMucDuoi18 phải ≤ hanMucTuDatMacDinh");
   if (new Set(e.hoSo.map((p) => p.id)).size !== e.hoSo.length) errors.push("hoSo: id trùng");
   if (errors.length) throw new Error(`Nội dung không hợp lệ:\n${errors.map((x) => "  economy.yaml: " + x).join("\n")}`);
   return e;

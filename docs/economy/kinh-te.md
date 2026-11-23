@@ -27,20 +27,23 @@ Lòng Sao tốn 20 Linh Lực mỗi lượt, nên một ngày có 9 lượt. Lin
 | Lõi Sao          | Khai Tinh                        | 3 → 32 mỗi bậc; 6 bậc: **91** mỗi nhân vật                    |
 | Linh Lực         | Nhận thưởng Lòng Sao             | 20 mỗi lượt                                                   |
 
-Ví dụ một tháng của người không nạp: đủ Sách cho khoảng 4,5 nhân vật lên cấp 60, đủ Lõi Sao cho khoảng 3,5 nhân vật Khai Tinh đủ 6 bậc, còn Xu đủ cho khoảng 1,9 nhân vật (cấp + Khai Tinh = 650.100). **Xu là nút thắt** có chủ ý: người chơi phải chọn nuôi ai trước.
+Ví dụ một tháng của F2P chơi kỹ: đủ Sách cho khoảng 4,5 nhân vật lên cấp 60, đủ Lõi Sao cho khoảng 3,5 nhân vật Khai Tinh đủ 6 bậc, còn Xu đủ cho khoảng 1,9 nhân vật (cấp + Khai Tinh = 650.100). **Xu là nút thắt** có chủ ý: người chơi phải chọn nuôi ai trước.
 
 ## 3. Ước nguyện miễn phí
 
-|                                                | Người không nạp | Thẻ tháng |
-| ---------------------------------------------- | --------------: | --------: |
-| Lượt ước mỗi tháng (lặp lại, từ tháng thứ hai) |        **≈ 47** |      ≈ 66 |
-| Lượt ước tháng đầu (gồm Đá Sao một lần)        |            ≈ 79 |      ≈ 98 |
-| Lượt ước sau 180 ngày                          |             330 |       442 |
-| Số nhân vật 5★ sau 180 ngày (trung bình)       |             4,9 |       6,7 |
-| Số 5★ giới hạn sau 180 ngày (trung bình)       |             3,2 |       4,3 |
-| Ngày có 5★ giới hạn đầu tiên (trung bình)      |          **40** |        31 |
+|                                                                |                 F2P chơi kỹ | Nạp nhẹ (thẻ tháng + Hộ Chiếu Sao) |
+| -------------------------------------------------------------- | --------------------------: | ---------------------------------: |
+| Đá Sao mỗi tháng (lặp lại, từ tháng thứ hai)                   | ≈ 7.500 (**≈ 47 lượt ước**) |               ≈ 11.000 (≈ 69 lượt) |
+| Đá Sao trung bình mỗi tháng trong năm đầu (gồm Đá Sao một lần) |           8.132 (≈ 51 lượt) |                 11.656 (≈ 73 lượt) |
+| Lượt ước sau 365 ngày (nhân vật + vũ khí)                      |                   325 + 165 |                            695 + 0 |
+| Số nhân vật 5★ sau 365 ngày (trung bình)                       |                         5,0 |                               10,8 |
 
-Thời gian trung bình để người không nạp có thêm một nhân vật 5★ giới hạn: **khoảng 57 ngày (≈ 104 lượt ước)** ở giai đoạn ổn định, nghĩa là cứ khoảng 3 banner (mỗi banner 21 ngày) thì chắc chắn có một nhân vật mình muốn nếu biết tích lũy. Kỳ vọng lý thuyết của Bảo Hộ Vận Sao (0,6%, tăng từ lượt 74, chắc chắn ở lượt 90, 50/50): khoảng 62 lượt cho một 5★ và 93 lượt cho một 5★ giới hạn.
+**Thời gian trung bình để người không nạp có một nhân vật 5★ giới hạn:**
+
+- Theo kỳ vọng của Bảo Hộ Vận Sao (0,6%, tăng từ lượt 74, chắc chắn ở lượt 90, 50/50): khoảng 62 lượt cho một 5★ và **93 lượt cho một 5★ giới hạn**, tức **khoảng 2 tháng** Đá Sao miễn phí.
+- Nếu chỉ ước khi nhân vật mình muốn có banner (như F2P chơi kỹ trong mô phỏng): trung bình ngày 110 mới có 5★ giới hạn đầu tiên, vì phải chờ banner quay lại (126 ngày một lần). Đổi lại, khi banner tới, người chơi đã tích đủ Đá Sao để gần như chắc chắn có nhân vật và vũ khí của họ.
+
+Banner vũ khí (Binh Khí Tinh Tú) dùng chung Đá Sao: kỳ vọng khoảng 53 lượt cho một 5★, trung bình 87 lượt và tối đa 154 lượt cho đúng vũ khí đã chọn nhờ La Bàn Sao. Đây là chỗ tiêu Đá Sao lớn thứ hai, chủ yếu của người muốn nội dung đỉnh.
 
 ## 4. Lạm phát và giữ giá trị tài nguyên
 

@@ -150,7 +150,8 @@ function wish() {
     cost: field("Giá một lần ước (Đá Sao)", { type: "number", value: String(c.cost) }),
   };
   const feat = h("select", { class: "tt-input", id: "admFeat" });
-  for (const ch of CHARS.filter((x) => x.r === 5)) feat.add(new Option(ch.name, ch.id, false, ch.id === c.featured));
+  for (const ch of CHARS.filter((x) => ECON.game.nhanVat5Sao.gioiHan.includes(x.id)))
+    feat.add(new Option(ch.name, ch.id, false, ch.id === c.featured));
   const save = button("Lưu cấu hình", {
     variant: "primary",
     icon: "xac-nhan",
@@ -340,7 +341,7 @@ const ECON_GROUP: Record<string, string> = {
   game: "Đang chạy trong game",
   thietKe: "Thiết kế (tài liệu và mô phỏng)",
   goiNap: "Gói nạp đề xuất (chỉ mô phỏng)",
-  hoSo: "Ba hồ sơ mô phỏng",
+  hoSo: "Hồ sơ mô phỏng",
   moPhong: "Thông số mô phỏng",
 };
 function numericLeaves(o: unknown, path = "", out: [string, number][] = []) {

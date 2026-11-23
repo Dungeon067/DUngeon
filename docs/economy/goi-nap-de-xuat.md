@@ -15,18 +15,18 @@ Một lượt Ước nguyện = 160 Đá Sao.
 | Rương Đá Sao lớn                   |      1.000.000 đ |                                    2.500 |                                                  400 |                      2,90 |                       5,00 |         55.172 đ |
 | Kho Đá Sao                         |      2.000.000 đ |                                    5.000 |                                                1.000 |                      3,00 |                       5,00 |         53.333 đ |
 | **Thẻ Trăng** (thẻ tháng, 30 ngày) |         79.000 đ | 300 ngay + 90 mỗi ngày đăng nhập = 3.000 |                                                    — |                 **37,97** |                          — |          4.213 đ |
-| **Hành Trình Mùa** (42 ngày)       |        149.000 đ |                                      680 | 120 Sách, 300.000 Xu, 1 vũ khí 4★ chọn, 1 trang phục | 4,56 (chưa tính vật phẩm) |                          — |         35.059 đ |
+| **Hộ Chiếu Sao** (42 ngày)         |        149.000 đ |                                      680 | 120 Sách, 300.000 Xu, 1 vũ khí 4★ chọn, 1 trang phục | 4,56 (chưa tính vật phẩm) |                          — |         35.059 đ |
 | Trang phục                         | 99.000–299.000 đ |                                        — |                                         Chỉ đổi hình |                         — |                          — |                — |
 
 - **Lần đầu nhân đôi:** mỗi mệnh giá Đá Sao một lần trên mỗi tài khoản, nhận gấp đôi số Đá Sao gốc (thay cho phần thưởng thường).
 - **So sánh:** Thẻ Trăng có giá trị mỗi đồng cao nhất (gấp ≈ 13 lần gói Đá Sao lớn nhất) để người nạp ít được lợi nhất. Gói lớn chỉ rẻ hơn gói nhỏ 17% mỗi lượt, để không thúc người chơi nạp gói to.
-- Hành Trình Mùa có nhánh miễn phí cho mọi người; nhánh trả phí chỉ thêm Đá Sao, nguyên liệu và trang phục, không thêm chỉ số.
+- Hộ Chiếu Sao có nhánh miễn phí cho mọi người; nhánh trả phí chỉ thêm Đá Sao, nguyên liệu và trang phục, không thêm chỉ số.
 
 ## 2. Bảo vệ người chơi
 
 1. **Công khai tỉ lệ** ngay trên màn Ước nguyện và trong trang riêng: 5★ 0,6%, 4★ 5,1%, mốc tăng tỉ lệ từ lượt 74, chắc chắn 5★ ở lượt 90, 50/50 nhân vật nổi bật, bảo đảm 4★ mỗi 10 lượt; tỉ lệ thực tế tổng hợp gồm cả Bảo Hộ Vận Sao. Hiện số lượt đã ước kể từ lần 5★ gần nhất.
 2. **Giới hạn chi tiêu do người chơi tự đặt** theo ngày, tuần, tháng. Mặc định 2.000.000 đ/tháng (`hanMucTuDatMacDinh`); hạ thì có hiệu lực ngay, nâng thì có hiệu lực sau 24 giờ.
-3. **Hạn mức hệ thống** 10.000.000 đ mỗi tài khoản mỗi tháng (`hanMucThang`), không vượt được. Đây cũng là điều kiện giữ trần chênh lệch 1,6 (xem [phan-cap-suc-manh.md](phan-cap-suc-manh.md) mục 4).
+3. **Không còn hạn mức hệ thống để giữ cân bằng.** Cân bằng dựa vào mô hình phân tầng nội dung (xem [phan-cap-suc-manh.md](phan-cap-suc-manh.md) mục 6). Hạn mức do người chơi tự đặt và cảnh báo dưới đây vẫn bắt buộc.
 4. **Cảnh báo khi nạp nhiều trong ngày:** tổng nạp trong ngày vượt 1.000.000 đ (`canhBaoNgay`) thì hiện cảnh báo, kèm tổng đã nạp trong ngày, tuần, tháng; người chơi phải chờ 10 giây mới xác nhận tiếp được.
 5. **Không dùng giao diện đánh lừa:**
    - nút nạp không đặt ở vị trí nút "Đóng", "Tiếp" hay nút đánh; không có nút nạp trong màn chiến đấu;
@@ -34,8 +34,10 @@ Một lượt Ước nguyện = 160 Đá Sao.
    - giá ghi bằng đồng (VND), không chỉ ghi bằng Đá Sao; Đá Sao còn lại hiện rõ trước khi ước;
    - không gói "may rủi" trả bằng tiền thật trực tiếp: tiền chỉ đổi ra Đá Sao, rồi người chơi tự chọn ước.
 6. **Xác nhận hai bước trước khi nạp:** bước 1 chọn gói và xem giá, nội dung, tổng đã nạp trong tháng; bước 2 xác nhận lại ở màn riêng (hoặc qua cổng thanh toán). Không lưu lựa chọn "không hỏi lại".
-7. **Người dưới 18 tuổi:** hạn mức thấp hơn và cần xác thực theo quy định (xem mục 3).
-8. **Hoàn tiền và hỗ trợ:** có kênh khiếu nại, lịch sử giao dịch đầy đủ trong game.
+7. **Người dưới 18 tuổi:** hạn mức đề xuất 500.000 đ/tháng (`hanMucDuoi18`), cần xác thực theo quy định (xem mục 3).
+8. **Banner vũ khí cũng công khai đầy đủ:** 5★ 0,7%, 4★ 6%, tăng tỉ lệ từ lượt 63, chắc chắn 5★ ở lượt 77, 75% là vũ khí nổi bật, cách tính La Bàn Sao.
+9. **Nút nạp trong bản thử nghiệm (nếu có) chỉ là giao diện giả**, ghi rõ nhãn "chưa mở", không gọi bất kỳ cổng thanh toán nào.
+10. **Hoàn tiền và hỗ trợ:** có kênh khiếu nại, lịch sử giao dịch đầy đủ trong game.
 
 ## 3. Yêu cầu pháp lý ở Việt Nam
 

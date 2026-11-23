@@ -1,6 +1,7 @@
 /**
- * Mô phỏng kinh tế S19: nhiều người chơi ảo cho 3 hồ sơ (không nạp, thẻ tháng, nạp nhiều).
- * Chỉ tính toán số liệu. Không có bất kỳ đoạn code thanh toán nào.
+ * Mô phỏng kinh tế (S19): người chơi ảo cho từng hồ sơ trong content/economy.yaml.
+ * Hai banner (nhân vật giới hạn, vũ khí "Binh Khí Tinh Tú") dùng đúng công thức với game (src/economy/core.ts).
+ * KHÔNG có thanh toán: tiền nạp chỉ là con số đổi ra Đá Sao theo bảng gói đề xuất.
  */
 import type { Economy } from "../../src/data/economy-schema";
 import {
@@ -8,20 +9,26 @@ import {
   charStats,
   chienLuc,
   dpsNeeded,
+  effAtk,
   freeGemsOnDay,
   hoTinhLevel,
   lvCost,
   rollRarity,
+  rollWeapon,
   teamChienLuc,
   teamDps,
   type BaseChar,
   type Invest,
   type PityState,
+  type WeaponPity,
 } from "../../src/economy/core";
 
+export type Profile = Economy["hoSo"][number];
 export interface SimChar extends BaseChar {
   id: string;
   name?: string;
+  /** Loại vũ khí: sword, great, cat, bow, spear. */
+  w: string;
 }
 export interface Gacha {
   rate5: number;
@@ -35,7 +42,6 @@ export interface SimOpts {
   days: number;
   seed: number;
 }
-type Profile = Economy["hoSo"][number];
 
 /** RNG có seed (mulberry32): cùng seed cho cùng kết quả. */
 export function mulberry32(seed: number) {
@@ -49,22 +55,21 @@ export function mulberry32(seed: number) {
   };
 }
 
-/** Đầu tư của đội theo ngày (không phụ thuộc may rủi): cấp, Khai Tinh, kỹ năng, Bảo Ấn, vũ khí. */
-export function investOnDay(day: number, p: Profile | null, E: Economy, weapon?: { r: 3 | 4 | 5; r5Ngay: number }) {
+/** Đầu tư của đội theo ngày (không phụ thuộc may rủi): cấp, Khai Tinh, kỹ năng, Bảo Ấn; nuôi đội 4 người khi đủ Sách, Xu, Lõi Sao. */
+export function investOnDay(day: number, p: Profile | null, E: Economy) {
   const T = E.thietKe,
     ht = hoTinhLevel(day, E),
     cp = caps(ht, E);
   const runs = Math.floor((day * T.linhLuc.hoiMoiNgay) / T.linhLuc.moiLuotLongSao);
   const U = E.game.thuong.uyThac,
-    seasons = p?.hanhTrinh ? Math.ceil(day / E.goiNap.hanhTrinhMua.ngay) : 0;
-  let books = runs * T.linhLuc.thuongMoiLuot.sach + day * U.duBon.sach + seasons * E.goiNap.hanhTrinhMua.sach;
+    seasons = p?.hoChieu ? Math.ceil(day / E.goiNap.hoChieuSao.ngay) : 0;
+  let books = runs * T.linhLuc.thuongMoiLuot.sach + day * U.duBon.sach + seasons * E.goiNap.hoChieuSao.sach;
   let coin =
     runs * T.linhLuc.thuongMoiLuot.xu +
     day * 4 * U.moiViec.xu +
     Math.floor(day / 7) * T.thuNhap.tuan.xu +
-    seasons * E.goiNap.hanhTrinhMua.xu;
+    seasons * E.goiNap.hoChieuSao.xu;
   let loi = runs * T.linhLuc.thuongMoiLuot.loiSao;
-  // Nuôi đội 4 người: lên cấp hoặc Khai Tinh khi đủ Sách, Xu, Lõi Sao.
   let lv = 1,
     khai = 0;
   for (;;) {
@@ -83,9 +88,6 @@ export function investOnDay(day: number, p: Profile | null, E: Economy, weapon?:
       khai++;
     } else break;
   }
-  const baoAnRamp = Math.min(1, day / 30);
-  const w = weapon ?? p?.vuKhi ?? { r: 4 as const, r5Ngay: T.thuNhap.vuKhi4MienPhiR5Ngay };
-  const tinhLuyen = Math.min(5, 1 + Math.floor((4 * day) / w.r5Ngay));
   return {
     hoTinh: ht,
     thienTuong: cp.thienTuong,
@@ -93,20 +95,25 @@ export function investOnDay(day: number, p: Profile | null, E: Economy, weapon?:
       lv,
       khai,
       kyNang: Math.min(cp.kyNang, T.kyNang.toiDaTheoKhaiTinh[khai]!),
-      baoAn: T.baoAn.chatLuongTheoThienTuong[cp.thienTuong]! * baoAnRamp,
-      vuKhi: { r: w.r, tinhLuyen },
-    } satisfies Omit<Invest, "cons">,
+      baoAn: T.baoAn.chatLuongTheoThienTuong[cp.thienTuong]! * Math.min(1, day / 30),
+    } satisfies Omit<Invest, "cons" | "vuKhi">,
   };
 }
 
-/** Đá Sao từ tiền nạp trong tháng `month` (0-based): mua gói giá trị cao nhất trước, gói lần đầu nhân đôi một lần. */
-export function paidGemsForMonth(month: number, p: Profile, E: Economy, usedFirst: Set<string>) {
+/** Bậc tinh luyện vũ khí 4★ Lò Rèn ở ngày `day`. */
+export const craftRefine = (day: number, E: Economy) =>
+  Math.min(5, 1 + Math.floor((4 * day) / E.thietKe.vuKhi.loRenR5Ngay));
+const craftId = (w: string, E: Economy) =>
+  (E.thietKe.vuKhi.danhSach.find((x) => x.nguon === "loRen" && x.loai === w) ??
+    E.thietKe.vuKhi.danhSach.find((x) => x.nguon === "loRen")!)!.id;
+export const signatureOf = (id: string, E: Economy) =>
+  E.thietKe.vuKhi.danhSach.find((w) => w.nguon === "gioiHan" && w.cua === id)?.id ?? null;
+
+/** Đá Sao từ tiền mua gói trong tháng: mua gói giá trị cao nhất trước, gói lần đầu nhân đôi một lần. */
+export function paidGemsForMonth(p: Profile, E: Economy, usedFirst: Set<string>) {
   const S = E.goiNap;
   let budget = p.vndThang,
     gems = 0;
-  if (p.theThang) budget -= S.theThang.gia;
-  if (p.hanhTrinh)
-    for (let d = month * 30; d < month * 30 + 30; d++) if (d % S.hanhTrinhMua.ngay === 0) budget -= S.hanhTrinhMua.gia;
   const packs = [...S.daSao].sort((a, b) => b.gia - a.gia);
   if (S.napLanDauNhanDoi)
     for (const pk of [...packs].reverse())
@@ -122,228 +129,407 @@ export function paidGemsForMonth(month: number, p: Profile, E: Economy, usedFirs
     }
   return gems;
 }
+/** Chi tiêu trung bình mỗi tháng (VND) của hồ sơ. */
+export const spendPerMonth = (p: Profile, E: Economy) =>
+  p.vndThang +
+  (p.theThang ? E.goiNap.theThang.gia : 0) +
+  (p.hoChieu ? (E.goiNap.hoChieuSao.gia * 30) / E.goiNap.hoChieuSao.ngay : 0);
 
+export type Quant = { p10: number; p50: number; p90: number };
+export interface Snapshot {
+  owned: Record<string, number>;
+  cl: number;
+  dps: number;
+  pulls: number;
+  wpulls: number;
+  carryN: number;
+  carryR: number;
+}
 export interface ProfileResult {
   id: string;
   ten: string;
   checkpoints: number[];
-  /** [checkpoint][player] Chiến Lực đội. */
-  cl: Float32Array[];
-  pulls: Float64Array; // trung bình lượt ước tích lũy theo ngày
+  cl: Quant[];
+  dps: Quant[];
+  /** Trung bình tích lũy theo ngày: lượt ước nhân vật, lượt ước vũ khí, số 5★ nhân vật, 5★ giới hạn. */
+  pulls: Float64Array;
+  wpulls: Float64Array;
   five: Float64Array;
   featured: Float64Array;
-  fiveDist: number[]; // số người theo số 5★ ở ngày cuối
-  firstFeaturedDay: number; // trung bình (người chưa có tính là soNgay+1)
-  noFeatured: number; // tỉ lệ chưa có 5★ giới hạn nào ở ngày cuối
-  sample: { owned: Record<string, number>; cl: number; pulls: number }; // người chơi trung vị ở ngày cuối
-  sampleAt: Record<number, { owned: Record<string, number>; cl: number; pulls: number }>;
+  /** Số người theo số nhân vật 5★ ở ngày cuối. */
+  fiveDist: number[];
+  firstFeaturedDay: number;
+  /** Theo mốc ngày: phân phối Nét Sao chủ lực (-1..6) và tinh luyện vũ khí chủ lực (0..5). */
+  carryN: Record<number, number[]>;
+  carryR: Record<number, number[]>;
+  /** Theo mốc ngày: tỉ lệ người chơi chạm Đỉnh và đạt điểm tối đa. */
+  chamDinh: Record<number, number>;
+  diemToiDa: Record<number, number>;
+  /** Ngày trung vị chạm Đỉnh, điểm tối đa (null: quá nửa số người chưa đạt trong thời gian mô phỏng). */
+  chamDinhDay: number | null;
+  diemToiDaDay: number | null;
+  sampleAt: Record<number, Snapshot>;
   gemsPerMonth: number;
+  vndPerMonth: number;
+}
+
+const quant = (a: Float32Array): Quant => {
+  const s = Float32Array.from(a).sort(),
+    q = (x: number) => s[Math.min(s.length - 1, Math.floor(x * s.length))]!;
+  return { p10: q(0.1), p50: q(0.5), p90: q(0.9) };
+};
+
+/** Sát thương mỗi giây cần để chạm Đỉnh (sao tối đa tầng 12 bản Đỉnh) và để đạt điểm tối đa. */
+export function peakNeed(E: Economy) {
+  const d = E.thietKe.phanTang.dinh,
+    cham = dpsNeeded(12, E, d.capQuaiThem) * d.heSoMau;
+  return { cham, max: cham * d.heSoDiemToiDa };
 }
 
 export function simulateProfile(p: Profile, chars: SimChar[], G: Gacha, E: Economy, o: SimOpts): ProfileResult {
-  const five = chars.filter((c) => c.r === 5),
-    four = chars.filter((c) => c.r === 4),
-    free = E.thietKe.congBang.doiMienPhi;
-  const idx = new Map(chars.map((c, i) => [c.id, i]));
+  const N = chars.length,
+    idx = new Map(chars.map((c, i) => [c.id, i]));
+  const pools = E.game.nhanVat5Sao,
+    std = pools.thuongTru.map((id) => idx.get(id)!),
+    lim = pools.gioiHan.map((id) => idx.get(id)!),
+    four = chars.flatMap((c, i) => (c.r === 4 ? [i] : [])),
+    free = E.thietKe.phanTang.doiMienPhi.map((id) => idx.get(id)!);
+  const carry = lim[0]!,
+    banner = 21;
+  const goals = p.mucTieu.map((g) => ({ vk: g.startsWith("vk"), n: Number(g.slice(2)) }));
+  const sig = chars.map((c) => signatureOf(c.id, E));
+  const crafted = chars.map((c) => craftId(c.w, E));
+  const m = E.thietKe.moHinhTran,
+    need = peakNeed(E);
   const step = 5,
+    moc = E.moPhong.mocNgay.filter((d) => d <= o.days),
     checkpoints = [
-      ...new Set([
-        ...Array.from({ length: Math.floor(o.days / step) }, (_, i) => (i + 1) * step),
-        ...E.moPhong.mocNgay.filter((d) => d <= o.days),
-        o.days,
-      ]),
+      ...new Set([...Array.from({ length: Math.floor(o.days / step) }, (_, i) => (i + 1) * step), ...moc, o.days]),
     ].sort((a, b) => a - b);
-  // Bảng Chiến Lực [checkpoint][nhân vật][Nét Sao] (đầu tư cố định theo ngày).
-  const tables = checkpoints.map((d) => {
-    const { inv } = investOnDay(d, p, E);
-    return chars.map((c) => Array.from({ length: 7 }, (_, cons) => chienLuc(charStats(c, { ...inv, cons }, E), E)));
-  });
-  const cl = checkpoints.map(() => new Float32Array(o.players));
+  const cpAt = new Map(checkpoints.map((d, i) => [d, i]));
+  // Bảng [checkpoint][nhân vật][Nét Sao][vũ khí]: vũ khí 0 = 4★ Lò Rèn, 1..5 = vũ khí đặc trưng R1..R5.
+  const K = 6,
+    at = (ci: number, cons: number, w: number) => (ci * 7 + cons) * K + w;
+  const tabCl: Float32Array[] = [],
+    tabU: Float32Array[] = [];
+  for (const d of checkpoints) {
+    const { inv } = investOnDay(d, p, E),
+      cr = craftRefine(d, E);
+    const tc = new Float32Array(N * 7 * K),
+      tu = new Float32Array(N * 7 * K);
+    chars.forEach((c, ci) => {
+      for (let cons = 0; cons < 7; cons++)
+        for (let w = 0; w < K; w++) {
+          const vuKhi = w && sig[ci] ? { id: sig[ci]!, tinhLuyen: w } : { id: crafted[ci]!, tinhLuyen: cr };
+          const st = charStats(c, { ...inv, cons, vuKhi }, E);
+          tc[at(ci, cons, w)] = chienLuc(st, E);
+          tu[at(ci, cons, w)] = effAtk(st) * (1 + st.skill);
+        }
+    });
+    tabCl.push(tc);
+    tabU.push(tu);
+  }
+  const clA = checkpoints.map(() => new Float32Array(o.players)),
+    dpsA = checkpoints.map(() => new Float32Array(o.players));
   const pulls = new Float64Array(o.days + 1),
+    wpulls = new Float64Array(o.days + 1),
     fiveA = new Float64Array(o.days + 1),
     featA = new Float64Array(o.days + 1);
   const fiveDist: number[] = [];
+  const carryN: Record<number, number[]> = {},
+    carryR: Record<number, number[]> = {},
+    chamC: Record<number, number> = {},
+    maxC: Record<number, number> = {};
+  for (const d of moc) {
+    carryN[d] = Array(8).fill(0);
+    carryR[d] = Array(6).fill(0);
+    chamC[d] = 0;
+    maxC[d] = 0;
+  }
+  const chamDays = new Float32Array(o.players),
+    maxDays = new Float32Array(o.players);
+  const snaps: Record<number, { owned: Int8Array; wr: Int8Array; cl: number; dps: number; np: number; nw: number }[]> =
+    {};
+  for (const d of moc) snaps[d] = [];
   let firstSum = 0,
-    noFeat = 0;
-  const finals: { owned: Int8Array; cl: number; pulls: number }[] = [];
-  const keepAt = new Set(E.moPhong.mocNgay);
-  const snap: Record<number, { owned: Int8Array; cl: number; pulls: number }[]> = {};
-  const rotate = 21;
-  let gemsTotal = 0;
+    gemsTotal = 0;
+  const top = [0, 0, 0, 0],
+    topU = [0, 0, 0, 0];
+
   for (let pl = 0; pl < o.players; pl++) {
     const rng = mulberry32((o.seed ^ Math.imul(pl + 1, 2654435761)) >>> 0);
-    const owned = new Int8Array(chars.length).fill(-1);
-    for (const id of free) owned[idx.get(id)!] = 0;
-    const st: PityState = { pity5: 0, pity4: 0, guaranteed: false };
+    const owned = new Int8Array(N).fill(-1),
+      wr = new Int8Array(N);
+    for (const i of free) owned[i] = 0;
+    const st: PityState = { pity5: 0, pity4: 0, guaranteed: false },
+      wst: WeaponPity = { pity5: 0, pity4: 0, guaranteed: false, laBan: 0 };
     const usedFirst = new Set<string>();
     let gems = 0,
       np = 0,
+      nw = 0,
       n5 = 0,
       nf = 0,
       first = 0,
-      ci = 0;
+      gi = 0,
+      cham = 0,
+      mx = 0;
+    const pullChar = (F: number, d: number) => {
+      gems -= G.cost;
+      np++;
+      const roll = rollRarity(st, G, E, rng);
+      let c = -1;
+      if (roll.r === 5) {
+        n5++;
+        if (roll.feat) {
+          c = F;
+          nf++;
+          if (!first) first = d;
+        } else c = std[Math.floor(rng() * std.length)]!;
+      } else if (roll.r === 4) c = four[Math.floor(rng() * four.length)]!;
+      if (c >= 0) owned[c] = Math.min(6, owned[c]! + 1);
+    };
+    const pullWeapon = (other: number) => {
+      gems -= G.cost;
+      nw++;
+      const roll = rollWeapon(wst, E, rng);
+      if (roll.kind === "chon") wr[carry] = Math.min(5, wr[carry]! + 1);
+      else if (roll.kind === "khac") wr[other] = Math.min(5, wr[other]! + 1);
+    };
     for (let d = 1; d <= o.days; d++) {
       let g = freeGemsOnDay(d, E);
       if (p.theThang)
         g +=
           E.goiNap.theThang.daSaoMoiNgay + ((d - 1) % E.goiNap.theThang.ngay === 0 ? E.goiNap.theThang.daSaoNgay : 0);
-      if (p.hanhTrinh && (d - 1) % E.goiNap.hanhTrinhMua.ngay === 0) g += E.goiNap.hanhTrinhMua.daSao;
-      if (p.vndThang && (d - 1) % 30 === 0) g += paidGemsForMonth(Math.floor((d - 1) / 30), p, E, usedFirst);
+      if (p.hoChieu && (d - 1) % E.goiNap.hoChieuSao.ngay === 0) g += E.goiNap.hoChieuSao.daSao;
+      if (p.vndThang && (d - 1) % 30 === 0) g += paidGemsForMonth(p, E, usedFirst);
       gems += g;
       if (pl === 0) gemsTotal += g;
-      const feat = five[Math.floor((d - 1) / rotate) % five.length]!;
-      if (gems >= (p.vndThang ? 1 : Math.max(1, E.moPhong.tichLuyTruocKhiUoc)) * G.cost)
-        while (gems >= G.cost) {
-          gems -= G.cost;
-          np++;
-          const roll = rollRarity(st, G, E, rng);
-          let c: SimChar | null = null;
-          if (roll.r === 5) {
-            n5++;
-            if (roll.feat) {
-              c = feat;
-              nf++;
-              if (!first) first = d;
-            } else {
-              const pool = five.filter((x) => x.id !== feat.id);
-              c = pool[Math.floor(rng() * pool.length)]!;
-            }
-          } else if (roll.r === 4) c = four[Math.floor(rng() * four.length)]!;
-          if (c) {
-            const k = idx.get(c.id)!;
-            owned[k] = Math.min(6, owned[k]! + 1);
-          }
-        }
+      const k = Math.floor((d - 1) / banner),
+        F = lim[k % lim.length]!,
+        next = lim[(k + 1) % lim.length]!;
+      while (gems >= G.cost) {
+        while (gi < goals.length && (goals[gi]!.vk ? wr[carry]! >= goals[gi]!.n : owned[carry]! >= goals[gi]!.n)) gi++;
+        const goal = goals[gi];
+        if (goal && F === carry && !goal.vk) pullChar(F, d);
+        else if (goal && goal.vk && (F === carry || next === carry) && owned[carry]! >= 0)
+          pullWeapon(F === carry ? next : F);
+        else if (F !== carry && owned[F]! < (goal ? p.uocKhac : Math.max(0, p.uocKhac))) pullChar(F, d);
+        else break;
+      }
       pulls[d] += np;
+      wpulls[d] += nw;
       fiveA[d] += n5;
       featA[d] += nf;
-      if (d === checkpoints[ci]) {
-        const t = tables[ci]!,
-          vals: number[] = [];
-        for (let k = 0; k < chars.length; k++) if (owned[k]! >= 0) vals.push(t[k]![owned[k]!]!);
-        const v = teamChienLuc(vals);
-        cl[ci]![pl] = v;
-        if (keepAt.has(d)) (snap[d] ??= []).push({ owned: owned.slice(), cl: v, pulls: np });
-        ci++;
+      const ci = cpAt.get(d);
+      if (ci !== undefined) {
+        const tc = tabCl[ci]!,
+          tu = tabU[ci]!;
+        top.fill(0);
+        topU.fill(0);
+        for (let c = 0; c < N; c++) {
+          const cons = owned[c]!;
+          if (cons < 0) continue;
+          const j = at(c, cons, wr[c]!),
+            v = tc[j]!,
+            u = tu[j]!;
+          for (let t = 0; t < 4; t++)
+            if (v > top[t]!) {
+              for (let s = 3; s > t; s--) {
+                top[s] = top[s - 1]!;
+                topU[s] = topU[s - 1]!;
+              }
+              top[t] = v;
+              topU[t] = u;
+              break;
+            }
+        }
+        const cl = top[0]! + top[1]! + top[2]! + top[3]!;
+        const us = [...topU].sort((a, b) => b - a);
+        const dps = m.heSoSatThuong * (us[0]! + m.chiaSeNgoaiSan * (us[1]! + us[2]! + us[3]!)) * m.thoiGianDanh;
+        clA[ci]![pl] = cl;
+        dpsA[ci]![pl] = dps;
+        if (!cham && dps >= need.cham) cham = d;
+        if (!mx && dps >= need.max) mx = d;
+        if (carryN[d]) {
+          carryN[d]![owned[carry]! + 1]!++;
+          carryR[d]![wr[carry]!]!++;
+          if (cham) chamC[d]!++;
+          if (mx) maxC[d]!++;
+          snaps[d]!.push({ owned: owned.slice(), wr: wr.slice(), cl, dps, np, nw });
+        }
       }
     }
     fiveDist[n5] = (fiveDist[n5] ?? 0) + 1;
     firstSum += first || o.days + 1;
-    if (!nf) noFeat++;
-    finals.push({ owned, cl: cl[checkpoints.length - 1]![pl]!, pulls: np });
+    chamDays[pl] = cham || Infinity;
+    maxDays[pl] = mx || Infinity;
   }
   for (let d = 0; d <= o.days; d++) {
     pulls[d] /= o.players;
+    wpulls[d] /= o.players;
     fiveA[d] /= o.players;
     featA[d] /= o.players;
   }
-  const median = (arr: { owned: Int8Array; cl: number; pulls: number }[]) => {
-    const s = [...arr].sort((a, b) => a.cl - b.cl)[Math.floor(arr.length / 2)]!;
-    const ownedRec: Record<string, number> = {};
-    s.owned.forEach((c, k) => c >= 0 && (ownedRec[chars[k]!.id] = c));
-    return { owned: ownedRec, cl: s.cl, pulls: s.pulls };
+  const medDay = (a: Float32Array) => {
+    const v = quant(a).p50;
+    return Number.isFinite(v) ? v : null;
   };
-  const sampleAt: ProfileResult["sampleAt"] = {};
-  for (const d of Object.keys(snap)) sampleAt[+d] = median(snap[+d]!);
+  const sampleAt: Record<number, Snapshot> = {};
+  for (const d of moc) {
+    const arr = snaps[d]!.sort((a, b) => a.cl - b.cl),
+      s = arr[Math.floor(arr.length / 2)]!;
+    const rec: Record<string, number> = {};
+    s.owned.forEach((c, k) => c >= 0 && (rec[chars[k]!.id] = c));
+    sampleAt[d] = {
+      owned: rec,
+      cl: s.cl,
+      dps: s.dps,
+      pulls: s.np,
+      wpulls: s.nw,
+      carryN: s.owned[carry]!,
+      carryR: s.wr[carry]!,
+    };
+    for (const k of Object.keys(carryN[d]!)) {
+      carryN[d]![+k]! /= o.players;
+    }
+    carryR[d] = carryR[d]!.map((x) => x / o.players);
+    chamC[d]! /= o.players;
+    maxC[d]! /= o.players;
+  }
   return {
     id: p.id,
     ten: p.ten,
     checkpoints,
-    cl,
+    cl: clA.map(quant),
+    dps: dpsA.map(quant),
     pulls,
+    wpulls,
     five: fiveA,
     featured: featA,
     fiveDist: Array.from(fiveDist, (x) => x ?? 0),
     firstFeaturedDay: firstSum / o.players,
-    noFeatured: noFeat / o.players,
-    sample: median(finals),
+    carryN,
+    carryR,
+    chamDinh: chamC,
+    diemToiDa: maxC,
+    chamDinhDay: medDay(chamDays),
+    diemToiDaDay: medDay(maxDays),
     sampleAt,
     gemsPerMonth: (gemsTotal / o.days) * 30,
+    vndPerMonth: spendPerMonth(p, E),
   };
 }
 
-export const quantile = (a: Float32Array, q: number) => {
-  const s = Float32Array.from(a).sort();
-  return s[Math.min(s.length - 1, Math.floor(q * s.length))]!;
-};
-
-/** Chiến Lực trần lý thuyết ở ngày d: 4 nhân vật 5★ mạnh nhất, N6, vũ khí 5★ R5. Chỉ để tham khảo: cần nạp vượt xa hạn mức tháng. */
-export function theoreticalMax(day: number, chars: SimChar[], E: Economy) {
-  const { inv } = investOnDay(day, null, E, { r: 5, r5Ngay: 1 });
-  return teamChienLuc(chars.filter((c) => c.r === 5).map((c) => chienLuc(charStats(c, { ...inv, cons: 6 }, E), E)));
-}
-
-/** Đội 4★ miễn phí (N0, vũ khí 4★ rèn): Chiến Lực và DPS ước tính theo ngày. */
+/** Đội 4★ miễn phí (N0, vũ khí 4★ Lò Rèn): Chiến Lực và sát thương mỗi giây theo ngày. */
 export function freeTeam(day: number, chars: SimChar[], E: Economy) {
-  const { inv, hoTinh } = investOnDay(day, null, E);
-  const team = E.thietKe.congBang.doiMienPhi.map((id) =>
-    charStats(
-      chars.find((c) => c.id === id)!,
-      { ...inv, cons: 0 },
-      E,
-    ),
-  );
+  const { inv, hoTinh } = investOnDay(day, null, E),
+    cr = craftRefine(day, E);
+  const team = E.thietKe.phanTang.doiMienPhi.map((id) => {
+    const c = chars.find((x) => x.id === id)!;
+    return charStats(c, { ...inv, cons: 0, vuKhi: { id: craftId(c.w, E), tinhLuyen: cr } }, E);
+  });
   return { hoTinh, lv: inv.lv, cl: teamChienLuc(team.map((s) => chienLuc(s, E))), dps: teamDps(team, E) };
 }
 
-export interface Fairness {
-  story: { chuong: number; ngay: number; can: number; co: number; ok: boolean }[];
-  tower: { tang: number; dpsCan: number; ngayDat: number | null; ok: boolean }[];
-  ratio: {
-    ngay: number;
-    khongNap: number;
-    napIt: number;
-    napNhieu: number;
-    napNhieuP99: number;
-    napNhieuMax: number;
-    tran: number;
-    tiLe: number;
-    tiLeP99: number;
-    tiLeMax: number;
-    tiLeTran: number;
-    ok: boolean;
-  }[];
+export type DoDe = "chưa qua" | "qua được" | "vừa đủ" | "dễ" | "rất nhẹ nhàng";
+export function doDe(margin: number, E: Economy): DoDe {
+  const t = E.thietKe.phanTang.doDe;
+  if (margin < 1) return "chưa qua";
+  if (margin < t.vuaDu) return "qua được";
+  if (margin < t.de) return "vừa đủ";
+  if (margin < t.ratNhe) return "dễ";
+  return "rất nhẹ nhàng";
+}
+
+export interface Tiering {
+  /** Nội dung thường: Chiến Lực cần, đội 4★ miễn phí, độ dư từng hồ sơ ở ngày mở, ngày F2P (trung vị) qua. */
+  thuong: { ten: string; ngay: number; can: number; mienPhi: number; du: number[]; f2pNgay: number | null }[];
+  thap: { tang: number; dpsCan: number; mienPhiNgay: number | null; f2pNgay: number | null }[];
+  f2pTatCa: number | null;
+  /** Độ dư thấp nhất và trung vị trên các nội dung thường, theo hồ sơ. */
+  doDe: { min: number; median: number; nhan: DoDe }[];
+  dinh: { cham: number; max: number };
+  checks: { ten: string; ok: boolean }[];
   ok: boolean;
 }
 
-export function fairness(res: ProfileResult[], chars: SimChar[], E: Economy, days: number): Fairness {
-  const story = E.thietKe.cotTruyen.map((c) => {
-    const co = freeTeam(c.ngay, chars, E).cl;
-    return { chuong: c.chuong, ngay: c.ngay, can: c.chienLuc, co, ok: co >= c.chienLuc };
+/** Chỉ số Chiến Lực (trung vị) ở ngày d: lấy checkpoint gần nhất không sau d (ngày trước checkpoint đầu dùng checkpoint đầu). */
+const clAt = (r: ProfileResult, d: number) => {
+  let i = 0;
+  while (i + 1 < r.checkpoints.length && r.checkpoints[i + 1]! <= d) i++;
+  return r.cl[i]!.p50;
+};
+const firstDay = (r: ProfileResult, from: number, ok: (i: number) => boolean) => {
+  for (let i = 0; i < r.checkpoints.length; i++) if (r.checkpoints[i]! >= from && ok(i)) return r.checkpoints[i]!;
+  return null;
+};
+
+export function tiering(res: ProfileResult[], chars: SimChar[], E: Economy, days: number): Tiering {
+  const P = E.thietKe.phanTang,
+    f2p = res[0]!;
+  const thuong = P.thuong.map((x) => {
+    const mienPhi = freeTeam(x.ngay, chars, E).cl;
+    return {
+      ten: x.ten,
+      ngay: x.ngay,
+      can: x.chienLuc,
+      mienPhi,
+      du: res.map((r) => clAt(r, x.ngay) / x.chienLuc),
+      f2pNgay: firstDay(f2p, x.ngay, (i) => f2p.cl[i]!.p50 >= x.chienLuc),
+    };
   });
-  const tower = Array.from({ length: 12 }, (_, i) => {
+  const thap = Array.from({ length: P.thapThuong }, (_, i) => {
     const f = i + 1,
       need = dpsNeeded(f, E);
-    let ngayDat: number | null = null;
-    for (let d = 1; d <= days && ngayDat === null; d++) if (freeTeam(d, chars, E).dps >= need) ngayDat = d;
-    return { tang: f, dpsCan: Math.round(need), ngayDat, ok: ngayDat !== null };
+    let mienPhiNgay: number | null = null;
+    for (let d = 1; d <= days && mienPhiNgay === null; d++) if (freeTeam(d, chars, E).dps >= need) mienPhiNgay = d;
+    return {
+      tang: f,
+      dpsCan: Math.round(need),
+      mienPhiNgay,
+      f2pNgay: firstDay(f2p, 1, (k) => f2p.dps[k]!.p50 >= need),
+    };
   });
-  const [f2p, low, high] = res as [ProfileResult, ProfileResult, ProfileResult];
-  const tranCfg = E.thietKe.congBang.tranChenhLech;
-  const ratio = E.moPhong.mocNgay
-    .filter((d) => d <= days)
-    .map((d) => {
-      const i = f2p.checkpoints.indexOf(d);
-      const a = quantile(f2p.cl[i]!, 0.5),
-        b = quantile(low.cl[i]!, 0.5),
-        c = quantile(high.cl[i]!, 0.5),
-        c99 = quantile(high.cl[i]!, 0.99),
-        cMax = high.cl[i]!.reduce((m, x) => Math.max(m, x), 0),
-        t = theoreticalMax(d, chars, E);
-      return {
-        ngay: d,
-        khongNap: a,
-        napIt: b,
-        napNhieu: c,
-        napNhieuP99: c99,
-        napNhieuMax: cMax,
-        tran: t,
-        tiLe: c / a,
-        tiLeP99: c99 / a,
-        tiLeMax: cMax / a,
-        tiLeTran: t / a,
-        ok: cMax / a <= tranCfg,
-      };
-    });
-  return { story, tower, ratio, ok: story.every((s) => s.ok) && tower.every((t) => t.ok) && ratio.every((r) => r.ok) };
+  const all = [...thuong.map((x) => x.f2pNgay), ...thap.map((x) => x.f2pNgay)];
+  const f2pTatCa = all.some((x) => x === null) ? null : Math.max(...(all as number[]));
+  const dd = res.map((_, k) => {
+    const v = thuong.map((x) => x.du[k]!).sort((a, b) => a - b);
+    const median = v[Math.floor(v.length / 2)]!;
+    return { min: v[0]!, median, nhan: doDe(median, E) };
+  });
+  const need = peakNeed(E),
+    last = Math.max(...E.moPhong.mocNgay.filter((d) => d <= days)),
+    [c0, c1] = P.dinh.f2pChamDinh,
+    whale = res.at(-1)!;
+  const checks = [
+    {
+      ten: `Đội 4★ miễn phí đủ cấp qua mọi nội dung thường ở ngày mở và Tháp tầng 1–${P.thapThuong} 3★`,
+      ok: thuong.every((x) => x.mienPhi >= x.can) && thap.every((x) => x.mienPhiNgay !== null),
+    },
+    {
+      ten: `F2P chơi kỹ (trung vị) qua 100% nội dung thường trước ngày ${P.hanThuong}`,
+      ok: f2pTatCa !== null && f2pTatCa <= P.hanThuong,
+    },
+    {
+      ten: "Độ dễ nội dung thường tăng dần theo mức nạp, F2P vẫn qua được",
+      ok: dd.every((x, k) => k === 0 || x.median >= dd[k - 1]!.median) && dd[0]!.min >= 1,
+    },
+    {
+      ten: `F2P chơi kỹ (trung vị) chạm Đỉnh trong khoảng ngày ${c0}–${c1}`,
+      ok: f2p.chamDinhDay !== null && f2p.chamDinhDay >= c0 && f2p.chamDinhDay <= c1,
+    },
+    {
+      ten: `Điểm tối đa chủ yếu dành cho ${whale.ten}: ở ngày ${last}, dưới một nửa F2P và từ một nửa ${whale.ten} trở lên đạt`,
+      ok: (f2p.diemToiDa[last] ?? 0) < 0.5 && (whale.diemToiDa[last] ?? 0) >= 0.5,
+    },
+  ];
+  return {
+    thuong,
+    thap,
+    f2pTatCa,
+    doDe: dd,
+    dinh: need,
+    checks,
+    ok: checks.every((c) => c.ok),
+  };
 }

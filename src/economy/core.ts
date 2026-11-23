@@ -2,7 +2,7 @@
  * Công thức kinh tế và Chiến Lực dùng chung cho game, trang Admin và công cụ mô phỏng (tools/economy).
  * Không đọc trạng thái toàn cục: mọi con số lấy từ `E` (content/economy.yaml).
  */
-import type { Economy } from "../data/economy-schema";
+import type { Economy, Weapon } from "../data/economy-schema";
 
 export type Rng = () => number;
 
@@ -17,7 +17,8 @@ export interface Invest {
   cons: number;
   khai?: number;
   kyNang?: number;
-  vuKhi?: { r: 3 | 4 | 5; tinhLuyen: number } | null;
+  /** Vũ khí theo id trong thietKe.vuKhi.danhSach, tinh luyện 1–5. */
+  vuKhi?: { id: string; tinhLuyen: number } | null;
   /** Chất lượng Bảo Ấn 0..1 (đủ bộ 4 ô khi > 0). */
   baoAn?: number;
 }
@@ -28,7 +29,7 @@ export interface Stats {
   atk: number;
   crit: number;
   cdmg: number;
-  /** Tăng sát thương cộng dồn (tinh luyện vũ khí, Bộ Ấn). */
+  /** Tăng sát thương cộng dồn (bị động vũ khí, Bộ Ấn). */
   dmg: number;
   /** Thưởng kỹ năng nhân vào Chiến Lực. */
   skill: number;
@@ -53,15 +54,28 @@ export function lvCostRange(from: number, to: number, E: Economy) {
   return { books, coin };
 }
 
+const weaponCache = new WeakMap<Economy, Map<string, Weapon>>();
+export function weaponOf(id: string, E: Economy): Weapon {
+  let m = weaponCache.get(E);
+  if (!m) weaponCache.set(E, (m = new Map(E.thietKe.vuKhi.danhSach.map((w) => [w.id, w]))));
+  const w = m.get(id);
+  if (!w) throw new Error(`Không có vũ khí "${id}"`);
+  return w;
+}
+/** Bị động vũ khí ở bậc tinh luyện R (1–5): R1 × (1 + buocTinhLuyen × (R − 1)). */
+export const passiveAt = (w: Weapon, tinhLuyen: number, E: Economy) =>
+  w.biDong.satThuong * (1 + E.thietKe.vuKhi.buocTinhLuyen * (Math.min(5, Math.max(1, tinhLuyen)) - 1));
+
 export function charStats(b: BaseChar, s: Invest, E: Economy): Stats {
   const G = E.game,
     T = E.thietKe;
   const g = 1 + (s.lv - 1) * G.capNhanVat.tangMoiCap,
     cb = 1 + s.cons * G.netSao.tangMoiNet,
     kt = 1 + (s.khai ?? 0) * T.khaiTinh.tangMoiBac;
-  const w = s.vuKhi ? T.vuKhi[String(s.vuKhi.r) as "3" | "4" | "5"] : null;
+  const w = s.vuKhi ? weaponOf(s.vuKhi.id, E) : null;
   const ba = s.baoAn ?? 0;
-  const atkPct = 1 + (w ? w.tanCong : 0) + ba * T.baoAn.tanCongToiDa,
+  const ph = (k: Weapon["phu"]["loai"]) => (w && w.phu.loai === k ? w.phu.giaTri : 0);
+  const atkPct = 1 + (w ? w.tanCong : 0) + ph("tanCong") + ba * T.baoAn.tanCongToiDa,
     hpPct = 1 + ba * T.baoAn.mauToiDa;
   const cm = G.chiMang[rk(b.r)];
   return {
@@ -69,9 +83,9 @@ export function charStats(b: BaseChar, s: Invest, E: Economy): Stats {
     cons: s.cons,
     hp: Math.round(b.hp * g * cb * kt * hpPct),
     atk: Math.round(b.atk * g * cb * kt * atkPct),
-    crit: cm.tiLe,
-    cdmg: cm.satThuong,
-    dmg: (w ? w.tinhLuyen * Math.max(0, s.vuKhi!.tinhLuyen - 1) : 0) + (ba > 0 ? T.baoAn.boAn : 0),
+    crit: Math.min(1, cm.tiLe + ph("chiMang")),
+    cdmg: cm.satThuong + ph("satThuongChiMang"),
+    dmg: (w ? passiveAt(w, s.vuKhi!.tinhLuyen, E) : 0) + (ba > 0 ? T.baoAn.boAn : 0),
     skill: Math.max(0, (s.kyNang ?? 1) - 1) * T.kyNang.tangMoiCap,
   };
 }
@@ -151,6 +165,45 @@ export function rollRarity(st: PityState, cfg: GachaCfg, E: Economy, rng: Rng): 
   return { r: 3, feat: false };
 }
 
+/** Bảo Hộ Vận Sao của banner vũ khí và điểm La Bàn Sao. */
+export interface WeaponPity {
+  pity5: number;
+  pity4: number;
+  /** Lần 5★ trước không phải một trong hai vũ khí nổi bật: lần sau chắc chắn là vũ khí nổi bật. */
+  guaranteed: boolean;
+  laBan: number;
+}
+/** Một lượt banner vũ khí. "chon": đúng vũ khí đã chọn bằng La Bàn Sao; "khac": vũ khí nổi bật còn lại; "thuong": 5★ thường trú. */
+export function rollWeapon(
+  st: WeaponPity,
+  E: Economy,
+  rng: Rng,
+): { r: 3 | 4 | 5; kind: "chon" | "khac" | "thuong" | null } {
+  const B = E.thietKe.vuKhi.banner;
+  st.pity5++;
+  st.pity4++;
+  let p5 = B.tiLe5 / 100;
+  if (st.pity5 >= B.mem) p5 += (st.pity5 - B.mem + 1) * B.tangMoiLuotSauMem;
+  if (st.pity5 >= B.cung) p5 = 1;
+  const r = rng();
+  if (r < p5) {
+    st.pity5 = 0;
+    st.pity4 = 0;
+    let kind: "chon" | "khac" | "thuong";
+    if (B.laBanSao > 0 && st.laBan >= B.laBanSao) kind = "chon";
+    else if (st.guaranteed || rng() < B.tiLeNoiBat) kind = rng() < 0.5 ? "chon" : "khac";
+    else kind = "thuong";
+    st.guaranteed = kind === "thuong";
+    st.laBan = kind === "chon" ? 0 : st.laBan + 1;
+    return { r: 5, kind };
+  }
+  if (st.pity4 >= B.bao4Sao || r < p5 + B.tiLe4 / 100) {
+    st.pity4 = 0;
+    return { r: 4, kind: null };
+  }
+  return { r: 3, kind: null };
+}
+
 /** Cấp Hộ Tinh sau `days` ngày chơi (chỉ tăng theo thời gian, không bán). */
 export function hoTinhLevel(days: number, E: Economy) {
   const h = E.thietKe.capHoTinh;
@@ -208,7 +261,7 @@ export function packValue(E: Economy) {
   const tt = s.theThang,
     ttGems = tt.daSaoNgay + tt.daSaoMoiNgay * tt.ngay;
   rows.push({ id: tt.id, gia: tt.gia, daSao: ttGems, moi1000: (ttGems / tt.gia) * 1000, lanDau: null });
-  const ht = s.hanhTrinhMua;
+  const ht = s.hoChieuSao;
   rows.push({ id: ht.id, gia: ht.gia, daSao: ht.daSao, moi1000: (ht.daSao / ht.gia) * 1000, lanDau: null });
   return rows;
 }

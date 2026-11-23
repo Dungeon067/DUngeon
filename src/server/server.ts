@@ -141,7 +141,10 @@ export const Server = {
     if (roll.r === 5) {
       let c;
       if (roll.feat) c = byId[cfg.featured];
-      else c = pick(CHARS.filter((x) => x.r === 5 && x.id !== cfg.featured));
+      else {
+        const std = ECON.game.nhanVat5Sao.thuongTru.filter((id) => id !== cfg.featured && byId[id]);
+        c = std.length ? byId[pick(std)] : pick(CHARS.filter((x) => x.r === 5 && x.id !== cfg.featured));
+      }
       out = { kind: "char", id: c.id, r: 5, name: c.name, feat: roll.feat, ...this.grant(c.id) };
     } else if (roll.r === 4) {
       const c = pick(CHARS.filter((x) => x.r === 4));
@@ -374,6 +377,8 @@ export const Server = {
       if (cfg.rate5 > 100 || cfg.rate4 > 100) throw new Error("Tỉ lệ tối đa 100%");
       if (c.featured) {
         if (!byId[c.featured] || byId[c.featured].r !== 5) throw new Error("Banner chỉ nhận nhân vật 5★");
+        if (!ECON.game.nhanVat5Sao.gioiHan.includes(c.featured))
+          throw new Error("Banner chỉ nhận nhân vật 5★ giới hạn");
         if (cfg.featured !== c.featured) this.P.guaranteed = false;
         cfg.featured = c.featured;
       }

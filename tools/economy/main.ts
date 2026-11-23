@@ -1,10 +1,10 @@
-/** pnpm economy:sim [--players 100000] [--days 180] [--seed n] [--out docs/economy/ket-qua] */
+/** pnpm economy:sim [--players 100000] [--days 365] [--seed n] [--out docs/economy/ket-qua] */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { validateContent } from "../../src/data/schema";
 import { validateEconomy } from "../../src/data/economy-schema";
 import { loadRawContent, loadRawEconomy } from "../../scripts/load-content";
-import { fairness, simulateProfile } from "./sim";
+import { simulateProfile, tiering } from "./sim";
 import { renderReport } from "./report";
 
 const arg = (k: string) => {
@@ -19,11 +19,11 @@ const opts = {
   seed: Number(arg("seed") ?? E.moPhong.seed),
 };
 const out = arg("out") ?? "docs/economy/ket-qua";
-const chars = content.characters.map((c) => ({ id: c.id, name: c.name, r: c.r, hp: c.hp, atk: c.atk }));
+const chars = content.characters.map((c) => ({ id: c.id, name: c.name, r: c.r, hp: c.hp, atk: c.atk, w: c.w }));
 const G = content.config.gacha;
 const t0 = Date.now();
 const res = E.hoSo.map((p) => simulateProfile(p, chars, G, E, opts));
-const fair = fairness(res, chars, E, opts.days);
+const fair = tiering(res, chars, E, opts.days);
 mkdirSync(out, { recursive: true });
 const files = renderReport(res, fair, chars, E, opts);
 for (const [name, body] of Object.entries(files.files)) writeFileSync(join(out, name), body);
