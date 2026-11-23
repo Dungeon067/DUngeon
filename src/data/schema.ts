@@ -42,13 +42,19 @@ export const CharacterSchema = z
     look: z
       .object({
         hair: hex,
-        style: z.enum(["spiky", "long", "pony", "buns", "short", "bob"]),
+        style: z.enum(["spiky", "long", "longlocks", "pony", "buns", "short", "bob"]),
         outfit: hex,
         accent: hex,
         skin: hex,
         eye: hex,
         coat: z.boolean().optional(),
         pants: hex.optional(),
+        // Chi tiết chỉ dùng cho sprite pixel (docs/art/pixel-chuan.md).
+        shoe: hex.optional(),
+        mark: hex.optional(),
+        gem: hex.optional(),
+        cord: hex.optional(),
+        weaponColor: hex.optional(),
       })
       .strict(),
   })
