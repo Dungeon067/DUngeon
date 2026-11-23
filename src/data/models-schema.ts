@@ -3,8 +3,7 @@ import { z } from "zod";
 
 export const WT = z.enum(["sword", "great", "spear", "bow", "cat"]);
 const v3 = z.tuple([z.number(), z.number(), z.number()]);
-const perType = <T extends z.ZodTypeAny>(t: T) =>
-  z.object({ sword: t, great: t, spear: t, bow: t, cat: t });
+const perType = <T extends z.ZodTypeAny>(t: T) => z.object({ sword: t, great: t, spear: t, bow: t, cat: t });
 const look = z.object({ height: z.number().positive(), yOffset: z.number().default(0) });
 export const ModelsSchema = z.object({
   mau: z.string().min(1),

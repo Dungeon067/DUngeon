@@ -11,7 +11,13 @@ export interface MonsterView {
   segs?: THREE.Object3D[];
 }
 
-function part(g: THREE.BufferGeometry, color: number | string, mats: THREE.MeshToonMaterial[], ol = 0.03, emissive?: string) {
+function part(
+  g: THREE.BufferGeometry,
+  color: number | string,
+  mats: THREE.MeshToonMaterial[],
+  ol = 0.03,
+  emissive?: string,
+) {
   const m = toonMat({ color, emissive: emissive ?? 0x000000, emissiveIntensity: emissive ? 1.2 : 0 });
   mats.push(m);
   const mesh = new THREE.Mesh(g, m);
@@ -20,7 +26,15 @@ function part(g: THREE.BufferGeometry, color: number | string, mats: THREE.MeshT
   return mesh;
 }
 
-function eyes(parent: THREE.Object3D, y: number, z: number, sep: number, r: number, mats: THREE.MeshToonMaterial[], col = 0xffffff) {
+function eyes(
+  parent: THREE.Object3D,
+  y: number,
+  z: number,
+  sep: number,
+  r: number,
+  mats: THREE.MeshToonMaterial[],
+  col = 0xffffff,
+) {
   for (const s of [-1, 1]) {
     const e = part(new THREE.SphereGeometry(r, 10, 8), col, mats, 0);
     e.position.set(s * sep, y, z);

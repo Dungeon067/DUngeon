@@ -558,7 +558,11 @@ export function buildProps(W: any, F: HeightField, shadows: boolean, opened: (i:
       add(
         new THREE.Mesh(new THREE.BoxGeometry(along ? w : 0.07, 0.24, along ? 0.07 : dz), toonMat({ color: 0x7c5229 })),
         0.012,
-      ).position.set(d.x + (along ? w / 2 : side ? w - 0.04 : 0.04), y + 0.12, d.y + (along ? (side ? dz - 0.04 : 0.04) : dz / 2));
+      ).position.set(
+        d.x + (along ? w / 2 : side ? w - 0.04 : 0.04),
+        y + 0.12,
+        d.y + (along ? (side ? dz - 0.04 : 0.04) : dz / 2),
+      );
     for (const [px2, pz2] of [
       [0.15, 0.15],
       [w - 0.15, 0.15],

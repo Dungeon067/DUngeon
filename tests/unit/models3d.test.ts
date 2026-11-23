@@ -40,6 +40,7 @@ describe("S25: cấu hình mô hình 3D và hoạt ảnh humanoid", () => {
 
   it("mẫu VRM tạm và vũ khí mặc định có file", () => {
     expect(existsSync(`public/media/models/${M.mau}/model.vrm`)).toBe(true);
-    for (const id of Object.values(M.vuKhiMacDinh)) expect(existsSync(`public/media/models/weapons/${id}.glb`), id).toBe(true);
+    for (const id of Object.values(M.vuKhiMacDinh))
+      expect(existsSync(`public/media/models/weapons/${id}.glb`), id).toBe(true);
   });
 });

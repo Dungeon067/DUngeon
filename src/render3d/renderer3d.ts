@@ -26,9 +26,42 @@ import { LV, buildGrass, buildHeight, buildProps, buildTerrain, buildWater, type
 
 /** Thiết lập theo mức đồ họa. */
 export const QUALITY3D = {
-  low: { scale: 0.7, shadows: false, shadowMap: 0, soft: false, bloom: false, dof: false, lights: 2, grass: 0, R: 2, msaa: 0 },
-  medium: { scale: 0.85, shadows: true, shadowMap: 1024, soft: false, bloom: true, dof: false, lights: 4, grass: 2, R: 2, msaa: 0 },
-  high: { scale: 1, shadows: true, shadowMap: 2048, soft: true, bloom: true, dof: true, lights: 8, grass: 4, R: 3, msaa: 4 },
+  low: {
+    scale: 0.7,
+    shadows: false,
+    shadowMap: 0,
+    soft: false,
+    bloom: false,
+    dof: false,
+    lights: 2,
+    grass: 0,
+    R: 2,
+    msaa: 0,
+  },
+  medium: {
+    scale: 0.85,
+    shadows: true,
+    shadowMap: 1024,
+    soft: false,
+    bloom: true,
+    dof: false,
+    lights: 4,
+    grass: 2,
+    R: 2,
+    msaa: 0,
+  },
+  high: {
+    scale: 1,
+    shadows: true,
+    shadowMap: 2048,
+    soft: true,
+    bloom: true,
+    dof: true,
+    lights: 8,
+    grass: 4,
+    R: 3,
+    msaa: 4,
+  },
 } as const;
 
 const FOV = 40;
@@ -89,9 +122,21 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   const cv = document.createElement("canvas");
   cv.id = "game3d";
   cv.setAttribute("aria-hidden", "true");
-  Object.assign(cv.style, { position: "fixed", inset: "0", width: "100%", height: "100%", pointerEvents: "none", zIndex: "0" });
+  Object.assign(cv.style, {
+    position: "fixed",
+    inset: "0",
+    width: "100%",
+    height: "100%",
+    pointerEvents: "none",
+    zIndex: "0",
+  });
   host.parentElement!.insertBefore(cv, host);
-  const gl = new THREE.WebGLRenderer({ canvas: cv, antialias: true, powerPreference: "high-performance", stencil: false });
+  const gl = new THREE.WebGLRenderer({
+    canvas: cv,
+    antialias: true,
+    powerPreference: "high-performance",
+    stencil: false,
+  });
   gl.outputColorSpace = THREE.SRGBColorSpace;
   gl.info.autoReset = false;
   cv.addEventListener("webglcontextlost", (e) => {
@@ -158,7 +203,8 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     side: THREE.DoubleSide,
     blending: THREE.AdditiveBlending,
     uniforms: { uC: { value: new THREE.Color(0xffffff) } },
-    vertexShader: "attribute float a; varying float vA; void main(){ vA=a; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }",
+    vertexShader:
+      "attribute float a; varying float vA; void main(){ vA=a; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }",
     fragmentShader: "uniform vec3 uC; varying float vA; void main(){ gl_FragColor=vec4(uC*vA, vA); }",
   });
   const trail = new THREE.Mesh(trailGeo, trailMat);
@@ -588,14 +634,20 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     for (const f of G.fx) {
       const k = f.life / f.max,
         gy = groundY(f.x, f.y, 0);
-      if (f.k === "dot") addP(f.x / TS, gy + 0.2 + (f.z ?? 0) / TS + (1 - k) * 0.4, f.y / TS, f.col, Math.max(0.5, f.size * k * 0.5));
+      if (f.k === "dot")
+        addP(f.x / TS, gy + 0.2 + (f.z ?? 0) / TS + (1 - k) * 0.4, f.y / TS, f.col, Math.max(0.5, f.size * k * 0.5));
       else if (f.k === "pt") addP(f.x / TS, gy + 0.5 + (1 - k) * 0.5, f.y / TS, f.col ?? "#fff", 0.9 * k + 0.4);
       else if (f.k === "ring") {
         let r = ringPool[ri];
         if (!r) {
           r = new THREE.Mesh(
             new THREE.RingGeometry(0.88, 1, 40),
-            new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, depthWrite: false, side: THREE.DoubleSide }),
+            new THREE.MeshBasicMaterial({
+              color: 0xffffff,
+              transparent: true,
+              depthWrite: false,
+              side: THREE.DoubleSide,
+            }),
           );
           r.rotation.x = -Math.PI / 2;
           ringPool.push(r);
@@ -622,7 +674,13 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         glow.push({ x: f.x / TS, y: gy + 0.8, z: f.y / TS, c: new THREE.Color(f.col ?? "#fff"), i: 1.2 * k });
       } else if (f.k === "bolt") {
         for (let j = 0; j < 16; j++)
-          addP(f.x / TS + Math.sin(j * 7.3 + (f.seed ?? 0)) * 0.2, gy + j * 0.4, f.y / TS, j % 3 ? f.col : "#ffffff", 1.2);
+          addP(
+            f.x / TS + Math.sin(j * 7.3 + (f.seed ?? 0)) * 0.2,
+            gy + j * 0.4,
+            f.y / TS,
+            j % 3 ? f.col : "#ffffff",
+            1.2,
+          );
         glow.push({ x: f.x / TS, y: gy + 1.5, z: f.y / TS, c: new THREE.Color(f.col), i: 4 * k });
       }
     }
@@ -634,12 +692,24 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         const a = j * 2.4 + t * (inBurst ? 4 : 2),
           r = 0.5 + ((j * 37) % 10) / 7,
           hy = ((j * 13 + t * 60) % 30) / 14;
-        addP(pos.x + Math.cos(a) * r, pos.y + hy, pos.z + Math.sin(a) * r, j % 4 ? elc.c2 : "#ffffff", 0.8 + (j % 3) * 0.2);
+        addP(
+          pos.x + Math.cos(a) * r,
+          pos.y + hy,
+          pos.z + Math.sin(a) * r,
+          j % 4 ? elc.c2 : "#ffffff",
+          0.8 + (j % 3) * 0.2,
+        );
       }
       glow.push({ x: pos.x, y: pos.y + 2.6, z: pos.z, c: new THREE.Color(elc.c), i: inBurst ? 1.4 : 0.8 });
     }
     for (const fl of G.fields)
-      glow.push({ x: fl.x / TS, y: groundY(fl.x, fl.y, 0) + 0.4, z: fl.y / TS, c: new THREE.Color(EL[fl.el].c), i: 1.5 });
+      glow.push({
+        x: fl.x / TS,
+        y: groundY(fl.x, fl.y, 0) + 0.4,
+        z: fl.y / TS,
+        c: new THREE.Color(EL[fl.el].c),
+        i: 1.5,
+      });
     parts.count = pi;
     parts.instanceMatrix.needsUpdate = true;
     if (parts.instanceColor) parts.instanceColor.needsUpdate = true;
@@ -706,7 +776,10 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         const g = o.geometry,
           n = (g.index ? g.index.count : g.attributes.position.count) / 3,
           k = o.isInstancedMesh ? o.count : 1,
-          key = o.parent === scene ? o.type : (o.parent?.parent === scene ? "grp" : o.parent?.parent?.type) + ":" + (o.material?.type ?? "");
+          key =
+            o.parent === scene
+              ? o.type
+              : (o.parent?.parent === scene ? "grp" : o.parent?.parent?.type) + ":" + (o.material?.type ?? "");
         by[key] = (by[key] ?? 0) + n * k;
       });
       return { by, hero, scene };

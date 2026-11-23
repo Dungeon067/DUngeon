@@ -4,7 +4,14 @@ import { validateEconomy } from "../src/data/economy-schema";
 import { validateWeapons } from "../src/data/weapons-schema";
 import { puzzleGems, validatePuzzles } from "../src/data/puzzles-schema";
 import { validateModels } from "../src/data/models-schema";
-import { loadRawContent, loadRawEconomy, loadRawMenuContent, loadRawWeapons, loadRawPuzzles, loadRawModels } from "./load-content";
+import {
+  loadRawContent,
+  loadRawEconomy,
+  loadRawMenuContent,
+  loadRawWeapons,
+  loadRawPuzzles,
+  loadRawModels,
+} from "./load-content";
 import { existsSync, readFileSync } from "node:fs";
 
 try {
@@ -18,7 +25,8 @@ try {
   const clips = JSON.parse(readFileSync("public/media/anim/humanoid.json", "utf8")).clips;
   for (const [t, a] of Object.entries(md.hoatAnh))
     for (const k of [a.stand, ...a.atk, a.charge, a.skill, a.burst])
-      if (!clips[k]) throw new Error(`models.yaml hoatAnh.${t}: không có clip ${k} trong public/media/anim/humanoid.json`);
+      if (!clips[k])
+        throw new Error(`models.yaml hoatAnh.${t}: không có clip ${k} trong public/media/anim/humanoid.json`);
   for (const [t, id] of Object.entries(md.vuKhiMacDinh))
     if (!existsSync(`public/media/models/weapons/${id}.glb`))
       throw new Error(`models.yaml vuKhiMacDinh.${t}: thiếu public/media/models/weapons/${id}.glb`);

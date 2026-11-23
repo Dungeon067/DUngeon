@@ -80,7 +80,6 @@ const fillBurst = (pg) =>
     void m;
   });
 
-
 /** Kéo chuột phải để xoay camera (như người chơi). */
 async function orbit(pg, dx, dy = 0, steps = 30) {
   const { w, h } = await pg.evaluate(() => ({ w: innerWidth, h: innerHeight }));

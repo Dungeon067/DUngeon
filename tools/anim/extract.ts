@@ -131,7 +131,9 @@ const restP = poseAt(anims.get("A_TPose")!, 0),
 const hipsN = byName.get("pelvis")!,
   hipsRest = posOf(restW.get(hipsN)!);
 // Hệ trục nguồn → hệ trục VRM (+Y lên, nhân vật nhìn +Z, tay trái ở +X).
-const up = posOf(restW.get(byName.get("Head")!)!).sub(hipsRest).normalize();
+const up = posOf(restW.get(byName.get("Head")!)!)
+  .sub(hipsRest)
+  .normalize();
 const left = posOf(restW.get(byName.get("hand_l")!)!)
   .sub(posOf(restW.get(byName.get("hand_r")!)!))
   .normalize();
@@ -149,8 +151,16 @@ const fwd = new Vector3().crossVectors(left, up).normalize();
 const basis = new Matrix4().makeBasis(left, up, fwd); // cột: trục nguồn ứng với X, Y, Z của VRM
 const C = rotOf(basis.clone().invert()),
   Ci = C.clone().invert();
-const hipsH = hipsRest.dot(up) - Math.min(...["foot_l", "foot_r"].map((b) => posOf(restW.get(byName.get(b)!)!).dot(up)));
-console.log("trục lên", up.toArray().map((v) => v.toFixed(2)), "trái", left.toArray().map((v) => v.toFixed(2)), "cao hông", hipsH.toFixed(3));
+const hipsH =
+  hipsRest.dot(up) - Math.min(...["foot_l", "foot_r"].map((b) => posOf(restW.get(byName.get(b)!)!).dot(up)));
+console.log(
+  "trục lên",
+  up.toArray().map((v) => v.toFixed(2)),
+  "trái",
+  left.toArray().map((v) => v.toFixed(2)),
+  "cao hông",
+  hipsH.toFixed(3),
+);
 
 function bake(name: string): Clip {
   const A = anims.get(name);
@@ -172,7 +182,9 @@ function bake(name: string): Clip {
       // Đổi xoay cục bộ thành độ lệch so với tư thế chuẩn trong hệ thế giới, rồi đổi sang hệ VRM.
       const parRest = rotOf(restW.get(par)!),
         restInv = rotOf(restW.get(node)!).invert();
-      const local = rotOf(W.get(par)!).invert().multiply(rotOf(W.get(node)!));
+      const local = rotOf(W.get(par)!)
+        .invert()
+        .multiply(rotOf(W.get(node)!));
       const q = parRest.clone().multiply(local).multiply(restInv);
       const v = C.clone().multiply(q).multiply(Ci);
       (clip.bones[vb] ??= { q: [] }).q.push(v.toArray().map((x) => +x.toFixed(4)));

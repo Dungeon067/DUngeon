@@ -9,3 +9,4 @@ ios/
 src-tauri/target/
 src-tauri/gen/
 public/media/sprites/
+public/media/anim/
