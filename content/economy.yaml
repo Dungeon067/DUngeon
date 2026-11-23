@@ -208,6 +208,8 @@ thietKe:
     motLan:
       daSao: 7800
       trongSoNgay: 45
+      # Xu khởi đầu, nhận ngay khi tạo hồ sơ (bằng startProfile.coin trong content/config.yaml).
+      xu: 30000
     # Một lần, S23: rương câu đố + rương bí cảnh + thưởng quest mini (content/puzzles.yaml).
     # content:check kiểm tra số này bằng tổng tính từ puzzles.yaml.
     cauDo:

@@ -16,7 +16,7 @@ Kết luận: **ĐẠT**
 
 - Một vũ khí 4★ lên cấp 60: ngày 36 (mục tiêu 30–45).
 - Vũ khí 4★ Lò Rèn R5: ngày 40 (mục tiêu khoảng 40).
-- Xu cho vũ khí (cửa hàng quặng, kinh nghiệm, đột phá, Lò Rèn) tới ngày 40: 393.436, đã trừ vào Xu nuôi nhân vật (nhân vật ưu tiên).
+- Xu cho vũ khí (cửa hàng quặng, kinh nghiệm, đột phá, Lò Rèn) tới ngày 40: 357.436, đã trừ vào Xu nuôi nhân vật (nhân vật ưu tiên).
 
 ## Bốn hồ sơ
 
@@ -49,8 +49,8 @@ F2P chơi kỹ (trung vị) qua 100% nội dung thường từ ngày **120** (y�
 | Cốt truyện chương 1                    | 1       | 1.400         | 1.435 (1,02×)   | 1,57× dễ       | 1,60× dễ                           | 1,75× dễ       | 2,68× rất nhẹ nhàng | 5               |
 | Cốt truyện chương 2                    | 4       | 2.000         | 2.092 (1,05×)   | 1,10× qua được | 1,12× qua được                     | 1,23× qua được | 1,87× rất nhẹ nhàng | 5               |
 | Cốt truyện chương 3                    | 10      | 2.900         | 3.034 (1,05×)   | 1,09× qua được | 1,11× qua được                     | 1,30× vừa đủ   | 1,83× rất nhẹ nhàng | 10              |
-| Cốt truyện chương 4                    | 20      | 4.200         | 4.267 (1,02×)   | 1,10× qua được | 1,14× qua được                     | 1,29× vừa đủ   | 1,79× dễ            | 20              |
-| Sự kiện thường                         | 21      | 4.200         | 4.403 (1,05×)   | 1,10× qua được | 1,14× qua được                     | 1,29× vừa đủ   | 1,79× dễ            | 25              |
+| Cốt truyện chương 4                    | 20      | 4.200         | 4.328 (1,03×)   | 1,12× qua được | 1,16× qua được                     | 1,31× vừa đủ   | 1,82× rất nhẹ nhàng | 20              |
+| Sự kiện thường                         | 21      | 4.200         | 4.403 (1,05×)   | 1,12× qua được | 1,16× qua được                     | 1,31× vừa đủ   | 1,82× rất nhẹ nhàng | 25              |
 | Cốt truyện chương 5                    | 35      | 5.400         | 5.732 (1,06×)   | 1,16× qua được | 1,36× vừa đủ                       | 1,53× dễ       | 1,98× rất nhẹ nhàng | 35              |
 | Boss thế giới Hắc Giao (Thiên Tượng 3) | 45      | 5.500         | 5.810 (1,06×)   | 1,15× qua được | 1,47× vừa đủ                       | 1,60× dễ       | 2,00× rất nhẹ nhàng | 45              |
 | Cốt truyện chương 6                    | 55      | 6.500         | 6.818 (1,05×)   | 1,14× qua được | 1,50× vừa đủ                       | 1,60× dễ       | 1,98× rất nhẹ nhàng | 55              |
@@ -79,7 +79,7 @@ F2P chơi kỹ (trung vị) qua 100% nội dung thường từ ngày **120** (y�
 | F2P chơi kỹ                        | 1,09×           | 1,15×          | qua được      |
 | Nạp nhẹ (thẻ tháng + Hộ Chiếu Sao) | 1,11×           | 1,50×          | vừa đủ        |
 | Nạp khá                            | 1,23×           | 1,60×          | dễ            |
-| Whale                              | 1,79×           | 1,99×          | rất nhẹ nhàng |
+| Whale                              | 1,82×           | 1,99×          | rất nhẹ nhàng |
 
 ## B. Nội dung đỉnh
 

@@ -72,6 +72,7 @@ export function investOnDay(day: number, p: Profile | null, E: Economy, wx = wea
     seasons = p?.hoChieu ? Math.ceil(day / E.goiNap.hoChieuSao.ngay) : 0;
   let books = runs * T.linhLuc.thuongMoiLuot.sach + day * U.duBon.sach + seasons * E.goiNap.hoChieuSao.sach;
   let coin =
+    T.thuNhap.motLan.xu +
     runs * T.linhLuc.thuongMoiLuot.xu +
     Math.floor(day * B.luotMoiNgay) * B.xu +
     day * 4 * U.moiViec.xu +
@@ -111,7 +112,7 @@ export function investOnDay(day: number, p: Profile | null, E: Economy, wx = wea
 }
 
 export interface WeaponFlow {
-  /** Bậc tinh luyện vũ khí 4★ Lò Rèn theo ngày (số bản rèn được, tối đa 5). */
+  /** Bậc tinh luyện vũ khí 4★ Lò Rèn theo ngày (số bản rèn được, tối đa 5); 0 = chưa rèn, dùng vũ khí 3★ mặc định. */
   r: number[];
   /** Ngày một vũ khí 4★ lên cấp tối đa (đủ kinh nghiệm và đủ 6 lần đột phá), null nếu không kịp. */
   lvDay: number | null;
@@ -143,16 +144,18 @@ export function weaponFlow(E: Economy, days = 400): WeaponFlow {
     lvNeed = expNeed(V.cap.toiDa),
     phoi0 = V.khoiDau[V.loRen.nguyenLieu] ?? 0;
   // Ngân sách: Xu dư thấp nhất từ ngày d trở đi của đội F2P chưa tiêu cho vũ khí.
-  const left = Array.from({ length: days + 1 }, (_, d) => investOnDay(d, null, E, 0).coinLeft);
+  // Bản rèn đầu tiên (Phôi khởi đầu) làm ngay khi tạo hồ sơ, trước cả nuôi nhân vật: đội cần vũ khí 4★ từ ngày 1.
+  const pre = phoi0 >= V.loRen.so ? V.loRen.xu : 0;
+  const left = Array.from({ length: days + 1 }, (_, d) => investOnDay(d, null, E, pre).coinLeft + pre);
   for (let d = days - 1; d >= 0; d--) left[d] = Math.min(left[d]!, left[d + 1]!);
   let exp = ex(V.khoiDau),
     saoHave = so(V.khoiDau),
     saoUsed = 0,
     expUsed = 0,
     asc = 0,
-    forges = 0,
+    forges = pre ? 1 : 0,
     runs = 0,
-    spent = 0,
+    spent = pre,
     lvDay: number | null = null,
     r5Day: number | null = null;
   const r: number[] = [],
@@ -167,7 +170,9 @@ export function weaponFlow(E: Economy, days = 400): WeaponFlow {
     }
     const budget = () => Math.max(0, Math.floor(left[d]!) - spent);
     for (const x of N.cuaHang) {
-      const k = Math.min(weekLeft.get(x.id) ?? 0, Math.floor(budget() / x.xu));
+      const saoNeed = V.cap.dotPha.quang.slice(asc).reduce((t, q) => t + q, 0) - (saoHave - saoUsed),
+        need = x.id === sao ? saoNeed : Math.ceil((lvNeed - exp) / (expOf.get(x.id) ?? 1));
+      const k = Math.min(weekLeft.get(x.id) ?? 0, Math.floor(budget() / x.xu), Math.max(0, need));
       if (k <= 0) continue;
       weekLeft.set(x.id, weekLeft.get(x.id)! - k);
       spent += k * x.xu;
@@ -197,7 +202,7 @@ export function weaponFlow(E: Economy, days = 400): WeaponFlow {
       forges++;
       spent += V.loRen.xu;
     }
-    r.push(Math.max(1, forges));
+    r.push(forges);
     xu.push(Math.ceil(spent));
     if (r5Day === null && forges >= 5) r5Day = d;
   }
@@ -218,6 +223,11 @@ export const craftRefine = (day: number, E: Economy) => {
 const craftId = (w: string, E: Economy) =>
   (E.thietKe.vuKhi.danhSach.find((x) => x.nguon === "loRen" && x.loai === w) ??
     E.thietKe.vuKhi.danhSach.find((x) => x.nguon === "loRen")!)!.id;
+/** Vũ khí của đội khi chưa có vũ khí đặc trưng: 4★ Lò Rèn nếu đã rèn, không thì 3★ mặc định R1. */
+const craftedOn = (w: SimChar["w"], cr: number, E: Economy) =>
+  cr > 0
+    ? { id: craftId(w, E), tinhLuyen: cr }
+    : { id: E.thietKe.vuKhi.macDinh[w as keyof typeof E.thietKe.vuKhi.macDinh]!, tinhLuyen: 1 };
 export const signatureOf = (id: string, E: Economy) =>
   E.thietKe.vuKhi.danhSach.find((w) => w.nguon === "gioiHan" && w.cua === id)?.id ?? null;
 
@@ -310,7 +320,6 @@ export function simulateProfile(p: Profile, chars: SimChar[], G: Gacha, E: Econo
     banner = 21;
   const goals = p.mucTieu.map((g) => ({ vk: g.startsWith("vk"), n: Number(g.slice(2)) }));
   const sig = chars.map((c) => signatureOf(c.id, E));
-  const crafted = chars.map((c) => craftId(c.w, E));
   const m = E.thietKe.moHinhTran,
     need = peakNeed(E);
   const step = 5,
@@ -332,7 +341,7 @@ export function simulateProfile(p: Profile, chars: SimChar[], G: Gacha, E: Econo
     chars.forEach((c, ci) => {
       for (let cons = 0; cons < 7; cons++)
         for (let w = 0; w < K; w++) {
-          const vuKhi = w && sig[ci] ? { id: sig[ci]!, tinhLuyen: w } : { id: crafted[ci]!, tinhLuyen: cr };
+          const vuKhi = w && sig[ci] ? { id: sig[ci]!, tinhLuyen: w } : craftedOn(chars[ci]!.w, cr, E);
           const st = charStats(c, { ...inv, cons, vuKhi }, E);
           tc[at(ci, cons, w)] = chienLuc(st, E);
           tu[at(ci, cons, w)] = effAtk(st) * (1 + st.skill);
@@ -538,7 +547,7 @@ export function freeTeam(day: number, chars: SimChar[], E: Economy) {
     cr = craftRefine(day, E);
   const team = E.thietKe.phanTang.doiMienPhi.map((id) => {
     const c = chars.find((x) => x.id === id)!;
-    return charStats(c, { ...inv, cons: 0, vuKhi: { id: craftId(c.w, E), tinhLuyen: cr } }, E);
+    return charStats(c, { ...inv, cons: 0, vuKhi: craftedOn(c.w, cr, E) }, E);
   });
   return { hoTinh, lv: inv.lv, cl: teamChienLuc(team.map((s) => chienLuc(s, E))), dps: teamDps(team, E) };
 }

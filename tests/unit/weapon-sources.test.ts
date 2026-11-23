@@ -100,11 +100,22 @@ describe("Nguồn nguyên liệu vũ khí", () => {
     expect(f.xu[ECON.thietKe.vuKhi.loRenR5Ngay]!).toBeGreaterThan(0);
     for (let d = 1; d <= 120; d++) {
       const a = investOnDay(d, null, ECON),
-        b = investOnDay(d, null, ECON, 0);
+        b = investOnDay(d, null, ECON, ECON.thietKe.vuKhi.loRen.xu);
       expect(a.inv).toEqual(b.inv);
       expect(a.coinLeft).toBeGreaterThanOrEqual(0);
       expect(f.xu[d]!).toBeGreaterThanOrEqual(f.xu[d - 1]!);
     }
+  });
+
+  it("mô phỏng: xong cấp tối đa và R5 thì không mua quặng hay tiêu Xu vũ khí nữa", () => {
+    const f = weaponFlow(ECON),
+      done = Math.max(f.lvDay!, f.r5Day!);
+    expect(f.r[0]).toBe(1);
+    expect(f.xu[done + 60]).toBe(f.xu[done]);
+  });
+
+  it("mô phỏng: Xu khởi đầu bằng hồ sơ mới trong game", () => {
+    expect(ECON.thietKe.thuNhap.motLan.xu).toBe(freshProfile().coin);
   });
 });
 
