@@ -43,10 +43,7 @@ registerScreen("bicanh", {
       h("p", { class: "tt-dim" }, [
         `Mỗi lượt rơi ${list(N.biCanh.roi)} và ${fmt(N.biCanh.xu)} Xu. Linh Lực hồi ${L.hoiMoiNgay} mỗi ngày, tối đa ${L.toiDa}. Bản tạm: sẽ gộp vào hệ bí cảnh.`,
       ]),
-      h("div", { class: "tt-row" }, [
-        progress(ll / L.toiDa, { label: "Linh Lực", text: `${ll}/${L.toiDa}` }),
-        run,
-      ]),
+      h("div", { class: "tt-row" }, [progress(ll / L.toiDa, { label: "Linh Lực", text: `${ll}/${L.toiDa}` }), run]),
     );
 
     const shop = h("ul", { class: "tt-tasks", id: "oreShop" });
