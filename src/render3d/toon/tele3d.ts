@@ -171,6 +171,12 @@ export function createTeleLayer(scene: THREE.Scene) {
       }
     }
     for (const w of G.waves ?? []) wave(w, time);
+    // Vùng phép (lốc xoáy, bão tuyết...): nền mờ và viền theo màu nguyên tố, vòng trong xoay, để thấy tầm gây sát thương.
+    for (const f of G.fields ?? []) {
+      const col = new THREE.Color(EL[f.el]?.c ?? "#ffffff");
+      put("circle", f.x, f.y, 0, f.r, 0.4, { p: 0, col, flash: 0, time });
+      put("ring", f.x, f.y, 0, f.r * (0.55 + 0.1 * Math.sin(time * 3)), 1, { half: 0.06, col, flash: 0, time });
+    }
     for (let i = n; i < pool.length; i++) pool[i].m.visible = false;
     for (let i = wn; i < walls.length; i++) walls[i].m.visible = false;
   }

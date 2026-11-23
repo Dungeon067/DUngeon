@@ -247,6 +247,9 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     orb: new THREE.SphereGeometry(0.1, 10, 8),
   };
   const pickPool: THREE.Mesh[] = [];
+  const turretPool: THREE.Group[] = [],
+    turretPoleG = new THREE.CylinderGeometry(0.05, 0.06, 0.6, 6).translate(0, 0.3, 0),
+    turretOrbG = new THREE.OctahedronGeometry(0.18, 1);
   const ringPool: THREE.Mesh[] = [],
     arrowPool: THREE.Object3D[] = [],
     orbPool: THREE.Mesh[] = [];
@@ -713,6 +716,38 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     }
     for (let i = ki; i < pickPool.length; i++) pickPool[i].visible = false;
 
+    // Trụ phép (kỹ năng "turret"): cọc gỗ và quả cầu nguyên tố lơ lửng, nháy khi sắp hết giờ.
+    let tti = 0;
+    const turretGlow: { x: number; y: number; z: number; c: THREE.Color; i: number }[] = [];
+    for (const tu of G.turrets) {
+      let o = turretPool[tti];
+      if (!o) {
+        o = new THREE.Group();
+        const pole = new THREE.Mesh(turretPoleG, toonMat({ color: 0x4a3a2a }));
+        pole.castShadow = true;
+        const orb = new THREE.Mesh(
+          turretOrbG,
+          toonMat({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 1.4 }),
+        );
+        orb.position.y = 0.85;
+        o.add(pole, orb);
+        turretPool.push(o);
+        fxGroup.add(o);
+      }
+      tti++;
+      const orb = o.children[1] as THREE.Mesh,
+        om = orb.material as THREE.MeshToonMaterial,
+        c = EL[tu.el]?.c ?? "#ffffff";
+      om.color.set(EL[tu.el]?.c2 ?? c);
+      om.emissive.set(c);
+      o.visible = !(tu.life < 2 && Math.floor(t * 8) % 2);
+      o.position.set(tu.x / TS, groundY(tu.x, tu.y, 0), tu.y / TS);
+      orb.position.y = 0.85 + Math.sin(t * 4) * 0.05;
+      orb.rotation.y = t * 2;
+      turretGlow.push({ x: tu.x / TS, y: o.position.y + 0.9, z: tu.y / TS, c: new THREE.Color(c), i: 1 });
+    }
+    for (let i = tti; i < turretPool.length; i++) turretPool[i].visible = false;
+
     // Vật thể câu đố (renderable).
     const live = new Set<any>();
     for (const r of renderObjects) {
@@ -756,7 +791,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     );
 
     // Mũi tên, đạn phép, vòng, hạt; đèn điểm theo nguyên tố.
-    const glow: { x: number; y: number; z: number; c: THREE.Color; i: number }[] = [];
+    const glow: { x: number; y: number; z: number; c: THREE.Color; i: number }[] = [...turretGlow];
     let si = 0,
       ai = 0,
       oi = 0,
