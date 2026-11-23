@@ -34,6 +34,7 @@ for name, emit in [("mat_metal", False), ("mat_aged", False), ("mat_emit", True)
 
 from designs import design_for  # noqa: E402
 from models import BUILDERS  # noqa: E402
+from ornate import BUILDERS_ORNATE  # noqa: E402
 
 argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 ap = argparse.ArgumentParser()
@@ -55,16 +56,22 @@ def guess(mat_name, d):
 
 weapons = json.load(open(a.list, encoding="utf8"))
 ids = [x for x in a.ids.split(",") if x]
+# Vũ khí chỉ để hiển thị (glb_ornate, không có trong weapons.yaml): luôn có mặt để xuất được bằng --ids.
+from designs import DESIGNS  # noqa: E402
+have = {w["id"] for w in weapons}
+weapons += [dict(id=k, r=v["r"], loai=v["type"]) for k, v in DESIGNS.items() if v.get("glb_ornate") and k not in have]
 os.makedirs(a.out, exist_ok=True)
 for w in weapons:
     if ids and w["id"] not in ids:
         continue
     d = design_for(w)
-    if d["type"] not in BUILDERS:
+    # glb_ornate: xuất GLB bằng bộ dựng chi tiết (builder) thay cho bộ dựng đơn giản theo loại.
+    build = BUILDERS_ORNATE.get(d["builder"]) if d.get("glb_ornate") else BUILDERS.get(d["type"])
+    if not build:
         continue
     COLORS.clear()
     lib.reset_scene()
-    BUILDERS[d["type"]](d)
+    build(d)
     # Đường cong, chữ... thành lưới; áp modifier.
     bpy.ops.object.select_all(action="DESELECT")
     for o in bpy.context.scene.objects:

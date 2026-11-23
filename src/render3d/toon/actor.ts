@@ -76,6 +76,17 @@ export function loadWeapon(id: string): Promise<THREE.Object3D | null> {
   return p.then((o) => (o ? o.clone() : null));
 }
 
+const _q = new THREE.Quaternion();
+
+/** Khớp spring bone (vải, tóc): góc lệch tối đa (rad) và trọng số gió theo `vai` trong content/models.yaml. */
+export interface ClothJoint {
+  bone: THREE.Object3D;
+  rest: THREE.Quaternion;
+  loai: string;
+  max: number;
+  gio: number;
+}
+
 export class VrmActor {
   obj = new THREE.Group();
   mixer: THREE.AnimationMixer;
@@ -83,6 +94,8 @@ export class VrmActor {
   private cur: THREE.AnimationAction | null = null;
   curName = "";
   weapon: THREE.Object3D | null = null;
+  /** Đọc `gio` ở đây để cộng lực gió (S27); `max` luôn được giữ sau mỗi bước mô phỏng. */
+  clothJoints: ClothJoint[] = [];
   constructor(
     public vrm: VRM,
     public wtype: WeaponType,
@@ -115,6 +128,24 @@ export class VrmActor {
       this.actions.set(name, this.mixer.clipAction(new THREE.AnimationClip(name, -1, tracks)));
     }
     this.obj.add(vrm.scene);
+  }
+
+  setupCloth(id: string) {
+    const V = MODELS.vai,
+      rules = [...Object.entries(MODELS.nhanVat[id]?.vai ?? MODELS.npc[id]?.vai ?? {}), ...V.xuong].map(
+        ([re, l]) => [new RegExp(re, "i"), l] as const,
+      );
+    for (const j of this.vrm.springBoneManager?.joints ?? []) {
+      const loai = rules.find(([re]) => re.test(j.bone.name))?.[1] ?? V.macDinh,
+        t = V.loai[loai]!;
+      this.clothJoints.push({
+        bone: j.bone,
+        rest: j.bone.quaternion.clone(),
+        loai,
+        max: (t.gocMax * Math.PI) / 180,
+        gio: t.gio,
+      });
+    }
   }
 
   static async load(
@@ -155,20 +186,34 @@ export class VrmActor {
     const look = { ...MODELS.macDinh, ...(MODELS.nhanVat[id] ?? {}) };
     const box = new THREE.Box3().setFromObject(vrm.scene);
     const s = look.height / Math.max(0.1, box.max.y - box.min.y);
+    // Hướng nghỉ của xương tay thô khác nhau giữa các bản xuất (VRoid, Blender): quy `camVuKhi` về
+    // trục của mô hình để cùng một cấu hình cầm vũ khí đúng cho mọi file.
+    const cfg = MODELS.nhanVat[id],
+      grip = { ...MODELS.camVuKhi[wtype], ...(!weaponId && cfg?.vuKhi ? cfg.camVuKhi : null) };
+    const bone = vrm.humanoid.getRawBoneNode(grip.bone as any);
+    vrm.scene.updateMatrixWorld(true);
+    const restInv = bone
+      ? vrm.scene
+          .getWorldQuaternion(new THREE.Quaternion())
+          .invert()
+          .multiply(bone.getWorldQuaternion(new THREE.Quaternion()))
+          .invert()
+      : new THREE.Quaternion();
     const a = new VrmActor(vrm, wtype, A.clips, A.fps, url);
+    a.setupCloth(id);
     a.obj.scale.setScalar(s);
     a.obj.updateMatrixWorld(true);
     a.obj.userData.yOff = look.yOffset - box.min.y * s;
-    const wid = weaponId ?? MODELS.vuKhiMacDinh[wtype];
+    const wid = weaponId ?? cfg?.vuKhi ?? MODELS.vuKhiMacDinh[wtype];
     if (wid) {
       const w = await loadWeapon(wid);
-      const grip = MODELS.camVuKhi[wtype];
-      const bone = vrm.humanoid.getRawBoneNode(grip.bone as any);
       if (w && bone) {
         const holder = new THREE.Group();
         const bs = bone.getWorldScale(new THREE.Vector3()).x || 1;
-        holder.position.fromArray(grip.pos).divideScalar(bs);
-        holder.rotation.set(...(grip.rot.map((d) => (d * Math.PI) / 180) as [number, number, number]));
+        holder.position.fromArray(grip.pos).applyQuaternion(restInv).divideScalar(bs);
+        holder.quaternion
+          .setFromEuler(new THREE.Euler(...(grip.rot.map((d) => (d * Math.PI) / 180) as [number, number, number])))
+          .premultiply(restInv);
         holder.scale.setScalar(grip.scale / bs);
         holder.add(w);
         bone.add(holder);
@@ -205,7 +250,15 @@ export class VrmActor {
 
   update(dt: number) {
     this.mixer.update(dt);
-    this.vrm.update(dt);
+    // Khung hình giật (dt lớn) làm spring bone văng: giới hạn bước mô phỏng.
+    this.vrm.update(Math.min(dt, 1 / 30));
+    // Váy, vạt áo không lật quá giới hạn của loại vải so với tư thế nghỉ, dù gió mạnh tới đâu.
+    for (const c of this.clothJoints)
+      if (c.rest.angleTo(c.bone.quaternion) > c.max) {
+        c.bone.quaternion.copy(_q.copy(c.rest).rotateTowards(c.bone.quaternion, c.max));
+        // Spring bone tắt matrixAutoUpdate: tự cập nhật ma trận để giới hạn có hiệu lực khi render.
+        c.bone.updateMatrix();
+      }
   }
 
   dispose() {
