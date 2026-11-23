@@ -36,6 +36,21 @@ export function hasWebGL2(): boolean {
   }
 }
 
+/** Máy đủ mạnh cho 3D: có WebGL2, GPU thật (không vẽ bằng CPU), đủ nhân và RAM. */
+export function deviceStrong(): boolean {
+  if (!hasWebGL2()) return false;
+  const nav = navigator as any;
+  if ((nav.hardwareConcurrency ?? 4) < 4 || (nav.deviceMemory ?? 4) < 3) return false;
+  try {
+    const g = document.createElement("canvas").getContext("webgl2")!,
+      ext = g.getExtension("WEBGL_debug_renderer_info"),
+      name = String(g.getParameter(ext ? ext.UNMASKED_RENDERER_WEBGL : g.RENDERER));
+    return !/swiftshader|llvmpipe|software|mali-4|adreno \(tm\) 3/i.test(name);
+  } catch {
+    return true;
+  }
+}
+
 export function wants3D(): boolean {
   try {
     if (localStorage.getItem(FORCE_2D_KEY) === "1") return false;
@@ -47,7 +62,8 @@ export function wants3D(): boolean {
   // Test e2e chạy trên GPU giả lập: mặc định 2D, muốn thử 3D thì thêm ?renderer=3d.
   if (qs.has("e2e")) return false;
   if (settings.renderer === "2d") return false;
-  return hasWebGL2();
+  if (settings.renderer === "3d") return hasWebGL2();
+  return deviceStrong();
 }
 
 export function renderer3d(): WorldRenderer | null {
