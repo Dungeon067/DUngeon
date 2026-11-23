@@ -16,6 +16,7 @@ import { blockedAt } from "../world/collision";
 import { TS, genWorld } from "../world/map";
 import { buildPuzzles, puzzleInteract } from "../world/puzzles";
 import { openMiniDialog } from "../ui/dialog";
+import { lootOf, showChestReveal } from "../ui/chest-reveal";
 import { domainInteract, startDomain } from "./domain";
 import { startStory, storySave, storyTick } from "../story/story";
 
@@ -107,7 +108,8 @@ export function doInteract() {
   } else if (it.kind === "chest") {
     const r = Server.req("openChest", { idx: it.i });
     if (r.ok) {
-      rollDrop("chest");
+      const extra = rollDrop("chest", false);
+      showChestReveal("thuong", lootOf(r.data, extra));
       sfx("chest");
       fxBurst(it.x, it.y - 14, "#f0c060", 30, 240, 4);
       fxRing(it.x, it.y - 10, 60, "#f0c060", 0.5, 6);

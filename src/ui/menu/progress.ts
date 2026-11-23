@@ -38,13 +38,18 @@ export function onKill(e: any) {
   rollDrop(e.isBoss ? "boss" : "enemy");
 }
 
-export function rollDrop(source: string) {
+/** Tung vật phẩm rơi; trả về danh sách đã nhận (để màn mở rương hiện thành thẻ). */
+export function rollDrop(source: string, feed = true) {
+  const got: { name: string; icon: string; qty: number; rarity: 3 | 4 }[] = [];
   for (const d of MC.items.drops[source] ?? []) {
     if (Math.random() >= d.chance) continue;
     const id = d.pool[Math.floor(Math.random() * d.pool.length)]!;
-    if (Server.req("addItems", { items: { [id]: 1 } }).ok)
-      lootFeed("item:" + id, ITEM_BY_ID[id]?.name ?? id, 1, "tui-do", "#c9a6ff");
+    if (Server.req("addItems", { items: { [id]: 1 } }).ok) {
+      if (feed) lootFeed("item:" + id, ITEM_BY_ID[id]?.name ?? id, 1, "tui-do", "#c9a6ff");
+      got.push({ name: ITEM_BY_ID[id]?.name ?? id, icon: "tui-do", qty: 1, rarity: 4 });
+    }
   }
+  return got;
 }
 
 let affT = 0;
