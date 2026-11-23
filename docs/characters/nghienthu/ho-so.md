@@ -1,6 +1,8 @@
 # Nghiên Thu: Hồ sơ
 
-> **Loại 5★:** `gioi-han` (5★ giới hạn, chỉ ra ở banner theo kỳ, có thể quay lại ở kỳ sau). Đề xuất S06, chờ chủ dự án duyệt; truyện chính không tặng nhân vật này, chỉ cho xuất hiện như NPC hoặc khách mời, không vào đội.
+> **Loại 5★:** `gioi-han` (5★ giới hạn, chỉ ra ở banner theo kỳ, có thể quay lại ở kỳ sau). Đã chốt (S23). Truyện chính không tặng nhân vật này, chỉ cho xuất hiện như NPC hoặc khách mời, không vào đội.
+
+> **Vũ khí ước nguyện đặc trưng:** Thủy Mặc Vấn Thiên (bị động: Bút Lạc Thành Hà). Truyện và chỉ số: `content/weapons.yaml`, bảng ở `docs/economy/vu-khi.md`.
 
 > Hộ Tinh hệ Thủy, pháp khí, 5★. Danh hiệu trong game: **Người Chép Luật Bằng Nước**.
 > Nguồn đối chiếu: `docs/world/03-dia-ly.md` mục 3 (Lũng Vân), `docs/world/04-phe-phai.md` mục 10 (Hội Đồng Bút), `docs/world/11-dat-ten.md` mục 2, `docs/characters/bachvu/tieu-su.md` mục 2 (vụ Phong Khảo NS 1345).

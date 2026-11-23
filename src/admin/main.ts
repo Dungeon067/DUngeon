@@ -5,7 +5,7 @@ import "./admin.css";
 import { CHARS, EL } from "../data/content";
 import { ADMIN_CFG } from "../data/menu-content";
 import { stringify } from "yaml";
-import { ECON, econEdited, resetEcon, setEcon } from "../data/economy";
+import { ECON, econEdited, econForYaml, resetEcon, setEcon } from "../data/economy";
 import { packValue } from "../economy/core";
 import { LOG_KEY, SAVE_KEY, Server, powerOf } from "../server/server";
 import { button, field, h, tabs, tag, toggle } from "../ui/ds";
@@ -356,17 +356,21 @@ function setPath(o: any, path: string, v: number) {
   for (const k of ks.slice(0, -1)) cur = cur[k];
   cur[ks.at(-1)!] = v;
 }
+/** Độ hiếm vũ khí thuộc content/weapons.yaml, Admin chỉ chỉnh chỉ số. */
+const WEAPON_FIXED = /^thietKe\.vuKhi\.danhSach\.\d+\.r$/;
 function econConfig(): Kid[] {
   const inputs: [string, HTMLInputElement][] = [];
   const groups = Object.keys(ECON_GROUP).map((g) => {
-    const fields = numericLeaves((ECON as any)[g], g).map(([path, v]) => {
-      const f = field(path.slice(g.length + 1), { type: "number", value: String(v) });
-      const el = input(f);
-      el.step = "any";
-      el.dataset.path = path;
-      inputs.push([path, el]);
-      return f;
-    });
+    const fields = numericLeaves((ECON as any)[g], g)
+      .filter(([path]) => !WEAPON_FIXED.test(path))
+      .map(([path, v]) => {
+        const f = field(path.slice(g.length + 1), { type: "number", value: String(v) });
+        const el = input(f);
+        el.step = "any";
+        el.dataset.path = path;
+        inputs.push([path, el]);
+        return f;
+      });
     return h("details", { class: "tt-admin-econ", open: g === "game" }, [
       h("summary", {}, [`${ECON_GROUP[g]} · ${fields.length} số`]),
       h("div", { class: "tt-admin-form" }, fields),
@@ -394,7 +398,7 @@ function econConfig(): Kid[] {
     icon: "tiep",
     onClick: () => {
       const a = document.createElement("a");
-      a.href = URL.createObjectURL(new Blob([stringify(ECON)], { type: "text/yaml" }));
+      a.href = URL.createObjectURL(new Blob([stringify(econForYaml())], { type: "text/yaml" }));
       a.download = "economy.yaml";
       a.click();
       URL.revokeObjectURL(a.href);

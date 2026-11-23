@@ -60,7 +60,7 @@ function ensure() {
   cine = createCinematic($("wishCv") as HTMLCanvasElement, {
     sound: () => GS.soundOn,
     done: () => finish(),
-    featured: () => Server.P?.cfg?.featured ?? "lachong",
+    featured: () => Server.P?.cfg?.featured ?? "loidinh",
     line: (id) => lines[id] ?? byId[id]?.desc ?? "",
     skipBtn,
     hint,

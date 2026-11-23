@@ -43,7 +43,7 @@ describe("Lưu trữ", () => {
     const P = freshProfile();
     expect(P).toMatchObject({ v: 3, gems: 1600, coin: 30000, books: 30, party: ["suongmai", "mailinh", "bachvu"] });
     expect(P.owned).toEqual({ suongmai: { lv: 1, cons: 0 }, mailinh: { lv: 1, cons: 0 }, bachvu: { lv: 1, cons: 0 } });
-    expect(P.cfg).toEqual({ rate5: 0.6, rate4: 5.1, soft: 74, hard: 90, cost: 160, featured: "lachong" });
+    expect(P.cfg).toEqual({ rate5: 0.6, rate4: 5.1, soft: 74, hard: 90, cost: 160, featured: "loidinh" });
   });
 
   it("ghi và đọc lại khóa localStorage tinhtu-v3", () => {
@@ -79,6 +79,15 @@ describe("Lưu trữ", () => {
     expect(Server.P.owned.lachong).toEqual({ lv: 40, cons: 2 });
     expect(Server.P.teams[0]).toEqual(["lachong"]);
     expect(Server.P.bag).toEqual({});
+  });
+
+  it("hồ sơ cũ có banner Lạc Hồng (nay là thường trú) chuyển sang banner giới hạn mặc định", () => {
+    const old = { ...freshProfile(), cfg: { ...freshProfile().cfg, featured: "lachong", cost: 120 } };
+    localStorage.setItem("tinhtu-v3", JSON.stringify(old));
+    Server.P = null as never;
+    Server.load();
+    expect(Server.P.cfg.featured).toBe("loidinh");
+    expect(Server.P.cfg.cost).toBe(120);
   });
 });
 

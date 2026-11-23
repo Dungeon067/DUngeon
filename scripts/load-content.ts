@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { parse } from "yaml";
 import type { RawContent } from "../src/data/schema";
 import type { RawMenuContent } from "../src/data/menu-schema";
+import { withWeapons } from "../src/data/weapons-schema";
 
 const ROOT = process.cwd();
 const readDir = (dir: string) =>
@@ -40,4 +41,6 @@ export function loadRawMenuContent(raw: RawContent): RawMenuContent {
   };
 }
 
-export const loadRawEconomy = () => read("content/economy.yaml");
+export const loadRawWeapons = () => read("content/weapons.yaml");
+/** economy.yaml cộng danh sách vũ khí từ weapons.yaml (thietKe.vuKhi.danhSach). */
+export const loadRawEconomy = () => withWeapons(read("content/economy.yaml"), loadRawWeapons());

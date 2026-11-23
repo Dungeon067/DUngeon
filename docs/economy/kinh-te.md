@@ -41,7 +41,7 @@ Ví dụ một tháng của F2P chơi kỹ: đủ Sách cho khoảng 4,5 nhân v
 **Thời gian trung bình để người không nạp có một nhân vật 5★ giới hạn:**
 
 - Theo kỳ vọng của Bảo Hộ Vận Sao (0,6%, tăng từ lượt 74, chắc chắn ở lượt 90, 50/50): khoảng 62 lượt cho một 5★ và **93 lượt cho một 5★ giới hạn**, tức **khoảng 2 tháng** Đá Sao miễn phí.
-- Nếu chỉ ước khi nhân vật mình muốn có banner (như F2P chơi kỹ trong mô phỏng): trung bình ngày 110 mới có 5★ giới hạn đầu tiên, vì phải chờ banner quay lại (126 ngày một lần). Đổi lại, khi banner tới, người chơi đã tích đủ Đá Sao để gần như chắc chắn có nhân vật và vũ khí của họ.
+- Nếu chỉ ước khi nhân vật mình muốn có banner (như F2P chơi kỹ trong mô phỏng): trung vị ngày 128 mới có 5★ giới hạn đầu tiên, vì phải chờ banner quay lại (147 ngày một lần). Đổi lại, khi banner tới, người chơi đã tích đủ Đá Sao để gần như chắc chắn có nhân vật và vũ khí của họ.
 
 Banner vũ khí (Binh Khí Tinh Tú) dùng chung Đá Sao: kỳ vọng khoảng 53 lượt cho một 5★, trung bình 87 lượt và tối đa 154 lượt cho đúng vũ khí đã chọn nhờ La Bàn Sao. Đây là chỗ tiêu Đá Sao lớn thứ hai, chủ yếu của người muốn nội dung đỉnh.
 
