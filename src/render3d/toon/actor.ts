@@ -254,8 +254,11 @@ export class VrmActor {
     this.vrm.update(Math.min(dt, 1 / 30));
     // Váy, vạt áo không lật quá giới hạn của loại vải so với tư thế nghỉ, dù gió mạnh tới đâu.
     for (const c of this.clothJoints)
-      if (c.rest.angleTo(c.bone.quaternion) > c.max)
+      if (c.rest.angleTo(c.bone.quaternion) > c.max) {
         c.bone.quaternion.copy(_q.copy(c.rest).rotateTowards(c.bone.quaternion, c.max));
+        // Spring bone tắt matrixAutoUpdate: tự cập nhật ma trận để giới hạn có hiệu lực khi render.
+        c.bone.updateMatrix();
+      }
   }
 
   dispose() {
