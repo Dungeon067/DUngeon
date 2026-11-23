@@ -21,6 +21,7 @@ import { CanvasSprite } from "./actors3d";
 import { getRenderable, renderObjects } from "./renderables";
 import type { WorldRenderer } from "./select";
 import { MODELS, VrmActor } from "./toon/actor";
+import { toonMat } from "./toon/mat";
 import { animateMonster, buildMonster, type MonsterView } from "./toon/monsters";
 import { buildSky } from "./toon/sky";
 import { LV, buildGrass, buildHeight, buildProps, buildTerrain, buildWater, type HeightField } from "./toon/terrain";
@@ -229,6 +230,14 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   );
   parts.frustumCulled = false;
   scene.add(parts);
+  // Vật rơi (xu, sách, mảnh nguyên tố, cầu năng lượng).
+  const PICK_G: Record<string, THREE.BufferGeometry> = {
+    coin: new THREE.CylinderGeometry(0.13, 0.13, 0.04, 14).rotateX(Math.PI / 2),
+    book: new THREE.BoxGeometry(0.3, 0.08, 0.22),
+    shard: new THREE.OctahedronGeometry(0.15, 0),
+    orb: new THREE.SphereGeometry(0.1, 10, 8),
+  };
+  const pickPool: THREE.Mesh[] = [];
   const ringPool: THREE.Mesh[] = [],
     arrowPool: THREE.Object3D[] = [],
     orbPool: THREE.Mesh[] = [];
@@ -562,6 +571,29 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         for (const mm of v.mats) mm.dispose();
         monsters.delete(e);
       }
+
+    let ki = 0;
+    for (const k of G.pickups) {
+      const g = PICK_G[k.k];
+      if (!g) continue;
+      let o = pickPool[ki];
+      if (!o) {
+        o = new THREE.Mesh(g, toonMat());
+        o.castShadow = true;
+        pickPool.push(o);
+        fxGroup.add(o);
+      }
+      ki++;
+      o.geometry = g;
+      o.visible = true;
+      const mt = o.material as THREE.MeshToonMaterial,
+        col = k.k === "coin" ? "#f0c060" : k.k === "book" ? "#9b6ff0" : k.k === "shard" ? EL[k.el].c : EL[k.el].c2;
+      mt.color.set(col);
+      mt.emissive.set(k.k === "shard" || k.k === "orb" ? col : "#000000");
+      o.position.set(k.x / TS, groundY(k.x, k.y, 0) + 0.3 + Math.sin(t * 5 + k.x) * 0.05, k.y / TS);
+      o.rotation.y = t * 2.5;
+    }
+    for (let i = ki; i < pickPool.length; i++) pickPool[i].visible = false;
 
     // Vật thể câu đố (renderable).
     const live = new Set<any>();
