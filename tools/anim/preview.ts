@@ -42,7 +42,8 @@ if (q.get("nghi") && a.dang) a.dang = { ...a.dang, nghi: { ...a.dang.nghi, sau: 
 a.poseIn = { mode, freeL: w !== "bow", freeR: w === "bow" };
 // Tay không (vũ khí đã cất): ẩn vũ khí, hai tay rảnh.
 if (clip === "relax" || clip.startsWith("stow") || q.get("nov")) {
-  if (a.weapon && clip === "relax") a.weapon.visible = false;
+  if (a.weapon && (clip === "relax" || q.get("nov"))) a.weapon.visible = false;
+  if (a.wfx && q.get("nov")) a.wfx.st = "gone";
   a.poseIn = { mode, freeL: true, freeR: true };
 }
 // Mô phỏng dáng khi chưa có mô hình riêng: co giãn cao/ngang.
@@ -102,7 +103,7 @@ function sequence(src: string) {
     return { k, d: d ? +d : WIN[k] / (k.startsWith("atk") ? A.speed : 1) };
   });
   let T = 0,
-    lastAct = 0,
+    lastAct = q.get("nov") ? -99 : 0,
     si = -1,
     segT = 0,
     cur = "";

@@ -14,6 +14,32 @@ const P = validatePoses(posesRaw);
 const SHARED = ["relax", "walk", "run", "sprint", "dash", "jumpUp", "jumpAir", "jumpLand", "hurt", "die"];
 
 describe("S27: dáng tư thế × vũ khí", () => {
+  it("đi / chạy / chạy nhanh thẳng lưng: đổ người từ hông ≤ 20°, đầu nhìn gần ngang", async () => {
+    const THREE = await import("three");
+    const CHAIN = ["hips", "spine", "chest", "upperChest", "neck", "head"];
+    // VRM chuẩn hóa: tư thế nghỉ không xoay, nên hướng thế giới = tích quaternion cục bộ dọc chuỗi xương.
+    const pitch = (d: { n: number; bones: Record<string, { q: number[][] }> }, i: number, upto: string) => {
+      const q = new THREE.Quaternion();
+      for (const n of CHAIN.slice(0, CHAIN.indexOf(upto) + 1)) {
+        const t = d.bones[n]?.q;
+        if (t) q.multiply(new THREE.Quaternion().fromArray(t[Math.min(t.length - 1, i)]));
+      }
+      const u = new THREE.Vector3(0, 1, 0).applyQuaternion(q);
+      return (Math.atan2(u.z, u.y) * 180) / Math.PI;
+    };
+    for (const [c, max] of [
+      ["walk", 8],
+      ["run", 15],
+      ["sprint", 20],
+    ] as const) {
+      const d = A.clips[c];
+      for (let i = 0; i < d.n; i++) {
+        expect(Math.abs(pitch(d, i, "upperChest")), `${c}#${i} ngực`).toBeLessThanOrEqual(max);
+        expect(Math.abs(pitch(d, i, "head")), `${c}#${i} đầu`).toBeLessThanOrEqual(8);
+      }
+    }
+  });
+
   it("dáng trẻ em chỉ dùng hoạt ảnh chờ hồn nhiên (nhún nhảy, nhìn quanh, vươn vai)", () => {
     for (const d of ["nu-nho", "nam-nho"] as const)
       for (const c of P.dang[d].nghi.clip) expect(["idleHop", "idleLook", "idleStretch"], `${d}: ${c}`).toContain(c);

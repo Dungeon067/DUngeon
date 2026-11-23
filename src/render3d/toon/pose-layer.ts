@@ -169,10 +169,12 @@ export class PoseLayer {
         }
       if (inp.freeL) this.post("leftUpperArm", 0, 0, chay.mo * this.wMove);
       if (inp.freeR) this.post("rightUpperArm", 0, 0, -chay.mo * this.wMove);
-      // Đổ người theo hướng chạy.
+      // Đổ người thêm theo dáng: chỉ từ hông (lưng giữ thẳng), đùi giữ hướng, cổ và đầu bù để mắt nhìn ngang.
       const lean = chay.nghieng * Math.min(1.6, sp) * this.wMove;
-      this.pre("hips", lean * 0.45, 0, 0);
-      this.post("spine", lean * 0.4, 0, 0);
+      this.pre("hips", lean, 0, 0);
+      this.pre("leftUpperLeg", -lean, 0, 0);
+      this.pre("rightUpperLeg", -lean, 0, 0);
+      this.post("neck", -lean * 0.5, 0, 0);
       this.post("head", -lean * 0.5, 0, 0);
     }
     const bk = THREE.MathUtils.clamp(-this.turn * 0.09, -1, 1) * chay.lac * D * this.wMove;
