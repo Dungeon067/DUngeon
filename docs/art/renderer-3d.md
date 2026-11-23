@@ -24,6 +24,8 @@ renderObjects.push({ kind: "cot-bang", obj: { x, y, on: false } });
 
 Chưa có `build3d` thì renderer 3D tự vẽ `draw2d` ra canvas nhỏ và dựng billboard, nên câu đố hiện ngay trong 3D mà không sửa logic.
 
+Câu đố, NPC quest mini và cửa bí cảnh S23 hiện có (`src/world/draw-puzzles.ts`) chưa đăng ký renderable: renderer 3D lấy hàng đợi vẽ 2D của chúng (mỗi mục có `at` là điểm chân) rồi chiếu bản vẽ 2D lên đúng chỗ trong cảnh 3D. Bí cảnh dựng lại mesh khi đổi bản đồ. Khi chuyển dần sang `registerRenderable`, mục nào có bản 3D sẽ thôi chiếu bản 2D.
+
 ## Mức đồ họa
 
 | Mức  | Độ phân giải | Bóng                 | Bloom | Tilt-shift | Đèn điểm |
