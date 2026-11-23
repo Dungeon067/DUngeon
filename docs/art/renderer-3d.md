@@ -4,11 +4,13 @@ Hướng đồ họa (chủ dự án chốt 23/11): hoạt hình 3D kiểu anime
 
 ## Kiến trúc
 
-- `src/render3d/select.ts` (không nhập three): chọn lớp vẽ. Cài đặt **Lớp vẽ thế giới**: Tự chọn / 3D / 2D. URL `?renderer=2d|3d`; `localStorage.tt_force2d = "1"` ép 2D. Không có WebGL2, tải lỗi hoặc mất context thì tự lùi về Canvas 2D. `?e2e` mặc định 2D (GPU giả lập chậm), thêm `?renderer=3d` để thử 3D.
+- `src/render3d/select.ts` (không nhập three): chọn lớp vẽ. Người chơi luôn chạy 3D ở mọi chế độ (đảo, bí cảnh, Tháp, Hắc Giao); máy không có WebGL2 hoặc 3D lỗi hai lần thì hiện thông báo, không lùi về 2D. Lớp vẽ 2D trong `src/core/render.ts` chỉ còn chạy với `?e2e` hoặc `?renderer=2d` (kiểm thử tự động); `?e2e&renderer=3d` để kiểm thử 3D.
 - `src/render3d/renderer3d.ts` (Three.js 0.170, tải sau): camera, ánh sáng, ngày đêm, đèn nguyên tố, hạt, vệt vũ khí, hậu kỳ.
 - `src/render3d/toon/terrain.ts`: địa hình mượt, nước, cỏ, cây, đá, bia, cổng, rương, cầu.
 - `src/render3d/toon/actor.ts`: nhân vật VRM, hoạt ảnh, vũ khí trên tay.
-- `src/render3d/toon/monsters.ts`: quái và boss low-poly tạm thời.
+- `src/render3d/toon/monsters.ts`: quái low-poly tạm thời và Hắc Giao 3D (đốt thân bám `b.segs` của logic).
+- `src/render3d/toon/arena.ts`: đấu trường Tháp Tinh Tú và hang Hắc Giao (S28).
+- `src/render3d/toon/tele3d.ts`: vùng cảnh báo đòn và sóng xung kích 3D trên sàn đấu trường.
 - `src/render3d/toon/sky.ts`, `mat.ts`: bầu trời, vật liệu toon 3 tông, viền inverted hull.
 - Lớp logic không đổi: lưới 110×110, `h`, va chạm, nhảy, AI, câu đố S23. Renderer chỉ đọc `GS`. HUD, bản đồ nhỏ, bản đồ lớn vẫn là lớp 2D đè lên.
 
@@ -42,6 +44,16 @@ Nước: một mặt phẳng shader, màu theo độ sâu, viền bọt trắng 
 ## Camera
 
 Góc 3/4 phía sau và trên nhân vật, theo sát. Kéo chuột phải hoặc kéo màn hình (ngoài joystick và nút) để xoay; lăn chuột hoặc chụm hai ngón để zoom (6–22 ô). Joystick đi theo hướng camera. Camera tự kéo lại gần khi địa hình chắn giữa camera và nhân vật.
+
+## Đấu trường (S28)
+
+Tháp Tinh Tú và Hắc Giao không có bản đồ ô (`GS.G.map` rỗng): renderer dựng đấu trường một lần khi vào trận (theo `GS.G`), dọn sạch (geometry, vật liệu, texture, Reflector) khi về đảo, đổi mức đồ họa hoặc rời màn chơi. Sàn phẳng ở y = 0, khung đi lại vẫn là `GS.G.bounds`; logic chiến đấu không đổi. Dùng chung nhân vật VRM, vệt chém, hạt nguyên tố, đèn điểm, bloom/tilt-shift của renderer thế giới.
+
+- **Tháp Tinh Tú:** sàn bát giác lơ lửng giữa trời sao, lát đá có vòng chú văn phát sáng, viền và tám cột đá có đá sao trên đỉnh, hai vòng chòm sao xoay chậm, đá vụn trôi. Màu theo tầng (`floorPalette`): 1–3 vàng sao, 4–6 lam ngọc, 7–9 tử vi, 10–12 huyết tinh. Cổng ra ở mép bắc, mở rực khi vượt tầng. Lúc chờ đợt mới: đá sao sáng dần, vòng triệu hồi ở cung xuất quái; quái xuất hiện có cột sáng, vòng lan và hạt. Cột chắn trước camera tự thu nhỏ.
+- **Hang Hắc Giao:** vách và vòm đá (vẽ mặt trong, camera lùi ra ngoài vẫn nhìn xuyên), nhũ đá, măng đá, cụm nấm và tinh thể lân tinh có quầng sáng, bào tử trôi, cột sáng từ khe trần. Mặt nước đen gợn sóng có ánh đèn lân tinh phản chiếu; mức Cao thêm ảnh phản chiếu thật (Reflector nửa độ phân giải). Giai đoạn 2: hang ngả tím Lôi, chớp sáng, tia lôi dọc thân boss.
+- **Hắc Giao 3D:** đầu có hàm mở khi lấy đà, sừng cong, râu, bờm vây; 13 đốt thân theo đúng `b.segs`, vây lưng và đốm phát sáng đổi màu theo nguyên tố; mỗi nhóm gộp thành 1 lưới màu đỉnh + viền + 1 lưới phát sáng. Bị hạ thì chìm dần.
+- **Cảnh báo đòn:** decal shader trên sàn, cùng hình và tiến độ với bản 2D (`art/props.ts`): quạt, đường lao, mưa, vòng triệu hồi của boss; vòng, cung, nhảy, đường đạn của quái thường. Sóng xung kích là vòng sáng có vách thấp. Thanh máu quái, dấu "!", thanh chịu đòn và sao choáng của boss là lớp 2D chiếu qua `project()`.
+- **Ngân sách (đo SwiftShader 1280×720, có VRM):** Tháp khoảng 100–230 lệnh vẽ, 160–170k tam giác; Hắc Giao Thấp 173 / Vừa 348 / Cao khoảng 510 lệnh vẽ (Cao vẽ thêm lượt phản chiếu).
 
 ## Giao diện renderable (cho S23)
 

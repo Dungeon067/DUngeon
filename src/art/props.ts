@@ -129,7 +129,7 @@ export function drawBossTele(b: any) {
   if (tl.kind !== "summon") drawAlert(b.x, b.y - 110, k);
 }
 /** Dấu "!" trên đầu quái đang chuẩn bị đánh; to dần và nháy trắng lúc sắp ra đòn. */
-function drawAlert(x: number, y: number, k: number) {
+export function drawAlert(x: number, y: number, k: number) {
   const fl = teleFlash(k),
     s = (GS.isTouch ? FEEL.telegraph.touchScale : 1) / GS.ZOOM,
     r = (7 + k * 3) * s;
