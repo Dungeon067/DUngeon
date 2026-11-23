@@ -169,7 +169,9 @@ export function weaponFlow(E: Economy, days = 400): WeaponFlow {
       forges = Math.min(5, Math.floor((phoi0 + event + ach) / V.loRen.so));
     }
     r.push(Math.max(1, forges));
-    let spent = bought + Math.min(exp, lvNeed) * V.cap.xuMoiKinhNghiem + forges * V.loRen.xu;
+    let capNeed = 0;
+    for (let L = 1; L < V.cap.gioiHan[asc]!; L++) capNeed += V.cap.kinhNghiem.goc + V.cap.kinhNghiem.moiCap * (L - 1);
+    let spent = bought + Math.min(exp, capNeed) * V.cap.xuMoiKinhNghiem + forges * V.loRen.xu;
     for (let i = 0; i < asc; i++) spent += V.cap.dotPha.xu[i]!;
     xu.push(Math.ceil(spent));
     if (r5Day === null && forges >= 5) r5Day = d;
