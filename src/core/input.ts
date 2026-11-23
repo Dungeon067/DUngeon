@@ -129,7 +129,7 @@ export function holdBtn(el: HTMLElement, down: () => void, up?: () => void) {
 export function screenToWorld(sx: number, sy: number) {
   const G = GS.G;
   const r3 = renderer3d();
-  if (r3 && G.map) return r3.unproject(sx, sy);
+  if (r3) return r3.unproject(sx, sy);
   return { x: G.cam.x + (sx - GS.VW / 2) / GS.ZOOM, y: G.cam.y + (sy - GS.VH / 2) / GS.ZOOM };
 }
 
