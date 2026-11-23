@@ -206,9 +206,9 @@ describe("Trang bị, nâng cấp, tinh luyện, Lò Rèn", () => {
       expect(Server.req("refineWeapon", { uid: w.uid, mat: d.uid, confirm: true }).ok).toBe(true);
     }
     expect(w.tl).toBe(5);
-    expect(Server.req("refineWeapon", { uid: w.uid, mat: addWeapon(P, "suong-som-ben-song").uid, confirm: true }).ok).toBe(
-      false,
-    );
+    expect(
+      Server.req("refineWeapon", { uid: w.uid, mat: addWeapon(P, "suong-som-ben-song").uid, confirm: true }).ok,
+    ).toBe(false);
   });
   it("Lò Rèn rèn vũ khí 4★ bằng Phôi Lòng Sao", () => {
     const P = Server.P;
