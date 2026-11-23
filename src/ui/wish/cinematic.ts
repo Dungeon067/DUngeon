@@ -6,6 +6,7 @@ import { drawChibi } from "../../art/chibi";
 import { byId as GAME_BY_ID } from "../../data/content";
 import { CINEMATIC } from "../../data/menu-content";
 import { weaponBitmap } from "../weapon-art";
+import { BIRD, BIRD_EDGES } from "./constellation";
 
 export interface CineItem {
   kind: "char" | "item";
@@ -276,31 +277,6 @@ export function createCinematic(cv: HTMLCanvasElement, hooks: CineHooks) {
     },
   };
 
-  const BIRD = [
-    [-0.62, 0.05],
-    [-0.38, -0.12],
-    [-0.18, -0.02],
-    [0, -0.22],
-    [0.16, -0.04],
-    [0.4, -0.16],
-    [0.64, 0.02],
-    [0.2, 0.18],
-    [0, 0.36],
-    [-0.2, 0.18],
-  ];
-  const BIRD_EDGES = [
-    [0, 1],
-    [1, 2],
-    [2, 3],
-    [3, 4],
-    [4, 5],
-    [5, 6],
-    [2, 9],
-    [4, 7],
-    [9, 8],
-    [7, 8],
-    [3, 8],
-  ];
   /* ============================ extra cinematic sounds ============================ */
   function pad(freqs: any, t0: any, dur: any, vol: any) {
     freqs.forEach((f: any, i: any) => {
@@ -789,7 +765,7 @@ export function createCinematic(cv: HTMLCanvasElement, hooks: CineHooks) {
   // Shot 4  "Hạ giới"     wide shot: the meteor falls onto the bronze drum; shockwave across the sea
   // Shot 5  "Hộ Tinh"     silhouette, rim light, colour floods in, name slams in
   const SHOT = { ...CINEMATIC.shots };
-  function start(list: any) {
+  function start(list: any, quiet = false) {
     S.list = list;
     S.best = Math.max(...list.map((x: any) => x.r));
     S.order = [...list].sort((a, b) => a.r - b.r);
@@ -806,7 +782,7 @@ export function createCinematic(cv: HTMLCanvasElement, hooks: CineHooks) {
     ui.classList.add("off");
     skipBtn.hidden = false;
     hint.hidden = true;
-    CIN.open();
+    if (!quiet) CIN.open();
     S.clouds = Array.from({ length: 26 }, (_, i) => ({
       x: rand(-0.2, 1.2),
       y: (i / 26) * 3.2,
@@ -1819,10 +1795,12 @@ export function createCinematic(cv: HTMLCanvasElement, hooks: CineHooks) {
     resize,
     tap,
     skip,
-    play(list: any) {
+    /** fromReveal: video S20 đã chiếu cảnh 1–4, vào thẳng cảnh 5 không phát âm mở màn. */
+    play(list: any, fromReveal = false) {
       FEATURED = hooks.featured();
       resize();
-      start(list);
+      start(list, fromReveal);
+      if (fromReveal) enterReveal();
       last = 0;
       if (!raf) raf = requestAnimationFrame(frame);
     },

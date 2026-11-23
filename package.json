@@ -6,7 +6,7 @@
   "packageManager": "pnpm@9.15.0",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build && node -e \"require('fs').cpSync('legacy','dist/legacy',{recursive:true})\"",
+    "build": "tsc --noEmit && vite build && node -e \"require('fs').cpSync('legacy','dist/legacy',{recursive:true})\" && node scripts/copy-cinematic.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . && prettier --check .",

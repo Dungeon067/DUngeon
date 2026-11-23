@@ -23,3 +23,5 @@ Hiệu ứng đánh, trúng đòn, lướt, rương và xu dùng mẫu âm thanh
 | [RPG Audio](https://kenney.nl/assets/rpg-audio)         | Kenney Vleugels (Kenney.nl) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | `cloth1-4.ogg`, `knifeSlice2.ogg`, `metalLatch.ogg`, `handleCoins*.ogg` |
 
 Âm báo đòn quái, tiếng chuông ước nguyện và toàn bộ nhạc nền theo khu vực được tự tổng hợp bằng Web Audio trong `src/core/audio.ts` và `src/core/music.ts`.
+
+Video ước nguyện (`media/cinematic/`) dựng bằng Blender 5.3 (GPL, miễn phí) từ script trong repo; âm thanh tự tổng hợp, không dùng asset bên ngoài.
