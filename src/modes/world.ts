@@ -17,6 +17,7 @@ import { TS, genWorld } from "../world/map";
 import { buildPuzzles, puzzleInteract } from "../world/puzzles";
 import { openMiniDialog } from "../ui/dialog";
 import { domainInteract, startDomain } from "./domain";
+import { startStory, storySave, storyTick } from "../story/story";
 
 export function startWorld() {
   if (!GS.WORLD) GS.WORLD = genWorld();
@@ -52,8 +53,12 @@ export function startWorld() {
   });
   enterPlay();
   showBanner("Đảo Lạc");
+  // Người chơi mới: vào thẳng Mở đầu. Người cũ: chạm dòng mục tiêu để bắt đầu khi muốn.
+  if (!storySave().done.length && !Server.P.chests.length && !/[?&]e2e/.test(location.search))
+    setTimeout(() => startStory(), 1200);
 }
 export function worldLogic(dt: number) {
+  storyTick();
   const p = GS.G.p,
     W = GS.G.map;
   let best = null,

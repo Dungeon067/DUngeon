@@ -17,6 +17,7 @@ import { trackedObjective } from "./menu/quests";
 import { applyLayout, layoutParty } from "./hud/layout";
 import { openSettings } from "./settings";
 import type { Action } from "../data/schema";
+import { startStory, storyObjective } from "../story/story";
 
 /* =========================================================
    HUD (S09). Vị trí theo bố cục quen thuộc của thể loại, phần nhìn theo hệ thống
@@ -161,6 +162,8 @@ export function currentObjective(): { text: string; target: string | null } {
   const G = GS.G;
   if (G.mode === "tower") return { text: OBJECTIVES.tower.replace("{floor}", String(G.tower.floor)), target: null };
   if (G.mode === "boss") return { text: OBJECTIVES.boss, target: null };
+  const so = storyObjective();
+  if (so) return so;
   const tq = trackedObjective();
   if (tq) return tq;
   const P = Server.P;
@@ -308,6 +311,13 @@ export function updateHud() {
   if (C.ob !== ob.text) {
     C.ob = ob.text;
     $("objective").innerHTML = `${iconSvg("nhiem-vu", { size: 16 })}<span>${ob.text}</span>`;
+    const el = $("objective");
+    if (!el.dataset.story) {
+      el.dataset.story = "1";
+      // Chạm dòng mục tiêu để chơi tiếp cốt truyện.
+      el.addEventListener("click", () => startStory());
+    }
+    el.classList.toggle("is-story", !!storyObjective());
   }
   GS.G.objTarget = ob.target;
   let info = "";

@@ -23,7 +23,8 @@
     "android:apk": "pnpm cap:sync && cd android && ./gradlew assembleRelease",
     "tauri": "tauri",
     "sprites": "tsx tools/sprites/build.ts",
-    "anim:author": "tsx tools/anim/author.ts"
+    "anim:author": "tsx tools/anim/author.ts",
+    "story:build": "tsx scripts/story-extract.ts"
   },
   "devDependencies": {
     "@capacitor/cli": "^7",
