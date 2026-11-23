@@ -192,7 +192,7 @@ export function simulateProfile(p: Profile, chars: SimChar[], G: Gacha, E: Econo
       gems += g;
       if (pl === 0) gemsTotal += g;
       const feat = five[Math.floor((d - 1) / rotate) % five.length]!;
-      if (gems >= Math.max(1, E.moPhong.tichLuyTruocKhiUoc) * G.cost)
+      if (gems >= (p.vndThang ? 1 : Math.max(1, E.moPhong.tichLuyTruocKhiUoc)) * G.cost)
         while (gems >= G.cost) {
           gems -= G.cost;
           np++;
