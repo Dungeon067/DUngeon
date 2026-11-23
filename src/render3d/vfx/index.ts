@@ -5,13 +5,17 @@
 import type { Vfx } from "./system";
 import { HAVY } from "./chars/havy";
 import { SUONGMAI } from "./chars/suongmai";
+import { MAILINH } from "./chars/mailinh";
 import type { Cell } from "./tex";
 import { catBurst } from "./weapons";
 
 export interface Painters {
   fx?: Record<string, (f: any, X: Vfx) => void>;
   field?: Record<string, (fl: any, X: Vfx) => void>;
-  proj?: (pr: any, X: Vfx) => void;
+  /** Trả về false để rơi về cách vẽ chung. */
+  proj?: (pr: any, X: Vfx) => boolean | void;
+  /** Vật triệu hồi (G.turrets); true thì ẩn mô hình chung. */
+  turret?: (tu: any, X: Vfx) => boolean;
   /** Cảnh nộ, k = 0..1. */
   cine?: (k: number, X: Vfx) => void;
   /** Đang tụ trọng kích (p.charge). */
@@ -19,7 +23,7 @@ export interface Painters {
   /** Trạng thái kéo dài trên người đang điều khiển. */
   aura?: (m: any, X: Vfx) => void;
 }
-export const PAINTERS: Record<string, Painters> = { havy: HAVY, suongmai: SUONGMAI };
+export const PAINTERS: Record<string, Painters> = { havy: HAVY, suongmai: SUONGMAI, mailinh: MAILINH };
 
 export const paintFx = (f: any, X: Vfx) => {
   const p = PAINTERS[f.who]?.fx?.[f.id];
@@ -36,8 +40,7 @@ export const paintField = (fl: any, X: Vfx) => {
 export const paintProj = (pr: any, X: Vfx) => {
   const p = PAINTERS[pr.m?.c.id]?.proj;
   if (!p) return false;
-  p(pr, X);
-  return true;
+  return p(pr, X) !== false;
 };
 export function paintHero(G: any, m: any, X: Vfx) {
   const P = m && PAINTERS[m.c.id];

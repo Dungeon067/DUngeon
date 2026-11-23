@@ -760,6 +760,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     let tti = 0;
     const turretGlow: { x: number; y: number; z: number; c: THREE.Color; i: number }[] = [];
     for (const tu of G.turrets) {
+      if (tu.tag === "den" && PAINTERS[tu.m?.c.id]?.turret) continue;
       let o = turretPool[tti];
       if (!o) {
         o = new THREE.Group();
@@ -914,6 +915,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     vfx.setQuality(vq);
     vfx.begin({ TS, t, dt, ground: kc.ground, glow: kc.glow, q: vq, hero: pos, heroYaw });
     const heroVfx = paintHero(G, m, vfx);
+    for (const tu of G.turrets) PAINTERS[tu.m?.c.id]?.turret?.(tu, vfx);
     // Pháp khí (S30): sách lơ lửng cạnh tay trái thay cho mô hình cầm tay.
     if (m?.c.w === "cat") {
       if (hero?.weapon) hero.weapon.visible = false;
