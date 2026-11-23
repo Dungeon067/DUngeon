@@ -1,3 +1,4 @@
+import { effectAt } from "../world/regions";
 import { dir8 } from "../core/facing";
 import { GS } from "../core/state";
 import { onKill } from "../ui/menu/progress";
@@ -60,6 +61,8 @@ export function hitEnemy(e: any, m: any, mult: number, el: string, o: any = {}) 
   let dmg = m.st.atk * mult * (crit ? 1 + m.st.cdmg : 1) * (1 + (m.st.dmg ?? 0)) * rand(0.95, 1.05);
   const r = applyElement(e, el, m);
   dmg *= r.mult * (e.vuln > 0 ? 1.25 : 1) * (e.stun > 0 ? FEEL.poise.stunVuln : 1);
+  // Vùng tăng hoặc giảm nhẹ sát thương theo nguyên tố (S12), tính theo chỗ người chơi đứng.
+  if (el && GS.G?.map) dmg *= effectAt(GS.G.map, GS.G.p.x, GS.G.p.y, `${el}Dmg`);
   if (Server.P.gm.one) dmg = Math.max(dmg, e.hp + 1);
   e.hp -= dmg;
   e.flash = FEEL.hit.flash;

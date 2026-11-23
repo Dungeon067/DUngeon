@@ -1,3 +1,4 @@
+import { effectAt } from "../world/regions";
 import { GS } from "../core/state";
 import { aim, hitEnemy, nearestEnemy } from "../combat/damage";
 import { sfx } from "../core/audio";
@@ -108,7 +109,7 @@ export function doDash(): boolean {
     p.stamina -= FEEL.jump.airDashStamina;
   } else {
     if (p.stamina < 20) return false;
-    p.stamina -= 20;
+    p.stamina -= 20 * effectAt(GS.G.map, p.x, p.y, "dashStamina");
   }
   if (FEEL.input.dashCancel) {
     // Lướt né hủy hoạt ảnh và thời gian chờ của đòn đánh; combo vẫn giữ để nối tiếp.

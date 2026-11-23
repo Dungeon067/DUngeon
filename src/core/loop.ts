@@ -1,3 +1,4 @@
+import { effectAt } from "../world/regions";
 import { GS } from "../core/state";
 import { camRelative, dir8 } from "./facing";
 import { tryAttack, updateBuffer } from "../combat/actions";
@@ -70,7 +71,7 @@ export function update(dt: number) {
     if (p.dashT <= 0) p.dashHit = null;
   } else if (p.moving) {
     const sprint = GS.holdDash && p.dashHeld > 0.25 && p.stamina > 0;
-    const sp = (sprint ? 225 : 155) * (p.atkAnim > 0 ? 0.45 : 1);
+    const sp = (sprint ? 225 : 155) * (p.atkAnim > 0 ? 0.45 : 1) * effectAt(GS.G.map, p.x, p.y, "moveSpeed");
     if (sprint) p.stamina = Math.max(0, p.stamina - 22 * dt);
     moveC(p, mx * sp * dt, my * sp * dt, 9);
     p.walk += dt * (sprint ? 14 : 10);
@@ -82,7 +83,8 @@ export function update(dt: number) {
   if (!p.air) updateGround(p);
   p.land = Math.max(0, p.land - dt);
   if (GS.holdDash) p.dashHeld += dt;
-  if (!(GS.holdDash && p.moving)) p.stamina = Math.min(100, p.stamina + 28 * dt);
+  if (!(GS.holdDash && p.moving))
+    p.stamina = Math.min(100, p.stamina + 28 * dt * effectAt(GS.G.map, p.x, p.y, "staminaRegen"));
   p.atkCd -= dt;
   p.comboT -= dt;
   p.atkAnim = Math.max(0, p.atkAnim - dt * 5);

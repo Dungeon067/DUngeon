@@ -17,6 +17,7 @@ import { trackedObjective } from "./menu/quests";
 import { applyLayout, layoutParty } from "./hud/layout";
 import { openSettings } from "./settings";
 import type { Action } from "../data/schema";
+import { REGIONS, cellAt, regionEffectText } from "../world/regions";
 import { startStory, storyObjective } from "../story/story";
 
 /* =========================================================
@@ -194,6 +195,11 @@ function statusIcons(p: any, m: any) {
   const out: [string, string, string][] = [];
   if (p.shield > 0) out.push(["khien", `Khiên ${fmt(p.shield)}`, `${Math.ceil(p.shieldT)}s`]);
   if (GS.G.healAura) out.push(["bia-da", "Đang hồi phục gần Bia Đá", ""]);
+  if (GS.G.mode === "world") {
+    const rg = cellAt(GS.G.map, p.x, p.y).r,
+      fx = regionEffectText(rg);
+    if (fx.length) out.push(["ban-do", `${REGIONS[rg]!.name}: ${fx.join(", ")}`, ""]);
+  }
   if (p.iframes > 0 && p.dashT > 0) out.push(["luot", "Đang lướt né, miễn sát thương", ""]);
   if (m && m.energy >= m.c.burst.cost) out.push(["no", "Nộ đã đầy", ""]);
   if (p.stamina < 20) out.push(["the-luc", "Thể lực thấp, chưa lướt được", ""]);

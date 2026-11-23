@@ -374,6 +374,8 @@ export const TerrainSchema = z
           .object({
             id: z.string().regex(/^[a-z][a-z-]*$/),
             name: z.string().min(1),
+            desc: z.string().optional(),
+            seed: z.tuple([z.number(), z.number()]).optional(),
             effects: EffectsSchema,
             terrain: z.record(z.string(), EffectsSchema),
           })

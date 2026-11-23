@@ -1,3 +1,4 @@
+import { REGIONS } from "../../../world/regions";
 import { GS } from "../../../core/state";
 import { TAU, clamp } from "../../../core/util";
 import { MENU } from "../../../data/menu-content";
@@ -162,6 +163,20 @@ function draw() {
     for (let fx = 0; fx < FOG_N; fx++)
       if (fog[fy * FOG_N + fx] !== "1")
         c.fillRect(Math.floor(X(fx * FOG)), Math.floor(Y(fy * FOG)), Math.ceil(FOG * s) + 1, Math.ceil(FOG * s) + 1);
+  // Tên vùng (S12) ở tâm vùng, chỉ hiện khi tâm đã khám phá.
+  c.textAlign = "center";
+  c.font = `700 ${Math.round(clamp(11 * V.z, 11, 20))}px "Noto Serif", serif`;
+  for (const R of REGIONS) {
+    if (!R.seed) continue;
+    const rx = M.cx + R.seed[0],
+      ry = M.cy + R.seed[1];
+    if (!seen(fog, rx, ry)) continue;
+    c.lineWidth = 3;
+    c.strokeStyle = "rgba(6,9,24,.85)";
+    c.strokeText(R.name, X(rx), Y(ry) - 10);
+    c.fillStyle = "#f4e2b0";
+    c.fillText(R.name, X(rx), Y(ry) - 10);
+  }
   const t = trackedObjective()?.target ?? GS.G?.objTarget;
   const tg = t ? targetXY(t) : null;
   if (tg) {

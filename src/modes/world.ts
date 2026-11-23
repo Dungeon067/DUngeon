@@ -18,6 +18,7 @@ import { buildPuzzles, puzzleInteract } from "../world/puzzles";
 import { openMiniDialog } from "../ui/dialog";
 import { lootOf, showChestReveal } from "../ui/chest-reveal";
 import { domainInteract, startDomain } from "./domain";
+import { REGIONS, cellAt, regionEffectText } from "../world/regions";
 import { startStory, storySave, storyTick } from "../story/story";
 
 export function startWorld() {
@@ -58,10 +59,21 @@ export function startWorld() {
   if (!storySave().done.length && !Server.P.chests.length && !/[?&]e2e/.test(location.search))
     setTimeout(() => startStory(), 1200);
 }
+let lastRegion = -1;
 export function worldLogic(dt: number) {
   storyTick();
   const p = GS.G.p,
     W = GS.G.map;
+  // Vào vùng mới: hiện tên vùng và hiệu ứng (S12).
+  const rg = cellAt(W, p.x, p.y).r;
+  if (rg !== lastRegion && rg > 0) {
+    if (lastRegion >= 0) {
+      showBanner(REGIONS[rg]!.name);
+      const fx = regionEffectText(rg);
+      if (fx.length) toast(`${REGIONS[rg]!.name}: ${fx.join(" · ")}`);
+    }
+    lastRegion = rg;
+  }
   let best = null,
     bd = 60;
   const check = (x: number, y: number, kind: string, i: number, label: string) => {
