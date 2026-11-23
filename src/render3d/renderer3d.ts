@@ -38,9 +38,9 @@ const TOD_KEYS: [number, number, number, number, number][] = [
   // t, màu trời, cường độ mặt trời, màu nắng, độ sáng môi trường (x100)
   [0, 0x0b1230, 0.25, 0x8fa8ff, 28],
   [0.22, 0x2a2850, 0.35, 0x9fb0ff, 34],
-  [0.28, 0xf0a070, 1.2, 0xffb27a, 60],
-  [0.5, 0x8ccfff, 2.6, 0xfff2d8, 95],
-  [0.72, 0xf09060, 1.4, 0xffa060, 62],
+  [0.28, 0xf0a070, 1.0, 0xffb27a, 50],
+  [0.5, 0x8ccfff, 1.7, 0xfff2d8, 70],
+  [0.72, 0xf09060, 1.1, 0xffa060, 50],
   [0.8, 0x2a2850, 0.4, 0x9fb0ff, 34],
   [1, 0x0b1230, 0.25, 0x8fa8ff, 28],
 ];
@@ -150,7 +150,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     composer = new EffectComposer(gl);
     composer.addPass(new RenderPass(scene, camera));
     if (Q.bloom) {
-      bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.55, 0.4, 0.82);
+      bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.4, 0.35, 0.96);
       composer.addPass(bloom);
     }
     if (Q.dof) {
@@ -255,8 +255,8 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       tz = (G.cam.y + 20) / TS;
     camera.position.set(tx + Math.sin(GS.camYaw) * Math.cos(PITCH) * dist, gy + Math.sin(PITCH) * dist, tz + Math.cos(GS.camYaw) * Math.cos(PITCH) * dist);
     camera.lookAt(tx, gy, tz);
-    (scene.fog as THREE.Fog).near = dist * 0.95;
-    (scene.fog as THREE.Fog).far = dist * 2.1;
+    (scene.fog as THREE.Fog).near = dist * 1.5;
+    (scene.fog as THREE.Fog).far = dist * 3.4;
     if (tilt) tilt.uniforms.amount.value = 1.4;
 
     // Ngày đêm.
@@ -268,7 +268,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     sun.intensity = tod.sun;
     sun.position.set(tx - 8 + Math.cos(sa) * -6, gy + 14 + Math.sin(Math.max(0.2, sa)) * 6, tz - 6);
     sun.target.position.set(tx, gy, tz);
-    hemi.intensity = tod.amb * 1.6;
+    hemi.intensity = tod.amb * 1.2;
     hemi.color.copy(tod.sky).lerp(new THREE.Color(0xffffff), 0.5);
 
     // Rương đã mở.
@@ -484,7 +484,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     // Đèn: hiệu ứng gần nhất trước, ban đêm thêm đèn ở bia và cổng, và ánh nguyên tố quanh nhân vật.
     if (tod.night) {
       for (const l of lamps) glow.push({ x: l.x, y: l.y, z: l.z, c: new THREE.Color(l.c), i: 2.2 });
-      if (m) glow.push({ x: pos.x, y: pos.y + 0.8, z: pos.z + 0.3, c: new THREE.Color(EL[m.c.el].c), i: 1.2 });
+      if (m) glow.push({ x: pos.x, y: pos.y + 1.6, z: pos.z + 0.6, c: new THREE.Color(EL[m.c.el].c), i: 0.5 });
     }
     glow.sort((a, b) => (a.x - pos.x) ** 2 + (a.z - pos.z) ** 2 - ((b.x - pos.x) ** 2 + (b.z - pos.z) ** 2));
     lights.forEach((l, i) => {

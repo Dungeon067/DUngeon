@@ -115,9 +115,10 @@ class Geo {
       u1 = ((tex % 8) * T + T - 0.02) / (T * 8);
     const v1 = 1 - (Math.floor(tex / 8) * T + 0.02) / (T * 2),
       v0 = 1 - (Math.floor(tex / 8) * T + T * Math.min(1, vh) - 0.02) / (T * 2);
-    for (const q of [a, b, c, a, c, d]) this.p.push(...q);
+    // Thứ tự a, c, b / a, d, c để mặt hướng theo pháp tuyến (ngược chiều kim đồng hồ khi nhìn từ ngoài).
+    for (const q of [a, c, b, a, d, c]) this.p.push(...q);
     for (let i = 0; i < 6; i++) this.n.push(...nrm);
-    this.uv.push(u0, v1, u1, v1, u1, v0, u0, v1, u1, v0, u0, v0);
+    this.uv.push(u0, v1, u1, v0, u1, v1, u0, v1, u0, v0, u1, v0);
   }
   build() {
     const g = new THREE.BufferGeometry();
