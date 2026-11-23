@@ -211,7 +211,7 @@ export function drawEnemyStatuses(e: any, x: number, y: number) {
     ctx.fillStyle = "rgba(10,18,48,.78)";
     ctx.fillRect(cx - 1, y - 1, sz + 2, sz + 2);
     const im = stsIcon(d.icon, col);
-    if (im?.complete) ctx.drawImage(im, cx, y, sz, sz);
+    if (im?.complete && im.naturalWidth > 0) ctx.drawImage(im, cx, y, sz, sz);
     // vạch thời gian còn lại
     ctx.fillStyle = col;
     ctx.fillRect(cx, y + sz + 1, sz * Math.max(0, Math.min(1, s.t / s.max)), 1.5);
