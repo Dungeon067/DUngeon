@@ -68,16 +68,20 @@ def kind(n):
     return None
 
 
-done = set()
+# normal map không phải ảnh màu: không đổi màu
+done = {m.vrm_addon_extension.mtoon1.normal_texture.index.source.name for m in bpy.data.materials
+        if m.vrm_addon_extension.mtoon1.normal_texture.index.source}
 for m in bpy.data.materials:
     k = kind(m.name)
     if not k:
         continue
     mt = m.vrm_addon_extension.mtoon1
-    for f, attr in ((mt.pbr_metallic_roughness, "base_color_factor"),
-                    (mt.extensions.vrmc_materials_mtoon, "shade_color_factor")):
+    mm = mt.extensions.vrmc_materials_mtoon
+    for f, attr, tex in ((mt.pbr_metallic_roughness, "base_color_factor", mt.pbr_metallic_roughness.base_color_texture),
+                         (mm, "shade_color_factor", mm.shade_multiply_texture)):
         c = np.array(getattr(f, attr)[:3], dtype=float) ** (1 / 2.2)
-        if not (k == "cloth" and "SKIN" in m.name):
+        # MToon nhân hệ số với texture: có texture thì chỉ đổi texture, tránh nhân đôi
+        if not tex.index.source and not (k == "cloth" and "SKIN" in m.name):
             setattr(f, attr, [*(shift(c[None], P[k])[0] ** 2.2), *getattr(f, attr)[3:]])
     for n in m.node_tree.nodes if m.node_tree else []:
         img = getattr(n, "image", None)
