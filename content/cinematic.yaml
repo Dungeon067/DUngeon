@@ -5,9 +5,8 @@
 shots: { s1: 2.6, s2: 2.2, s3: 2.3, s4: 1.9 }
 # 5★: sao băng giả làm 4★ rồi chậm lại (hệ số tốc độ) và bùng vàng.
 slowMo: 0.28
-# Video S20. Khi S20 đưa file vào media/cinematic/ thì ghi đường dẫn ở đây (tính từ gốc site),
-# theo độ hiếm cao nhất của lượt ước. Để trống nghĩa là dùng bản code.
-# Ví dụ: videos: { "5": /media/cinematic/uoc-5.webm, "4": /media/cinematic/uoc-4.webm }
-videos: {}
+# Video S20 (media/cinematic/out, danh sách bản trong timeline.json), chọn theo độ hiếm cao nhất của lượt ước.
+# false: luôn dùng bản code.
+video: true
 # Video tải quá thời gian này (ms) hoặc lỗi thì chuyển sang bản code.
 videoTimeoutMs: 4000
