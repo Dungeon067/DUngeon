@@ -55,7 +55,7 @@ const SHOTS: Shot[] = [
   { id: "giu", ten: "Kỹ năng (giữ)", frames: 180, steps: [[0, `${C}.castKitSkill("giu")`]] },
   { id: "no", ten: "Nộ", frames: 240, steps: [[0, `${C}.castKitBurst()`]], cam: { dist: 9 } },
   // Rút vũ khí khi ra đòn, đứng yên tới khi tự cất (pháp khí: sách hiện ra, mở, khép rồi tan).
-  { id: "rutcat", ten: "Rút ra và cất đi", frames: 400, steps: [[10, atk]], cam: { dist: 4.5, yaw: 0.5 } },
+  { id: "rutcat", ten: "Rút ra và cất đi", frames: 400, steps: [[10, atk]], cam: { dist: 3.2, yaw: 2.3, pitch: 0.25 } },
 ];
 
 async function main() {
@@ -160,7 +160,7 @@ async function setup(page: any, party: string[], s: Shot) {
     const p = G.p; p.x = G.bounds.w / 2; p.y = G.bounds.h / 2 + 60;
     for (const [dx, dy] of [[0, -130], [-70, -175], [70, -175]]) {
       const e = T.cap.makeEnemy("slime", p.x + dx, p.y + dy, 20, null);
-      e.hp = e.maxHp = 1e8; e.spd = 0; e.speed = 0; e.atkCd = 1e9; G.enemies.push(e); }
+      e.hp = e.maxHp = 1e8; e.spd = 0; e.spd0 = 0; e.speed = 0; e.mass = 1e9; e.atkCd = 1e9; G.enemies.push(e); }
     const m = G.party[G.act]; m.energy = m.c.burst.cost; m.skCd = 0; m.cd = 0;
     S.camYaw = ${cam.yaw}; S.camPitch = ${cam.pitch}; S.camDist = ${cam.dist}; S.holdAtk = false; })()`);
   await page.evaluate(step(30, 1 / 60));

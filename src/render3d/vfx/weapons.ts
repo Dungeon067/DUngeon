@@ -45,7 +45,7 @@ export interface WInfo {
 /* ---------- Sách pháp khí ---------- */
 
 const pivot = (g: THREE.BufferGeometry, dx: number) => (g.translate(dx, 0, 0), g);
-const shaft = () => new THREE.CylinderGeometry(0.1, 0.2, 0.5, 20, 1, true).translate(0, 0.25, 0);
+const shaft = () => new THREE.CylinderGeometry(0.06, 0.13, 0.32, 20, 1, true).translate(0, 0.16, 0);
 
 class Book {
   readonly g = new THREE.Group();
@@ -110,7 +110,7 @@ class Book {
     glyph.uniforms.uRot.value = t * 0.4;
     glyph.uniforms.uGlow.value = 1.3;
     light.uniforms.uAge.value = 0.4;
-    light.uniforms.uA.value = 0.5 * glow * open;
+    light.uniforms.uA.value = 0.16 * glow * open;
     light.uniforms.uNs.value.set(10, 3);
     light.uniforms.uScroll.value.set(0.2, -1.2);
     light.uniforms.uNA.value = 0.8;
@@ -188,15 +188,15 @@ export class Catalyst {
     g.visible = true;
     g.position.copy(this.pos);
     g.rotation.set(-0.55, yaw + Math.PI + 0.35, 0, "YXZ");
-    g.scale.setScalar(0.25 + 0.75 * appear);
+    g.scale.setScalar((0.25 + 0.75 * appear) * 1.7);
     this.book.pose(V.t, this.el, open, this.flip, glow, dis);
     // Vòng phù văn quanh sách, xoay nhẹ; nạp trọng kích thì to hơn, nhanh hơn, hiện thêm vòng chữ.
-    const ringA = open * (0.55 + this.chargeK * 0.45) * (1 - dis);
+    const ringA = open * (0.35 + this.chargeK * 0.6) * (1 - dis);
     const ring = X.use("cat-ring", SH.decal, { map: runeTex(RUNE[this.el] ?? "ice"), side: THREE.DoubleSide });
     if (ring) {
       ring.m.position.copy(this.pos);
       ring.m.rotation.set(-0.55 + Math.PI / 2 - 0.3, yaw + Math.PI + 0.35, 0, "YXZ");
-      ring.m.scale.setScalar(0.55 + this.chargeK * 0.35);
+      ring.m.scale.setScalar(0.4 + this.chargeK * 0.3);
       setCols(ring.u, ...cols);
       ring.u.uA.value = ringA;
       ring.u.uRot.value = V.t * (0.5 + this.chargeK * 3);
@@ -318,10 +318,13 @@ function quality(X: Vfx, c: Catalyst, w: WInfo, cols: [string, string, string], 
   const V = X.V,
     k = (w.tl >= 5 ? 1.4 : 1) * al,
     P = c.pos;
-  const halo = X.use("cat-halo", SH.ball, { fres: 2.6, fresAlpha: true });
+  const halo = X.use("cat-halo", () => SH.shock(0.9), { soft: [0, 0, 0.3, 0.3] });
   if (halo) {
     halo.m.position.copy(P);
-    halo.m.scale.setScalar(0.3 + (w.r >= 5 ? 0.06 : 0));
+    halo.m.rotation.set(Math.PI / 2, V.heroYaw, V.t * 0.6, "YXZ");
+    halo.m.scale.setScalar(0.26 + (w.r >= 5 ? 0.05 : 0));
+    halo.u.uNs.value.set(24, 2);
+    halo.u.uScroll.value.set(0.3, 0);
     setCols(halo.u, ...(w.r >= 5 ? (["#fff6d8", "#ffd77a", cols[1]] as [string, string, string]) : cols));
     halo.u.uA.value = (w.r >= 5 ? 0.55 : 0.3) * k;
     halo.u.uAge.value = 0.4;
@@ -445,11 +448,11 @@ export function catBurst(f: any, X: Vfx) {
   const e = X.use("cb-shell", SH.ball, { fres: 1.4, fresAlpha: true });
   if (e) {
     e.m.position.set(x, y, z);
-    e.m.scale.setScalar(0.2 + ease(a * 2) * 0.55);
+    e.m.scale.setScalar(0.1 + ease(a * 2) * 0.22);
     setCols(e.u, ...cols);
     e.u.uAge.value = a;
-    e.u.uA.value = 1.4 * (1 - a);
-    e.u.uDis.value = a * 0.8;
+    e.u.uA.value = 0.9 * (1 - a);
+    e.u.uDis.value = 0.2 + a * 0.8;
     e.u.uNs.value.set(5, 5);
   }
   if (el === "ice" || el === "earth")
