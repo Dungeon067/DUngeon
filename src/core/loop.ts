@@ -448,6 +448,7 @@ export function clampCam() {
 export function frame(now: number) {
   const dt = Math.min(0.05, (now - GS.lastT) / 1000);
   GS.lastT = now;
+  if (GS.capT != null) return void requestAnimationFrame(frame);
   try {
     pollGamepad();
     if (GS.scene === "play" && GS.G && !GS.paused) {
@@ -487,4 +488,18 @@ function dashHitStep(p: any) {
       size: 5,
     });
   }
+}
+
+/** Quay xác định: chạy `n` bước cố định `dt` rồi vẽ một khung. Bật bằng `GS.capT = 0` (chỉ dùng qua ?capture). */
+export function capStep(n = 1, dt = 1 / 60) {
+  GS.capT ??= 0;
+  for (let i = 0; i < n; i++) {
+    if (GS.scene === "play" && GS.G && !GS.paused) {
+      update(gameDt(dt));
+      updateZoom(dt);
+    }
+    GS.capT += dt;
+  }
+  render();
+  if (GS.scene === "play" && GS.G) updateHud();
 }

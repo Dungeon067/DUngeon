@@ -468,7 +468,8 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
 
   function frame(t: number): boolean {
     if (gl.getContext().isContextLost()) return false;
-    const dt = Math.min(0.05, t - lastT || 0.016);
+    // Đồng hồ có thể nhảy lùi khi chuyển sang chế độ quay xác định: khi đó coi như một khung chuẩn.
+    const dt = t > lastT ? Math.min(0.05, t - lastT) : 0.016;
     lastT = t;
     cv.style.display = "block";
     gl.info.reset();

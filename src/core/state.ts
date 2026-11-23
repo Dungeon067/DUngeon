@@ -30,6 +30,8 @@ export const GS = {
   overlay: null as null | string,
   isTouch: matchMedia("(pointer: coarse)").matches,
   lastT: performance.now(),
+  /** Đồng hồ của chế độ quay xác định; null khi chơi bình thường. */
+  capT: null as number | null,
   selChar: null as string | null,
   draftParty: null as any,
   wipeArm: 0,

@@ -4,7 +4,10 @@ import { pulseElement } from "./world/puzzles";
 import { applyRenderer, renderer3d } from "./render3d/select";
 import { GS } from "./core/state";
 import { portraitCache } from "./art/chibi";
-import { frame } from "./core/loop";
+import { capStep, frame } from "./core/loop";
+import { press } from "./combat/actions";
+import { castKitBurst, castKitSkill, skipCine } from "./combat/kits/run";
+import { makeEnemy } from "./entities/enemy";
 import { SAVE_KEY, Server } from "./server/server";
 import { ECON_KEY, reloadEcon } from "./data/economy";
 import { init as initCanvas } from "./core/canvas";
@@ -75,6 +78,8 @@ if (new URLSearchParams(location.search).has("e2e"))
       settings,
       saveSettings,
       r3: renderer3d,
+      capStep,
+      cap: { press, castKitSkill, castKitBurst, skipCine, makeEnemy },
       menu: { openMenu, closeMenu, currentScreen },
       wishVideo: videoNow,
       pz: { pulse: pulseElement, startDomain, exitDomain, data: { DOMAINS, MINI, PZ } },
