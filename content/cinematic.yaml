@@ -9,4 +9,4 @@ slowMo: 0.28
 # false: luôn dùng bản code.
 video: true
 # Video tải quá thời gian này (ms) hoặc lỗi thì chuyển sang bản code.
-videoTimeoutMs: 4000
+videoTimeoutMs: 8000

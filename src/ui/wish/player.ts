@@ -113,15 +113,25 @@ export async function playWish(raw: any[], onDone?: () => void) {
   done = onDone ?? null;
   $("wishFx").hidden = false;
   const best = Math.max(...list.map((x) => x.r));
-  const [ok] = await Promise.all([
-    playWishVideo(best, list.length > 1, {
-      video: $("wishVid") as HTMLVideoElement,
-      overlay: $("wishOv") as HTMLCanvasElement,
-      skip: $("wishSkip"),
-      ff: $("wishFf") as HTMLButtonElement,
-    }),
+  const els = {
+    video: $("wishVid") as HTMLVideoElement,
+    overlay: $("wishOv") as HTMLCanvasElement,
+    skip: $("wishSkip"),
+    ff: $("wishFf") as HTMLButtonElement,
+  };
+  // Chủ dự án chốt: cảnh ước nguyện CHỈ dùng video, không còn bản dựng bằng code.
+  // Video lỗi hoặc tải chậm thì thử lại một lần; vẫn không được thì vào thẳng phần nhận kết quả.
+  const hint = $("wishHint");
+  const [ok1] = await Promise.all([
+    playWishVideo(best, list.length > 1, els),
     preloadLines(list),
     preloadWeaponArt(list.flatMap((x) => (x.wid ? [x.wid] : []))),
   ]);
-  c.play(list, ok);
+  if (!ok1) {
+    hint.textContent = "Đang tải cảnh ước nguyện…";
+    hint.hidden = false;
+    await playWishVideo(best, list.length > 1, els, 3);
+    hint.textContent = "";
+  }
+  c.play(list, true);
 }

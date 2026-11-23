@@ -185,14 +185,14 @@ function weakDevice(v: HTMLVideoElement) {
  * Phát video cảnh 1–4 cho lượt ước. Trả về true khi video chạy hết hoặc người chơi bỏ qua (gọi tiếp cảnh 5),
  * false khi phải dùng bản code (thiếu video, máy yếu, tải chậm, lỗi phát).
  */
-export async function playWishVideo(best: number, multi: boolean, els: VideoEls): Promise<boolean> {
+export async function playWishVideo(best: number, multi: boolean, els: VideoEls, slow = 1): Promise<boolean> {
   wishes++;
   const variant = pickVariant(best, multi, fives);
   if (!multi && best >= 5) fives++;
   stopVideoAudio();
   const { video: v, overlay, skip, ff } = els;
   if (!CINEMATIC.video || weakDevice(v)) return false;
-  const tl = await timeout(loadTimeline(), CINEMATIC.videoTimeoutMs);
+  const tl = await timeout(loadTimeline(), CINEMATIC.videoTimeoutMs * slow);
   const vv = tl?.variants[variant];
   if (!tl || !vv) return false;
   const want = wantHeight({
@@ -210,8 +210,8 @@ export async function playWishVideo(best: number, multi: boolean, els: VideoEls)
   );
   if (!file) return false;
   const [blob, tr] = await Promise.all([
-    timeout(fetchBlob(file), CINEMATIC.videoTimeoutMs),
-    GS.soundOn ? timeout(loadAudio(vv), CINEMATIC.videoTimeoutMs) : null,
+    timeout(fetchBlob(file), CINEMATIC.videoTimeoutMs * slow),
+    GS.soundOn ? timeout(loadAudio(vv), CINEMATIC.videoTimeoutMs * slow) : null,
   ]);
   if (!blob) return false;
   track = tr;
@@ -245,7 +245,7 @@ export async function playWishVideo(best: number, multi: boolean, els: VideoEls)
       }
       res(ok);
     };
-    const to = setTimeout(() => !started && end(false), CINEMATIC.videoTimeoutMs);
+    const to = setTimeout(() => !started && end(false), CINEMATIC.videoTimeoutMs * slow);
     const doSkip = () => end(true, true);
     const toggleFast = () => {
       if (ff.hidden) return;

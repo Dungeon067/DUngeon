@@ -115,16 +115,6 @@ function panelGeneral() {
       settings.quality,
       (v) => ((settings.quality = v), commit(), resize(), void applyRenderer()),
     ),
-    choice<RendererPref>(
-      "Lớp vẽ thế giới",
-      [
-        ["auto", "Tự chọn (3D nếu máy hỗ trợ)"],
-        ["3d", "3D (WebGL)"],
-        ["2d", "2D (bản cũ, nhẹ nhất)"],
-      ],
-      settings.renderer,
-      (v) => ((settings.renderer = v), commit(), applyRenderer()),
-    ),
     pct("Cỡ chữ", settings.fontScale, (v) => ((settings.fontScale = v), commit()), { min: 80, max: 140, step: 10 }),
     choice<ColorMode>(
       "Chế độ màu cho người mù màu",
