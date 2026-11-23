@@ -2,7 +2,7 @@
 
 Tinh Tú có bản web (chơi ngay trên trình duyệt) và bản cài đặt cho từng loại máy. Bản cài đặt chạy toàn màn hình, không còn thanh địa chỉ hay thanh tab, chơi được cả khi mất mạng. Mọi bản đều miễn phí.
 
-Tải file cài đặt ở trang **[Releases mới nhất](https://github.com/Dungeon067/DUngeon/releases/latest)** (trong game: Cài đặt → Ứng dụng → **Tải bản cài đặt**). Các bản thử (tên có `-test`) nằm ở [danh sách Releases](https://github.com/Dungeon067/DUngeon/releases), đánh dấu _Pre-release_.
+Tải file cài đặt ở trang **[Releases](https://github.com/Dungeon067/DUngeon/releases)** (bản mới nhất ở trên cùng) (trong game: Cài đặt → Ứng dụng → **Tải bản cài đặt**). Các bản thử (tên có `-test`) được đánh dấu _Pre-release_.
 
 | Máy                 | Cách cài                              | File                                         |
 | ------------------- | ------------------------------------- | -------------------------------------------- |

@@ -7,7 +7,7 @@ import { $ } from "../core/util";
    toàn màn hình. Bản Android/iOS (Capacitor) và máy tính (Tauri) không dùng service worker.
    ========================================================= */
 
-export const RELEASES_URL = "https://github.com/Dungeon067/DUngeon/releases/latest";
+export const RELEASES_URL = "https://github.com/Dungeon067/DUngeon/releases";
 const PWA_KEY = "tinhtu-pwa-v1";
 
 type Win = Window & {

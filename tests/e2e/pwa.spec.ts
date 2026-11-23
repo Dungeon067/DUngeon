@@ -74,6 +74,6 @@ test("Cài đặt → Ứng dụng có link tải bản cài đặt", async ({ p
   await page.getByRole("tab", { name: "Ứng dụng" }).click();
   const a = page.locator("#stReleases");
   await expect(a).toHaveText("Tải bản cài đặt");
-  await expect(a).toHaveAttribute("href", "https://github.com/Dungeon067/DUngeon/releases/latest");
+  await expect(a).toHaveAttribute("href", "https://github.com/Dungeon067/DUngeon/releases");
   await expect(page.locator("#stFullscreen")).toBeVisible();
 });
