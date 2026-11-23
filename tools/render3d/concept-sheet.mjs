@@ -36,8 +36,9 @@ const SHEETS = {
     name: "Hắc Giao",
     grid: "water@1,bolt@2",
     turn: "zoom=1.25",
-    close: "mode=hero&yaw=-0.7&pitch=0.12&zoom=1.1",
-    vq: "mode=hero&yaw=-0.7&pitch=0.12&zoom=1.05",
+    close: "mode=hero&yaw=-0.7&pitch=0.12&zoom=1.55",
+    vq: "mode=hero&yaw=-0.7&pitch=0.12&zoom=1.7",
+    crop: "760x760+820+0",
     notes: [
       "Rồng nước thân dài kết từ Nguyện Cặn.",
       "Vảy cá đen ánh lam, bóng ướt; bụng tấm bạc xám.",
@@ -79,7 +80,7 @@ for (const [i, g] of grid.entries()) {
 await b.close();
 
 const im = (...a) => execFileSync("convert", a.flat(Infinity).map(String));
-im(`${tmp}/sketchsrc.png`, "-crop", "600x760+0+0", "+repage", "-colorspace", "Gray", "-edge", "1.2", "-negate",
+im(`${tmp}/sketchsrc.png`, "-crop", S.crop ?? "600x760+0+0", "+repage", "-colorspace", "Gray", "-edge", "1.2", "-negate",
   "-level", "35%,95%", "-blur", "0x0.4", "(", "+clone", "-fill", "#f3ecdf", "-colorize", "100", ")", "+swap",
   "-compose", "multiply", "-composite", `${tmp}/sketch.png`);
 im(grid.map((_, i) => `${tmp}/v${i}.png`), "+append", `${tmp}/variants.png`);
@@ -110,7 +111,7 @@ im("-size", "2400x2000", "xc:#1b1826",
   `${tmp}/sheet-a.png`);
 im("-size", "2400x1000", "xc:#1b1826",
   "-font", bold, "-fill", "#f1e6c8", "-pointsize", "40", "-annotate", "+60+70", `${S.name} · phác hoạ nét và biến thể`,
-  "(", `${tmp}/sketch.png`, "-resize", "x860", ")", "-geometry", "+40+110", "-composite",
+  "(", `${tmp}/sketch.png`, "-resize", "620x860", ")", "-geometry", "+40+110", "-composite",
   `${tmp}/variants.png`, "-geometry", "+680+130", "-composite",
   "-font", font, "-fill", "#a99fc4", "-pointsize", "24", "-annotate", "+690+930",
   id === "hacgiao" ? "Trái: giai đoạn 1 (Thủy). Phải: giai đoạn 2 (Lôi, nứt tím)." : `Nguyên tố: ${grid.join(", ")} (cùng một mô hình, đổi uniform)`,
