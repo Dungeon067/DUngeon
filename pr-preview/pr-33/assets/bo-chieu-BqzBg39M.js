@@ -33,6 +33,17 @@ const n=`# Mai Linh: Bộ chiêu
 2. **Lửa Không Lan:** **Quá Tải** do đèn hoặc pháo hoa của Mai Linh gây ra không đẩy quái văng đi, và nổ thêm một đốm lửa nhỏ (0,4).
 3. **Khám phá, Thợ Đèn Nhỏ:** đốm lửa thắp được đèn câu đố ở khoảng cách gấp đôi; ban đêm quanh cô sáng hơn.
 
+## Vai trò và buff/debuff
+
+**Vai trò:** Sát thương phụ, Hỗ trợ buff. ★ = buff/debuff đặc trưng, lý do để chọn vào đội.
+
+| Trạng thái | Loại   | Tác dụng                                                                                               | Thời gian | Cộng dồn                                                                            |
+| ---------- | ------ | ------------------------------------------------------------------------------------------------------ | --------- | ----------------------------------------------------------------------------------- |
+| Đèn Canh ★ | Buff   | Đứng gần đèn hoa mai được cộng tấn công theo tấn công của Mai Linh. Giá trị: 20% tấn công của mailinh. | 1.5 giây  | không cộng dồn, áp lại thì làm mới (nhóm tanCongPhang: chỉ tính cái mạnh nhất)      |
+| Tàn Pháo ★ | Debuff | Giảm kháng Hỏa của quái. Giá trị: 15%.                                                                 | 10 giây   | không cộng dồn, áp lại thì làm mới (nhóm giamKhangNguyenTo: chỉ tính cái mạnh nhất) |
+
+Số liệu chạy trong game lấy từ \`content/kits/mailinh.yaml\` và \`content/statuses.yaml\`.
+
 ## Phối hợp
 
 - Đèn đánh khi cô đã đổi ra ngoài sân, giữ Hỏa trên quái cho **Bốc Hơi** (Sương Mai), **Tan Chảy** (Hạ Vy), **Khuếch Tán** Hỏa (Bạch Vũ), **Quá Tải** không văng quái (Lôi Đình).

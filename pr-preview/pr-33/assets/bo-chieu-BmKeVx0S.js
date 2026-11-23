@@ -33,6 +33,19 @@ const n=`# Lôi Đình: Bộ chiêu
 2. **Quyết Nhanh:** lướt né đúng lúc (đòn quái suýt trúng) thì kỹ năng hồi nhanh 2 giây (mỗi 6 giây một lần).
 3. **Khám phá, Xóm Lính:** chạy nhanh tốn ít hơn 15% thể lực.
 
+## Vai trò và buff/debuff
+
+**Vai trò:** Sát thương chính. ★ = buff/debuff đặc trưng, lý do để chọn vào đội.
+
+| Trạng thái    | Loại   | Tác dụng                                                   | Thời gian | Cộng dồn                                                                       |
+| ------------- | ------ | ---------------------------------------------------------- | --------- | ------------------------------------------------------------------------------ |
+| Nhịp Vó       | Buff   | Tích từ đòn đánh, trọng kích tiêu hết để phi thương.       | 15 giây   | cộng dồn tới 5 tầng                                                            |
+| Sấm Xé Giáp ★ | Debuff | Giảm phòng thủ của quái. Giá trị: 20%.                     | 8 giây    | không cộng dồn, áp lại thì làm mới (nhóm giamPhongThu: chỉ tính cái mạnh nhất) |
+| Thiên Lôi     | Buff   | Đòn đánh mang Lôi, tăng sát thương chí mạng. Giá trị: 40%. | 10 giây   | không cộng dồn, áp lại thì làm mới                                             |
+| Lôi Hiệu ★    | Buff   | Đồng đội tăng hồi năng lượng. Giá trị: 25%.                | 10 giây   | không cộng dồn, áp lại thì làm mới (nhóm hoiNang: chỉ tính cái mạnh nhất)      |
+
+Số liệu chạy trong game lấy từ \`content/kits/loidinh.yaml\` và \`content/statuses.yaml\`.
+
 ## Phối hợp
 
 - **Điện Cảm** với Sương Mai: mỗi tia Điện Cảm cho một Nhịp Vó. **Siêu Dẫn** với Hạ Vy: trọng kích vào quái đang dễ tổn thương. **Quá Tải** với Mai Linh (không văng quái nhờ thiên phú của Mai Linh). **Khuếch Tán** Lôi với Bạch Vũ.

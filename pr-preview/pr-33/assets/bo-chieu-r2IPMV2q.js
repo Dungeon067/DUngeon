@@ -35,6 +35,19 @@ Nhịp chuỗi: 0,32 giây mỗi đòn. Tổng hệ số chuỗi 4,10 trong 1,3 
 2. **Mực Nước Sông:** trọng kích vào quái đang mang Thủy gây thêm 15% sát thương và luôn làm giảm chịu đòn gấp đôi.
 3. **Khám phá, Hộ Vệ Sớm:** chạy và lướt trên vùng nước nông tốn ít hơn 20% thể lực.
 
+## Vai trò và buff/debuff
+
+**Vai trò:** Sát thương chính, Bảo vệ. ★ = buff/debuff đặc trưng, lý do để chọn vào đội.
+
+| Trạng thái  | Loại   | Tác dụng                                                         | Thời gian | Cộng dồn                                                                            |
+| ----------- | ------ | ---------------------------------------------------------------- | --------- | ----------------------------------------------------------------------------------- |
+| Giọt Sương  | Buff   | Mỗi giọt tăng sát thương trọng kích rút kiếm.                    | 12 giây   | cộng dồn tới 3 tầng                                                                 |
+| Ướt Sương ★ | Debuff | Giảm kháng Thủy của quái. Giá trị: 15%.                          | 8 giây    | không cộng dồn, áp lại thì làm mới (nhóm giamKhangNguyenTo: chỉ tính cái mạnh nhất) |
+| Sóng Bạc    | Buff   | Đòn đánh thường mang Thủy và tăng sát thương Thủy. Giá trị: 15%. | 8 giây    | không cộng dồn, áp lại thì làm mới                                                  |
+| Sông Che ★  | Buff   | Cả đội giảm sát thương nhận vào. Giá trị: 15%.                   | 12 giây   | không cộng dồn, áp lại thì làm mới (nhóm giamSatThuongNhan: chỉ tính cái mạnh nhất) |
+
+Số liệu chạy trong game lấy từ \`content/kits/suongmai.yaml\` và \`content/statuses.yaml\`.
+
 ## Phối hợp
 
 - Áp Thủy ổn định trên sân cho **Đóng Băng** (Hạ Vy), **Điện Cảm** (Lôi Đình), **Bốc Hơi** (Mai Linh đánh vào Thủy, hệ số 1,5; Sương Mai đánh vào Hỏa, hệ số 2).

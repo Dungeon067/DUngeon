@@ -33,6 +33,20 @@ const n=`# Hạ Vy: Bộ chiêu
 2. **Hầm Băng Biết Cười:** Tên Hoa Tuyết trúng quái đang Đóng Băng gây thêm 25% sát thương. Đóng Băng xảy ra trong Hầm Băng kéo dài thêm 1 giây.
 3. **Khám phá, Canh Thuyền:** khi cô trên sân, bản đồ nhỏ hiện quái và rương trong 30 m.
 
+## Vai trò và buff/debuff
+
+**Vai trò:** Bảo vệ, Khống chế, Hỗ trợ buff. ★ = buff/debuff đặc trưng, lý do để chọn vào đội.
+
+| Trạng thái    | Loại   | Tác dụng                                                  | Thời gian | Cộng dồn                                                                      |
+| ------------- | ------ | --------------------------------------------------------- | --------- | ----------------------------------------------------------------------------- |
+| Khâu Băng ★   | Debuff | Quái bị khâu chỉ băng nhận thêm sát thương. Giá trị: 12%. | 8 giây    | không cộng dồn, áp lại thì làm mới (nhóm danhDau: chỉ tính cái mạnh nhất)     |
+| Hầm Băng      | Debuff | Làm chậm quái. Giá trị: 30%.                              | 4 giây    | không cộng dồn, áp lại thì làm mới (nhóm lamCham: chỉ tính cái mạnh nhất)     |
+| Áo Buồm ★     | Buff   | Khiên vá buồm, không bị ngắt chiêu khi trúng đòn.         | 8 giây    | không cộng dồn, áp lại thì làm mới                                            |
+| Bị gom        | Debuff | Quái bị hút về một điểm.                                  | 0.6 giây  | không cộng dồn, áp lại thì làm mới                                            |
+| Gió Đầu Mùa ★ | Buff   | Cả đội tăng tỉ lệ chí mạng. Giá trị: 15%.                 | 12 giây   | không cộng dồn, áp lại thì làm mới (nhóm tiLeChiMang: chỉ tính cái mạnh nhất) |
+
+Số liệu chạy trong game lấy từ \`content/kits/havy.yaml\` và \`content/statuses.yaml\`.
+
 ## Phối hợp
 
 - **Đóng Băng** với Sương Mai (Hầm Băng + Vệt Sương giữ quái đứng yên). **Siêu Dẫn** với Lôi Đình. **Tan Chảy** với Mai Linh (Hỏa vào Băng nhân 2).
