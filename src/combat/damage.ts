@@ -85,6 +85,10 @@ export function hitEnemy(e: any, m: any, mult: number, el: string | null, o: any
   e.flash = FEEL.hit.flash;
   e.hitT = FEEL.hit.squash;
   damagePoise(e, (FEEL.poise.weapon[m.c.w as keyof typeof FEEL.poise.weapon] ?? 8) * mult);
+  // Va chạm (S30): tia lửa theo nguyên tố ở lớp 3D, khựng hình và rung nhẹ theo lực đòn.
+  GS.G.fx.push({ k: "hit", x: e.x, y: e.y, el, pw: mult, crit, w: m.c.w, normal: !!o.normal, life: 0.28, max: 0.28 });
+  if (mult >= 0.7) hitstop("heavy");
+  shake("light", Math.min(2, mult));
   if (crit) hitstop("crit");
   if (r.mult > 1) {
     hitstop("react");

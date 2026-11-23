@@ -5,6 +5,11 @@
 import * as THREE from "three";
 import { KITS } from "../data/kits";
 import { kitFx, kitField, kitTrail, type FxCtx } from "./kit-fx";
+import { Vfx } from "./vfx/system";
+import { Catalyst, catProj } from "./vfx/weapons";
+import { ECON } from "../data/economy";
+import { weaponOf } from "../economy/core";
+import { PAINTERS, paintField, paintFx, paintHero, paintHit, paintProj } from "./vfx";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
@@ -195,6 +200,9 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   scene.add(blob);
   const fxGroup = new THREE.Group();
   scene.add(fxGroup);
+  const vfx = new Vfx(scene);
+  const cat = new Catalyst(scene);
+  const tmpHand = new THREE.Vector3();
 
   // Vệt kiếm: dải nối các vị trí mũi vũ khí gần nhất.
   const TRAIL = 14;
@@ -902,16 +910,41 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       TS,
       t,
     };
+    const vq = Q.lights >= 8 ? 1 : Q.lights >= 4 ? 0.7 : 0.4;
+    vfx.setQuality(vq);
+    vfx.begin({ TS, t, dt, ground: kc.ground, glow: kc.glow, q: vq, hero: pos, heroYaw });
+    const heroVfx = paintHero(G, m, vfx);
+    // Pháp khí (S30): sách lơ lửng cạnh tay trái thay cho mô hình cầm tay.
+    if (m?.c.w === "cat") {
+      if (hero?.weapon) hero.weapon.visible = false;
+      const lh = hero?.vrm.humanoid.getRawBoneNode("leftHand" as any);
+      const vk = Server.P.owned?.[m.c.id]?.vk,
+        wi = vk ? Server.P.weapons?.[vk] : null;
+      let w = null;
+      try {
+        w = wi ? { id: wi.id, r: weaponOf(wi.id, ECON).r, tl: wi.tl ?? 1 } : null;
+      } catch {
+        w = null;
+      }
+      cat.update(vfx, G, m, lh ? lh.getWorldPosition(tmpHand) : null, w);
+    } else cat.hide();
     for (const pr of G.projs)
-      if (pr.skin && pr.m) {
+      if (pr.m && paintProj(pr, vfx)) continue;
+      else if (pr.m?.c.w === "cat" && pr.kind === "orb" && !pr.skin) {
+        if (vfx.first(pr)) cat.muzzle(vfx);
+        catProj(pr, vfx);
+      }
+      else if (pr.skin && pr.m) {
         const K = KITS[pr.m.c.id];
         if (K) kitTrail(pr, kc, groundY(pr.x, pr.y, 0) + 0.9, K.mau.c, K.mau.c2);
       }
-    for (const fl of G.fields) if (fl.k === "kvung") kitField(fl, kc, fl.m?.c.id ?? "");
+    for (const fl of G.fields) if (fl.k === "kvung" && !paintField(fl, vfx)) kitField(fl, kc, fl.m?.c.id ?? "");
     for (const f of G.fx) {
       const k = f.life / f.max,
         gy = groundY(f.x, f.y, 0);
-      if (f.k === "kfx") kitFx(f, kc);
+      if (f.k === "kfx") {
+        if (!paintFx(f, vfx)) kitFx(f, kc);
+      } else if (f.k === "hit") paintHit(f, vfx);
       else if (f.k === "dot")
         addP(
           f.x / TS,
@@ -990,7 +1023,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     }
     // Tuyết xoáy quanh chân khi dùng nộ hoặc kỹ năng Băng.
     const inBurst = p.act?.k === "burst" && G.time - p.act.t0 < 1.3;
-    if (m && (inBurst || (p.act?.k === "skill" && G.time - p.act.t0 < 0.7))) {
+    if (m && !heroVfx && !PAINTERS[m.c.id] && (inBurst || (p.act?.k === "skill" && G.time - p.act.t0 < 0.7))) {
       const elc = EL[m.c.el];
       for (let j = 0; j < (inBurst ? 32 : 14); j++) {
         const a = j * 2.4 + t * (inBurst ? 4 : 2),
@@ -1014,6 +1047,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         c: new THREE.Color(EL[fl.el].c),
         i: 1.5,
       });
+    vfx.end();
     parts.count = pi;
     parts.instanceMatrix.needsUpdate = true;
     if (parts.instanceColor) parts.instanceColor.needsUpdate = true;

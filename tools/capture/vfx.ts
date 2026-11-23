@@ -54,6 +54,8 @@ const SHOTS: Shot[] = [
   { id: "bam", ten: "Kỹ năng (bấm)", frames: 150, steps: [[0, `${C}.castKitSkill("bam")`]] },
   { id: "giu", ten: "Kỹ năng (giữ)", frames: 180, steps: [[0, `${C}.castKitSkill("giu")`]] },
   { id: "no", ten: "Nộ", frames: 240, steps: [[0, `${C}.castKitBurst()`]], cam: { dist: 9 } },
+  // Rút vũ khí khi ra đòn, đứng yên tới khi tự cất (pháp khí: sách hiện ra, mở, khép rồi tan).
+  { id: "rutcat", ten: "Rút ra và cất đi", frames: 400, steps: [[10, atk]], cam: { dist: 4.5, yaw: 0.5 } },
 ];
 
 async function main() {
@@ -62,6 +64,9 @@ async function main() {
   const page = await browser.newPage({ viewport: { width: W, height: H } });
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(String(e)));
+  page.on("console", (m) => m.type() === "error" && console.error("[trang]", m.text().slice(0, 400)));
+  page.on("crash", () => console.error("[trang sập]"));
+  page.on("framenavigated", (f) => f === page.mainFrame() && console.error("[điều hướng]", f.url()));
   await page.goto(url + "?e2e&renderer=3d");
   await page.evaluate(`(() => { localStorage.setItem("tinhtu-hints-v1", "1");
     localStorage.setItem("tinhtu-settings-v1", JSON.stringify({ quality: "high" })); })()`);
@@ -80,7 +85,11 @@ async function main() {
         n = s.frames * sub;
       for (let f = 0; f < n; f++) {
         for (const [at, js] of s.steps) if (at * sub === f) await page.evaluate(js);
-        await page.evaluate(step(1, 1 / 60 / sub));
+        try {
+          await page.evaluate(step(1, 1 / 60 / sub));
+        } catch (err) {
+          throw new Error(`khung ${f} của ${s.id}: ${String(err).slice(0, 200)}\n${errors.join("\n")}`);
+        }
         await page.screenshot({ path: join(dir, `${String(f).padStart(5, "0")}.jpg`), type: "jpeg", quality: 92 });
       }
       const mp4 = `${dir}.mp4`;
@@ -136,7 +145,11 @@ async function main() {
 async function setup(page: any, party: string[], s: Shot) {
   await page.evaluate(`(() => { const T = window.__tinhtu; T.S.capT = null; const P = T.Server.P; P.gm.god = true;
     for (const id of ${JSON.stringify(party)}) P.owned[id] = P.owned[id] || { lv: 60, cons: 0 };
-    P.party = ${JSON.stringify(party)}; T.menu.openMenu("main"); })()`);
+    P.party = ${JSON.stringify(party)};
+    const wpn = ${JSON.stringify(process.env.WPN ?? "")};
+    if (wpn) { P.weapons ??= {}; P.weapons["cap-" + wpn] = { uid: "cap-" + wpn, id: wpn, lv: 90, exp: 0, khai: 6, tl: Number(${JSON.stringify(process.env.TL ?? "1")}), lock: false };
+      P.owned[${JSON.stringify(party[0])}].vk = "cap-" + wpn; }
+    T.menu.openMenu("main"); })()`);
   await page.locator('.tt-main-item[data-item="tower"]').click();
   await page.locator("#towerFloors button").first().click();
   await page.waitForFunction(`window.__tinhtu.r3?.()?.debug?.()?.arena?.kind === "tower"`, null, { timeout: 60_000 });
