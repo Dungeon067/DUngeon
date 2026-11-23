@@ -492,9 +492,21 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     if (!camInit) camTarget.copy(want);
     camInit = true;
     camTarget.lerp(want, 1 - Math.exp(-dt * 10));
-    const yaw = GS.camYaw ?? 0,
+    let yaw = GS.camYaw ?? 0,
       pitch = Math.min(1.2, Math.max(0.2, GS.camPitch ?? 0.62));
     let dist = Math.min(24, Math.max(5, GS.camDist ?? 13));
+    // Cảnh nộ (S30): camera vòng ra trước mặt nhân vật, hạ thấp và áp sát, rồi trả về khi hết cảnh.
+    if (G.cine) {
+      const k = 1 - Math.max(0, G.cine.t) / G.cine.max,
+        w = Math.min(1, k * 5, (1 - k) * 6),
+        e = w * w * (3 - 2 * w);
+      const front = Math.atan2(-(p.dirX ?? 1), p.dirY ?? 0) + 0.5 - k * 0.9;
+      const dy = Math.atan2(Math.sin(front - yaw), Math.cos(front - yaw));
+      yaw += dy * e;
+      pitch += (0.22 - pitch) * e;
+      dist += (Math.max(4, dist * 0.42) - dist) * e;
+      camTarget.y += 0.35 * e;
+    }
     const dir = new THREE.Vector3(-Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), Math.cos(yaw) * Math.cos(pitch));
     if (F)
       for (let s = 1; s <= 24; s++) {
