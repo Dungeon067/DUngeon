@@ -76,7 +76,7 @@ export function weekKey(d = new Date()) {
   return `${m.getFullYear()}-${m.getMonth() + 1}-${m.getDate()}`;
 }
 export function shopLeft(P: Profile, id: string) {
-  const it = vk().nguon.cuaHang.find((x) => x.id === id);
+  const it = [...vk().nguon.cuaHang, ...vk().nguon.cuaHangVuKhi].find((x) => x.id === id);
   if (!it) return 0;
   const used = P.wShop.week === weekKey() ? (P.wShop.bought[id] ?? 0) : 0;
   return Math.max(0, it.moiTuan - used);
@@ -814,6 +814,19 @@ export const Server = {
       P.coin -= it.xu * k;
       P.bag[id] = (P.bag[id] ?? 0) + k;
       return { left: shopLeft(P, id) };
+    },
+    buyWeaponShop(this: any, { id }: any) {
+      const P: Profile = this.P,
+        it = vk().nguon.cuaHangVuKhi.find((x) => x.id === id);
+      if (!it) throw new Error("Cửa hàng không bán vũ khí này");
+      if (shopLeft(P, id) < 1) throw new Error("Đã hết lượt đổi tuần này");
+      if (P.coin < it.xu) throw new Error("Không đủ Xu");
+      const wk = weekKey();
+      if (P.wShop.week !== wk) P.wShop = { week: wk, bought: {} };
+      P.wShop.bought[id] = (P.wShop.bought[id] ?? 0) + 1;
+      P.coin -= it.xu;
+      const w = addWeapon(P, id);
+      return { uid: w.uid, left: shopLeft(P, id) };
     },
     claimWAch(this: any, { id }: any) {
       const P: Profile = this.P,

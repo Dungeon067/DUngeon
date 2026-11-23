@@ -53,13 +53,25 @@
   --tt-el-wood: #7cc95a;
   --tt-el-wood-2: #d3f2b8;
 
-  /* ---------- Độ hiếm ---------- */
-  --tt-r3: #6fa8dc;
+  /* ---------- Độ hiếm (S24b: cân lại; -a/-b là hai đầu chuyển màu chéo của thẻ đồ) ---------- */
+  --tt-r1: #a4a8b3;
+  --tt-r1-a: #3d4049;
+  --tt-r1-b: #6d717c;
+  --tt-r2: #86c79c;
+  --tt-r2-a: #26463a;
+  --tt-r2-b: #4a8063;
+  --tt-r3: #86b8e6;
   --tt-r3-bg: #172a4d;
-  --tt-r4: #ad8cf5;
-  --tt-r4-bg: #241c4d;
-  --tt-r5: #f0c060;
-  --tt-r5-bg: #33240f;
+  --tt-r3-a: #24406a;
+  --tt-r3-b: #4c7cb0;
+  --tt-r4: #ab92f2;
+  --tt-r4-bg: #211d4f;
+  --tt-r4-a: #2f2a6b;
+  --tt-r4-b: #6b5cc0;
+  --tt-r5: #eab35c;
+  --tt-r5-bg: #33220f;
+  --tt-r5-a: #5a3418;
+  --tt-r5-b: #b8783a;
 
   /* ---------- Phông và cỡ chữ ---------- */
   --tt-font-body: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -120,8 +132,8 @@
   --tt-shadow-2: 0 1px 0 rgb(255 255 255 / 0.05) inset, 0 8px 24px rgb(3 6 20 / 0.55);
   --tt-shadow-3: 0 18px 48px rgb(3 6 20 / 0.7);
   --tt-glow-bronze: 0 0 0 1px var(--tt-bronze-lo), 0 0 18px rgb(226 180 83 / 0.35);
-  --tt-glow-r5: 0 0 22px rgb(240 192 96 / 0.45);
-  --tt-glow-r4: 0 0 18px rgb(173 140 245 / 0.4);
+  --tt-glow-r5: 0 0 22px rgb(234 179 92 / 0.4);
+  --tt-glow-r4: 0 0 18px rgb(171 146 242 / 0.35);
 
   /* ---------- Chuyển động ---------- */
   --tt-dur-instant: 80ms;

@@ -1,4 +1,5 @@
 import { effectAt } from "../world/regions";
+import { tickStack } from "../combat/damage";
 import { GS } from "../core/state";
 import { camRelative, dir8 } from "./facing";
 import { tryAttack, updateBuffer } from "../combat/actions";
@@ -97,6 +98,7 @@ export function update(dt: number) {
   }
   for (const pm of GS.G.party) {
     if (pm.skillCd > 0) pm.skillCd -= dt;
+    if (pm.stack) tickStack(pm, dt);
     if (Server.P.gm.nocd) {
       pm.skillCd = 0;
       pm.energy = pm.c.burst.cost;

@@ -27,6 +27,13 @@ export interface CineHooks {
   hint: { hidden: boolean; textContent: string | null };
 }
 
+/** Nền thẻ đồ ở bảng kết quả: chuyển màu chéo theo độ hiếm như thẻ trong Tủ Đồ. */
+const LOOT_BG: Record<number, [string, string]> = {
+  3: ["#24406a", "#4c7cb0"],
+  4: ["#2f2a6b", "#6b5cc0"],
+  5: ["#5a3418", "#b8783a"],
+};
+
 export function createCinematic(cv: HTMLCanvasElement, hooks: CineHooks) {
   const ui = { classList: { add(_c: string) {}, remove(_c: string) {} } };
   const skipBtn = hooks.skipBtn,
@@ -1675,11 +1682,29 @@ export function createCinematic(cv: HTMLCanvasElement, hooks: CineHooks) {
         }
       } else if (it.kind === "char") X.drawImage(cardArt(it.id, 200, 310), 0, 0, cwF, ch);
       else {
-        X.fillStyle = "#1d2a44";
+        const [a, b] = LOOT_BG[it.r] ?? LOOT_BG[3]!;
+        const lg = X.createLinearGradient(0, 0, cwF, ch);
+        lg.addColorStop(0, a);
+        lg.addColorStop(1, b);
+        X.fillStyle = lg;
         X.fillRect(0, 0, cwF, ch);
+        X.fillStyle = "rgba(255,255,255,.35)";
+        for (let k = 0; k < 14; k++)
+          X.fillRect((((k * 53) % 97) / 97) * cwF, (((k * 31) % 89) / 89) * ch * 0.8, 1.5, 1.5);
         drawItemIcon(it.k, cwF / 2, ch * 0.42, cwF * 0.8, col, it.wid);
       }
-      if (front) {
+      if (front && it.kind !== "char") {
+        const sh = ch * 0.17;
+        X.fillStyle = "#ece5d6";
+        X.fillRect(0, ch - sh, cwF, sh);
+        X.fillStyle = "#3a3226";
+        X.font = `700 ${Math.max(10, Math.round(cwF * 0.1))}px "Be Vietnam Pro",sans-serif`;
+        X.textAlign = "center";
+        X.fillText(it.name, cwF / 2, ch - sh * 0.32, cwF - 8);
+        X.fillStyle = col;
+        X.font = `${Math.max(10, Math.round(cwF * 0.11))}px sans-serif`;
+        X.fillText("★".repeat(it.r), cwF / 2, ch - sh - 4);
+      } else if (front) {
         const vg = X.createLinearGradient(0, ch * 0.55, 0, ch);
         vg.addColorStop(0, "rgba(0,0,0,0)");
         vg.addColorStop(1, "rgba(0,0,0,.75)");

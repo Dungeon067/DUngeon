@@ -65,6 +65,8 @@ const SAMPLES: Record<string, Sample> = {
   kill: { files: range("impactSoft_heavy", 2), vol: 0.55, rate: [0.9, 1.1] },
   hurt: { files: range("impactPunch_heavy", 2), vol: 0.7, rate: [0.9, 1.05] },
   slam: { files: range("impactPlate_heavy", 3), vol: 0.8, rate: [0.55, 0.65], synth: "boom" },
+  tab: { files: ["cloth1"], vol: 0.22, rate: [1.7, 1.9] },
+  pick: { files: ["impactGlass_light_000"], vol: 0.3, rate: [1.5, 1.7] },
   react: { files: ["impactGlass_medium_000"], vol: 0.45, rate: [0.95, 1.2] },
   chest: { files: ["metalLatch"], vol: 0.6, rate: [1, 1] },
   coin: { files: ["handleCoins", "handleCoins2"], vol: 0.45, rate: [1, 1.15] },

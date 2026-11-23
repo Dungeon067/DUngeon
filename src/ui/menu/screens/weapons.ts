@@ -9,6 +9,8 @@ import { Server, powerOf, statsOf, vk, wDef, weaponList } from "../../../server/
 import { button, h, openDialog, stars, tabs, tag } from "../../ds";
 import { icon } from "../../icons/icons";
 import { weaponImg } from "../../weapon-art";
+import { stackOf } from "../../../entities/party";
+import { renderTuDo } from "./bag";
 import { refreshWallets, openMenu, back, registerScreen, rerender } from "../shell";
 import {
   SUB_NAME,
@@ -21,6 +23,9 @@ import {
   statRows,
   weaponCard,
   weaponCell,
+  sortWeapons,
+  filterWeapons,
+  weaponBadge,
 } from "../weapon-ui";
 
 /* S24: Kho vũ khí, Nâng cấp / Tinh luyện, Thay vũ khí, Lò Rèn. Mọi thay đổi đi qua Server.req. */
@@ -39,29 +44,9 @@ const itemName = (id: string) => ITEMS.find((i) => i.id === id)?.name ?? id;
 const bagOf = (id: string) => Server.P.bag[id] ?? 0;
 const weapons = () => Object.values(Server.P.weapons) as WeaponInst[];
 
-export function sortWeapons(list: WeaponInst[], sort: Sort) {
-  const key = (w: WeaponInst) => {
-    const d = wDef(w.id)!;
-    return sort === "lv" ? [w.lv, d.r, w.tl] : sort === "tl" ? [w.tl, d.r, w.lv] : [d.r, w.lv, w.tl];
-  };
-  return [...list].sort((a, b) => {
-    const ka = key(a),
-      kb = key(b);
-    for (let i = 0; i < 3; i++) if (ka[i] !== kb[i]) return kb[i]! - ka[i]!;
-    return a.id.localeCompare(b.id) || a.uid.localeCompare(b.uid);
-  });
-}
-export function filterWeapons(list: WeaponInst[], f: { type: string; r: number; eq: "all" | "on" | "off" }) {
-  return list.filter((w) => {
-    const d = wDef(w.id)!,
-      on = !!holderOf(w.uid);
-    return (
-      (f.type === "all" || d.loai === f.type) && (!f.r || d.r === f.r) && (f.eq === "all" || (f.eq === "on") === on)
-    );
-  });
-}
+export { sortWeapons, filterWeapons };
 
-function chipGroup<T extends string | number>(label: string, opts: [T, string][], cur: T, set: (v: T) => void) {
+export function chipGroup<T extends string | number>(label: string, opts: [T, string][], cur: T, set: (v: T) => void) {
   return h("div", { class: "tt-row tt-chips", role: "group", "aria-label": label }, [
     h("span", { class: "tt-dim" }, [label]),
     ...opts.map(([v, l]) => {
@@ -91,6 +76,7 @@ function refreshParty(ids: string[]) {
     m.hp = m.alive ? Math.round((m.hp / m.maxHp) * st.hp) : m.hp;
     m.st = st;
     m.maxHp = st.hp;
+    m.stack = stackOf(id, m.stack ?? null);
   }
 }
 
@@ -185,7 +171,7 @@ function renderInventory(host: HTMLElement, params: any) {
   );
 }
 
-function lockBtn(w: WeaponInst) {
+export function lockBtn(w: WeaponInst) {
   const b = button(w.lock ? "Mở khóa" : "Khóa", {
     variant: "ghost",
     icon: w.lock ? "mo-khoa" : "khoa",
@@ -445,7 +431,7 @@ function renderSwap(host: HTMLElement, params: any) {
         "aria-selected": String(w.uid === sw.sel),
       },
       [
-        h("span", { class: "art" }, [weaponImg(w.id, 128)]),
+        h("span", { class: "art" }, [weaponBadge(w.id, `Cấp ${w.lv}`, { refine: w.tl, locked: w.lock, holder: who })]),
         h("span", { class: "txt" }, [
           h("b", {}, [d.ten]),
           h("small", {}, [stars(d.r, 10), ` Cấp ${w.lv} · R${w.tl}`]),
@@ -543,7 +529,7 @@ function renderForge(host: HTMLElement) {
     b.dataset.id = d.id;
     grid.append(
       h("article", { class: "tt-forge-item", "data-r": d.r, "data-id": d.id }, [
-        h("span", { class: "art" }, [weaponImg(d.id, 256, d.ten)]),
+        h("span", { class: "art" }, [weaponBadge(d.id, `Đang có ${n}`)]),
         h("b", {}, [d.ten]),
         h("small", { class: "tt-dim" }, [`${TYPE_NAME(d.loai)} · Tấn công +${pct(d.tanCong)} · ${d.biDong.ten}`]),
         h("small", {}, [`Đang có ${n}`]),
@@ -555,14 +541,11 @@ function renderForge(host: HTMLElement) {
 }
 
 registerScreen("weapons", {
-  title: "Kho vũ khí",
-  icon: "danh",
-  render: renderInventory,
-  onKey(e) {
-    if (e.key !== "q" && e.key !== "e") return false;
-    inv.type = TYPES[(TYPES.indexOf(inv.type as any) + (e.key === "e" ? 1 : TYPES.length - 1)) % TYPES.length]!;
-    rerender();
-    return true;
+  title: "Tủ Đồ",
+  icon: "tui-do",
+  render: (host, params) => {
+    if (params.tab === undefined) params.tab = "vu-khi";
+    renderTuDo(host, params);
   },
 });
 registerScreen("wupgrade", { title: "Vũ khí", icon: "nang-cap", render: renderUpgrade });

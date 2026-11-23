@@ -1,5 +1,6 @@
 /* Thư viện thành phần (S08). Mỗi hàm trả về phần tử DOM; CSS ở ds.css. Xem docs/ux/he-thong-thiet-ke.md. */
 import "./ds.css";
+import "./the-do.css";
 import { ELEMENT_ICON, icon, iconSvg } from "../icons/icons";
 import type { Rarity } from "../tokens";
 
@@ -404,6 +405,61 @@ export function itemCard(o: { name: string; rarity: Rarity; icon: string; qty?: 
         stars(o.rarity, 11),
       ]),
       h("span", { class: "nm" }, [o.name]),
+    ],
+  );
+}
+
+export type LootRarity = 1 | 2 | 3 | 4 | 5;
+export interface LootOpts {
+  rarity: LootRarity;
+  art: Node;
+  /** Dải nhãn dưới: "Cấp 60", "×120"... */
+  label: string;
+  ariaLabel: string;
+  refine?: number;
+  locked?: boolean;
+  /** Chân dung nhỏ của nhân vật đang trang bị. */
+  holder?: Node | null;
+  selected?: boolean;
+  picked?: boolean;
+  disabled?: boolean;
+  starSize?: number;
+  /** Thẻ chỉ để hiển thị (nằm trong nút khác hoặc danh sách): dùng thẻ span, không nhận chạm. */
+  static?: boolean;
+}
+/** Thẻ đồ dọc: ảnh trên nền theo độ hiếm, hàng sao đè mép, dải nhãn sáng, R góc trái, khóa/người dùng góc phải. */
+export function lootCard(o: LootOpts) {
+  const st = h("span", { class: "tt-loot__stars", "aria-hidden": "true" });
+  st.innerHTML = iconSvg("sao", { size: o.starSize ?? 13 }).repeat(o.rarity);
+  const tr =
+    o.locked || o.holder
+      ? h("span", { class: "tt-loot__tr" }, [
+          o.locked ? h("span", { class: "tt-loot__lock", title: "Đã khóa" }, [icon("khoa", { size: 12 })]) : null,
+          o.holder ? h("span", { class: "tt-loot__who" }, [o.holder]) : null,
+        ])
+      : null;
+  const cls = "tt-loot" + (o.selected ? " is-sel" : "") + (o.picked ? " is-picked" : "");
+  return h(
+    o.static ? "span" : "button",
+    o.static
+      ? { class: cls + " is-static", "data-r": o.rarity, role: "img", "aria-label": o.ariaLabel }
+      : {
+          type: "button",
+          class: cls,
+          "data-r": o.rarity,
+          "aria-pressed": String(!!(o.selected || o.picked)),
+          "aria-label": o.ariaLabel,
+          disabled: o.disabled,
+        },
+    [
+      h("span", { class: "tt-loot__art" }, [
+        o.art,
+        o.rarity >= 4 ? h("span", { class: "tt-loot__shine", "aria-hidden": "true" }) : null,
+      ]),
+      o.refine ? h("span", { class: "tt-loot__ref" }, [`R${o.refine}`]) : null,
+      tr,
+      st,
+      h("span", { class: "tt-loot__label" }, [o.label]),
     ],
   );
 }

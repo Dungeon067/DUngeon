@@ -172,6 +172,9 @@ thietKe:
       cuaHang:
         - { id: quang-tinh-luyen, xu: 1200, moiTuan: 7 }
         - { id: quang-tinh-luyen-sao, xu: 7000, moiTuan: 3 }
+      # Vũ khí 4★ cửa hàng tuần: mỗi tuần một bản, đủ R5 sau 5 tuần nếu đổi đều.
+      cuaHangVuKhi:
+        - { id: nhanh-mai-truoc-gio, xu: 60000, moiTuan: 1 }
       # Phôi Lòng Sao: thành tựu Binh Khí (một lần) và cửa hàng sự kiện mỗi tháng.
       # Hệ sự kiện chưa có trong game: suKienMoiThang hiện chỉ dùng cho mô phỏng.
       phoi:
