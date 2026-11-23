@@ -10,6 +10,7 @@ import { EL } from "../data/content";
 import { cur } from "../entities/party";
 import { Server } from "../server/server";
 import { drawCine } from "../ui/cine";
+import { renderer3d, type WorldRenderer } from "../render3d/select";
 import { drawMenuBg } from "../ui/menuBg";
 import { drawArena, drawChest, drawPortal, drawRock, drawStatue, drawTile, drawTree } from "../world/draw";
 import { MH, MW, TL, TS } from "../world/map";
@@ -19,9 +20,16 @@ export function render() {
   const tm = performance.now() / 1000;
   ctx.setTransform(GS.DPR, 0, 0, GS.DPR, 0, 0);
   if (GS.scene !== "play") {
+    renderer3d()?.hide?.();
     drawMenuBg(tm);
     return;
   }
+  const r3 = renderer3d();
+  if (r3 && GS.G.map && r3.frame(tm)) {
+    render3dOverlay(r3, tm);
+    return;
+  }
+  r3?.hide?.();
   const sx = GS.G.shake ? rand(-GS.G.shake, GS.G.shake) : 0,
     sy = GS.G.shake ? rand(-GS.G.shake, GS.G.shake) : 0;
   ctx.fillStyle = "#1f5a8e";
@@ -333,6 +341,30 @@ export function render() {
   }
   ctx.globalAlpha = 1;
   ctx.restore();
+  drawScreenOverlays(tm);
+}
+
+/** Lớp 2D đè lên cảnh 3D: chữ sát thương theo vị trí chiếu, viền tối, băng chữ, cắt cảnh. */
+function render3dOverlay(r3: WorldRenderer, tm: number) {
+  ctx.clearRect(0, 0, GS.VW, GS.VH);
+  ctx.textAlign = "center";
+  for (const t of GS.G.texts) {
+    const k = t.life / t.max,
+      q = r3.project(t.x, t.y + 30, 30);
+    if (!q.vis) continue;
+    ctx.globalAlpha = Math.min(1, k * 2);
+    ctx.font = `800 ${t.size * GS.ZOOM}px 'Be Vietnam Pro',sans-serif`;
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "rgba(0,0,0,.65)";
+    ctx.strokeText(t.txt, q.x, q.y);
+    ctx.fillStyle = t.col;
+    ctx.fillText(t.txt, q.x, q.y);
+  }
+  ctx.globalAlpha = 1;
+  drawScreenOverlays(tm);
+}
+
+function drawScreenOverlays(tm: number) {
   // night tint vignette
   const vg = ctx.createRadialGradient(
     GS.VW / 2,

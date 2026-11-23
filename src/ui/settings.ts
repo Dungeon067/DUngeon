@@ -113,7 +113,7 @@ function panelGeneral() {
         ["low", "Thấp (mượt hơn trên máy yếu)"],
       ],
       settings.quality,
-      (v) => ((settings.quality = v), commit(), resize()),
+      (v) => ((settings.quality = v), commit(), resize(), void applyRenderer()),
     ),
     choice<RendererPref>(
       "Lớp vẽ thế giới",
