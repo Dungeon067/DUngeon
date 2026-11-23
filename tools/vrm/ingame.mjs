@@ -64,7 +64,13 @@ await pg.evaluate(() => {
   for (const x of window.__tinhtu.S.G.party) x.energy = 999;
 });
 await pg.keyboard.press("KeyQ");
-await sleep(700);
+// Bỏ qua màn chân dung (cine, che giữa màn hình) rồi mới chụp động tác nộ.
+await pg.waitForFunction(() => window.__tinhtu.S.G.cine, null, { timeout: 15000 });
+await pg.evaluate(() => {
+  window.__tinhtu.S.G.cine.t = 0.01;
+});
+await pg.waitForFunction(() => !window.__tinhtu.S.G.cine, null, { timeout: 30000 });
+await sleep(350);
 await shot("4-no");
 await b.close();
 console.log("ok", out);
