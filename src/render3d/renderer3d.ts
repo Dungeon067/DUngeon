@@ -244,6 +244,45 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   const ringPool: THREE.Mesh[] = [],
     arrowPool: THREE.Object3D[] = [],
     orbPool: THREE.Mesh[] = [];
+  /** Vệt chém lưỡi liềm 3D: lõi sáng ở mép ngoài, nhạt dần vào trong và theo thời gian. */
+  const slashPool: { g: THREE.Group; m: THREE.Mesh; mat: THREE.ShaderMaterial }[] = [];
+  const slashGeo = new Map<number, THREE.BufferGeometry>();
+  const slashGeom = (arc: number) => {
+    const k = Math.round(arc * 20) / 20;
+    let g = slashGeo.get(k);
+    if (!g) {
+      g = new THREE.RingGeometry(0.5, 1, 28, 1, -k, k * 2);
+      slashGeo.set(k, g);
+    }
+    return g;
+  };
+  function slashMesh() {
+    const mat = new THREE.ShaderMaterial({
+      uniforms: {
+        uC: { value: new THREE.Color() },
+        uCore: { value: new THREE.Color() },
+        uK: { value: 1 },
+        uArc: { value: 1 },
+      },
+      vertexShader: `varying vec2 vP; void main(){ vP = position.xy; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+      fragmentShader: `uniform vec3 uC; uniform vec3 uCore; uniform float uK; uniform float uArc; varying vec2 vP;
+        void main(){ float r = length(vP); float a = atan(vP.y, vP.x);
+          float edge = smoothstep(0.5, 1.0, r);
+          // Đầu vệt (phía cuối cung) đậm, đuôi nhạt: theo chiều vung.
+          float along = clamp((a + uArc) / (2.0 * uArc), 0.0, 1.0);
+          float alpha = clamp(edge * 1.4, 0.0, 1.0) * (0.35 + 0.65 * along) * uK;
+          vec3 col = mix(uC, uCore, smoothstep(0.82, 0.98, r));
+          gl_FragColor = vec4(col * 1.3, alpha); }`,
+      transparent: true,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+    });
+    const m = new THREE.Mesh(slashGeom(1), mat);
+    m.rotation.x = -Math.PI / 2;
+    const g = new THREE.Group();
+    g.add(m);
+    return { g, m, mat };
+  }
 
   function setupPost() {
     composer?.dispose();
@@ -664,7 +703,8 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
 
     // Mũi tên, đạn phép, vòng, hạt; đèn điểm theo nguyên tố.
     const glow: { x: number; y: number; z: number; c: THREE.Color; i: number }[] = [];
-    let ai = 0,
+    let si = 0,
+      ai = 0,
       oi = 0,
       ri = 0,
       pi = 0;
@@ -768,7 +808,27 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         mat.color.set(f.col);
         mat.opacity = k;
         if (k > 0.5) glow.push({ x: f.x / TS, y: gy + 0.6, z: f.y / TS, c: new THREE.Color(f.col), i: 2 * k });
-      } else if (f.k === "slash" || f.k === "arrowRain" || f.k === "meteor") {
+      } else if (f.k === "slash") {
+        let s = slashPool[si];
+        if (!s) {
+          s = slashMesh();
+          slashPool.push(s);
+          fxGroup.add(s.g);
+        }
+        si++;
+        s.g.visible = true;
+        const arc = f.arc ?? 1.1,
+          R = Math.max(0.6, (f.r ?? 60) / TS) * (1.05 - k * 0.2);
+        s.m.geometry = slashGeom(arc);
+        s.mat.uniforms.uArc.value = arc;
+        s.mat.uniforms.uK.value = Math.min(1, k * 1.4);
+        s.mat.uniforms.uC.value.set(f.col ?? "#ffffff");
+        s.mat.uniforms.uCore.value.set(f.core ?? "#ffffff");
+        s.g.position.set(f.x / TS, gy + 0.75 + (f.trail === "heavy" ? -0.15 : 0), f.y / TS);
+        s.g.rotation.set(0, -(f.ang ?? 0), (f.flip ?? 1) * 0.25);
+        s.m.scale.set(R, R * (f.flip ?? 1), 1);
+        glow.push({ x: f.x / TS, y: gy + 0.8, z: f.y / TS, c: new THREE.Color(f.col ?? "#fff"), i: 1.2 * k });
+      } else if (f.k === "arrowRain" || f.k === "meteor") {
         for (let j = 0; j < 8; j++)
           addP(
             f.x / TS + Math.sin(j * 2.1 + f.x) * 0.6 * (1 - k),
@@ -820,6 +880,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     parts.instanceMatrix.needsUpdate = true;
     if (parts.instanceColor) parts.instanceColor.needsUpdate = true;
     for (let i = ri; i < ringPool.length; i++) ringPool[i].visible = false;
+    for (let i = si; i < slashPool.length; i++) slashPool[i].g.visible = false;
     if (night) {
       for (const l of lamps) glow.push({ x: l.x, y: l.y, z: l.z, c: new THREE.Color(l.c), i: 1.4 });
       if (m) glow.push({ x: pos.x, y: pos.y + 1.8, z: pos.z + 0.6, c: new THREE.Color(EL[m.c.el].c), i: 0.35 });
