@@ -202,7 +202,6 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   scene.add(fxGroup);
   const vfx = new Vfx(scene);
   const cat = new Catalyst(scene);
-  const tmpHand = new THREE.Vector3();
 
   // Vệt kiếm: dải nối các vị trí mũi vũ khí gần nhất.
   const TRAIL = 14;
@@ -919,7 +918,6 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     // Pháp khí (S30): sách lơ lửng cạnh tay trái thay cho mô hình cầm tay.
     if (m?.c.w === "cat") {
       if (hero?.weapon) hero.weapon.visible = false;
-      const lh = hero?.vrm.humanoid.getRawBoneNode("leftHand" as any);
       const vk = Server.P.owned?.[m.c.id]?.vk,
         wi = vk ? Server.P.weapons?.[vk] : null;
       let w = null;
@@ -928,12 +926,12 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       } catch {
         w = null;
       }
-      cat.update(vfx, G, m, lh ? lh.getWorldPosition(tmpHand) : null, w);
+      cat.update(vfx, G, m, w);
     } else cat.hide();
     for (const pr of G.projs)
       if (pr.m && paintProj(pr, vfx)) continue;
       else if (pr.m?.c.w === "cat" && pr.kind === "orb" && !pr.skin) {
-        if (vfx.first(pr)) cat.muzzle(vfx);
+        if (vfx.first(pr)) cat.muzzle(vfx, { x: pr.vx, z: pr.vy });
         catProj(pr, vfx);
       } else if (pr.skin && pr.m) {
         const K = KITS[pr.m.c.id];

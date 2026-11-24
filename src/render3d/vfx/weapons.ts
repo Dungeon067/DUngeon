@@ -9,6 +9,7 @@ import { fxMat, setCols, type FxMat } from "./mats";
 import { runeTex, type Cell } from "./tex";
 import * as SH from "./shapes";
 import type { Vfx } from "./system";
+import { BookFloat } from "./book-float";
 
 const ease = (x: number) => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
 const RUNE: Record<string, "ice" | "water" | "fire" | "wind" | "bolt" | "earth" | "wood"> = {
@@ -132,6 +133,8 @@ class Book {
 
 /* ---------- trạng thái pháp khí của người đang điều khiển ---------- */
 
+const RING_TILT = new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI / 2 - 0.3, 0, 0));
+
 export class Catalyst {
   private book: Book;
   out = 0;
@@ -142,6 +145,9 @@ export class Catalyst {
   private chargeK = 0;
   private wasCharging = false;
   readonly pos = new THREE.Vector3();
+  private readonly fl = new BookFloat();
+  private readonly anchor = new THREE.Vector3();
+  private readonly aim = new THREE.Vector3();
   el = "ice";
   constructor(parent: THREE.Object3D) {
     this.book = new Book(parent);
@@ -150,8 +156,8 @@ export class Catalyst {
     this.book.g.visible = false;
     this.out = 0;
   }
-  /** Gọi mỗi khung khi nhân vật dùng pháp khí. hand: vị trí tay trái (thế giới) nếu có. */
-  update(X: Vfx, G: any, m: any, hand: THREE.Vector3 | null, w: WInfo | null) {
+  /** Gọi mỗi khung khi nhân vật dùng pháp khí. Sách bay theo neo của thân người (BookFloat). */
+  update(X: Vfx, G: any, m: any, w: WInfo | null) {
     const V = X.V,
       p = G.p,
       dt = V.dt,
@@ -171,17 +177,15 @@ export class Catalyst {
     const prev = this.out;
     this.out = Math.max(0, Math.min(1, this.out + (this.want ? dt / 0.55 : -dt / 0.6)));
     if (this.out <= 0) return void (this.book.g.visible = false);
-    // Vị trí: cạnh tay trái, lệch ra ngoài và lên trên một chút; trôi nhẹ.
+    // Neo theo thân người (cạnh vai trái, phía trước), không theo xương tay: vung tay không kéo sách.
     const lx = Math.cos(yaw),
       lz = -Math.sin(yaw),
       fx = Math.sin(yaw),
       fz = Math.cos(yaw);
-    const base = hand ?? new THREE.Vector3(h.x + lx * 0.32, h.y + 1.0, h.z + lz * 0.32);
-    this.pos.set(
-      base.x + lx * 0.22 + fx * 0.12,
-      base.y + 0.12 + Math.sin(V.t * 2.2) * 0.03,
-      base.z + lz * 0.22 + fz * 0.12,
-    );
+    this.anchor.set(h.x + lx * 0.5 + fx * 0.32, h.y + 1.2, h.z + lz * 0.5 + fz * 0.32);
+    if (prev <= 0) this.fl.reset(this.anchor, yaw);
+    this.fl.update(dt, this.anchor, yaw);
+    this.pos.copy(this.fl.pos);
     const appear = this.want ? ease(this.out * 1.6 - 0.4) : 1;
     const open = this.want ? ease((this.out - 0.45) / 0.55) : ease((this.out - 0.5) / 0.5);
     const dis = this.want ? 0 : Math.max(0, 1 - this.out / 0.5);
@@ -191,7 +195,7 @@ export class Catalyst {
     const g = this.book.g;
     g.visible = true;
     g.position.copy(this.pos);
-    g.rotation.set(-0.55, yaw + Math.PI + 0.35, 0, "YXZ");
+    g.quaternion.copy(this.fl.quat);
     g.scale.setScalar((0.25 + 0.75 * appear) * 1.7);
     this.book.pose(V.t, this.el, open, this.flip, glow, dis);
     // Vòng phù văn quanh sách, xoay nhẹ; nạp trọng kích thì to hơn, nhanh hơn, hiện thêm vòng chữ.
@@ -199,7 +203,7 @@ export class Catalyst {
     const ring = X.use("cat-ring", SH.decal, { map: runeTex(RUNE[this.el] ?? "ice"), side: THREE.DoubleSide });
     if (ring) {
       ring.m.position.copy(this.pos);
-      ring.m.rotation.set(-0.55 + Math.PI / 2 - 0.3, yaw + Math.PI + 0.35, 0, "YXZ");
+      ring.m.quaternion.copy(this.fl.quat).multiply(RING_TILT);
       ring.m.scale.setScalar(0.4 + this.chargeK * 0.3);
       setCols(ring.u, ...cols);
       ring.u.uA.value = ringA;
@@ -304,6 +308,7 @@ export class Catalyst {
       }
     }
     if (this.wasCharging && !charging && p.charge?.done !== false) {
+      this.fl.kick(this.aim.set(fx, 0, fz), 2.2);
       X.flash(this.pos.x, this.pos.y + 0.1, this.pos.z, cols[1], 4, 2);
       X.shock(h.x, h.y, h.z, 3, 0.05, cols, 1);
       this.flip = 0;
@@ -312,8 +317,10 @@ export class Catalyst {
     if (w) quality(X, this, w, cols, open * (1 - dis));
   }
   /** Lóe ở miệng sách khi bắn một đạn phép. */
-  muzzle(X: Vfx) {
+  muzzle(X: Vfx, dir?: { x: number; z: number }) {
     if (this.out < 0.5) return;
+    const yaw = X.V.heroYaw;
+    this.fl.kick(this.aim.set(dir?.x ?? Math.sin(yaw), 0, dir?.z ?? Math.cos(yaw)));
     const cols = colsOf(this.el);
     X.flash(this.pos.x, this.pos.y + 0.08, this.pos.z, cols[1], 2.2, 1.1);
     X.emit(1, () => ({

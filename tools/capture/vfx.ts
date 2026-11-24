@@ -37,6 +37,8 @@ const step = (n: number, dt: number) =>
   `new Promise((r) => requestAnimationFrame(() => { const T = window.__tinhtu; ${PIN} T.capStep(${n}, ${dt}); requestAnimationFrame(() => r(0)); }))`;
 const atk = `${C}.press("atk")`;
 const hold = (on: boolean) => `window.__tinhtu.S.holdAtk = ${on}`;
+/** Cần di chuyển ảo (x phải, y xuống màn hình); chỉ chạy trên vite dev (nhập module nguồn). */
+const move = (x: number, y = 0) => `import("/src/core/input.ts").then((m) => { m.joy.x = ${x}; m.joy.y = ${y}; })`;
 
 const SHOTS: Shot[] = [
   {
@@ -57,6 +59,22 @@ const SHOTS: Shot[] = [
   { id: "bam", ten: "Kỹ năng (bấm)", frames: 150, steps: [[0, `${C}.castKitSkill("bam")`]] },
   { id: "giu", ten: "Kỹ năng (giữ)", frames: 180, steps: [[0, `${C}.castKitSkill("giu")`]] },
   { id: "no", ten: "Nộ", frames: 240, steps: [[0, `${C}.castKitBurst()`]], cam: { dist: 9 } },
+  // Pháp khí: vung tay ra đòn, chạy rồi dừng, lướt, bắn liên tục (sách bay theo neo bằng lò xo).
+  {
+    id: "sach",
+    ten: "Sách bay theo người",
+    frames: 420,
+    steps: [
+      ...[0, 22, 44].map((f) => [f, atk] as [number, string]),
+      [80, move(1)],
+      [160, move(0)],
+      [215, move(-1)],
+      [222, `${C}.press("dash")`],
+      [250, move(0)],
+      ...[300, 312, 324, 336, 348, 360, 372, 384].map((f) => [f, atk] as [number, string]),
+    ],
+    cam: { dist: 5.5 },
+  },
   // Rút vũ khí khi ra đòn, đứng yên tới khi tự cất (pháp khí: sách hiện ra, mở, khép rồi tan).
   { id: "rutcat", ten: "Rút ra và cất đi", frames: 400, steps: [[10, atk]], cam: { dist: 3.4, yaw: 1.6, pitch: 0.35 } },
 ];
