@@ -17,6 +17,7 @@ import { SP_MC, SP_POL } from "./s27/spear";
 import { BW_ARCH, BW_FEM, BW_MC, BW_POL, STRS } from "./s27/bowpol";
 import { MELEE_FEM } from "./s27/femsets";
 import { MOVE_EXTRA } from "./s27/move-extra";
+import { FEM_LOCO } from "./s27/fem-loco";
 
 const FILE = "public/media/anim/humanoid.json";
 const lib = JSON.parse(readFileSync(FILE, "utf8"));
@@ -80,6 +81,7 @@ const MC: Record<string, MocapRecipe> = {
   ...CT_MC,
   ...SP_MC,
   ...BW_MC,
+  ...FEM_LOCO,
 };
 for (const [n, r] of Object.entries(MC)) {
   lib.clips[n] = bakeMocap(r, names, lib.clips.relax ?? lib.clips.idle, lib.fps);
