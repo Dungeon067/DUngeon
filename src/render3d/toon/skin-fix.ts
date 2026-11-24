@@ -74,3 +74,59 @@ export function fixStrayFingerWeights(root: THREE.Object3D, maxDist = 0.2): numb
   });
   return fixed;
 }
+
+const ARM = /(Hand|Thumb|Index|Middle|Ring|Little|LowerArm)/i;
+const TORSO = /(Hips|Spine|Chest|Neck|Bust|Head)/i;
+/**
+ * Xóa tam giác lỗi nối bàn tay với thân (mô hình xuất lỗi: đầu ngón găng tay nối với một đỉnh ở ngực, dài ≈ 1 m),
+ * hiện thành que mảnh từ tay chĩa ra khi chạy. Tam giác bị xóa khi một đỉnh theo xương tay / ngón và một đỉnh theo
+ * xương thân, đồng thời cạnh dài nhất ở tư thế gốc > `minLen` mét. Trả về số tam giác đã xóa.
+ */
+export function dropHandTorsoSlivers(root: THREE.Object3D, minLen = 0.3): number {
+  let dropped = 0;
+  root.traverse((o) => {
+    const m = o as THREE.SkinnedMesh;
+    if (!m.isSkinnedMesh || !m.skeleton || !m.geometry.index) return;
+    const g = m.geometry,
+      idx = g.index!,
+      pos = g.attributes.position as THREE.BufferAttribute,
+      si = g.attributes.skinIndex as THREE.BufferAttribute | undefined,
+      sw = g.attributes.skinWeight as THREE.BufferAttribute | undefined;
+    if (!si || !sw) return;
+    const names = m.skeleton.bones.map((b) => b.name);
+    const group = (i: number) => {
+      let top = -1,
+        tw = 0;
+      for (let k = 0; k < 4; k++) {
+        const w = sw.getComponent(i, k);
+        if (w > tw) {
+          tw = w;
+          top = si.getComponent(i, k);
+        }
+      }
+      const n = names[top] ?? "";
+      return ARM.test(n) ? 1 : TORSO.test(n) ? 2 : 0;
+    };
+    const a = new THREE.Vector3(),
+      b = new THREE.Vector3();
+    const keep: number[] = [];
+    let changed = false;
+    for (let t = 0; t + 2 < idx.count; t += 3) {
+      const v = [idx.getX(t), idx.getX(t + 1), idx.getX(t + 2)];
+      const gs = v.map(group);
+      let bad = false;
+      if (gs.includes(1) && gs.includes(2)) {
+        let L = 0;
+        for (let e = 0; e < 3; e++)
+          L = Math.max(L, a.fromBufferAttribute(pos, v[e]).distanceTo(b.fromBufferAttribute(pos, v[(e + 1) % 3])));
+        bad = L > minLen;
+      }
+      if (bad) {
+        dropped++;
+        changed = true;
+      } else keep.push(...v);
+    }
+    if (changed) g.setIndex(keep);
+  });
+  return dropped;
+}

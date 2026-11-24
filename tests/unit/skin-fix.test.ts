@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import * as THREE from "three";
-import { fixStrayFingerWeights } from "../../src/render3d/toon/skin-fix";
+import { dropHandTorsoSlivers, fixStrayFingerWeights } from "../../src/render3d/toon/skin-fix";
 
 /** Lưới 3 đỉnh: 2 đỉnh ngực theo xương ngực, 1 đỉnh ngực gắn nhầm ngón tay; thêm 1 đỉnh găng tay sát ngón (hợp lệ). */
 function mesh() {
@@ -33,5 +33,16 @@ describe("Sửa đỉnh gắn nhầm xương ngón tay", () => {
     const si = m.geometry.attributes.skinIndex;
     expect(si.getX(2)).toBe(1); // đỉnh ngực giờ theo xương ngực
     expect(si.getX(3)).toBe(2); // đỉnh găng tay vẫn theo ngón
+  });
+});
+
+describe("Xóa tam giác lỗi nối tay với thân", () => {
+  it("bỏ tam giác dài nối đỉnh ngón tay với đỉnh ngực, giữ tam giác bình thường", () => {
+    const m = mesh();
+    // Tam giác 0: ba đỉnh ngực (hợp lệ). Tam giác 1: hai đỉnh ngực + đỉnh găng tay cách ≈ 0,7 m (lỗi).
+    m.geometry.setIndex([0, 1, 2, 0, 1, 3]);
+    m.geometry.attributes.skinIndex.setX(2, 1);
+    expect(dropHandTorsoSlivers(m)).toBe(1);
+    expect(Array.from(m.geometry.index!.array)).toEqual([0, 1, 2]);
   });
 });
