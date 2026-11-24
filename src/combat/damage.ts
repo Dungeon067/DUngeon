@@ -88,7 +88,7 @@ export function hitEnemy(e: any, m: any, mult: number, el: string | null, o: any
   // Va chạm (S30): tia lửa theo nguyên tố ở lớp 3D, khựng hình và rung nhẹ theo lực đòn.
   GS.G.fx.push({ k: "hit", x: e.x, y: e.y, el, pw: mult, crit, w: m.c.w, normal: !!o.normal, life: 0.28, max: 0.28 });
   if (mult >= 0.7) hitstop("heavy");
-  else if (settings.impactFx) feelState.stop = Math.max(feelState.stop, 2 / 60);
+  else if (settings.impactFx && o.normal) feelState.stop = Math.max(feelState.stop, 2 / 60);
   shake("light", Math.min(2, mult));
   if (crit) hitstop("crit");
   if (r.mult > 1) {
