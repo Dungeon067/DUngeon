@@ -84,6 +84,8 @@ const Noi = z
     rut: z.string().optional(),
     xoay: z.tuple([n(0, 1), n(0, 1), n(-4, 4)]).optional(),
     truc: z.enum(["x", "y", "z"]).optional(),
+    /** Xoay thêm (độ) trong tay khi chạy trong trận: vũ khí hạ thấp, chéo ra sau người. */
+    chay: v3.optional(),
   })
   .strict();
 export const WEAPONS = ["sword", "great", "spear", "bow", "cat"] as const;

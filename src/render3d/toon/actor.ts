@@ -2,6 +2,8 @@
  * Nhân vật VRM (@pixiv/three-vrm, MToon, spring bone) với hoạt ảnh humanoid dùng chung.
  * Thả public/media/models/<id>/model.vrm là game tự nhận; thiếu thì dùng mẫu tạm trong content/models.yaml.
  */
+import { FootIK } from "./foot-ik";
+import { MOVE, locoWeights } from "../../combat/movement";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { VRMLoaderPlugin, VRMUtils, type VRM } from "@pixiv/three-vrm";
@@ -17,6 +19,7 @@ import { validateModels, type WeaponType } from "../../data/models-schema";
 import { toonHair } from "./hair";
 import { outlineMat, toonMat } from "./mat";
 
+const _v3 = new THREE.Vector3();
 const _v = new THREE.Vector3(),
   _s = new THREE.Vector3(),
   _p = new THREE.Vector3(),
@@ -144,6 +147,8 @@ export class VrmActor {
   restHips: THREE.Vector3;
   hipsH: number;
   bow: BowRig | null = null;
+  /** IK chân bám dốc / bậc (renderer đặt ground, planeY, active mỗi khung). */
+  footIK: FootIK | null = null;
   wfx: WeaponFx | null = null;
   private strs = new Map<string, number[]>();
   private fps: number;
@@ -251,6 +256,7 @@ export class VrmActor {
     const bone = vrm.humanoid.getNormalizedBoneNode(grip.bone as any);
     const a = new VrmActor(vrm, wtype, A.clips, A.fps, url);
     a.setupCloth(id);
+    if (MOVE.ikChan.bat) a.footIK = new FootIK(vrm, a.obj, MOVE.ikChan);
     a.obj.scale.setScalar(s);
     a.obj.updateMatrixWorld(true);
     a.obj.userData.yOff = look.yOffset - box.min.y * s;
@@ -342,6 +348,85 @@ export class VrmActor {
     return name;
   }
 
+  private locos: { names: string; acts: THREE.AnimationAction[]; L: number; tgt: number; fade: number }[] = [];
+  private locoActs = new Map<string, THREE.AnimationAction>();
+  private locoV = 0;
+  private locoSp: number[] = [];
+  /** Pha bước chung của blend di chuyển (0..1), lớp tư thế dùng để nhún hông theo nhịp. */
+  locoPh = 0;
+  private locoAct(name: string) {
+    let a = this.locoActs.get(name);
+    if (!a) {
+      const src = this.actions.get(name);
+      if (!src) return null;
+      // Bản sao clip riêng để blend không đụng action thường của cùng clip.
+      a = this.mixer.clipAction(src.getClip().clone());
+      a.setLoop(THREE.LoopRepeat, Infinity);
+      a.timeScale = 0;
+      this.locoActs.set(name, a);
+    }
+    return a;
+  }
+  /**
+   * Blend 1D đi / chạy / chạy nhanh theo tốc độ v (speeds = tốc độ từng clip), đồng bộ pha bước
+   * (mọi clip cùng pha chuẩn hóa), crossfade `fade` giây với clip trước đó. Gọi mỗi khung khi di chuyển.
+   */
+  locomote(names: string[], speeds: number[], v: number, fade: number, pha: number[] = []) {
+    names = names.map((n) => this.variant(n));
+    const key = names.join("|");
+    let L = this.locos.find((x) => x.names === key);
+    if (!L || L.tgt === 0) {
+      const acts = names.map((n) => this.locoAct(n)).filter((a): a is THREE.AnimationAction => !!a);
+      if (acts.length !== names.length) return;
+      for (const o of this.locos) {
+        o.tgt = 0;
+        o.fade = fade;
+      }
+      if (!L) {
+        L = { names: key, acts, L: 0, tgt: 1, fade };
+        this.locos.push(L);
+        for (const a of acts) {
+          a.reset();
+          a.timeScale = 0;
+          a.setEffectiveWeight(0);
+          a.play();
+        }
+      }
+      L.tgt = 1;
+      L.fade = fade;
+      if (this.cur) this.cur.fadeOut(fade);
+      this.cur = null;
+      this.curName = "loco";
+    }
+    this.locoV = v;
+    this.locoSp = speeds;
+    this.locoPha = pha;
+  }
+  private locoPha: number[] = [];
+  private locoStep(dt: number) {
+    if (!this.locos.length) return;
+    const w = locoWeights(this.locoSp, this.locoV);
+    const act = this.locos.find((x) => x.tgt === 1);
+    if (act) {
+      let rate = 0;
+      act.acts.forEach((a, i) => (rate += w[i] / Math.max(0.1, a.getClip().duration)));
+      this.locoPh = (this.locoPh + rate * dt) % 1;
+    }
+    for (const o of this.locos) {
+      o.L = THREE.MathUtils.clamp(o.L + (o.tgt ? 1 : -1) * (dt / Math.max(0.01, o.fade)), 0, 1);
+      o.acts.forEach((a, i) => {
+        const d = a.getClip().duration;
+        a.time = ((((this.locoPh + (this.locoPha[i] ?? 0)) % 1) + 1) % 1) * d;
+        a.setEffectiveWeight(w[i] * o.L);
+      });
+    }
+    this.locos = this.locos.filter((o) => {
+      if (o.L > 0 || o.tgt) return true;
+      o.acts.forEach((a) => a.stop());
+      return false;
+    });
+  }
+
   /** Chuyển clip (pha trộn mượt). once: chạy một lần rồi giữ khung cuối. */
   play(name: string, o: { once?: boolean; fade?: number; speed?: number; restart?: boolean } = {}) {
     name = this.variant(name);
@@ -355,6 +440,15 @@ export class VrmActor {
     a.enabled = true;
     a.setEffectiveWeight(1);
     a.play();
+    if (this.locos.length && !this.cur) {
+      // Từ blend di chuyển sang clip thường: blend tắt dần, clip mới hiện dần.
+      const f = o.fade ?? 0.15;
+      for (const L of this.locos) {
+        L.tgt = 0;
+        L.fade = f;
+      }
+      a.fadeIn(f);
+    }
     if (this.cur && this.cur !== a) {
       this.cur.crossFadeTo(a, o.fade ?? 0.15, false);
       if ((o.fade ?? 0.15) < 0.12) this.cloth.jolt();
@@ -429,12 +523,15 @@ export class VrmActor {
 
   update(dt: number) {
     this.layer?.restore();
+    this.locoStep(dt);
     this.mixer.update(dt);
     this.layer?.apply(dt, this.poseIn);
     if (this.layer) this.obj.rotation.z = this.layer.bank;
     this.offW += ((this.poseIn.mode === "act" ? 1 : 0) - this.offW) * Math.min(1, dt * 14);
     this.gripBlend();
     this.grip2();
+    this.footIK?.update(dt);
+    this.inertia(dt);
     this.cloth.update(dt);
     // Váy, vạt áo không lật quá giới hạn của loại vải so với tư thế nghỉ, dù gió mạnh tới đâu.
     for (const c of this.clothJoints)
@@ -448,6 +545,28 @@ export class VrmActor {
       const on = !this.wfx || this.wfx.st === "hand";
       this.bow.update(on ? this.strNow() : 0, on ? this.strRel() : -1);
     }
+  }
+
+  private pPrev: THREE.Vector3 | null = null;
+  private vPrev = new THREE.Vector3();
+  private aSm = new THREE.Vector3();
+  /** Tóc / vải theo quán tính thân: tăng tốc thì vải dạt ra sau, phanh thì văng tới trước. */
+  private inertia(dt: number) {
+    const P = MOVE.muot.phu,
+      p = this.obj.getWorldPosition(_v3);
+    if (!this.pPrev || dt <= 0) {
+      this.pPrev = p.clone();
+      return;
+    }
+    const v = p.clone().sub(this.pPrev).divideScalar(dt);
+    v.y = 0;
+    this.pPrev.copy(p);
+    // Dịch chuyển tức thời (dịch chỗ, đổi bản đồ) không tính là gia tốc.
+    if (v.length() > 30) v.set(0, 0, 0);
+    const a = v.clone().sub(this.vPrev).divideScalar(dt);
+    this.vPrev.copy(v);
+    this.aSm.lerp(a, Math.min(1, dt * 10));
+    this.cloth.inertia.copy(this.aSm).multiplyScalar(-P.quanTinh).clampLength(0, P.toiDa);
   }
 
   /** Trộn cách cầm lúc chờ / lúc ra đòn theo offW. */

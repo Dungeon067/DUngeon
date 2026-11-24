@@ -1,0 +1,61 @@
+# Hợp nhất A (máy trạng thái di chuyển) + D (IK chân). Thông số gốc theo Wafflus/unity-genshin-impact-movement-system (MIT),
+# đổi đơn vị: 40 px = 1 m (TS), 1 bậc = 0,55 m (jump.levelPx / TS). Tốc độ cơ sở giữ 155 px/s như game hiện tại
+# (bản gốc 5 m/s) để không đổi nhịp gameplay; các hệ số nhân giữ nguyên bản gốc.
+toc:
+  coSo: 155 # px/s = Run ×1
+  di: 0.225 # Walk
+  chay: 1
+  chayNhanh: 1.7 # Sprint
+  luot: 2 # Dash
+  diNguong: 0.5 # cần analog nghiêng dưới mức này thì đi bộ
+  nhaChayNhanh: 1 # nhả phím chạy nhanh quá 1 s thì về chạy
+luot:
+  thoiGian: 0.3 # giây
+  lienTiep: 2 # tối đa 2 lần liên tiếp
+  cuaSo: 1 # mỗi lần cách nhau dưới 1 s mới tính là liên tiếp
+  hoi: 1.75 # vượt giới hạn thì hồi 1,75 s
+dung: # lực hãm (1/s, vận tốc giảm theo e^-k·t); hết khi tốc độ < 10% hoặc hết thời gian clip
+  nhe: { ham: 5, toiDa: 0.45 } # sau đi bộ
+  vua: { ham: 6.5, toiDa: 0.5 } # sau chạy
+  manh: { ham: 5, toiDa: 0.7 } # sau chạy nhanh / lướt
+roi:
+  gioiHan: 10 # m/s
+  nangTu: 3 # m: rơi từ cao hơn thì tiếp đất nặng (đứng yên) hoặc lăn (đang chạy)
+  bacM: 0.55
+dat: { nhe: 0.22, lan: 0.6, nang: 0.75 } # giây khóa hoạt ảnh tiếp đất
+xoay: 0.14 # giây xoay tới hướng đích
+# Clip theo trạng thái. tam = clip đang dùng tạm; can = clip cần làm thêm (danh sách cho nhóm hoạt ảnh).
+clip:
+  walk: { tam: walk }
+  run: { tam: run }
+  sprint: { tam: sprint }
+  dash: { tam: dash }
+  stopLight: { tam: runStop, toc: 1.4, can: walkStop }
+  stopMedium: { tam: runStop }
+  stopHard: { tam: runStop, toc: 0.8, can: sprintStop }
+  fall: { tam: jumpAir }
+  landLight: { tam: jumpLand, toc: 1.4 }
+  landRoll: { tam: jumpLand, toc: 0.6, can: landRoll }
+  landHard: { tam: jumpLand, toc: 0.5, can: landHard }
+ikChan:
+  bat: true
+  toiDa: 0.4 # m chỉnh tối đa
+  muot: 14 # tốc độ làm mượt
+  nghieng: 0.5 # rad nghiêng bàn chân tối đa theo dốc
+# Mượt hóa chuyển động (vòng 2).
+# chuyen: crossfade giữa mọi trạng thái di chuyển (s); chuyenNhanh: vào lướt / tiếp đất.
+# blend: đi / chạy / chạy nhanh trộn theo tốc độ (blend 1D), đồng bộ pha bước; pha: lệch pha từng clip (0..1).
+# batDau: t giây đầu khi khởi động, tốc độ đích nhân k (dồn trọng tâm, bước đầu ngắn).
+# quay: hướng mới lệch quá `goc` độ khi đang chạy thì pivot: tốc độ còn `giu`, xoay tới hướng mới trong `t` giây.
+# than: lớp thủ tục trên hông/lưng. chay / chayNhanh: đổ người theo tốc độ (độ); gia: độ thêm mỗi (tốc độ cơ sở/s)
+#   gia tốc; phanh: ngả sau tối đa (độ); nhun: hông nhún mỗi bước (m); tanSo (Hz) + giam (<1 có quá đà): lò xo;
+#   nhin: đầu nhìn trước theo hướng sắp đi, tối đa (độ).
+# phu: tóc / vải theo quán tính thân: lực = -gia tốc (m/s²) × quanTinh, tối đa toiDa.
+muot:
+  chuyen: 0.2
+  chuyenNhanh: 0.15
+  blend: { pha: { walk: 0, run: 0, sprint: 0 } }
+  batDau: { t: 0.15, k: 0.45 }
+  quay: { goc: 135, t: 0.1, giu: 0.35 }
+  than: { chay: 6, chayNhanh: 12, gia: 3, phanh: 9, nhun: 0.02, tanSo: 2.6, giam: 0.42, nhin: 45 }
+  phu: { quanTinh: 0.05, toiDa: 1.2 }
