@@ -25,6 +25,7 @@
     "tauri": "tauri",
     "sprites": "tsx tools/sprites/build.ts",
     "anim:author": "tsx tools/anim/author.ts",
+    "anim:s27": "tsx tools/anim/build.ts",
     "story:build": "tsx scripts/story-extract.ts"
   },
   "devDependencies": {

@@ -1,0 +1,206 @@
+/**
+ * Cung: tay trái cầm giữa cung, cung dựng đứng hơi nghiêng; tay phải kéo dây về cạnh cằm, khuỷu phải ngang vai,
+ * đầu nhìn theo mũi tên, vai trái hướng mục tiêu (+Z). Ngoài trận cung hạ xuống cạnh người.
+ * Thời lượng clip chỉ là tỉ lệ: renderer co giãn theo cửa sổ đòn (ACT_WIN), mũi tên bay ngay lúc bấm nên
+ * thả dây đặt sớm (≈ 15% clip).
+ */
+import type { ClipDef, OverlayDef, Spec, Hand } from "../pose";
+import { P, STAND, FIST, OPEN, foot, ANKLE_Y } from "./base";
+import { idleLoop, readyLoop, carry, add } from "./common";
+
+const HOOK = { c: 0.45, t: 0.5, ci: 0.75, cm: 0.75 };
+const LET = { c: 0.15, t: 0.25, ci: 0.1, cm: 0.1, s: 6 };
+
+const LH_DOWN: Hand = { p: [0.2, -0.04, 0.06], fing: [0.2, -0.5, 0.9], thumb: [0, 1, 0.3], elbow: [0.3, 0, -1] };
+/** Ngoài trận: cung hạ cạnh người, tay phải buông tự nhiên. */
+export const BOW_RELAX: Spec = P(STAND, { lh: LH_DOWN, gl: FIST });
+
+/** Trong trận: nghiêng người, cung dựng nghiêng ở tay trái hạ thấp ngang hông, tay phải đặt hờ ở dây. */
+export const BOW_READY: Spec = P(STAND, {
+  hp: [0, -0.04, 0],
+  hr: [0, -32, 0],
+  b: { spine: [2, -6, 0], chest: [3, -6, 0], upperChest: [1, 0, 0], neck: [0, 18, 0], head: [4, 24, 0] },
+  fl: foot(0.07, 0.12, -22),
+  fr: foot(-0.1, -0.1, -48),
+  lh: { p: [0.29, 0.02, 0.27], fing: [-0.45, -0.1, 1], thumb: [-0.12, 1, 0.3], elbow: [1, -0.3, -0.6] },
+  rh: { p: [0.06, 0.08, 0.17], fing: [0.6, -0.2, 0.8], thumb: [0, 1, 0.2], elbow: [-0.6, -0.7, -0.4] },
+  gl: FIST,
+  gr: { c: 0.35, t: 0.4, ci: 0.55, cm: 0.55 },
+});
+
+/** Đầy dây: vai trái về mục tiêu, tay phải neo cạnh cằm, khuỷu phải ngang vai. */
+export const BOW_DRAW: Spec = P(STAND, {
+  hp: [0, -0.03, 0],
+  hr: [0, -62, 0],
+  b: { spine: [0, -8, 0], chest: [0, -10, -2], upperChest: [0, -4, -2], neck: [0, 36, 0], head: [6, 44, 6] },
+  fl: foot(0.02, 0.17, -62),
+  fr: foot(-0.03, -0.17, -78),
+  lh: { p: [0.04, 0.42, 0.58], fing: [-0.15, 0, 1], thumb: [0.15, 1, 0], elbow: [1, -0.4, 0] },
+  rh: { p: [-0.03, 0.45, 0.0], fing: [0.35, 0, 1], thumb: [0, 1, 0], elbow: [-0.2, 0.15, -1] },
+  gl: FIST,
+  gr: HOOK,
+});
+const HALF = P(BOW_DRAW, { rh: { p: [0.0, 0.42, 0.25] }, hr: [0, -55, 0] });
+/** Vừa thả: tay phải bật ra sau dọc má, ngón mở; tay cung giữ hướng. */
+const LOOSE_S = P(BOW_DRAW, {
+  rh: { p: [-0.1, 0.46, -0.12], fing: [0.2, 0.2, 1] },
+  gr: LET,
+  lh: { p: [0.04, 0.41, 0.6] },
+});
+
+/** Bắn nhanh: rút – neo – thả – giữ dáng – về thế chờ. v: biến thể thân. */
+function shot(v: { lean: number; yaw: number; strong?: boolean }): ClipDef {
+  const tw = (s: Spec): Spec =>
+    P(s, {
+      hr: add(s.hr, [0, v.yaw, 0]),
+      b: { ...s.b, spine: add(s.b.spine, [v.lean, 0, 0]) },
+      hp: add(s.hp, [0, v.strong ? -0.02 : 0, 0]),
+    });
+  const follow = v.strong
+    ? P(tw(LOOSE_S), { hp: [0, -0.06, -0.05], rh: { p: [-0.16, 0.44, -0.2] }, b: { chest: [-4, -10, -2] } })
+    : tw(LOOSE_S);
+  // Rút nhanh, giữ đầy dây một nhịp rõ ràng (căng dây về cằm), thả, giữ dáng rồi về thế chờ.
+  const full = v.strong ? 0.2 : 0.14,
+    rel = v.strong ? 0.4 : 0.32;
+  return {
+    dur: v.strong ? 0.9 : 0.7,
+    str: [
+      [0, 0.15],
+      [0.03, 1],
+      [rel, 1],
+      [rel + 0.015, 0],
+    ],
+    keys: [
+      { t: 0, s: BOW_READY },
+      { t: full * 0.5, s: tw(HALF), ease: "out" },
+      { t: full, s: tw(BOW_DRAW), ease: "out" },
+      { t: rel, s: tw(P(BOW_DRAW, { rh: { p: [-0.045, 0.45, -0.02] } })), ease: "lin" },
+      { t: rel + 0.05, s: follow, ease: "out" },
+      { t: 0.62, s: follow, ease: "inout" },
+      { t: 1, s: BOW_READY, ease: "inout" },
+    ],
+  };
+}
+
+/** Ngắm tụ lực: giữ đầy dây, run nhẹ vì căng. */
+const aim: ClipDef = {
+  dur: 1.6,
+  loop: true,
+  str: [
+    [0, 1],
+    [1, 1],
+  ],
+  keys: [
+    { t: 0, s: BOW_DRAW },
+    { t: 0.5, s: P(BOW_DRAW, { rh: { p: [-0.035, 0.452, -0.01] }, hp: [0, -0.034, 0] }) },
+    { t: 1, s: BOW_DRAW },
+  ],
+};
+
+/** Bắn chéo lên: tay cung nâng cao, ngửa người, mắt nhìn theo mũi tên. up: độ ngẩng (0..1). */
+const upDraw = (up: number, rh?: Partial<Hand>): Spec =>
+  P(BOW_DRAW, {
+    b: {
+      spine: [-4 * up, -8, 0],
+      chest: [-8 * up, -10, -2],
+      upperChest: [-4 * up, -4, -2],
+      neck: [-10 * up, 36, 0],
+      head: [6 - 22 * up, 44, 6],
+    },
+    lh: { p: [0.04, 0.42 + 0.48 * up, 0.58 - 0.24 * up], fing: [-0.15, 0.9 * up, 1], thumb: [0.15, 1, -0.9 * up] },
+    rh: { p: [-0.03, 0.45 + 0.05 * up, 0.0], fing: [0.35, 0.5 * up, 1], ...rh },
+  });
+
+/** Kỹ năng: nhún, bật lùi một nhịp kéo dây giữa không, đáp xuống bắn chéo lên trời rồi bước về. */
+const air = (s: Spec, y: number, z: number): Spec =>
+  P(s, {
+    hp: [0, y, z],
+    fl: foot(0.02, 0.1 + z * 0.6, -62, ANKLE_Y + Math.max(0, y + 0.03), 25),
+    fr: foot(-0.03, -0.12 + z * 0.8, -78, ANKLE_Y + Math.max(0, y + 0.06), 35),
+  });
+const landed = (s: Spec): Spec =>
+  P(s, { hp: [0, -0.1, -0.22], fl: foot(0.03, -0.06, -60), fr: foot(-0.05, -0.42, -80) });
+const bowSkill: ClipDef = {
+  dur: 0.75,
+  str: [
+    [0.08, 0.15],
+    [0.24, 1],
+    [0.44, 1],
+    [0.455, 0],
+    [0.85, 0.15],
+  ],
+  keys: [
+    { t: 0, s: BOW_READY },
+    { t: 0.08, s: P(BOW_READY, { hp: [0, -0.1, 0.02] }), ease: "out" },
+    { t: 0.2, s: air(upDraw(0.3, { p: [0.0, 0.46, 0.2] }), 0.1, -0.12), ease: "out" },
+    { t: 0.3, s: air(upDraw(0.55), 0.04, -0.2), ease: "in" },
+    { t: 0.36, s: landed(upDraw(0.55)), ease: "out" },
+    { t: 0.44, s: landed(upDraw(0.58, { p: [-0.045, 0.49, -0.02] })), ease: "lin" },
+    { t: 0.5, s: landed(upDraw(0.6, { p: [-0.14, 0.52, -0.14], fing: [0.2, 0.4, 1] })), ease: "out" },
+    { t: 0.7, s: P(landed(upDraw(0.6, { p: [-0.14, 0.52, -0.14] })), { gr: LET }), ease: "inout" },
+    { t: 0.86, s: P(BOW_READY, { hp: [0, -0.06, -0.1], fr: foot(-0.1, -0.2, -48) }), ease: "inout" },
+    { t: 1, s: BOW_READY, ease: "inout" },
+  ],
+};
+
+/** Nộ: lùi chân sau, hạ trọng tâm, giương cung thẳng lên trời, ngửa người kéo đầy dây, giữ rồi thả mưa tên. */
+const SKY = P(upDraw(1), {
+  hp: [0, -0.08, -0.05],
+  hr: [0, -58, 0],
+  b: { spine: [-10, -8, 0], chest: [-14, -10, -2], upperChest: [-8, -4, -2], neck: [-14, 34, 0], head: [-24, 40, 4] },
+  lh: { p: [0.05, 0.98, 0.3], fing: [-0.1, 1, 0.45], thumb: [0.12, 0.45, -1], elbow: [1, -0.3, 0] },
+  rh: { p: [-0.02, 0.52, 0.02], fing: [0.3, 0.8, 0.6], thumb: [0, 0.6, -0.8], elbow: [-0.3, -0.4, -1] },
+  fl: foot(0.04, 0.16, -50),
+  fr: foot(-0.1, -0.3, -70),
+});
+const SKY_LOOSE = P(SKY, { rh: { p: [-0.12, 0.5, -0.16], fing: [0.1, 0.6, 1] }, gr: LET });
+const burst: ClipDef = {
+  dur: 1.3,
+  str: [
+    [0.2, 0],
+    [0.36, 1],
+    [0.76, 1],
+    [0.775, 0],
+  ],
+  keys: [
+    { t: 0, s: BOW_READY },
+    { t: 0.14, s: P(BOW_READY, { hp: [0, -0.13, -0.08], fr: foot(-0.1, -0.3, -60) }), ease: "out" },
+    {
+      t: 0.3,
+      s: P(upDraw(0.6, { p: [0.0, 0.62, 0.3] }), { fl: SKY.fl, fr: SKY.fr, hp: [0, -0.06, -0.05] }),
+      ease: "inout",
+    },
+    { t: 0.44, s: SKY, ease: "out" },
+    { t: 0.7, s: P(SKY, { hp: [0, -0.1, -0.06] }), ease: "inout" },
+    { t: 0.76, s: P(SKY, { rh: { p: [-0.04, 0.515, 0.0] } }), ease: "lin" },
+    { t: 0.8, s: SKY_LOOSE, ease: "out" },
+    { t: 0.9, s: P(SKY_LOOSE, { hp: [0, -0.09, -0.06] }), ease: "inout" },
+    { t: 1, s: BOW_READY, ease: "inout" },
+  ],
+};
+
+export const BOW: Record<string, ClipDef> = {
+  bowRelax: idleLoop(BOW_RELAX),
+  bowReady: {
+    ...readyLoop(BOW_READY),
+    str: [
+      [0, 0.15],
+      [1, 0.15],
+    ],
+  },
+  bow1: shot({ lean: 0, yaw: 0 }),
+  bow2: shot({ lean: 3, yaw: -6 }),
+  bow3: shot({ lean: -2, yaw: 4, strong: true }),
+  bowAim: aim,
+  bowSkill,
+  bowBurst: burst,
+};
+
+const carryBow = { hold: { ...LH_DOWN, p: [0.21, -0.02, 0.1] as [number, number, number] }, k: 0.6, grip: FIST };
+export const BOW_MOVE: Record<string, OverlayDef> = {
+  bowWalk: carry("walk", { l: carryBow }),
+  bowRun: carry("run", { l: { ...carryBow, k: 0.45 } }),
+  bowSprint: carry("sprint", { l: { ...carryBow, k: 0.35 } }),
+  bowStop: carry("runStop", { l: { ...carryBow, k: 0.5 } }),
+};
+void OPEN;

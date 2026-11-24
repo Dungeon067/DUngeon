@@ -27,7 +27,13 @@ import { TS } from "../world/map";
 import { CanvasSprite } from "./actors3d";
 import { getRenderable, renderObjects } from "./renderables";
 import type { WorldRenderer } from "./select";
-import { MODELS, VrmActor } from "./toon/actor";
+import { MODELS, POSES, VrmActor } from "./toon/actor";
+import { weaponOut } from "../combat/weapon-state";
+import { jumpPhysics } from "../combat/jump";
+import { HeroFx } from "./toon/motion-fx";
+import { WindField, type WindSrc } from "./toon/wind";
+import { REGIONS, cellAt } from "../world/regions";
+import { ELEMENTS } from "../ui/tokens";
 import { FADE, disposeTree, fadeOccluder, toonMat } from "./toon/mat";
 import { animateMonster, buildMonster, disposeMonster, preloadMonsters, type MonsterView } from "./toon/monsterGlb";
 import { buildSky } from "./toon/sky";
@@ -203,31 +209,44 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   const vfx = new Vfx(scene);
   const cat = new Catalyst(scene);
 
-  // Vệt kiếm: dải nối các vị trí mũi vũ khí gần nhất.
-  const TRAIL = 14;
-  const trailPos = new Float32Array(TRAIL * 2 * 3);
-  const trailGeo = new THREE.BufferGeometry();
-  trailGeo.setAttribute("position", new THREE.BufferAttribute(trailPos, 3));
-  const trailA = new Float32Array(TRAIL * 2);
-  trailGeo.setAttribute("a", new THREE.BufferAttribute(trailA, 1));
-  const ti: number[] = [];
-  for (let i = 0; i < TRAIL - 1; i++) ti.push(i * 2, i * 2 + 1, i * 2 + 2, i * 2 + 1, i * 2 + 3, i * 2 + 2);
-  trailGeo.setIndex(ti);
-  const trailMat = new THREE.ShaderMaterial({
-    transparent: true,
-    depthWrite: false,
-    side: THREE.DoubleSide,
-    blending: THREE.AdditiveBlending,
-    uniforms: { uC: { value: new THREE.Color(0xffffff) } },
-    vertexShader:
-      "attribute float a; varying float vA; void main(){ vA=a; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }",
-    fragmentShader: "uniform vec3 uC; varying float vA; void main(){ gl_FragColor=vec4(uC*vA, vA); }",
-  });
-  const trail = new THREE.Mesh(trailGeo, trailMat);
-  trail.frustumCulled = false;
-  scene.add(trail);
-  const tipHist: THREE.Vector3[] = [],
-    baseHist: THREE.Vector3[] = [];
+  // Vệt chém, nét ấn pháp khí, hạt lướt (S27).
+  const heroFx = new HeroFx();
+  scene.add(heroFx.group);
+  let heroMoveT = 0,
+    heroStopT = -9;
+  // Gió cho tóc, vải (S27): gió nền theo vùng và độ cao, field hệ Phong (lốc xoáy, bão), xung chiêu, miệng gió đã mở.
+  const wind = new WindField(POSES.gio),
+    fieldLife = new WeakMap<object, number>();
+  let dashW = 0;
+  let castT0 = -1;
+  const dashDir = new THREE.Vector2();
+  const heroWind = (h: VrmActor, at: THREE.Vector3, dt: number) => {
+    const G = GS.G,
+      W = G.map;
+    wind.tick(dt);
+    for (const g of G.gusts ?? []) wind.pulse(g.k, g.x / TS, g.y / TS);
+    if (G.gusts) G.gusts.length = 0;
+    const nguon: WindSrc[] = [];
+    for (const fl of G.fields as any[]) {
+      if (fl.el !== "wind" || !POSES.gio.xung[fl.k]) continue;
+      if (!fieldLife.has(fl)) fieldLife.set(fl, fl.life);
+      const L = fieldLife.get(fl)!;
+      nguon.push({ k: fl.k, x: fl.x / TS, z: fl.y / TS, age: L - fl.life, life: L });
+    }
+    const mieng: { x: number; z: number }[] = [];
+    for (const st of W?.puzzles ?? [])
+      for (const o of st.objs) if (o.def.nang && o.done) mieng.push({ x: o.x / TS, z: o.y / TS });
+    const vung = REGIONS[cellAt(W, G.p.x, G.p.y).r]?.id;
+    const p = G.p;
+    if (p.dashT > 0) {
+      dashW = 1;
+      dashDir.set(p.dvx, p.dvy);
+      if (dashDir.lengthSq() < 1e-6) dashDir.set(p.dirX, p.dirY);
+      dashDir.normalize();
+    } else dashW = Math.max(0, dashW - dt / POSES.gio.luot.tat);
+    const luot = dashW > 0 ? { x: -dashDir.x * dashW, z: -dashDir.y * dashW } : undefined;
+    wind.sample(h.cloth.wind, at, G.time, { vung, cao: at.y, nguon, mieng, luot });
+  };
 
   // Quái: mô hình toon tạm. Vật thể câu đố: renderable (bản 2D dựng thành tấm phẳng nếu chưa có bản 3D).
   const monsters = new Map<any, MonsterView>();
@@ -415,7 +434,12 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   const v3 = new THREE.Vector3();
   const toV = (x: number, y: number, zPx = 0) => v3.set(x / TS, zPx / TS, y / TS);
 
-  function heroClip(p: any, m: any): { k: string; once?: boolean; speed?: number; fade?: number } {
+  function heroClip(
+    p: any,
+    m: any,
+    idleK: string | null = null,
+    stopping = false,
+  ): { k: string; once?: boolean; speed?: number; fade?: number } {
     const T = GS.G.time,
       w = (m.c.w as WeaponType) ?? "sword",
       A = MODELS.hoatAnh[w] ?? MODELS.hoatAnh.sword;
@@ -437,17 +461,26 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       }
     }
     if (p.hurt > 0) return { k: "hurt", once: true, fade: 0.06 };
-    if (p.dashT > 0) return { k: "dash", once: true, speed: 1.3, fade: 0.06 };
+    // Lướt ≈ 0,25 giây (clip 0,3 giây, kết ở sải chạy để nối thẳng vào chạy); trên không thì thân thẳng, thu gọn.
+    if (p.dashT > 0) return { k: p.air ? "dashAir" : "dash", once: true, speed: 1.2, fade: 0.04 };
     if (p.air) {
       p._landT = T;
       return p.vz > 0 ? { k: "jumpUp", once: true, fade: 0.08 } : { k: "jumpAir", fade: 0.2 };
     }
     if (p._landT !== undefined && T - p._landT < 0.22) return { k: "jumpLand", once: true, speed: 1.4, fade: 0.06 };
+    // S27: cầm vũ khí thì dùng thế chờ / chạy theo vũ khí; đã cất thì tay không thả lỏng.
+    const armed = !hero!.wfx || hero!.wfx.st === "hand" || hero!.wfx.st === "stowing";
     if (p.moving) {
-      const sprint = GS.holdDash && p.dashHeld > 0.25 && p.stamina > 0;
-      return sprint ? { k: "sprint", fade: 0.2 } : { k: "run", fade: 0.18, speed: p.atkAnim > 0 ? 0.6 : 1 };
+      const sprint = GS.holdDash && p.dashHeld > 0.25 && p.stamina > 0,
+        mv = armed ? A.move : undefined;
+      return sprint
+        ? { k: mv?.sprint ?? "sprint", fade: 0.2 }
+        : { k: mv?.run ?? "run", fade: 0.18, speed: p.atkAnim > 0 ? 0.6 : 1 };
     }
-    return { k: A.stand, fade: 0.25 };
+    if (hero!.wfx?.clip) return { k: hero!.wfx.clip, once: true, fade: 0.12 };
+    return armed
+      ? { k: A.ready ?? A.stand, fade: 0.25 }
+      : { k: hero!.dang?.gioi === "nam" ? "relaxNam" : "relax", fade: 0.35 };
   }
 
   let lastT = 0;
@@ -613,12 +646,16 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         heroFallback?.obj.removeFromParent();
         heroFallback?.dispose();
         heroFallback = null;
-        tipHist.length = baseHist.length = 0;
+        heroFx.clear();
         VrmActor.load(m.c.id, (m.c.w as WeaponType) ?? "sword", wid, (m.c as any).look).then((a) => {
           if (key !== heroKey) return a?.dispose();
           hero = a;
-          if (a) scene.add(a.obj);
-          else {
+          if (a) {
+            const dg = (m.c as any).dang as keyof typeof POSES.dang | undefined;
+            a.setDang(POSES.dang[dg ?? "nu-teen"] ?? POSES.dang["nu-teen"]);
+            if (a.wfx) a.wfx.color.set(ELEMENTS[m.c.el as keyof typeof ELEMENTS]?.c ?? "#ffffff");
+            scene.add(a.obj);
+          } else {
             // Không tải được VRM (mất mạng, file hỏng): vẽ chibi 2D lên tấm phẳng để nhân vật không biến mất.
             heroFallback = new CanvasSprite(80, 96, Q.shadows);
             scene.add(heroFallback.obj);
@@ -627,7 +664,26 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       }
     }
     if (hero && m) {
-      const c = heroClip(p, m),
+      const standing = !p.moving && !p.air && p.dashT <= 0;
+      const idleDraw = standing && !(p.act && G.time - p.act.t0 < 1);
+      hero.wfx?.want(weaponOut(p, G.enemies, G.time, POSES.vuKhi), standing, scene, idleDraw);
+      // Nhịp hãm khi dừng chạy, hoạt ảnh chờ ngẫu nhiên khi đứng yên tay không.
+      if (p.moving) heroMoveT += dt;
+      else {
+        if (heroMoveT > 0.3 && !p.air && p.dashT <= 0) heroStopT = G.time;
+        heroMoveT = 0;
+      }
+      const relaxing =
+        m.alive &&
+        !p.moving &&
+        !p.air &&
+        p.dashT <= 0 &&
+        p.hurt <= 0 &&
+        !(p.act && G.time - p.act.t0 < 0.8) &&
+        G.time - heroStopT > 0.5 &&
+        (!hero.wfx || hero.wfx.st === "gone");
+      const idleK = hero.idleVariant(dt, relaxing);
+      const c = heroClip(p, m, idleK, G.time - heroStopT < 0.42),
         name = c.k.split("#")[0];
       if (c.k !== hero.curName && (hero.curName.split("#")[0] !== name || c.k.includes("#"))) {
         hero.play(name, { once: c.once, fade: c.fade, speed: c.speed, restart: c.k.includes("#") });
@@ -644,37 +700,38 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       hero.obj.rotation.y = heroYaw;
       hero.obj.position.set(pos.x, pos.y + (hero.obj.userData.yOff ?? 0), pos.z);
       hero.obj.visible = !(p.iframes > 0 && p.hurt > 0 && Math.floor(t * 20) % 2);
+      const acting = !!p.act && ACT_WIN[p.act.k] !== undefined && G.time - p.act.t0 < ACT_WIN[p.act.k];
+      const handFree = !hero.wfx || hero.wfx.st !== "hand";
+      hero.poseIn = {
+        mode:
+          !m.alive || p.hurt > 0 || p.dashT > 0
+            ? "air"
+            : acting
+              ? "act"
+              : p.air
+                ? "air"
+                : p.moving
+                  ? "move"
+                  : handFree
+                    ? "relax"
+                    : "ready",
+        freeL: handFree || m.c.w !== "bow",
+        freeR: handFree || m.c.w === "bow",
+        anim: !!idleK,
+        spd: p.moving ? (GS.holdDash && p.dashHeld > 0.25 && p.stamina > 0 ? 1.5 : 1) : 0,
+        apex: p.air && p.dashT <= 0 ? Math.max(0, 1 - Math.abs(p.vz) / (0.45 * jumpPhysics().v0)) : 0,
+        dash: p.dashT > 0,
+      };
+      if (hero.wfx) hero.wfx.orbit = acting && m.c.w === "cat";
+      if (hero.wfx && m.c.w === "cat" && acting && p.act && p.act.t0 !== castT0) {
+        castT0 = p.act.t0;
+        hero.wfx.cast(p.act.k === "burst" ? 2 : p.act.k === "atk3" || p.act.k === "skill" ? 1.5 : 1);
+      }
+      heroWind(hero, pos, dt);
       hero.update(dt);
-      // Vệt vũ khí cận chiến khi ra đòn.
-      const melee = m.c.w !== "bow" && m.c.w !== "cat";
-      if (hero.weapon && melee && attacking) {
-        const tip = new THREE.Vector3(0, 0.95, 0),
-          base = new THREE.Vector3(0, 0.35, 0);
-        hero.weapon.localToWorld(tip);
-        hero.weapon.localToWorld(base);
-        tipHist.unshift(tip);
-        baseHist.unshift(base);
-        if (tipHist.length > TRAIL) {
-          tipHist.pop();
-          baseHist.pop();
-        }
-        trailMat.uniforms.uC.value.set(EL[m.c.el]?.c2 ?? "#ffffff");
-      } else if (tipHist.length) {
-        tipHist.pop();
-        baseHist.pop();
-      }
-      for (let i = 0; i < TRAIL; i++) {
-        const a = tipHist[Math.min(i, tipHist.length - 1)],
-          b = baseHist[Math.min(i, baseHist.length - 1)];
-        if (a && b) {
-          trailPos.set([a.x, a.y, a.z, b.x, b.y, b.z], i * 6);
-          const al = tipHist.length > 1 ? (1 - i / TRAIL) * 0.8 : 0;
-          trailA[i * 2] = al;
-          trailA[i * 2 + 1] = al * 0.2;
-        } else trailA[i * 2] = trailA[i * 2 + 1] = 0;
-      }
-      trailGeo.attributes.position.needsUpdate = true;
-      trailGeo.attributes.a.needsUpdate = true;
+      const fin = !!p.act && (p.act.k === "atk3" || p.act.k === "skill" || p.act.k === "burst");
+      heroFx.color(EL[m.c.el]?.c ?? "#ffffff", EL[m.c.el]?.c2 ?? "#ffffff");
+      heroFx.update(hero, { acting: !!attacking && acting, fin, dash: p.dashT > 0 }, dt);
     }
     if (!hero && heroFallback && m) {
       heroFallback.paint((c) =>
@@ -686,6 +743,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
           atk: p.atkAnim,
           t,
           noShadow: true,
+          noWeapon: !weaponOut(p, G.enemies, G.time, POSES.vuKhi),
         }),
       );
       heroFallback.obj.position.copy(pos);

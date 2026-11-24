@@ -5,6 +5,7 @@ import { cur } from "../../entities/party";
 import { Server } from "../../server/server";
 import { FEEL, feelState } from "../feel";
 import { aim } from "../damage";
+import { gust } from "../elements";
 import { tickStatuses } from "../status";
 import { runBlocks } from "./blocks";
 import { HOOKS, hooksOf } from "./hooks";
@@ -34,6 +35,8 @@ export function castKitSkill(v: "bam" | "giu"): boolean {
   aim();
   GS.G.p.act = { k: "skill", clip: S.clip, t0: GS.G.time };
   sfx("skill");
+  // Chiêu hệ Phong thổi tóc và vải quanh đó (hệ gió runtime S27).
+  if (m.c.el === "wind") gust("skill", GS.G.p.x, GS.G.p.y);
   runBlocks(S.khoi, ctx(m));
   return true;
 }
@@ -61,6 +64,7 @@ export function castKitBurst(): boolean {
   p.iframes = K.no.cine + 0.4;
   p.act = { k: "burst", clip: K.no.clip, t0: GS.G.time };
   sfx("burst");
+  if (m.c.el === "wind") gust("burst", p.x, p.y);
   const c = ctx(m);
   c.cast = { gave: true, amount: 0 };
   GS.G.cine = { t: K.no.cine, max: K.no.cine, m, kit: true, fire: () => runBlocks(K.no.khoi, c) };

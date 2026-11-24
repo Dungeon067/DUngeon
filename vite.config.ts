@@ -1,4 +1,5 @@
-import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import type { Plugin } from "vite";
 import { defineConfig } from "vitest/config";
@@ -19,10 +20,14 @@ function yamlToJson(): Plugin {
 const APP_VERSION = (
   JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf8")) as { version: string }
 ).version;
+/** Mã băm thư viện clip: bộ đệm media CacheFirst của PWA không giữ bản cũ khi clip đổi. */
+const animHash = (f: string) =>
+  existsSync(f) ? createHash("sha1").update(readFileSync(f)).digest("hex").slice(0, 10) : "0";
+const ANIM_V = animHash("public/media/anim/humanoid.json") + animHash("public/media/anim/kits.json");
 
 export default defineConfig({
   base: process.env.BASE_PATH ?? "./",
-  define: { __APP_VERSION__: JSON.stringify(APP_VERSION) },
+  define: { __APP_VERSION__: JSON.stringify(APP_VERSION), __ANIM_V__: JSON.stringify(ANIM_V) },
   plugins: [
     yamlToJson(),
     {

@@ -103,7 +103,14 @@ export function applyElement(e: any, el: string | null, m: any) {
   e.auraT = 7;
   return { mult: 1 };
 }
+/** Xung gió (chỉ để hiển thị: tóc, vải bay); khóa `k` trong gio.xung của content/poses.yaml. */
+export function gust(k: string, x: number, y: number) {
+  const g = (GS.G.gusts ??= []);
+  g.push({ k, x, y });
+  if (g.length > 16) g.shift();
+}
 export function swirl(e: any, el: string, m: any) {
+  gust("swirl", e.x, e.y);
   later(0, () => {
     fxRing(e.x, e.y - 10, 110, EL[el].c, 0.45, 7);
     fxBurst(e.x, e.y - 12, EL[el].c, 14, 200);

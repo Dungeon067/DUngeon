@@ -14,13 +14,35 @@ vuKhiMacDinh:
   spear: thuong-go-lim
   bow: cung-tre-dau-lang
   cat: vo-chep-thay-do
-# Vị trí vũ khí trên tay: xương VRM, độ lệch theo trục xương (đơn vị ô), góc xoay (độ), tỉ lệ.
+# Cách cầm vũ khí: xương VRM chuẩn hóa, độ lệch trong hệ bàn tay (m), góc xoay (độ), tỉ lệ, điểm cầm dọc thân vũ khí (at).
 camVuKhi:
-  sword: { bone: rightHand, pos: [-0.07, -0.02, 0.12], rot: [90, 0, 0], scale: 0.75 }
-  great: { bone: rightHand, pos: [-0.07, -0.02, 0.2], rot: [90, 0, 0], scale: 0.85 }
-  spear: { bone: rightHand, pos: [-0.07, -0.02, 0.45], rot: [90, 0, 0], scale: 0.9 }
-  bow: { bone: leftHand, pos: [0.07, 0, 0], rot: [0, 0, 90], scale: 0.85 }
-  cat: { bone: rightHand, pos: [-0.08, 0.08, 0], rot: [0, 0, 0], scale: 0.6 }
+  # Kiếm: một tay, cán vuông góc nắm tay.
+  sword: { bone: rightHand, pos: [-0.08, -0.012, 0.005], rot: [90, 0, 0], scale: 0.75, at: -0.17 }
+  # Đại kiếm: hai tay trên chuôi, tay trái ngay dưới tay phải.
+  great:
+    {
+      bone: rightHand,
+      pos: [-0.08, -0.012, 0.005],
+      rot: [90, 0, 0],
+      scale: 0.85,
+      at: -0.12,
+      tay2: { at: -0.25, rot: [0, 0, 180], chi: act },
+    }
+  # Thương: hai tay, nắm gần cuối cán, cán chéo dọc theo cẳng tay phải, mũi hướng lên trước; tay trái đỡ phía trước.
+  spear: {
+      bone: rightHand,
+      pos: [-0.08, -0.02, 0.0],
+      rot: [90, 0, -35],
+      scale: 0.9,
+      at: -0.95,
+      tay2: { at: -0.45, rot: [0, 0, 180], chi: act },
+      # Lúc chờ: một tay nắm giữa cán, cán dọc người, mũi chếch lên.
+      cho: { pos: [-0.08, -0.012, 0.005], rot: [90, 0, 0], at: -0.3 },
+    }
+  # Cung: tay trái nắm giữa thân cung, cung dựng, dây quay về phía người.
+  bow: { bone: leftHand, pos: [0.08, -0.012, 0.005], rot: [90, 0, 0], scale: 0.72, at: 0 }
+  # Sách phép: không cầm, lơ lửng mở trang trước tay trái (rot: hướng sách theo thân người).
+  cat: { bone: leftHand, pos: [0.02, 0.06, 0.22], rot: [-75, 0, 0], scale: 0.6, at: 0 }
 # S26: vải và tóc có spring bone. gocMax = góc lệch tối đa (độ) của mỗi khớp so với tư thế nghỉ, luôn áp dụng
 # kể cả khi gió mạnh nhất; gio = trọng số gió (0..1) cho hệ lực gió runtime S27 (tóc, dải vải cao, váy thấp).
 # xuong: [regex tên xương, loại], lấy luật khớp đầu tiên. nhanVat/npc.<id>.vai ghi đè riêng (ưu tiên trước).
@@ -44,11 +66,52 @@ vai:
   macDinh: vat
 # Clip hoạt ảnh theo loại vũ khí (tên clip trong public/media/anim/humanoid.json, xem tools/anim/recipes.ts).
 hoatAnh:
-  sword: { stand: swordIdle, atk: [sword1, sword2, sword3], charge: cast, skill: skill, burst: burst, speed: 1 }
-  great: { stand: swordIdle, atk: [great1, great2, great3], charge: cast, skill: skill, burst: burst, speed: 0.75 }
-  spear: { stand: idle, atk: [spear1, spear2, spear3], charge: cast, skill: skill, burst: burst, speed: 1 }
-  bow: { stand: idle, atk: [bow1, bow2, bow3], charge: bowAim, skill: skill, burst: bowBurst, speed: 1 }
-  cat: { stand: idle, atk: [cat1, cat2, cat3], charge: cast, skill: skill, burst: burst, speed: 1 }
+  sword:
+    {
+      stand: swReady,
+      ready: swReady,
+      move: { walk: swWalk, run: swRun, sprint: swSprint, stop: swStop },
+      atk: [sw1, sw2, sw3],
+      charge: swReady,
+      skill: swSkill,
+      burst: swBurst,
+      speed: 1,
+    }
+  great:
+    {
+      stand: grReady,
+      ready: grReady,
+      move: { walk: grWalk, run: grRun, sprint: grSprint, stop: grStop },
+      atk: [gr1, gr2, gr3],
+      charge: grReady,
+      skill: grSkill,
+      burst: grBurst,
+      speed: 0.75,
+    }
+  spear:
+    {
+      stand: spReady,
+      ready: spReady,
+      move: { walk: spWalk, run: spRun, sprint: spSprint, stop: spStop },
+      atk: [sp1, sp2, sp3],
+      charge: spReady,
+      skill: spSkill,
+      burst: spBurst,
+      speed: 1,
+    }
+  bow:
+    {
+      stand: bowReady,
+      ready: bowReady,
+      move: { walk: bowWalk, run: bowRun, sprint: bowSprint, stop: bowStop },
+      atk: [bow1, bow2, bow3],
+      charge: bowAim,
+      skill: bowSkill,
+      burst: bowBurst,
+      speed: 1,
+    }
+  cat:
+    { stand: ctReady, ready: ctReady, atk: [ct1, ct2, ct3], charge: ctCharge, skill: ctSkill, burst: ctBurst, speed: 1 }
 nhanVat:
   havy: { height: 1.62, dang: nu-teen }
   suongmai: { height: 1.56, dang: nu-teen }

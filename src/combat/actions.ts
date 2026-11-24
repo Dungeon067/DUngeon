@@ -11,6 +11,7 @@ import { FEEL, charFx, feelState, hitstop, inputBuffer, shake } from "../combat/
 import { Server } from "../server/server";
 import { canAirDash, tryJump, tryPlunge } from "./jump";
 import { pulseElement } from "../world/puzzles";
+import { gust } from "./elements";
 import { kitOf } from "../data/kits";
 import { infusionOf } from "./status";
 import { hooksOf } from "./kits/hooks";
@@ -168,6 +169,7 @@ export function castSkill(): boolean {
     F = charFx(m.c.id),
     col = F.c;
   m.skillCd = S.cd;
+  if (el === "wind") gust("skill", GS.G.p.x, GS.G.p.y);
   aim();
   p.act = { k: "skill", t0: GS.G.time };
   const ang = p.ang;
@@ -234,6 +236,7 @@ export function castBurst(): boolean {
   feelState.burstT = FEEL.camera.burstHold;
   m.energy = 0;
   GS.G.pending.burst++;
+  if (m.c.el === "wind") gust("burst", p.x, p.y);
   p.iframes = 1.4;
   p.act = { k: "burst", t0: GS.G.time };
   sfx("burst");

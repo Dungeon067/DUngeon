@@ -6,24 +6,40 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { VRMLoaderPlugin, VRMUtils, type VRM } from "@pixiv/three-vrm";
 import modelsRaw from "../../../content/models.yaml";
+import { POSES } from "../../data/poses";
+import type { DangParams } from "../../data/poses-schema";
+import { WeaponFx } from "./weapon-fx";
+import { PoseLayer, type PoseInput } from "./pose-layer";
+import { BowRig } from "./bow-rig";
+import { ClothGuard } from "./cloth";
+import { solveLimb, type Limb } from "./ik";
 import { validateModels, type WeaponType } from "../../data/models-schema";
 import { toonHair } from "./hair";
 import { outlineMat, toonMat } from "./mat";
 
+const _v = new THREE.Vector3(),
+  _s = new THREE.Vector3(),
+  _p = new THREE.Vector3(),
+  _q = new THREE.Quaternion(),
+  _q2 = new THREE.Quaternion();
+
 export const MODELS = validateModels(modelsRaw);
+export { POSES };
 const base = (import.meta as any).env?.BASE_URL ?? "/";
 const loader = new GLTFLoader();
 loader.register((p) => new VRMLoaderPlugin(p));
 const glbLoader = new GLTFLoader();
 
-type ClipData = { n: number; bones: Record<string, { q: number[][] }>; hips: number[][] };
+type ClipData = { n: number; bones: Record<string, { q: number[][] }>; hips: number[][]; str?: number[] };
 let animLib: Promise<{ fps: number; clips: Record<string, ClipData> } | null> | null = null;
 function loadAnims() {
   // Clip riêng theo nhân vật (S30, `<id>.<chiêu>`) nằm ở kits.json; thiếu file vẫn chạy bằng clip chung.
-  const kits = fetch(`${base}media/anim/kits.json`)
+  // `?v=` theo mã băm nội dung: bộ đệm media CacheFirst của PWA không giữ thư viện clip cũ sau khi cập nhật.
+  const v = `?v=${typeof __ANIM_V__ === "undefined" ? "dev" : __ANIM_V__}`;
+  const kits = fetch(`${base}media/anim/kits.json${v}`)
     .then((r) => (r.ok ? r.json() : {}))
     .catch(() => ({}));
-  return (animLib ??= fetch(`${base}media/anim/humanoid.json`)
+  return (animLib ??= fetch((globalThis as { __animUrl?: string }).__animUrl ?? `${base}media/anim/humanoid.json${v}`)
     .then((r) => (r.ok ? r.json() : null))
     .catch(() => null)
     .then(async (h) => h && { ...h, clips: { ...h.clips, ...(((await kits) as any)?.clips ?? {}) } }));
@@ -82,8 +98,6 @@ export function loadWeapon(id: string): Promise<THREE.Object3D | null> {
   return p.then((o) => (o ? o.clone() : null));
 }
 
-const _q = new THREE.Quaternion();
-
 /** Khớp spring bone (vải, tóc): góc lệch tối đa (rad) và trọng số gió theo `vai` trong content/models.yaml. */
 export interface ClothJoint {
   bone: THREE.Object3D;
@@ -102,6 +116,39 @@ export class VrmActor {
   weapon: THREE.Object3D | null = null;
   /** Đọc `gio` ở đây để cộng lực gió (S27); `max` luôn được giữ sau mỗi bước mô phỏng. */
   clothJoints: ClothJoint[] = [];
+  /** Vũ khí hai tay: tay trái bám điểm cầm thứ hai trên thân vũ khí (IK cánh tay). */
+  offHand: {
+    chi?: boolean;
+    limb: Limb;
+    w: THREE.Object3D;
+    at: number;
+    q: THREE.Quaternion;
+    off: THREE.Vector3;
+    r: THREE.Object3D;
+  } | null = null;
+  /** S27: lớp chỉnh tư thế theo dáng; poseIn do renderer đặt mỗi khung. */
+  layer: PoseLayer | null = null;
+  poseIn: PoseInput = { mode: "relax", freeL: true, freeR: true };
+  weaponMesh: THREE.Object3D | null = null;
+  /** Cách cầm lúc chờ (p, q, at) và lúc ra đòn (p1, q1, at1), trộn theo offW. */
+  gripCho: {
+    p: THREE.Vector3;
+    q: THREE.Quaternion;
+    at: number;
+    p1: THREE.Vector3;
+    q1: THREE.Quaternion;
+    at1: number;
+  } | null = null;
+  /** 0 = cầm kiểu chờ, 1 = cầm kiểu ra đòn (tay trái lên cán với tay2 chi: act). */
+  offW = 0;
+  restHips: THREE.Vector3;
+  hipsH: number;
+  bow: BowRig | null = null;
+  wfx: WeaponFx | null = null;
+  private strs = new Map<string, number[]>();
+  private fps: number;
+  /** Spring bone có kẹp dt, hông làm mượt, chặn góc váy. */
+  cloth: ClothGuard;
   constructor(
     public vrm: VRM,
     public wtype: WeaponType,
@@ -115,6 +162,9 @@ export class VrmActor {
     const restHips = hipsN.position.clone();
     vrm.scene.updateMatrixWorld(true);
     const hipsH = Math.max(0.3, hipsN.getWorldPosition(new THREE.Vector3()).y);
+    this.restHips = restHips;
+    this.hipsH = hipsH;
+    this.fps = fps;
     const v0 = vrm.meta?.metaVersion === "0";
     for (const [name, c] of Object.entries(clips)) {
       const times = Array.from({ length: c.n }, (_, i) => i / fps);
@@ -132,8 +182,10 @@ export class VrmActor {
       ]);
       tracks.push(new THREE.VectorKeyframeTrack(`${hipsN.name}.position`, times, pv));
       this.actions.set(name, this.mixer.clipAction(new THREE.AnimationClip(name, -1, tracks)));
+      if (c.str) this.strs.set(name, c.str);
     }
     this.obj.add(vrm.scene);
+    this.cloth = new ClothGuard(vrm, POSES.gio);
   }
 
   setupCloth(id: string) {
@@ -193,19 +245,10 @@ export class VrmActor {
     const look = { ...MODELS.macDinh, ...(MODELS.nhanVat[id] ?? {}) };
     const box = new THREE.Box3().setFromObject(vrm.scene);
     const s = look.height / Math.max(0.1, box.max.y - box.min.y);
-    // Hướng nghỉ của xương tay thô khác nhau giữa các bản xuất (VRoid, Blender): quy `camVuKhi` về
-    // trục của mô hình để cùng một cấu hình cầm vũ khí đúng cho mọi file.
     const cfg = MODELS.nhanVat[id],
       grip = { ...MODELS.camVuKhi[wtype], ...(!weaponId && cfg?.vuKhi ? cfg.camVuKhi : null) };
-    const bone = vrm.humanoid.getRawBoneNode(grip.bone as any);
-    vrm.scene.updateMatrixWorld(true);
-    const restInv = bone
-      ? vrm.scene
-          .getWorldQuaternion(new THREE.Quaternion())
-          .invert()
-          .multiply(bone.getWorldQuaternion(new THREE.Quaternion()))
-          .invert()
-      : new THREE.Quaternion();
+    // Xương chuẩn hóa có trục trùng hệ gốc ở tư thế chữ T nên cùng một cấu hình cầm đúng cho mọi mô hình.
+    const bone = vrm.humanoid.getNormalizedBoneNode(grip.bone as any);
     const a = new VrmActor(vrm, wtype, A.clips, A.fps, url);
     a.setupCloth(id);
     a.obj.scale.setScalar(s);
@@ -217,14 +260,69 @@ export class VrmActor {
       if (w && bone) {
         const holder = new THREE.Group();
         const bs = bone.getWorldScale(new THREE.Vector3()).x || 1;
-        holder.position.fromArray(grip.pos).applyQuaternion(restInv).divideScalar(bs);
-        holder.quaternion
-          .setFromEuler(new THREE.Euler(...(grip.rot.map((d) => (d * Math.PI) / 180) as [number, number, number])))
-          .premultiply(restInv);
+        holder.position.fromArray(grip.pos).divideScalar(bs);
+        holder.rotation.set(...(grip.rot.map((d) => (d * Math.PI) / 180) as [number, number, number]));
+        if (vrm.meta?.metaVersion === "0") {
+          holder.position.set(-holder.position.x, holder.position.y, -holder.position.z);
+          holder.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI));
+        }
         holder.scale.setScalar(grip.scale / bs);
+        w.position.y = -grip.at;
         holder.add(w);
         bone.add(holder);
         a.weapon = holder;
+        a.weaponMesh = w;
+        if (grip.cho) {
+          const r = grip.cho.rot.map((d) => (d * Math.PI) / 180) as [number, number, number];
+          const hq = new THREE.Quaternion().setFromEuler(new THREE.Euler(...r));
+          const hp = new THREE.Vector3().fromArray(grip.cho.pos).divideScalar(bs);
+          if (vrm.meta?.metaVersion === "0") {
+            hp.set(-hp.x, hp.y, -hp.z);
+            hq.premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI));
+          }
+          a.gripCho = {
+            p: hp,
+            q: hq,
+            at: grip.cho.at,
+            p1: holder.position.clone(),
+            q1: holder.quaternion.clone(),
+            at1: grip.at,
+          };
+        }
+        const str = w.getObjectByName("string") as THREE.Mesh | undefined,
+          gr = w.getObjectByName("grip"),
+          nock =
+            vrm.humanoid.getNormalizedBoneNode("rightMiddleIntermediate") ??
+            vrm.humanoid.getNormalizedBoneNode("rightMiddleProximal") ??
+            vrm.humanoid.getNormalizedBoneNode("rightHand");
+        if (wtype === "bow" && str?.isMesh && gr && nock) a.bow = new BowRig(str, gr, nock, a.obj);
+        const lh = ["leftUpperArm", "leftLowerArm", "leftHand"].map((n) =>
+          vrm.humanoid.getNormalizedBoneNode(n as any),
+        );
+        const rh = vrm.humanoid.getNormalizedBoneNode("rightHand");
+        if (grip.tay2 && rh && lh.every(Boolean)) {
+          const v0 = vrm.meta?.metaVersion === "0";
+          const q = new THREE.Quaternion().setFromEuler(
+            new THREE.Euler(...(grip.tay2.rot.map((d) => (d * Math.PI) / 180) as [number, number, number])),
+          );
+          if (v0) {
+            const F = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
+            q.premultiply(F).multiply(F);
+          }
+          a.offHand = {
+            limb: { a: lh[0]!, b: lh[1]!, c: lh[2]!, poleRest: new THREE.Vector3(0, 0, v0 ? 1 : -1) },
+            w,
+            at: grip.tay2.at,
+            chi: grip.tay2.chi === "act",
+            q,
+            // Cổ tay so với điểm cầm, hệ bàn tay trái (đối xứng tay phải).
+            off: new THREE.Vector3(-grip.pos[0], -grip.pos[1], -grip.pos[2])
+              .multiply(new THREE.Vector3(-1, 1, 1))
+              .multiply(v0 ? new THREE.Vector3(-1, 1, -1) : new THREE.Vector3(1, 1, 1)),
+            r: rh,
+          };
+        }
+        a.wfx = new WeaponFx(vrm, holder, wtype, POSES.vuKhi, (n) => a.duration(n), grip.scale, a.obj);
       }
     }
     return a;
@@ -234,8 +332,19 @@ export class VrmActor {
     return this.actions.has(name);
   }
 
+  /** Dáng nữ dùng bản nữ của clip (tên + "F", trẻ em ưu tiên "C") nếu có; phần "#..." là khóa phát lại. */
+  variant(name: string) {
+    if (this.dang?.gioi !== "nu") return name;
+    const i = name.indexOf("#"),
+      b = i < 0 ? name : name.slice(0, i);
+    for (const s of this.dang.tre ? ["C", "F"] : ["F"])
+      if (this.actions.has(b + s)) return b + s + name.slice(b.length);
+    return name;
+  }
+
   /** Chuyển clip (pha trộn mượt). once: chạy một lần rồi giữ khung cuối. */
   play(name: string, o: { once?: boolean; fade?: number; speed?: number; restart?: boolean } = {}) {
+    name = this.variant(name);
     const a = this.actions.get(name);
     if (!a) return;
     a.timeScale = o.speed ?? 1;
@@ -246,19 +355,87 @@ export class VrmActor {
     a.enabled = true;
     a.setEffectiveWeight(1);
     a.play();
-    if (this.cur && this.cur !== a) this.cur.crossFadeTo(a, o.fade ?? 0.15, false);
+    if (this.cur && this.cur !== a) {
+      this.cur.crossFadeTo(a, o.fade ?? 0.15, false);
+      if ((o.fade ?? 0.15) < 0.12) this.cloth.jolt();
+    }
     this.cur = a;
     this.curName = name;
   }
 
+  /** Độ kéo dây cung của clip đang chạy (rãnh str), 0 nếu clip không có. */
+  strNow() {
+    const a = this.cur;
+    if (!a) return 0;
+    const s = this.strs.get(a.getClip().name);
+    if (!s) return 0;
+    return s[Math.min(s.length - 1, Math.max(0, Math.round(a.time * this.fps)))];
+  }
+
+  /** Giây kể từ lúc thả dây (độ kéo tụt từ ≥0,5 xuống), -1 nếu không vừa thả. */
+  strRel() {
+    const a = this.cur;
+    const s = a && this.strs.get(a.getClip().name);
+    if (!a || !s) return -1;
+    const i = Math.min(s.length - 1, Math.max(0, Math.round(a.time * this.fps)));
+    if (s[i] >= 0.5) return -1;
+    for (let j = i; j > 0 && i - j < this.fps; j--) if (s[j - 1] >= 0.5) return (a.time * this.fps - j + 1) / this.fps;
+    return -1;
+  }
+
   duration(name: string) {
-    return this.actions.get(name)?.getClip().duration ?? 0.5;
+    return this.actions.get(this.variant(name))?.getClip().duration ?? 0.5;
+  }
+
+  /** Gắn dáng tư thế (content/poses.yaml). */
+  setDang(p: DangParams) {
+    this.dang = p;
+    this.layer = new PoseLayer(this.vrm, p, this.restHips, this.hipsH, this.obj);
+  }
+  dang: DangParams | null = null;
+  private idle = { t: 0, wait: 0, end: 0, n: 0, cur: "", last: "", seed: 7 };
+
+  /**
+   * Hoạt ảnh chờ ngẫu nhiên (theo dáng): gọi mỗi khung khi đứng yên tay không; trả tên clip kèm "#n"
+   * khi đang chạy một hoạt ảnh chờ, null khi dùng tư thế đứng thả lỏng.
+   */
+  idleVariant(dt: number, relaxing: boolean): string | null {
+    const I = this.idle,
+      ng = this.dang?.nghi;
+    if (!ng || !relaxing) {
+      I.t = 0;
+      I.cur = "";
+      I.wait = 0;
+      return null;
+    }
+    I.t += dt;
+    if (I.cur) {
+      if (I.t < I.end) return `${I.cur}#${I.n}`;
+      I.last = I.cur;
+      I.cur = "";
+      I.t = 0;
+      I.wait = 0;
+    }
+    const rnd = () => ((I.seed = (I.seed * 16807) % 2147483647) - 1) / 2147483646;
+    if (!I.wait) I.wait = ng.sau * (0.85 + 0.5 * rnd());
+    if (I.t < I.wait) return null;
+    const pool = ng.clip.filter((c) => this.has(c) && (c !== I.last || ng.clip.length === 1));
+    if (!pool.length) return null;
+    I.cur = pool[Math.floor(rnd() * pool.length) % pool.length];
+    I.n++;
+    I.end = I.t + this.duration(I.cur) - 0.15;
+    return `${I.cur}#${I.n}`;
   }
 
   update(dt: number) {
+    this.layer?.restore();
     this.mixer.update(dt);
-    // Khung hình giật (dt lớn) làm spring bone văng: giới hạn bước mô phỏng.
-    this.vrm.update(Math.min(dt, 1 / 30));
+    this.layer?.apply(dt, this.poseIn);
+    if (this.layer) this.obj.rotation.z = this.layer.bank;
+    this.offW += ((this.poseIn.mode === "act" ? 1 : 0) - this.offW) * Math.min(1, dt * 14);
+    this.gripBlend();
+    this.grip2();
+    this.cloth.update(dt);
     // Váy, vạt áo không lật quá giới hạn của loại vải so với tư thế nghỉ, dù gió mạnh tới đâu.
     for (const c of this.clothJoints)
       if (c.rest.angleTo(c.bone.quaternion) > c.max) {
@@ -266,9 +443,43 @@ export class VrmActor {
         // Spring bone tắt matrixAutoUpdate: tự cập nhật ma trận để giới hạn có hiệu lực khi render.
         c.bone.updateMatrix();
       }
+    this.wfx?.update(dt);
+    if (this.bow) {
+      const on = !this.wfx || this.wfx.st === "hand";
+      this.bow.update(on ? this.strNow() : 0, on ? this.strRel() : -1);
+    }
+  }
+
+  /** Trộn cách cầm lúc chờ / lúc ra đòn theo offW. */
+  gripBlend() {
+    const c = this.gripCho,
+      f = this.wfx;
+    if (!c || !f || f.st !== "hand") return;
+    f.handPos.lerpVectors(c.p, c.p1, this.offW);
+    f.handQuat.slerpQuaternions(c.q, c.q1, this.offW);
+    if (this.weaponMesh) this.weaponMesh.position.y = -(c.at + (c.at1 - c.at) * this.offW);
+  }
+
+  /** Tay trái đỡ vũ khí hai tay (gọi sau lớp tư thế). */
+  grip2() {
+    const o = this.offHand;
+    if (!o || !this.weapon?.visible || (this.wfx && this.wfx.st !== "hand")) return;
+    if (o.chi && this.offW < 0.02) return;
+    const L = [o.limb.a, o.limb.b, o.limb.c],
+      old = o.chi && this.offW < 0.98 ? L.map((b) => b.quaternion.clone()) : null;
+    o.w.updateWorldMatrix(true, false);
+    const shaft = o.w.localToWorld(_v.set(0, o.at, 0));
+    const q = o.r.getWorldQuaternion(_q).multiply(o.q);
+    const hs = o.limb.c.getWorldScale(_s).x;
+    const wrist = shaft.add(_s.copy(o.off).multiplyScalar(hs).applyQuaternion(q));
+    const pole = _p.set(0.6, -1, -0.5).normalize().applyQuaternion(this.obj.getWorldQuaternion(_q2));
+    solveLimb(o.limb, wrist, pole, q);
+    if (old) L.forEach((b, i) => b.quaternion.copy(old[i].slerp(b.quaternion, this.offW)));
   }
 
   dispose() {
+    this.wfx?.dispose();
+    this.bow?.dispose();
     this.mixer.stopAllAction();
     this.obj.removeFromParent();
     VRMUtils.deepDispose(this.vrm.scene);

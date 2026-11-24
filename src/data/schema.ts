@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DANG_IDS } from "./poses-schema";
 
 export const ELEMENT_IDS = ["fire", "water", "wind", "bolt", "earth", "ice"] as const;
 export const WEAPON_IDS = ["sword", "great", "spear", "bow", "cat"] as const;
@@ -14,6 +15,8 @@ export const CharacterSchema = z
     r: z.union([z.literal(4), z.literal(5)]),
     el: z.enum(ELEMENT_IDS),
     w: z.enum(WEAPON_IDS),
+    /** S27: dáng tư thế (content/poses.yaml). */
+    dang: z.enum(DANG_IDS).optional(),
     title: z.string().min(1),
     desc: z.string().min(1),
     hp: z.number().positive(),
