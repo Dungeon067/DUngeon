@@ -290,6 +290,7 @@ export class VrmActor {
         const str = w.getObjectByName("string") as THREE.Mesh | undefined,
           gr = w.getObjectByName("grip"),
           nock =
+            vrm.humanoid.getNormalizedBoneNode("rightMiddleIntermediate") ??
             vrm.humanoid.getNormalizedBoneNode("rightMiddleProximal") ??
             vrm.humanoid.getNormalizedBoneNode("rightHand");
         if (wtype === "bow" && str?.isMesh && gr && nock) a.bow = new BowRig(str, gr, nock, a.obj);

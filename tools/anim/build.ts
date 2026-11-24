@@ -14,7 +14,7 @@ import { SW_MC, SW_POL } from "./s27/sword";
 import { GR_MC, GR_POL } from "./s27/great";
 import { CT_MC, CT_POL } from "./s27/cat";
 import { SP_MC, SP_POL } from "./s27/spear";
-import { BW_FEM, BW_MC, BW_POL } from "./s27/bowpol";
+import { BW_ARCH, BW_FEM, BW_MC, BW_POL, STRS } from "./s27/bowpol";
 import { MELEE_FEM } from "./s27/femsets";
 
 const FILE = "public/media/anim/humanoid.json";
@@ -26,6 +26,7 @@ const OVER: Record<string, OverlayDef> = {
   ...GR_POL,
   ...CT_POL,
   ...SP_POL,
+  ...BW_ARCH,
   ...BW_POL,
   ...BOW_MOVE,
   ...MELEE_MOVE,
@@ -85,6 +86,7 @@ for (const [n, r] of Object.entries(MC)) {
 }
 lib.clips.bow2 = lib.clips.bow3 = lib.clips.bow1;
 
+for (const [n, c] of Object.entries(lib.clips) as [string, { str?: number[] }][]) if (c.str) STRS[n] = c.str;
 for (const [n, o] of Object.entries(OVER)) {
   lib.clips[n] = overlay(o, lib.clips, names, rig);
   console.log(n, lib.clips[n].n, "khung (chồng lớp)");
