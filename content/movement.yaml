@@ -30,13 +30,13 @@ clip:
   run: { tam: run }
   sprint: { tam: sprint }
   dash: { tam: dash }
-  stopLight: { tam: runStop, toc: 1.4, can: walkStop }
+  stopLight: { tam: walkStop }
   stopMedium: { tam: runStop }
-  stopHard: { tam: runStop, toc: 0.8, can: sprintStop }
+  stopHard: { tam: sprintStop }
   fall: { tam: jumpAir }
   landLight: { tam: jumpLand, toc: 1.4 }
-  landRoll: { tam: jumpLand, toc: 0.6, can: landRoll }
-  landHard: { tam: jumpLand, toc: 0.5, can: landHard }
+  landRoll: { tam: landRoll }
+  landHard: { tam: landHard }
 ikChan:
   bat: true
   toiDa: 0.4 # m chỉnh tối đa
