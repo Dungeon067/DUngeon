@@ -68,3 +68,73 @@ Các đòn sau được khung hóa bằng code trên xương humanoid VRM (`tool
 
 Chạy `pnpm anim:author` sau mỗi lần chạy `tools/anim/extract.ts` (extract ghi đè `humanoid.json`).
 Xem trước: `pnpm dev` rồi mở `/tools/anim/preview.html?w=great&clip=great2`.
+
+## S27: dáng tư thế và bộ clip theo vũ khí
+
+Bộ clip S27 được khung hóa bằng code (IK hai khớp trên khung xương VRM chuẩn hóa), tự dựng, thuộc dự án:
+
+- Công cụ: `tools/anim/pose.ts` (tư thế theo vị trí bàn tay / bàn chân, nội suy, IK, nướng clip, chồng lớp lên clip di chuyển).
+- Clip: `tools/anim/s27/` — `unarmed.ts` (đứng tay không `relax`, cất vũ khí `stowBackR`, `stowBackL`, `stowHip`),
+  `bow.ts` (cung), `melee.ts` (kiếm `sw*`, đại kiếm `gr*`, thương `sp*`, pháp khí `ct*`).
+- Nướng vào `humanoid.json`: `pnpm anim:s27` (chạy sau `extract.ts` và `pnpm anim:author`).
+- Lớp dáng (`content/poses.yaml`, `src/render3d/toon/pose-layer.ts`) cộng lên clip lúc chạy game: thở, dồn trọng tâm,
+  độ rộng chân, nghiêng hông / vai, vị trí tay, dáng đầu, biên độ / nhịp / độ nảy bước chạy, độ nặng khi ra đòn,
+  IK chân bám đất. Không có bộ clip riêng cho từng dáng.
+- Dây cung: dịch đỉnh lưới `string` của GLB cung theo tay phải, mũi tên dựng lúc chạy (`src/render3d/toon/bow-rig.ts`),
+  độ căng dây theo từng clip (`str` trong `tools/anim/s27/bow.ts`).
+
+### Vũ khí ngoài trận (cấu hình `vuKhi` trong `content/poses.yaml`)
+
+Thôi đánh và không còn quái gần quá `cho` giây (mặc định 2,5 giây): đứng yên thì chạy clip cất ngắn, vũ khí chuyển ra chỗ đeo,
+giữ một nhịp rồi tan thành hạt sáng màu nguyên tố của nhân vật (`src/render3d/toon/weapon-fx.ts`). Sau đó tay không, đứng / chạy thả lỏng.
+Đánh thường, kỹ năng hoặc nộ: vũ khí hiện lại trong tay ngay khung đầu, hạt sáng tụ nhanh, không làm chậm đòn.
+Renderer 2D ẩn vũ khí theo cùng luật (`src/combat/weapon-state.ts`).
+
+| Vũ khí   | Chỗ cất                 | Clip cất |
+| -------- | ----------------------- | -------- |
+| Kiếm     | bên hông trái           | `swStow` |
+| Đại kiếm | sau lưng, chuôi qua vai | `grStow` |
+| Thương   | sau lưng, chéo          | `spStow` |
+| Cung     | sau lưng, chéo          | `bwStow` |
+| Pháp khí | tan ngay cạnh tay       | (không)  |
+
+### Mẫu VRM nam dùng thử (không đưa vào repo)
+
+Khi chưa có mô hình nam của S26, bảng so sánh và video dáng nam dùng tạm "Robert" trong bộ 100Avatars R1 của Polygonal Mind
+(CC0, qua kho ToxSam/open-source-avatars), đặt cục bộ ở `public/media/models/_nam/` và không commit.
+
+## S27 – vòng tinh chỉnh sau Mốc 2
+
+Mọi khung hình đều tự dựng bằng code trong `tools/anim/s27/` (không dùng tệp hoạt ảnh tách từ game khác, không dựng lại động tác đặc trưng của nhân vật cụ thể nào). Video gameplay công khai chỉ dùng để tham khảo nhịp và cảm giác.
+
+- **Đứng thả lỏng:** lớp dáng dồn trọng tâm về một chân (`dung.tru`), chân trụ đổi bên chậm, hông bên trụ nhô nhẹ, chân còn lại đặt lên trước (`chanTruoc`) và mở mũi chân (`xoay`). `tay.sau` chắp tay sau lưng (thiếu nữ).
+- **Hoạt ảnh chờ ngẫu nhiên** (`nghi` trong `content/poses.yaml`): `idleStretch` (vươn vai), `idleLook` (nhìn quanh), `idleHair` (vén tóc), `idleHop` (nhún nhảy, dành cho dáng trẻ em). Chạy sau `nghi.sau` giây đứng yên tay không, không lặp lại clip vừa chạy.
+- **Thẳng lưng khi đi / chạy** (`tools/anim/s27/move.ts`): clip gốc UAL gập ngực rất sâu (ngực trên nghiêng ≈ 43° khi chạy, ≈ 52° khi chạy nhanh). Bản nướng lại giữ nhịp chân và tay của clip gốc (lấy từ bản sao gốc `tools/anim/s27/ual-move.json`) nhưng: spine / chest / upperChest gần như không gập, ngực hơi ưỡn, vai kéo ra sau; đổ người lấy từ hông (đi 3°, chạy 10°, chạy nhanh 15°, dáng cộng thêm 0–3° qua `chay.nghieng`); cổ và đầu bù để mắt nhìn ngang; nhún hông còn khoảng một nửa, chân trụ giải IK để bàn chân bám đất; chân đưa nhấc gối rõ hơn.
+- **Vải và tóc (spring bone) ở runtime** (`src/render3d/toon/cloth.ts`, thay cho `vrm.update`): dt của spring bone kẹp tối đa 1/30 giây; spring bone tính theo một bản hông đã làm mượt (lọc thông thấp, bám chậm hơn ngay sau khi đổi clip đột ngột như dừng, lướt, trúng đòn, ra đòn), còn thân người vẫn dùng hông thật. Không cộng lực theo tốc độ chạy.
+- **Gió có kiểm soát** (`src/render3d/toon/wind.ts`, mục `gio` trong `content/poses.yaml`): gió nền theo vùng (Rừng Trúc Mây mạnh nhất, Mỏ Ngọc lặng), cộng theo độ cao (đỉnh núi) và hệ số thời tiết (dùng khi game có thời tiết), có gió giật nhẹ (±35% lực, ±18° hướng). Xung gió từ chiêu hệ Phong: field `vortex` (lốc xoáy), `storm` (bão) có nguyên tố Phong, phản ứng Khuếch Tán (`swirl`), kỹ năng và nộ của nhân vật hệ Phong; hướng tỏa ra từ tâm chiêu, có thành phần xoáy và đẩy lên, giảm theo khoảng cách và thời gian. Miệng gió `luongGio` (S23) đã mở đẩy vải lên nhẹ. Gió cộng vào trọng lực của từng khớp theo loại vải (nhận theo tên xương VRoid): dải vải, tua rua 1,2; tóc, áo choàng 1; tay áo 0,5; váy, vạt áo 0,3; ngực luôn 0. Giới hạn góc so với tư thế nghỉ luôn áp dụng, tính cả chuỗi từ gốc tới mép: váy và vạt trước / sau tối đa 55° (khớp gốc 45°, mỗi khớp sau 20°), áo choàng tới 120°. Trọng số và giới hạn riêng từng xương, collider đùi / hông, quần trong là việc của mô hình (S26). Xem trước: `&vung=rung-truc-may`, `&ban=bachvu` (bạn đồng hành dùng lốc xoáy), cảnh `vortex`, `vent`, `nguoc` trong `seq`; `&cloth=0` để so với cách cũ.
+- **Chạy:** đổ người theo tốc độ (`chay.nghieng`), nghiêng vào khúc cua theo tốc độ xoay hướng (`chay.lac`), chạy nhanh vung tay mạnh hơn; dừng có nhịp hãm `runStop` (có bản cầm vũ khí `swStop`, `grStop`, `spStop`, `bowStop`).
+- **Lướt / nhảy:** lướt đổ người tới và tỏa hạt sáng theo nguyên tố; nhảy co chân ở đỉnh.
+- **Đòn:** lấy đà ≈ 10% clip, chạm ≈ 17%, giữ tư thế kết tới ≈ 60%. Đòn 3: kiếm và thương xoay một vòng người rồi chém / quét kết bước dài; đại kiếm thân xoay trước, lưỡi trễ theo (nặng tay); pháp khí chắp ấn rồi đẩy hai tay, pháp khí bay vòng quanh người khi ra đòn. Vệt chém của đòn kết dài và rộng hơn; pháp khí có nét ấn theo đầu ngón trỏ (`src/render3d/toon/motion-fx.ts`).
+- **Cung:** kỹ năng `bowSkill` bật lùi một nhịp rồi bắn chéo lên; nộ giương cung thẳng lên trời, ngửa người kéo đầy dây rồi thả.
+
+## S27 – đánh bóng cầm, rút và cất vũ khí (mocap Mixamo + keyframe tay)
+
+Nguồn: [Mixamo](https://www.mixamo.com) (Adobe), cho phép dùng miễn phí trong game thương mại; xuất "Without Skin", FBX, 30 FPS, file gốc ở `art-src/mocap/mixamo/` (không đưa vào git). Lớp keyframe tay ở `tools/anim/s27/` (IK tay theo kiểu cầm, ngón tay, cổ tay mềm, hông). Hình mẫu thể loại chỉ xem bằng mắt qua video gameplay công khai; không tách hay dùng dữ liệu hoạt ảnh của game khác.
+
+| Vũ khí   | Clip                                   | Pack Mixamo           | File gốc                                                                                                                     |
+| -------- | -------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Kiếm     | `swReady`, `sw1–3`, `swDraw`, `swStow` | Sword and Shield Pack | `ss_sword_and_shield_*`, `ss_draw_sword_*`, `ss_sheath_sword_*`                                                              |
+| Đại kiếm | `grReady`, `gr1–3`, `grDraw`, `grStow` | Great Sword Pack      | `gs_great_sword_idle/slash/attack/high_spin_attack`, `gs_draw_a_great_sword_1/2`                                             |
+| Thương   | `spReady`, `spDraw`, `spStow`          | Great Sword Pack      | `gs_great_sword_idle (1)`, `ss_draw_sword_1`, `gs_draw_a_great_sword_1` (đòn `sp1–3` giữ bản cũ)                             |
+| Cung     | `bowReady`, `bwDraw`, `bwStow`         | Pro Longbow Pack      | `bow_standing_idle_01`, `bow_standing_equip_bow`, `bow_standing_disarm_bow`                                                  |
+| Pháp khí | `ctReady`, `ct1–3`, `ctDraw`           | Magic Pack            | `mg_Standing_Idle_03`, `mg_Standing_1H_Magic_Attack_01/03`, `mg_Standing_2H_Magic_Attack_01`, `mg_standing_1H_cast_spell_01` |
+
+## S27 – tách bộ hoạt ảnh nữ, nam và trẻ em
+
+Mocap Mixamo của các pack vũ khí là người nam (dạng chân rộng, khuỵu thấp). Nhân vật nữ dùng bản riêng, tên clip thêm hậu tố `F`; dáng trẻ em (`tre: true`) ưu tiên hậu tố `C`, không có thì dùng `F`. Nhân vật nam giữ clip gốc. Runtime tự chọn trong `VrmActor.variant()` (`src/render3d/toon/actor.ts`), không đổi tên clip trong `hoatAnh` hay nhịp gameplay.
+
+- **Lớp nữ tính hóa** (`tools/anim/s27/fem.ts`, keyframe tay trên nền Mixamo): khép hai bàn chân về giữa (khoảng cách ≤ độ rộng vai), nâng trọng tâm (bớt 60–95% độ hạ hông), mũi chân hơi khép, gối hướng trước; thế chờ thêm hông lệch (contrapposto) và kéo khuỷu về gần thân; giữ nguyên đích bàn tay và cách cầm.
+- **Cung nữ** (`tools/anim/s27/bowpol.ts`, `BW_FEM`): thế chờ `bowReadyF` dựng trên idle nữ `relax` (Mixamo Catwalk Idle), cung thả thấp chéo bên đùi, đầu hơi nghiêng; bắn `bow1–3F`, ngắm `bowAimF` khép chân, lưng thẳng, khuỷu kéo dây ngang tai.
+- **Kiếm, đại kiếm, thương, pháp khí nữ** (`tools/anim/s27/femsets.ts`, `MELEE_FEM`): `swReadyF`, `sw1–3F`… tương tự cho `gr`, `sp`, `ct`; đại kiếm giữ lực nhưng chân gọn.
+- **Trẻ em** (Mai Linh, pháp khí): `ctReadyC` dựng trên Happy Idle (Mixamo, `mx/idle_happy`), nhún nhảy hồn nhiên; đòn `ct1–3C` khép chân, gần như không khuỵu.
+- Lớp thế chờ ở runtime (`cho` trong `content/poses.yaml`) của 4 dáng nữ giảm độ hạ hông, dạng chân và cúi người.

@@ -297,7 +297,8 @@ export function drawChibi(ctx: CanvasRenderingContext2D, c: any, x: number, y: n
   ctx.ellipse(-3, -37, 4, 1.6, -0.3, 0, TAU);
   ctx.fill();
   // front arm + weapon
-  if (c.w === "cat") {
+  const wpn = !o.noWeapon;
+  if (c.w === "cat" && wpn) {
     drawCatalyst(ctx, c, t);
   }
   const aRot = atk > 0 ? -1.9 + (1 - atk) * 2.8 : moving ? sw * 0.12 : -0.1;
@@ -311,7 +312,7 @@ export function drawChibi(ctx: CanvasRenderingContext2D, c: any, x: number, y: n
   ctx.beginPath();
   ctx.arc(0, 9, 1.9, 0, TAU);
   ctx.fill();
-  if (c.w !== "cat") {
+  if (c.w !== "cat" && wpn) {
     ctx.translate(0, 9.5);
     ctx.rotate(c.w === "bow" ? 1.3 : 1.55);
     drawWeapon(ctx, c, L, t);

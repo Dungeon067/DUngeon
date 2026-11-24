@@ -73,6 +73,8 @@ export function newSession(mode: string, opt = {}) {
     fx: [],
     texts: [],
     fields: [],
+    /** S27: sự kiện xung gió (chiêu hệ Phong) cho renderer 3D thổi tóc, vải. */
+    gusts: [] as { k: string; x: number; y: number }[],
     turrets: [],
     pickups: [],
     later: [],

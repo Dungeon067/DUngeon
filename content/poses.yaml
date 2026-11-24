@@ -1,0 +1,289 @@
+# S27: dáng (archetype) dùng chung cho mọi nhân vật. Lớp chỉnh cộng (additive) lên bộ clip gốc theo vũ khí,
+# áp lúc chạy trong src/render3d/toon/pose-layer.ts. Đơn vị: góc là độ, khoảng cách theo chiều cao hông (H).
+# Ràng buộc nội dung: mọi tư thế trang nhã, không nhấn vào cơ thể (schema giới hạn biên độ nghiêng hông/vai);
+# dáng trẻ em (tre: true) chỉ dùng tư thế hồn nhiên: không nghiêng hông, không đặt tay trước người.
+#  dung: đứng yên ngoài trận   chan: nới (+) / khép (−) mỗi bàn chân theo chiều ngang
+#        hong / vai: nghiêng hông / vai (vai ngược chiều hông)   lung: ngả lưng (+ cúi, − thẳng)   dau: nghiêng đầu
+#        moVai: mở vai ra sau   dauCui: cúi (+) / ngẩng (−) đầu
+#        tay: mo = dang cánh tay khỏi người, gap = gập khuỷu, truoc = đưa hai tay khép nhẹ trước người (0..1),
+#             dua = tay đung đưa nhẹ khi đứng (độ, dáng trẻ em)
+#        tho: nhịp thở (lần/giây), bien = biên độ (độ)   doiTrong: nhịp + biên độ dồn trọng tâm
+#  cho:  thế chờ trong trận: chan (nới thêm), ha (hạ hông), cui (đổ người tới trước), nhun + nhipNhun (nhún)
+#  chay: bien = biên độ sải, nhip = nhịp bước (nhân tốc độ clip), nay = độ nảy, mo = tay xa thân khi chạy (độ)
+#        nghieng: đổ người thêm từ hông (độ), cộng vào clip gốc đã thẳng lưng (chạy 10°, chạy nhanh 15°; chạy nhanh nhân 1,5), lac: nghiêng vào khúc cua tối đa (độ)
+#  nghi: hoạt ảnh chờ ngẫu nhiên sau `sau` giây đứng yên tay không (dáng trẻ em: nhún nhảy hồn nhiên)
+#  dung.tru: dồn trọng tâm một chân (0..1), chanTruoc: chân không trụ đặt trước (H), xoay: mở mũi chân (độ), tay.sau: chắp tay sau lưng
+#  don:  nang 0..1: đòn nặng thì hạ hông và xoay thân nhiều hơn
+#  tiLe: chỉ dùng cho bảng so sánh khi chưa có mô hình riêng (co giãn chiều cao / bề ngang).
+# Vũ khí ngoài trận: thôi đánh / rời trận `cho` giây thì cất (clip `clip` nếu đứng yên, vũ khí chuyển tới chỗ `noi`),
+# giữ `giu` giây rồi tan thành hạt sáng theo nguyên tố trong `tan` giây. Đánh thường / kỹ năng / nộ: hiện lại trong tay
+# ngay khung đầu (tụ hạt `hien` giây, không làm chậm đòn). gan: khoảng cách quái (px logic) được tính là đang trong trận.
+# Cất luôn đi LÊN và ra sau lưng theo quỹ đạo vòng cung 0,25 giây (weapon-fx.ts), không hạ thấp.
+# noi: xương VRM chuẩn hóa, pos (m, hệ xương ở tư thế chữ T: +X trái, +Y lên, +Z trước), rot (độ, XYZ).
+vuKhi:
+  cho: 2.5
+  gan: 420
+  giu: 0.35
+  tan: 0.6
+  hien: 0.14
+  hat: { so: 48, coDo: 0.05, bay: 0.5 }
+  noi:
+    # Kiếm: tra vào bao bên hông trái (clip cất mocap), rút từ hông rồi xoay một vòng cổ tay.
+    sword:
+      {
+        bone: hips,
+        pos: [0.17, 0.02, 0.02],
+        rot: [0, 0, 110],
+        clip: swStow,
+        luc: 0.62,
+        rut: swDraw,
+        xoay: [0.55, 0.9, 1],
+        truc: z,
+      }
+    # Đại kiếm: tay phải vung qua vai đặt chéo sau lưng; rút từ lưng kéo vòng qua đầu rồi vác vai.
+    great: { bone: upperChest, pos: [-0.12, 0.12, -0.15], rot: [0, 0, -150], clip: grStow, luc: 0.85, rut: grDraw }
+    # Thương: quay hai vòng trước người khi rút; cất thì vung qua vai đeo chéo lưng, mũi lên.
+    spear:
+      {
+        bone: upperChest,
+        pos: [-0.05, 0.0, -0.15],
+        rot: [0, 0, 35],
+        clip: spStow,
+        luc: 0.85,
+        rut: spDraw,
+        xoay: [0.15, 0.8, 2],
+        truc: x,
+      }
+    bow: { bone: upperChest, pos: [0.04, 0.0, -0.13], rot: [0, 0, 150], clip: bwStow, luc: 0.7, rut: bwDraw }
+    # Sách gập lại, bay lên lơ lửng sau hông phải (ngang thắt lưng), lắc nhẹ, giu giây sau mới tan.
+    cat: { bone: hips, pos: [-0.17, 0.16, -0.17], rot: [15, -30, -12], luc: 0, giu: 1.4, rut: ctDraw }
+# Gió (spring bone tóc, vải) ở runtime: src/render3d/toon/wind.ts + cloth.ts. Hướng: độ, 0 = thổi về +X thế giới, 90 = về +Z.
+#  vung: gió nền theo vùng (id trong content/terrain.yaml; mac-dinh cho vùng không khai báo), luc ~ độ cứng spring bone
+#  thoiTiet: hệ số nhân theo thời tiết (khi game có thời tiết)   doCao: lên cao hơn `tu` m thì cộng moiM mỗi m, tối đa toiDa (đỉnh núi)
+#  nhieu: gió giật (bien: ±tỉ lệ lực, goc: ±độ lệch hướng, nhip: lần/giây)   mieng: miệng gió `luongGio` (S23) đã mở: đẩy vải lên
+#  xung: xung gió từ chiêu hệ Phong (khóa = loại field / sự kiện): luc, banKinh (m), song (giây), len (đẩy lên), xoay (thành phần xoáy)
+#  trongSo: hệ số gió theo loại vải (tóc, dải / tua rua, áo choàng, tay áo, váy và vạt áo, ngực luôn 0, khác)
+#  gioiHan: góc lệch tối đa so với tư thế nghỉ (độ): goc = khớp gốc, con = mỗi khớp sau, tong = cả chuỗi. Luôn áp dụng.
+gio:
+  vung:
+    mac-dinh: { luc: 0.1, huong: 35 }
+    pho-van-dang: { luc: 0.08, huong: 35 }
+    bai-sao-roi: { luc: 0.4, huong: 200 }
+    lang-van-luoi: { luc: 0.3, huong: 210 }
+    ho-guong: { luc: 0.15, huong: 120 }
+    rung-truc-may: { luc: 0.6, huong: 60 }
+    mo-ngoc: { luc: 0, huong: 0 }
+    trai-bac: { luc: 0.45, huong: 290 }
+  thoiTiet: { lang: 0.4, gio: 1.5, giong: 1.9 }
+  doCao: { tu: 6, moiM: 0.04, toiDa: 0.45 }
+  nhieu: { bien: 0.35, goc: 18, nhip: 0.7 }
+  mieng: { luc: 0.9, banKinh: 1.1 }
+  # Lướt: gió thổi ngược hướng lướt cho tóc, dải vải, áo choàng (váy vẫn bị giới hạn góc).
+  luot: { luc: 1.5, tat: 0.35 }
+  xung:
+    vortex: { luc: 1.6, banKinh: 5, song: 2.5, len: 0.25, xoay: 0.6 }
+    storm: { luc: 1.3, banKinh: 5.5, song: 6, len: 0.2, xoay: 0.8 }
+    swirl: { luc: 1.2, banKinh: 4, song: 0.9, len: 0.15, xoay: 0.3 }
+    skill: { luc: 0.8, banKinh: 3.5, song: 0.6, len: 0.1, xoay: 0.2 }
+    burst: { luc: 1.4, banKinh: 6, song: 1.2, len: 0.3, xoay: 0.4 }
+  trongSo: { toc: 1.0, dai: 1.2, choang: 1.0, tay: 0.5, vay: 0.3, nguc: 0, khac: 0.4 }
+  gioiHan:
+    vay: { goc: 45, con: 20, tong: 55 }
+    tay: { goc: 50, con: 30, tong: 70 }
+    choang: { goc: 85, con: 45, tong: 120 }
+  lucToiDa: 2.2
+dang:
+  nu-nho:
+    ten: Nữ nhỏ (dáng trẻ em)
+    gioi: nu
+    tre: true
+    dung:
+      {
+        chan: -0.035,
+        tru: 0.3,
+        chanTruoc: 0,
+        xoay: 4,
+        hong: 0,
+        vai: 0,
+        moVai: 0,
+        lung: 1,
+        dau: 7,
+        dauCui: -3,
+        tay: { mo: 6, gap: 8, truoc: 0, sau: 0, dua: 10 },
+        tho: { nhip: 0.36, bien: 1.5 },
+        doiTrong: { nhip: 0.32, bien: 1.6 },
+      }
+    cho: { chan: 0, ha: 0.004, cui: 2, nhun: 0.016, nhipNhun: 2.4 }
+    chay: { bien: 0.85, nhip: 1.3, nay: 1.2, mo: 4, nghieng: 2, lac: 8 }
+    nghi: { sau: 5, clip: [idleHop, idleLook] }
+    don: { nang: 0.2 }
+    tiLe: { cao: 0.8, rong: 0.94 }
+  nu-teen:
+    ten: Thiếu nữ
+    gioi: nu
+    dung:
+      {
+        chan: -0.02,
+        tru: 0.85,
+        chanTruoc: 0.05,
+        xoay: 14,
+        hong: 1.2,
+        vai: 0.8,
+        moVai: 0,
+        lung: 0,
+        dau: 4,
+        dauCui: 1,
+        tay: { mo: 3, gap: 16, truoc: 0, sau: 0, dua: 0 },
+        tho: { nhip: 0.27, bien: 1.1 },
+        doiTrong: { nhip: 0.21, bien: 1.1 },
+      }
+    cho: { chan: 0, ha: 0.012, cui: 2, nhun: 0.006, nhipNhun: 1.7 }
+    chay: { bien: 1, nhip: 1.08, nay: 1.0, mo: 4, nghieng: 2, lac: 10 }
+    nghi: { sau: 6, clip: [idleHair, idleLook, idleStretch] }
+    don: { nang: 0.4 }
+    tiLe: { cao: 1, rong: 1 }
+  nu-truong-thanh:
+    ten: Nữ trưởng thành
+    gioi: nu
+    dung:
+      {
+        chan: 0.0,
+        tru: 0.6,
+        chanTruoc: 0.02,
+        xoay: 8,
+        hong: 1.4,
+        vai: 1,
+        moVai: 2,
+        lung: -1.5,
+        dau: 1,
+        dauCui: -1.5,
+        tay: { mo: 5, gap: 8, truoc: 0, sau: 0, dua: 0 },
+        tho: { nhip: 0.23, bien: 0.9 },
+        doiTrong: { nhip: 0.17, bien: 0.9 },
+      }
+    cho: { chan: 0.005, ha: 0.016, cui: 2, nhun: 0.004, nhipNhun: 1.4 }
+    chay: { bien: 1.12, nhip: 0.98, nay: 0.9, mo: 3, nghieng: 2, lac: 9 }
+    nghi: { sau: 7, clip: [idleLook, idleStretch, idleHair] }
+    don: { nang: 0.5 }
+    tiLe: { cao: 1.04, rong: 1 }
+  nu-dam-dang:
+    ten: Nữ đằm thắm (điềm tĩnh, nữ tính)
+    gioi: nu
+    dung:
+      {
+        chan: -0.04,
+        tru: 0.45,
+        chanTruoc: 0.05,
+        xoay: 20,
+        hong: 2.6,
+        vai: 1.8,
+        moVai: 1,
+        lung: -2.5,
+        dau: 3,
+        dauCui: 2,
+        tay: { mo: 2, gap: 28, truoc: 0, sau: 0, dua: 0 },
+        tho: { nhip: 0.19, bien: 0.8 },
+        doiTrong: { nhip: 0.14, bien: 0.7 },
+      }
+    cho: { chan: 0, ha: 0.01, cui: 1, nhun: 0.003, nhipNhun: 1.2 }
+    chay: { bien: 0.9, nhip: 0.92, nay: 0.7, mo: 4, nghieng: 0, lac: 6 }
+    nghi: { sau: 8, clip: [idleHair, idleLook] }
+    don: { nang: 0.55 }
+    tiLe: { cao: 1.02, rong: 1.06 }
+  nam-nho:
+    ten: Nam nhỏ (dáng trẻ em)
+    gioi: nam
+    tre: true
+    dung:
+      {
+        chan: 0.03,
+        tru: 0.3,
+        chanTruoc: 0,
+        xoay: 10,
+        hong: 0,
+        vai: 0,
+        moVai: 0,
+        lung: 1,
+        dau: 5,
+        dauCui: -4,
+        tay: { mo: 10, gap: 10, truoc: 0, sau: 0, dua: 9 },
+        tho: { nhip: 0.36, bien: 1.5 },
+        doiTrong: { nhip: 0.34, bien: 1.6 },
+      }
+    cho: { chan: 0.06, ha: 0.035, cui: 8, nhun: 0.022, nhipNhun: 2.5 }
+    chay: { bien: 0.95, nhip: 1.3, nay: 1.2, mo: 8, nghieng: 2, lac: 9 }
+    nghi: { sau: 5, clip: [idleHop, idleLook, idleStretch] }
+    don: { nang: 0.25 }
+    tiLe: { cao: 0.8, rong: 0.96 }
+  nam-teen:
+    ten: Thiếu niên
+    gioi: nam
+    dung:
+      {
+        chan: 0.03,
+        tru: 0.7,
+        chanTruoc: 0.03,
+        xoay: 12,
+        hong: 0.6,
+        vai: 0.4,
+        moVai: 0,
+        lung: 2,
+        dau: 2,
+        dauCui: 2,
+        tay: { mo: 7, gap: 14, truoc: 0, sau: 0, dua: 0 },
+        tho: { nhip: 0.26, bien: 1 },
+        doiTrong: { nhip: 0.2, bien: 1.1 },
+      }
+    cho: { chan: 0.075, ha: 0.05, cui: 6, nhun: 0.008, nhipNhun: 1.7 }
+    chay: { bien: 1.08, nhip: 1.1, nay: 1.0, mo: 6, nghieng: 3, lac: 10 }
+    nghi: { sau: 6, clip: [idleLook, idleStretch] }
+    don: { nang: 0.5 }
+    tiLe: { cao: 1.03, rong: 0.98 }
+  nam-truong-thanh:
+    ten: Nam trưởng thành
+    gioi: nam
+    dung:
+      {
+        chan: 0.05,
+        tru: 0.5,
+        chanTruoc: 0.02,
+        xoay: 12,
+        hong: 0.3,
+        vai: 0.2,
+        moVai: 3,
+        lung: -1,
+        dau: 0,
+        dauCui: -1,
+        tay: { mo: 10, gap: 10, truoc: 0, sau: 0, dua: 0 },
+        tho: { nhip: 0.22, bien: 0.9 },
+        doiTrong: { nhip: 0.16, bien: 0.8 },
+      }
+    cho: { chan: 0.09, ha: 0.065, cui: 5, nhun: 0.005, nhipNhun: 1.3 }
+    chay: { bien: 1.18, nhip: 0.98, nay: 0.9, mo: 9, nghieng: 3, lac: 9 }
+    nghi: { sau: 7, clip: [idleLook, idleStretch] }
+    don: { nang: 0.65 }
+    tiLe: { cao: 1.08, rong: 1.03 }
+  nam-vam-vo:
+    ten: Nam vạm vỡ (to cao)
+    gioi: nam
+    dung:
+      {
+        chan: 0.09,
+        tru: 0.35,
+        chanTruoc: 0,
+        xoay: 16,
+        hong: 0,
+        vai: 0,
+        moVai: 7,
+        lung: -2.5,
+        dau: 0,
+        dauCui: -2,
+        tay: { mo: 22, gap: 16, truoc: 0, sau: 0, dua: 0 },
+        tho: { nhip: 0.17, bien: 1.3 },
+        doiTrong: { nhip: 0.13, bien: 0.6 },
+      }
+    cho: { chan: 0.12, ha: 0.08, cui: 7, nhun: 0.004, nhipNhun: 1.1 }
+    chay: { bien: 1.22, nhip: 0.85, nay: 0.8, mo: 18, nghieng: 3, lac: 7 }
+    nghi: { sau: 8, clip: [idleStretch, idleLook] }
+    don: { nang: 1 }
+    tiLe: { cao: 1.14, rong: 1.2 }

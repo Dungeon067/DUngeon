@@ -7,7 +7,18 @@ const perType = <T extends z.ZodTypeAny>(t: T) => z.object({ sword: t, great: t,
 const look = z.object({ height: z.number().positive(), yOffset: z.number().default(0) });
 /** Dáng người (S27 sẽ định nghĩa danh sách đầy đủ), ví dụ nu-teen, nu-nho, nam-teen. */
 const DANG = z.string().regex(/^(nu|nam)-[a-z0-9-]+$/);
-const grip = z.object({ bone: z.string(), pos: v3, rot: v3, scale: z.number().positive() });
+/** Gắn vũ khí vào xương CHUẨN HÓA (trục trùng hệ gốc ở tư thế chữ T): pos/rot trong hệ bàn tay (m, độ), at = điểm cầm dọc trục Y của vũ khí. */
+const grip = z.object({
+  bone: z.string(),
+  pos: v3,
+  rot: v3,
+  scale: z.number().positive(),
+  at: z.number().default(0),
+  /** Tay trái đỡ vũ khí hai tay: điểm cầm dọc thân vũ khí (at) và hướng bàn tay trái so với bàn tay phải (độ). */
+  tay2: z.object({ at: z.number(), rot: v3, chi: z.literal("act").optional() }).optional(),
+  /** Cách cầm lúc chờ / di chuyển (khác lúc ra đòn), ví dụ thương nắm giữa cán một tay. */
+  cho: z.object({ pos: v3, rot: v3, at: z.number() }).optional(),
+});
 /** Ghi đè loại vải theo mô hình: regex tên xương spring -> tên loại trong `vai.loai`. */
 const vaiRieng = z.record(z.string(), z.string()).optional();
 const clothType = z.object({ gocMax: z.number().min(0).max(180), gio: z.number().min(0).max(1) });
@@ -26,6 +37,11 @@ export const ModelsSchema = z
     hoatAnh: perType(
       z.object({
         stand: z.string(),
+        /** S27: thế chờ trong trận và di chuyển khi đang cầm vũ khí (ngoài trận dùng relax / walk / run / sprint tay không). */
+        ready: z.string().optional(),
+        move: z
+          .object({ walk: z.string(), run: z.string(), sprint: z.string(), stop: z.string().optional() })
+          .optional(),
         atk: z.array(z.string()).length(3),
         charge: z.string(),
         skill: z.string(),
