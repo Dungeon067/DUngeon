@@ -175,6 +175,8 @@ export class ClothGuard {
         const max = J.up && J.up.loai === J.loai ? Math.max(0, Math.min(J.lim.con, J.lim.tong - up)) : J.lim.goc;
         if (ang > max) {
           J.b.quaternion.copy(J.q0).slerp(J.b.quaternion, max / ang);
+          // Spring bone tắt matrixAutoUpdate: cập nhật ma trận để giới hạn có hiệu lực khi render.
+          J.b.updateMatrix();
           ang = max;
         }
       }
