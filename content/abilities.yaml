@@ -1,0 +1,12 @@
+# Hợp nhất E: kỹ năng khai báo bằng dữ liệu (Ability = danh sách Mixin, Modifier = trạng thái gắn lên đối tượng).
+# Khung rỗng, chưa thay đường chạy kỹ năng cũ. Mẫu: kỹ năng "Chuông Lửa Ngân" của Ardo (nova, cd 8, ×2,4).
+ardo.skill:
+  cd: 8
+  mixin:
+    - { loai: khiBatDau, vung: { r: 110 }, satThuong: 2.4, nguyenTo: pyro, day: 180 }
+    - { loai: khiTrungDon, gan: chay-xem }
+modifier:
+  chay-xem:
+    thoiGian: 3
+    mixin:
+      - { loai: moiGiay, chuKy: 1, vung: { r: 0 }, satThuong: 0.2, nguyenTo: pyro }

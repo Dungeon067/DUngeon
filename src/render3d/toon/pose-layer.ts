@@ -6,6 +6,7 @@
  *  - IK chân: bàn chân bám dốc/bậc khi đứng (ground trả độ cao mặt đất theo tọa độ thế giới).
  */
 import * as THREE from "three";
+import { MOVE, Spring } from "../../combat/movement";
 import type { VRM } from "@pixiv/three-vrm";
 import type { DangParams } from "../../data/poses-schema";
 import { solveLimb, alignQuat, type Limb } from "./ik";
@@ -26,6 +27,11 @@ export interface PoseInput {
   apex?: number;
   /** Đang lướt: đổ người lao tới. */
   dash?: boolean;
+  /** Lớp thủ tục: tốc độ (÷ tốc độ cơ sở), gia tốc (÷ tốc độ cơ sở /s), góc còn phải xoay (rad), pha bước (0..1). */
+  vel?: number;
+  acc?: number;
+  look?: number;
+  phase?: number;
 }
 
 const D = Math.PI / 180;
@@ -44,6 +50,8 @@ export class PoseLayer {
   private wHand = 1;
   private wTuck = 0;
   private lastYaw: number | null = null;
+  private leanS = new Spring();
+  private lookS = new Spring();
   private turn = 0;
   /** Nghiêng vào khúc cua (rad, quanh trục trước mặt), actor áp lên gốc để xoay quanh bàn chân. */
   bank = 0;
@@ -181,6 +189,35 @@ export class PoseLayer {
     }
     const bk = THREE.MathUtils.clamp(-this.turn * 0.09, -1, 1) * chay.lac * D * this.wMove;
     this.bank += (bk - this.bank) * Math.min(1, dt * 7);
+    // Lớp thủ tục (movement.yaml muot.than): đổ người theo tốc độ + gia tốc, phanh thì ngả sau rồi bật lại
+    // (lò xo có quá đà), hông nhún theo nhịp bước, đầu nhìn trước theo hướng sắp đi.
+    {
+      const T = MOVE.muot.than,
+        vel = inp.vel ?? 0,
+        ground = inp.mode !== "air" && inp.mode !== "act";
+      const want = ground
+        ? T.chay * Math.min(1, vel) +
+          (T.chayNhanh - T.chay) * THREE.MathUtils.clamp((vel - 1) / 0.7, 0, 1) +
+          THREE.MathUtils.clamp((inp.acc ?? 0) * T.gia, -T.phanh, T.phanh)
+        : 0;
+      const L = this.leanS.step(dt, want, T.tanSo, T.giam);
+      this.pre("hips", L * 0.7, 0, 0);
+      this.pre("leftUpperLeg", -L * 0.7, 0, 0);
+      this.pre("rightUpperLeg", -L * 0.7, 0, 0);
+      this.post("spine", L * 0.3, 0, 0);
+      this.post("neck", -L * 0.4, 0, 0);
+      this.post("head", -L * 0.4, 0, 0);
+      const lk = this.lookS.step(
+        dt,
+        ground ? THREE.MathUtils.clamp(((inp.look ?? 0) * 180) / Math.PI, -T.nhin, T.nhin) : 0,
+        3,
+        0.9,
+      );
+      this.post("neck", 0, lk * 0.4, 0);
+      this.post("head", 0, lk * 0.6, 0);
+      if (this.wMove > 0.01 && inp.phase !== undefined)
+        hips.position.y -= T.nhun * 0.5 * (1 - Math.cos(inp.phase * 4 * Math.PI)) * this.wMove * Math.min(1, vel);
+    }
     // Lướt: clip `dash` / `dashAir` đã đổ người từ hông, thân trên thẳng; lớp này không gập thêm.
     // Đỉnh cú nhảy: clip mocap jumpUp / jumpAir đã tự co chân, lớp này không co thêm.
     // Ra đòn: dáng nặng hạ hông sâu hơn, xoay thân rộng hơn.

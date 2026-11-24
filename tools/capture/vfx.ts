@@ -34,7 +34,7 @@ const PIN = process.env.GOM
   ? ""
   : "for (const e of T.S.G?.enemies ?? []) if (e._hx != null) { e.x = e._hx; e.y = e._hy; }";
 const step = (n: number, dt: number) =>
-  `new Promise((r) => requestAnimationFrame(() => { const T = window.__tinhtu; ${PIN} T.capStep(${n}, ${dt}); requestAnimationFrame(() => r(0)); }))`;
+  `new Promise((r) => requestAnimationFrame(() => { const T = window.__tinhtu; ${PIN} T.capStep(${n}, ${dt}); if (T.S.G) T.S.G.texts.length = 0; requestAnimationFrame(() => r(0)); }))`;
 const atk = `${C}.press("atk")`;
 const hold = (on: boolean) => `window.__tinhtu.S.holdAtk = ${on}`;
 /** Cần di chuyển ảo (x phải, y xuống màn hình). */
@@ -59,6 +59,16 @@ const SHOTS: Shot[] = [
   { id: "bam", ten: "Kỹ năng (bấm)", frames: 150, steps: [[0, `${C}.castKitSkill("bam")`]] },
   { id: "giu", ten: "Kỹ năng (giữ)", frames: 180, steps: [[0, `${C}.castKitSkill("giu")`]] },
   { id: "no", ten: "Nộ", frames: 240, steps: [[0, `${C}.castKitBurst()`]], cam: { dist: 9 } },
+  {
+    id: "noHut",
+    ten: "Nộ hút nguyên tố (quái mang Hỏa)",
+    frames: 240,
+    steps: [
+      [0, `for (const e of window.__tinhtu.S.G.enemies) { e.aura = "fire"; e.auraT = 99; }`],
+      [0, `${C}.castKitBurst()`],
+    ],
+    cam: { dist: 9 },
+  },
   // Pháp khí: vung tay ra đòn, chạy rồi dừng, lướt, bắn liên tục (sách bay theo neo bằng lò xo).
   {
     id: "sach",

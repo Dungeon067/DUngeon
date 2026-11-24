@@ -12,6 +12,7 @@ import { Server } from "../server/server";
 import { canAirDash, tryJump, tryPlunge } from "./jump";
 import { pulseElement } from "../world/puzzles";
 import { gust } from "./elements";
+import { MOVE, fsmOf } from "./movement";
 import { kitOf } from "../data/kits";
 import { infusionOf } from "./status";
 import { hooksOf } from "./kits/hooks";
@@ -138,6 +139,8 @@ export function doDash(): boolean {
     p.stamina -= FEEL.jump.airDashStamina;
   } else {
     if (p.stamina < 20) return false;
+    // Tối đa 2 lần liên tiếp trong 1 s, vượt thì hồi 1,75 s (content/movement.yaml mục luot).
+    if (!fsmOf(p).tryDash()) return false;
     p.stamina -= 20 * effectAt(GS.G.map, p.x, p.y, "dashStamina");
   }
   if (FEEL.input.dashCancel) {
@@ -150,9 +153,11 @@ export function doDash(): boolean {
   const L = Math.hypot(dx, dy) || 1;
   dx /= L;
   dy /= L;
-  p.dashT = 0.2;
-  p.dvx = dx * 460;
-  p.dvy = dy * 460;
+  const air = p.air,
+    v = air ? 460 : MOVE.toc.coSo * MOVE.toc.luot;
+  p.dashT = air ? 0.2 : MOVE.luot.thoiGian;
+  p.dvx = dx * v;
+  p.dvy = dy * v;
   p.iframes = Math.max(p.iframes, 0.32);
   fxBurst(p.x, p.y - 6, "#ffffff", 8, 90, 2);
   sfx("dash");

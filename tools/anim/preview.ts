@@ -7,6 +7,7 @@ import * as THREE from "three";
 import { VrmActor, POSES, MODELS } from "../../src/render3d/toon/actor";
 import { HeroFx } from "../../src/render3d/toon/motion-fx";
 import { WindField, type WindEnv, type WindSrc } from "../../src/render3d/toon/wind";
+import { MOVE, MoveFSM, locoSpeeds, moveClip, type MoveInput } from "../../src/combat/movement";
 
 const q = new URLSearchParams(location.search);
 if (q.get("anim")) (globalThis as { __animUrl?: string }).__animUrl = q.get("anim")!;
@@ -42,11 +43,28 @@ scene.add(floor);
 const moving = !!q.get("move");
 if (moving) {
   floor.visible = false;
-  const grid = new THREE.GridHelper(400, 400, 0x8796ad, 0x9dabbf);
-  grid.position.y = 0.002;
-  const base = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshBasicMaterial({ color: 0xb4c0d1 }));
+  // Sàn kẻ ô 1 m, vạch đậm mỗi 5 m (texture lặp, rõ cả khi camera xa).
+  const cv = document.createElement("canvas");
+  cv.width = cv.height = 500;
+  const g2 = cv.getContext("2d")!;
+  g2.fillStyle = "#b4c0d1";
+  g2.fillRect(0, 0, 500, 500);
+  g2.fillStyle = "#8391a6";
+  for (let k = 0; k < 5; k++) {
+    g2.fillRect(k * 100, 0, 3, 500);
+    g2.fillRect(0, k * 100, 500, 3);
+  }
+  g2.fillStyle = "#56647a";
+  g2.fillRect(0, 0, 6, 500);
+  g2.fillRect(0, 0, 500, 6);
+  const tex = new THREE.CanvasTexture(cv);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(80, 80);
+  tex.anisotropy = 8;
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const base = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshBasicMaterial({ map: tex }));
   base.rotation.x = -Math.PI / 2;
-  scene.add(base, grid);
+  scene.add(base);
 }
 const camOff = cam.position.clone();
 // Thử cách cầm (grip={"rot":[..],"pos":[..]}) mà không sửa content.
@@ -97,6 +115,7 @@ const act = (a as any).actions.get(a.variant(clip)) as THREE.AnimationAction;
   return true;
 };
 if (q.get("seq")) sequence(q.get("seq")!);
+if (q.get("mv")) moveDemo(q.get("mv")!);
 // Gió (video duyệt S27): vùng gió (vung, huong), bạn đồng hành dùng lốc xoáy (ban, bw, bdang, bpos), miệng gió.
 const wind = new WindField(POSES.gio);
 const env: WindEnv = { vung: q.get("vung") ?? "mo-ngoc", huong: q.get("huong") ? +q.get("huong")! : undefined };
@@ -406,6 +425,160 @@ function sequence(src: string) {
     fx.update(a!, { acting: !!WIN[s.k], fin, dash: dashing }, dt);
     gl.render(scene, cam);
     T += dt;
+    segT += dt;
+    return true;
+  };
+}
+
+/**
+ * Video máy trạng thái di chuyển (hợp nhất A): mv=idle:0.6,walk:2,stop:1,run:2,stop:1,sprint:2,stop:1.4,run:0.6,dash,dash,dash,run:1,stop:1,fall:6:2.6
+ * Mỗi bước đặt đầu vào cho MoveFSM; dash = bấm lướt (bị từ chối khi đang hồi); fall:H:d = chạy khỏi cột cao H mét rồi rơi.
+ */
+function moveDemo(src: string) {
+  // Đoạn: idle / walk / run / sprint / s (rẽ chữ S) / turn (quay đầu 180° rồi chạy) / stop / dash / fall:cao:giây.
+  const steps = src.split(",").map((x) => {
+    const [k, d, e] = x.split(":");
+    return { k, d: k === "dash" ? 0.45 : k === "fall" ? +(e ?? 2.6) : +(d ?? 1), h: k === "fall" ? +(d ?? 6) : 0 };
+  });
+  const F = new MoveFSM();
+  const M = MOVE.muot;
+  const FPS = +(q.get("fps") ?? 30),
+    SLOW = +(q.get("slow") ?? 1);
+  (window as any).nframes = Math.round((steps.reduce((s, x) => s + x.d, 0) * FPS) / SLOW);
+  const pillar = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1, 1.2), new THREE.MeshLambertMaterial({ color: 0x8d99ab }));
+  pillar.visible = false;
+  scene.add(pillar);
+  // Ngoài trận khi di chuyển: vũ khí cất trên lưng suốt đoạn quay (armed=1: cầm trong tay, chạy trong trận).
+  const armed = !!q.get("armed");
+  if (q.get("chay")) POSES.vuKhi.noi.sword.chay = q.get("chay")!.split("_").map(Number) as [number, number, number];
+  POSES.vuKhi.giu = 1e9;
+  for (const k of Object.keys(POSES.vuKhi.noi)) delete (POSES.vuKhi.noi as any)[k].giu;
+  let si = -1,
+    segT = 0,
+    cur = "",
+    y = 0,
+    vy = 0,
+    air = false,
+    base = 0,
+    ang = 0,
+    yawC = 0,
+    vN0 = 0,
+    acc = 0;
+  const edge0 = new THREE.Vector3();
+  const y0 = a!.obj.userData.yOff ?? 0;
+  const play = (c: string, o: { once?: boolean; speed?: number; fade?: number; restart?: boolean } = {}) => {
+    if (c === cur && !o.restart) return;
+    cur = c;
+    a!.play(c, { fade: M.chuyen, ...o });
+  };
+  (window as any).step = () => {
+    const dt = SLOW / FPS;
+    if (si < 0 || segT >= steps[Math.min(si, steps.length - 1)].d) {
+      const prev = steps[si];
+      if (prev?.k === "turn") base += Math.PI;
+      si++;
+      segT = 0;
+      const s = steps[Math.min(si, steps.length - 1)];
+      if (s.k === "dash" && F.tryDash()) {
+        cur = "dash";
+        a!.play("dash", { once: true, fade: M.chuyenNhanh, restart: true, speed: 1.2 });
+      }
+      if (s.k === "fall" && si < steps.length) {
+        base = Math.atan2(camOff.x, camOff.z) + 1.1;
+        y = s.h;
+        pillar.visible = true;
+        pillar.scale.y = s.h;
+        const f = new THREE.Vector3(Math.sin(base), 0, Math.cos(base));
+        edge0.copy(a!.obj.position).addScaledVector(f, 0.3);
+        pillar.position.set(edge0.x, s.h / 2, edge0.z);
+      }
+    }
+    const s = steps[Math.min(si, steps.length - 1)];
+    ang = s.k === "s" ? base + 0.95 * Math.sin((2 * Math.PI * segT) / s.d) : s.k === "turn" ? base + Math.PI : base;
+    const inp: MoveInput =
+      s.k === "walk"
+        ? { len: 0.3 }
+        : s.k === "run" || s.k === "dash" || s.k === "s" || s.k === "turn"
+          ? { len: 1 }
+          : s.k === "sprint"
+            ? { len: 1, sprint: true }
+            : s.k === "fall"
+              ? { len: segT < 0.45 ? 1 : 0 }
+              : { len: 0 };
+    // Rơi: rời mép cột thì rơi tự do, giới hạn 10 m/s; chạm đất thì phân loại tiếp đất theo độ cao.
+    if (s.k === "fall" && pillar.visible) {
+      const off = a!.obj.position.clone().sub(pillar.position);
+      off.y = 0;
+      if (off.length() > 0.6 && y > 0) {
+        if (!air) {
+          air = true;
+          vy = 0;
+        }
+        vy = F.limitFall(vy - 25 * dt, 1);
+        y = Math.max(0, y + vy * dt);
+        if (y === 0) {
+          air = false;
+          F.land(s.h, inp.len > 0.15);
+        }
+      }
+    }
+    const r = F.update(dt, { ...inp, air });
+    // Hướng: chạy theo hướng cần ngay (như game), thân xoay mượt / pivot khi quay đầu gấp.
+    let d = ang - yawC;
+    d = Math.atan2(Math.sin(d), Math.cos(d));
+    if (inp.len > 0.15 || r.st === "dash") yawC += F.turn(d, dt);
+    const look = Math.atan2(Math.sin(ang - yawC), Math.cos(ang - yawC));
+    const mvA = r.st.startsWith("stop") ? yawC : ang;
+    if (!air || r.v > 0)
+      a!.obj.position.addScaledVector(new THREE.Vector3(Math.sin(mvA), 0, Math.cos(mvA)), (r.v / 40) * dt);
+    a!.obj.rotation.y = yawC;
+    a!.obj.position.y = y0 + y;
+    cam.position.set(a!.obj.position.x + camOff.x, camOff.y + y * 0.6, a!.obj.position.z + camOff.z);
+    cam.lookAt(a!.obj.position.x, ty + y * 0.8, a!.obj.position.z);
+    const vN = r.v / MOVE.toc.coSo;
+    acc += ((vN - vN0) / dt - acc) * Math.min(1, dt * 12);
+    vN0 = vN;
+    if (r.st === "fall") play("jumpAir", { fade: M.chuyen });
+    else if (r.st === "walk" || r.st === "run" || r.st === "sprint") {
+      cur = "loco";
+      a!.locomote(
+        (["walk", "run", "sprint"] as const).map((x) => moveClip(x)!.k),
+        locoSpeeds(),
+        r.v,
+        M.chuyen,
+        [M.blend.pha.walk, M.blend.pha.run, M.blend.pha.sprint],
+      );
+    } else if (r.st !== "dash") {
+      const c = moveClip(r.st);
+      if (!c) play(a!.dang?.gioi === "nam" ? "relaxNam" : "relax", { fade: 0.25 });
+      else {
+        const once = r.st.startsWith("stop") || r.st.startsWith("land");
+        play(c.k + (once ? "" : ""), {
+          once,
+          speed: c.speed ?? 1,
+          fade: r.st.startsWith("land") ? M.chuyenNhanh : M.chuyen,
+          restart: once && cur !== c.k,
+        });
+      }
+    }
+    const ground = r.st !== "fall" && r.st !== "dash";
+    if (a!.wfx) {
+      a!.wfx.want(armed, false, scene);
+      a!.wfx.runW = armed && ground && r.v > 1 ? Math.min(1, a!.wfx.runW + dt * 8) : Math.max(0, a!.wfx.runW - dt * 8);
+    }
+    a!.poseIn = {
+      mode: !ground ? "air" : r.st === "walk" || r.st === "run" || r.st === "sprint" ? "move" : "relax",
+      freeL: true,
+      freeR: true,
+      spd: r.st === "sprint" ? 1.5 : r.v > 1 ? 1 : 0,
+      dash: r.st === "dash",
+      vel: ground ? vN : 0,
+      acc: ground ? acc : 0,
+      look: inp.len > 0.15 ? look : 0,
+      phase: a!.locoPh,
+    };
+    a!.update(dt);
+    gl.render(scene, cam);
     segT += dt;
     return true;
   };

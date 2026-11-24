@@ -2,10 +2,12 @@
  * Renderer 3D toon (Three.js 0.170, MIT): địa hình mượt, cel-shading có viền, nhân vật VRM, camera xoay quanh nhân vật.
  * Chỉ đọc GS, không ghi logic. Kiến trúc và ngân sách hiệu năng: docs/art/renderer-3d.md.
  */
+import { MOVE, fsmOf, isLand, isStop, locoSpeeds, moveClip, type MoveState } from "../combat/movement";
 import * as THREE from "three";
 import { KITS } from "../data/kits";
 import { kitFx, kitField, kitTrail, type FxCtx } from "./kit-fx";
 import { Vfx } from "./vfx/system";
+import { RefractShader, updateImpact } from "./vfx/impact";
 import { Catalyst, catProj } from "./vfx/weapons";
 import { ECON } from "../data/economy";
 import { weaponOf } from "../economy/core";
@@ -181,6 +183,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     scene.add(l);
   }
 
+  let refract: ShaderPass | null = null;
   let composer: EffectComposer | null = null,
     tilt: ShaderPass | null = null;
   let world: THREE.Group | null = null,
@@ -327,6 +330,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     composer?.dispose();
     composer = null;
     tilt = null;
+    refract = null;
     if (!Q.bloom && !Q.dof) return;
     // Đích vẽ 8 bit: giá trị HDR quá lớn (đèn sát mặt, NaN) không làm bloom loang trắng cả màn hình.
     const rt = new THREE.WebGLRenderTarget(4, 4, { samples: Q.msaa });
@@ -337,6 +341,9 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       tilt = new ShaderPass(TiltShift);
       composer.addPass(tilt);
     }
+    refract = new ShaderPass(RefractShader);
+    refract.enabled = false;
+    composer.addPass(refract);
     composer.addPass(new OutputPass());
   }
 
@@ -439,7 +446,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     m: any,
     idleK: string | null = null,
     stopping = false,
-  ): { k: string; once?: boolean; speed?: number; fade?: number } {
+  ): { k: string; once?: boolean; speed?: number; fade?: number; loco?: string[] } {
     const T = GS.G.time,
       w = (m.c.w as WeaponType) ?? "sword",
       A = MODELS.hoatAnh[w] ?? MODELS.hoatAnh.sword;
@@ -462,28 +469,35 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     }
     if (p.hurt > 0) return { k: "hurt", once: true, fade: 0.06 };
     // Lướt ≈ 0,25 giây (clip 0,3 giây, kết ở sải chạy để nối thẳng vào chạy); trên không thì thân thẳng, thu gọn.
-    if (p.dashT > 0) return { k: p.air ? "dashAir" : "dash", once: true, speed: 1.2, fade: 0.04 };
+    const CH = MOVE.muot.chuyen,
+      CN = MOVE.muot.chuyenNhanh;
+    if (p.dashT > 0) return { k: p.air ? "dashAir" : "dash", once: true, speed: 1.2, fade: CN };
     if (p.air) {
-      p._landT = T;
-      return p.vz > 0 ? { k: "jumpUp", once: true, fade: 0.08 } : { k: "jumpAir", fade: 0.2 };
+      return p.vz > 0 ? { k: "jumpUp", once: true, fade: CN } : { k: "jumpAir", fade: CH };
     }
-    if (p._landT !== undefined && T - p._landT < 0.22) return { k: "jumpLand", once: true, speed: 1.4, fade: 0.06 };
+    // Tiếp đất nhẹ / lăn / nặng và dừng nhẹ / vừa / mạnh theo máy trạng thái di chuyển.
+    const ms = p.mst as MoveState | undefined;
+    const armed0 = !hero!.wfx || hero!.wfx.st === "hand" || hero!.wfx.st === "stowing";
+    if (ms && (isLand(ms) || isStop(ms))) {
+      const c = moveClip(ms, armed0 ? A.move : undefined)!;
+      return { k: `${c.k}#${ms}`, once: true, speed: c.speed, fade: isLand(ms) ? CN : CH };
+    }
     // S27: cầm vũ khí thì dùng thế chờ / chạy theo vũ khí; đã cất thì tay không thả lỏng.
     const armed = !hero!.wfx || hero!.wfx.st === "hand" || hero!.wfx.st === "stowing";
     if (p.moving) {
-      const sprint = GS.holdDash && p.dashHeld > 0.25 && p.stamina > 0,
-        mv = armed ? A.move : undefined;
-      return sprint
-        ? { k: mv?.sprint ?? "sprint", fade: 0.2 }
-        : { k: mv?.run ?? "run", fade: 0.18, speed: p.atkAnim > 0 ? 0.6 : 1 };
+      // Đi / chạy / chạy nhanh: blend 1D theo tốc độ, đồng bộ pha bước (không nhảy clip khi tăng tốc).
+      const mv = armed ? A.move : undefined;
+      return { k: "loco", fade: CH, loco: (["walk", "run", "sprint"] as const).map((s) => moveClip(s, mv)!.k) };
     }
     if (hero!.wfx?.clip) return { k: hero!.wfx.clip, once: true, fade: 0.12 };
     return armed
-      ? { k: A.ready ?? A.stand, fade: 0.25 }
-      : { k: hero!.dang?.gioi === "nam" ? "relaxNam" : "relax", fade: 0.35 };
+      ? { k: A.ready ?? A.stand, fade: Math.max(CH, 0.25) }
+      : { k: hero!.dang?.gioi === "nam" ? "relaxNam" : "relax", fade: Math.max(CH, 0.25) };
   }
 
-  let lastT = 0;
+  let lastT = 0,
+    heroAcc = 0,
+    heroVN = 0;
   const camTarget = new THREE.Vector3();
   let camInit = false;
   const fv = new THREE.Vector3(),
@@ -667,6 +681,10 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       const standing = !p.moving && !p.air && p.dashT <= 0;
       const idleDraw = standing && !(p.act && G.time - p.act.t0 < 1);
       hero.wfx?.want(weaponOut(p, G.enemies, G.time, POSES.vuKhi), standing, scene, idleDraw);
+      if (hero.wfx) {
+        const rw = p.moving && !p.air && p.dashT <= 0 && !(p.atkAnim > 0) ? 1 : 0;
+        hero.wfx.runW += (rw - hero.wfx.runW) * Math.min(1, dt * 8);
+      }
       // Nhịp hãm khi dừng chạy, hoạt ảnh chờ ngẫu nhiên khi đứng yên tay không.
       if (p.moving) heroMoveT += dt;
       else {
@@ -685,7 +703,11 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       const idleK = hero.idleVariant(dt, relaxing);
       const c = heroClip(p, m, idleK, G.time - heroStopT < 0.42),
         name = c.k.split("#")[0];
-      if (c.k !== hero.curName && (hero.curName.split("#")[0] !== name || c.k.includes("#"))) {
+      const F = fsmOf(p);
+      if (c.loco) {
+        const M = MOVE.muot.blend.pha;
+        hero.locomote(c.loco, locoSpeeds(), F.v * (p.atkAnim > 0 ? 0.6 : 1), c.fade ?? 0.2, [M.walk, M.run, M.sprint]);
+      } else if (c.k !== hero.curName && (hero.curName.split("#")[0] !== name || c.k.includes("#"))) {
         hero.play(name, { once: c.once, fade: c.fade, speed: c.speed, restart: c.k.includes("#") });
         hero.curName = c.k;
       } else if (c.speed && !c.once) hero.play(name, { speed: c.speed });
@@ -696,9 +718,19 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       else if (p.moving || p.dashT > 0) ty = Math.atan2(p.dirX, p.dirY);
       let d = ty - heroYaw;
       d = Math.atan2(Math.sin(d), Math.cos(d));
-      heroYaw += d * Math.min(1, dt * (attacking ? 30 : 14));
+      heroYaw += attacking ? d * Math.min(1, dt * 30) : F.turn(d, dt);
+      const lookD = Math.atan2(Math.sin(ty - heroYaw), Math.cos(ty - heroYaw));
+      const vN = F.v / MOVE.toc.coSo;
+      heroAcc += ((vN - heroVN) / Math.max(dt, 1e-3) - heroAcc) * Math.min(1, dt * 12);
+      heroVN = vN;
       hero.obj.rotation.y = heroYaw;
       hero.obj.position.set(pos.x, pos.y + (hero.obj.userData.yOff ?? 0), pos.z);
+      if (hero.footIK) {
+        const gPx = lift(p).g;
+        hero.footIK.ground = (x, z) => groundY(x * TS, z * TS, gPx);
+        hero.footIK.planeY = pos.y;
+        hero.footIK.active = !p.air && p.dashT <= 0 && m.alive;
+      }
       hero.obj.visible = !(p.iframes > 0 && p.hurt > 0 && Math.floor(t * 20) % 2);
       const acting = !!p.act && ACT_WIN[p.act.k] !== undefined && G.time - p.act.t0 < ACT_WIN[p.act.k];
       const handFree = !hero.wfx || hero.wfx.st !== "hand";
@@ -721,6 +753,10 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         spd: p.moving ? (GS.holdDash && p.dashHeld > 0.25 && p.stamina > 0 ? 1.5 : 1) : 0,
         apex: p.air && p.dashT <= 0 ? Math.max(0, 1 - Math.abs(p.vz) / (0.45 * jumpPhysics().v0)) : 0,
         dash: p.dashT > 0,
+        vel: p.air || p.dashT > 0 ? 0 : vN,
+        acc: p.air || p.dashT > 0 ? 0 : heroAcc,
+        look: p.moving && !attacking ? lookD : 0,
+        phase: hero.locoPh,
       };
       if (hero.wfx) hero.wfx.orbit = acting && m.c.w === "cat";
       if (hero.wfx && m.c.w === "cat" && acting && p.act && p.act.t0 !== castT0) {
@@ -970,7 +1006,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     };
     const vq = Q.lights >= 8 ? 1 : Q.lights >= 4 ? 0.7 : 0.4;
     vfx.setQuality(vq);
-    vfx.begin({ TS, t, dt, ground: kc.ground, glow: kc.glow, q: vq, hero: pos, heroYaw });
+    vfx.begin({ TS, t, dt, ground: kc.ground, glow: kc.glow, q: vq, hero: pos, heroYaw, cam: camera });
     const heroVfx = paintHero(G, m, vfx);
     for (const tu of G.turrets) PAINTERS[tu.m?.c.id]?.turret?.(tu, vfx);
     // Pháp khí (S30): sách lơ lửng cạnh tay trái thay cho mô hình cầm tay.
@@ -1145,6 +1181,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     });
 
     updateFade();
+    if (refract) refract.enabled = updateImpact(refract.uniforms as any, camera, dt, GS.VW / Math.max(1, GS.VH));
     if (composer) composer.render();
     else gl.render(scene, camera);
     return true;

@@ -1,0 +1,8 @@
+# Hợp nhất C: camera va chạm tường + ngăn xếp trạng thái. Khung rỗng, chưa bật (bat: false).
+bat: false
+vaCham: { dem: 0.2, gan: 2.5, keoVao: 20, noiRa: 3 } # đệm (m), gần nhất (m), tốc độ kéo vào / nới ra
+trangThai:
+  thuong: { uuTien: 0, xa: 13, goc: 32, fov: 40, tron: 0.4 }
+  boss: { uuTien: 10, xa: 17, goc: 36, fov: 44, tron: 0.6 }
+  no: { uuTien: 20, xa: 8, goc: 18, fov: 34, tron: 0.25 }
+  hoiThoai: { uuTien: 30, xa: 4.5, goc: 8, fov: 30, tron: 0.5 }

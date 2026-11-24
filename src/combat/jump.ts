@@ -10,6 +10,7 @@ import { groundAt, moveC, standable, STEP } from "../world/collision";
 import { FEEL, hitstop, shake } from "./feel";
 import { hitEnemy, hurtPlayer } from "./damage";
 import { buzz } from "../core/haptics";
+import { MOVE, fsmOf } from "./movement";
 
 /* =========================================================
    NHẢY VÀ ĐỘ CAO (S09). Độ cao đo bằng "bậc" (một bệ đá).
@@ -106,7 +107,8 @@ export function updateAir(p: any, dt: number, mx: number, my: number) {
     }
     moveC(p, p.jvx * dt, p.jvy * dt, 9);
     if (p.plunge) p.vz = -J.plunge.speed;
-    else p.vz -= g * dt;
+    // Rơi tối đa 10 m/s (đổi sang bậc/giây).
+    else p.vz = Math.max(p.vz - g * dt, -MOVE.roi.gioiHan / MOVE.roi.bacM);
   }
   if (Math.abs(mx) > 0.2) p.fx = mx > 0 ? 1 : -1;
   p.zh += p.vz * dt;
@@ -132,6 +134,8 @@ export function updateGround(p: any) {
 
 function land(p: any, ground: number) {
   const levels = p.peak - ground;
+  // Tiếp đất nhẹ / lăn / nặng theo độ cao rơi (mét).
+  p.mst = fsmOf(p).land(Math.max(0, levels) * MOVE.roi.bacM, !!p.moving);
   const plunged = p.plunge;
   p.air = false;
   p.vz = 0;
