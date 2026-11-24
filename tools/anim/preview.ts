@@ -438,7 +438,13 @@ function moveDemo(src: string) {
   // Đoạn: idle / walk / run / sprint / s (rẽ chữ S) / turn (quay đầu 180° rồi chạy) / stop / dash / fall:cao:giây.
   const steps = src.split(",").map((x) => {
     const [k, d, e] = x.split(":");
-    return { k, d: k === "dash" ? 0.45 : k === "fall" ? +(e ?? 2.6) : +(d ?? 1), h: k === "fall" ? +(d ?? 6) : 0 };
+    const fall = k === "fall" || k === "fallrun";
+    return {
+      k: fall ? "fall" : k,
+      run: k === "fallrun",
+      d: k === "dash" ? 0.45 : fall ? +(e ?? 2.6) : +(d ?? 1),
+      h: fall ? +(d ?? 6) : 0,
+    };
   });
   const F = new MoveFSM();
   const M = MOVE.muot;
@@ -503,7 +509,7 @@ function moveDemo(src: string) {
           : s.k === "sprint"
             ? { len: 1, sprint: true }
             : s.k === "fall"
-              ? { len: segT < 0.45 ? 1 : 0 }
+              ? { len: segT < 0.45 || (s.run && y > 0) ? 1 : 0 }
               : { len: 0 };
     // Rơi: rời mép cột thì rơi tự do, giới hạn 10 m/s; chạm đất thì phân loại tiếp đất theo độ cao.
     if (s.k === "fall" && pillar.visible) {
@@ -541,8 +547,12 @@ function moveDemo(src: string) {
     if (r.st === "fall") play("jumpAir", { fade: M.chuyen });
     else if (r.st === "walk" || r.st === "run" || r.st === "sprint") {
       cur = "loco";
+      // Như game: vũ khí còn trên tay (hoặc đang cất) thì chạy theo bộ cầm vũ khí.
+      const held = !a!.wfx || a!.wfx.st === "hand" || a!.wfx.st === "stowing";
       a!.locomote(
-        (["walk", "run", "sprint"] as const).map((x) => moveClip(x)!.k),
+        (["walk", "run", "sprint"] as const).map(
+          (x) => moveClip(x, held ? MODELS.hoatAnh[w as keyof typeof MODELS.hoatAnh]?.move : undefined)!.k,
+        ),
         locoSpeeds(),
         r.v,
         M.chuyen,

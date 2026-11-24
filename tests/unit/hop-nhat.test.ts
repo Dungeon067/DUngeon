@@ -117,10 +117,13 @@ describe("Hợp nhất A: máy trạng thái di chuyển", () => {
     for (let t = 0; t < MOVE.xoay - 1e-9; t += 1 / 60) a += (1 - a) * turnK(1 / 60);
     expect(a).toBeGreaterThan(0.93);
   });
-  it("mọi trạng thái có clip; clip thiếu được liệt kê", () => {
+  it("mọi trạng thái có clip riêng, không còn clip mượn tạm", () => {
     expect(moveClip("idle")).toBeNull();
-    expect(moveClip("stopHard")?.k).toBe("runStop");
-    expect(missingClips().map((c) => c.need)).toEqual(expect.arrayContaining(["walkStop", "landRoll", "landHard"]));
+    expect(moveClip("stopLight")?.k).toBe("walkStop");
+    expect(moveClip("stopHard")?.k).toBe("sprintStop");
+    expect(moveClip("landRoll")?.k).toBe("landRoll");
+    expect(moveClip("landHard")?.k).toBe("landHard");
+    expect(missingClips()).toEqual([]);
   });
 });
 
