@@ -17,6 +17,7 @@ import { sfx } from "../core/audio";
 import { held, moveAxis } from "../core/input";
 import { pollGamepad } from "../core/gamepad";
 import { updateAir, updateGround, updateWaves } from "../combat/jump";
+import { fsmOf } from "../combat/movement";
 import { render } from "../core/render";
 import { renderer3d } from "../render3d/select";
 import { clamp, dist, lerpAng, rand } from "../core/util";
@@ -73,26 +74,37 @@ export function update(dt: number) {
     p.dirY = my;
     if (p.atkCd <= 0) p.face8 = dir8(Math.atan2(my, mx), p.face8);
   }
+  const F = fsmOf(p),
+    sprintHeld = GS.holdDash && p.dashHeld > 0.25 && p.stamina > 0;
   if (p.air) {
+    p.mst = F.update(dt, { len: ml, air: true }).st;
     updateAir(p, dt, GS.G.over ? 0 : mx, GS.G.over ? 0 : my);
     dashHitStep(p);
     if (p.dashT <= 0) p.dashHit = null;
   } else if (p.dashT > 0) {
+    p.mst = F.update(dt, { len: ml }).st;
     p.dashT -= dt;
     moveC(p, p.dvx * dt, p.dvy * dt, 9);
     dashHitStep(p);
     if (p.dashT <= 0) p.dashHit = null;
-  } else if (p.moving) {
-    const sprint = GS.holdDash && p.dashHeld > 0.25 && p.stamina > 0;
-    const sp =
-      (sprint ? 225 : 155) * (p.atkAnim > 0 ? 0.45 : 1) * effectAt(GS.G.map, p.x, p.y, "moveSpeed") * exploreSpeed();
-    if (sprint) p.stamina = Math.max(0, p.stamina - 22 * dt);
-    moveC(p, mx * sp * dt, my * sp * dt, 9);
-    p.walk += dt * (sprint ? 14 : 10);
-    p.dirX = mx;
-    p.dirY = my;
-    if (Math.abs(mx) > 0.2) p.fx = mx > 0 ? 1 : -1;
-    p.back = my < -0.5 && Math.abs(mx) < 0.6;
+  } else {
+    // Máy trạng thái di chuyển (content/movement.yaml): đi / chạy / chạy nhanh, dừng có trượt hãm, khóa khi tiếp đất nặng.
+    const r = F.update(dt, { len: p.moving ? ml : 0, sprint: sprintHeld, walk: !!GS.holdWalk });
+    p.mst = r.st;
+    if (r.v > 0) {
+      const sp = r.v * (p.atkAnim > 0 ? 0.45 : 1) * effectAt(GS.G.map, p.x, p.y, "moveSpeed") * exploreSpeed();
+      if (r.st === "sprint" && sprintHeld) p.stamina = Math.max(0, p.stamina - 22 * dt);
+      const dx = p.moving ? mx : p.dirX,
+        dy = p.moving ? my : p.dirY;
+      moveC(p, dx * sp * dt, dy * sp * dt, 9);
+      p.walk += dt * (r.st === "sprint" ? 14 : r.st === "walk" ? 5 : 10);
+    }
+    if (p.moving) {
+      p.dirX = mx;
+      p.dirY = my;
+      if (Math.abs(mx) > 0.2) p.fx = mx > 0 ? 1 : -1;
+      p.back = my < -0.5 && Math.abs(mx) < 0.6;
+    }
   }
   if (!p.air) updateGround(p);
   p.land = Math.max(0, p.land - dt);

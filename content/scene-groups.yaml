@@ -1,0 +1,11 @@
+# Hợp nhất E: SceneGroup kiểu "sân khấu – diễn viên – kịch bản". Khung rỗng, chưa gắn vào bản đồ.
+den-tru-mau:
+  vung: { x: 0, y: 0, r: 160 }
+  giaiDoan:
+    - id: cho
+      dienVien: [{ id: den1, loai: den }, { id: den2, loai: den }, { id: den3, loai: den }]
+    - id: mo
+      dienVien: [{ id: ruong, loai: ruong }]
+  kichBan:
+    - { khi: vaoVung, lam: [{ giaiDoan: cho }] }
+    - { khi: { tatCa: [den1, den2, den3] }, lam: [{ giaiDoan: mo }, { thongBao: "Rương đã mở" }] }

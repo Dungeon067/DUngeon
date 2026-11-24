@@ -23,6 +23,8 @@ export const GS = {
   /** Đang giữ nút kỹ năng (S30): t giây. */
   skHold: null as { t: number } | null,
   holdDash: false,
+  /** Giữ phím đi bộ (máy trạng thái di chuyển). */
+  holdWalk: false,
   lastSync: 0,
   hudCache: {} as Record<string, any>,
   mouse: { sx: 0, sy: 0, wx: 0, wy: 0, inside: false },

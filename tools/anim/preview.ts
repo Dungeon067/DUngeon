@@ -7,6 +7,7 @@ import * as THREE from "three";
 import { VrmActor, POSES, MODELS } from "../../src/render3d/toon/actor";
 import { HeroFx } from "../../src/render3d/toon/motion-fx";
 import { WindField, type WindEnv, type WindSrc } from "../../src/render3d/toon/wind";
+import { MoveFSM, moveClip, type MoveInput } from "../../src/combat/movement";
 
 const q = new URLSearchParams(location.search);
 if (q.get("anim")) (globalThis as { __animUrl?: string }).__animUrl = q.get("anim")!;
@@ -97,6 +98,7 @@ const act = (a as any).actions.get(a.variant(clip)) as THREE.AnimationAction;
   return true;
 };
 if (q.get("seq")) sequence(q.get("seq")!);
+if (q.get("mv")) moveDemo(q.get("mv")!);
 // Gió (video duyệt S27): vùng gió (vung, huong), bạn đồng hành dùng lốc xoáy (ban, bw, bdang, bpos), miệng gió.
 const wind = new WindField(POSES.gio);
 const env: WindEnv = { vung: q.get("vung") ?? "mo-ngoc", huong: q.get("huong") ? +q.get("huong")! : undefined };
@@ -406,6 +408,112 @@ function sequence(src: string) {
     fx.update(a!, { acting: !!WIN[s.k], fin, dash: dashing }, dt);
     gl.render(scene, cam);
     T += dt;
+    segT += dt;
+    return true;
+  };
+}
+
+/**
+ * Video máy trạng thái di chuyển (hợp nhất A): mv=idle:0.6,walk:2,stop:1,run:2,stop:1,sprint:2,stop:1.4,run:0.6,dash,dash,dash,run:1,stop:1,fall:6:2.6
+ * Mỗi bước đặt đầu vào cho MoveFSM; dash = bấm lướt (bị từ chối khi đang hồi); fall:H:d = chạy khỏi cột cao H mét rồi rơi.
+ */
+function moveDemo(src: string) {
+  const steps = src.split(",").map((x) => {
+    const [k, d, e] = x.split(":");
+    return { k, d: k === "dash" ? 0.45 : k === "fall" ? +(e ?? 2.6) : +(d ?? 1), h: k === "fall" ? +(d ?? 6) : 0 };
+  });
+  const F = new MoveFSM();
+  const FPS = +(q.get("fps") ?? 30),
+    SLOW = +(q.get("slow") ?? 1);
+  (window as any).nframes = Math.round((steps.reduce((s, x) => s + x.d, 0) * FPS) / SLOW);
+  const pillar = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1, 1.2), new THREE.MeshLambertMaterial({ color: 0x8d99ab }));
+  pillar.visible = false;
+  scene.add(pillar);
+  let si = -1,
+    segT = 0,
+    cur = "",
+    y = 0,
+    vy = 0,
+    air = false,
+    last: MoveInput = { len: 0 };
+  const y0 = a!.obj.userData.yOff ?? 0;
+  const play = (c: string, o: { once?: boolean; speed?: number; fade?: number; restart?: boolean } = {}) => {
+    if (c === cur && !o.restart) return;
+    cur = c;
+    a!.play(c, { fade: 0.15, ...o });
+  };
+  (window as any).step = () => {
+    const dt = SLOW / FPS;
+    if (si < 0 || segT >= steps[Math.min(si, steps.length - 1)].d) {
+      si++;
+      segT = 0;
+      const s = steps[Math.min(si, steps.length - 1)];
+      if (s.k === "dash" && F.tryDash()) play("dash", { once: true, fade: 0.04, restart: true });
+      if (s.k === "fall" && si < steps.length) {
+        y = s.h;
+        pillar.visible = true;
+        pillar.scale.y = s.h;
+        pillar.position.set(a!.obj.position.x, s.h / 2, a!.obj.position.z + 0.3);
+      }
+    }
+    const s = steps[Math.min(si, steps.length - 1)];
+    const inp: MoveInput =
+      s.k === "walk"
+        ? { len: 0.3 }
+        : s.k === "run" || s.k === "dash"
+          ? { len: 1 }
+          : s.k === "sprint"
+            ? { len: 1, sprint: true }
+            : s.k === "fall"
+              ? { len: segT < 0.35 ? 1 : 0 }
+              : { len: 0 };
+    if (s.k !== "stop" && s.k !== "idle") last = inp;
+    // Rơi: rời mép cột thì rơi tự do, giới hạn 10 m/s; chạm đất thì phân loại tiếp đất theo độ cao.
+    if (s.k === "fall" && pillar.visible) {
+      const edge = a!.obj.position.z > pillar.position.z + 0.6;
+      if (edge && y > 0) {
+        if (!air) {
+          air = true;
+          vy = 0;
+        }
+        vy = F.limitFall(vy - 25 * dt, 1);
+        y = Math.max(0, y + vy * dt);
+        if (y === 0) {
+          air = false;
+          F.land(s.h, inp.len > 0.15);
+        }
+      }
+    }
+    const r = F.update(dt, { ...inp, air });
+    const f = new THREE.Vector3(0, 0, 1);
+    a!.obj.position.addScaledVector(f, (r.v / 40) * dt);
+    a!.obj.position.y = y0 + y;
+    cam.position.set(a!.obj.position.x + camOff.x, camOff.y + y * 0.6, a!.obj.position.z + camOff.z);
+    cam.lookAt(a!.obj.position.x, ty + y * 0.8, a!.obj.position.z);
+    if (r.st === "fall") play("jumpAir", { fade: 0.15 });
+    else if (r.st !== "dash") {
+      const c = moveClip(r.st);
+      if (!c) play(a!.dang?.gioi === "nam" ? "relaxNam" : "relax", { fade: 0.3 });
+      else {
+        const once = r.st.startsWith("stop") || r.st.startsWith("land");
+        play(once ? `${c.k}` : c.k, {
+          once,
+          speed: c.speed ?? 1,
+          fade: once ? 0.08 : 0.18,
+          restart: once && cur !== c.k,
+        });
+      }
+    }
+    void last;
+    a!.poseIn = {
+      mode: r.st === "fall" || r.st === "dash" ? "air" : r.v > 1 ? "move" : "relax",
+      freeL: true,
+      freeR: true,
+      spd: r.st === "sprint" ? 1.5 : r.v > 1 ? 1 : 0,
+      dash: r.st === "dash",
+    };
+    a!.update(dt);
+    gl.render(scene, cam);
     segT += dt;
     return true;
   };

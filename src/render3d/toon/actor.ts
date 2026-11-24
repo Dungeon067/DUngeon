@@ -2,6 +2,8 @@
  * Nhân vật VRM (@pixiv/three-vrm, MToon, spring bone) với hoạt ảnh humanoid dùng chung.
  * Thả public/media/models/<id>/model.vrm là game tự nhận; thiếu thì dùng mẫu tạm trong content/models.yaml.
  */
+import { FootIK } from "./foot-ik";
+import { MOVE } from "../../combat/movement";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { VRMLoaderPlugin, VRMUtils, type VRM } from "@pixiv/three-vrm";
@@ -144,6 +146,8 @@ export class VrmActor {
   restHips: THREE.Vector3;
   hipsH: number;
   bow: BowRig | null = null;
+  /** IK chân bám dốc / bậc (renderer đặt ground, planeY, active mỗi khung). */
+  footIK: FootIK | null = null;
   wfx: WeaponFx | null = null;
   private strs = new Map<string, number[]>();
   private fps: number;
@@ -251,6 +255,7 @@ export class VrmActor {
     const bone = vrm.humanoid.getNormalizedBoneNode(grip.bone as any);
     const a = new VrmActor(vrm, wtype, A.clips, A.fps, url);
     a.setupCloth(id);
+    if (MOVE.ikChan.bat) a.footIK = new FootIK(vrm, a.obj, MOVE.ikChan);
     a.obj.scale.setScalar(s);
     a.obj.updateMatrixWorld(true);
     a.obj.userData.yOff = look.yOffset - box.min.y * s;
@@ -435,6 +440,7 @@ export class VrmActor {
     this.offW += ((this.poseIn.mode === "act" ? 1 : 0) - this.offW) * Math.min(1, dt * 14);
     this.gripBlend();
     this.grip2();
+    this.footIK?.update(dt);
     this.cloth.update(dt);
     // Váy, vạt áo không lật quá giới hạn của loại vải so với tư thế nghỉ, dù gió mạnh tới đâu.
     for (const c of this.clothJoints)

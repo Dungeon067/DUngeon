@@ -2,6 +2,7 @@
  * Renderer 3D toon (Three.js 0.170, MIT): địa hình mượt, cel-shading có viền, nhân vật VRM, camera xoay quanh nhân vật.
  * Chỉ đọc GS, không ghi logic. Kiến trúc và ngân sách hiệu năng: docs/art/renderer-3d.md.
  */
+import { isLand, isStop, moveClip, turnK, type MoveState } from "../combat/movement";
 import * as THREE from "three";
 import { KITS } from "../data/kits";
 import { kitFx, kitField, kitTrail, type FxCtx } from "./kit-fx";
@@ -464,18 +465,21 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     // Lướt ≈ 0,25 giây (clip 0,3 giây, kết ở sải chạy để nối thẳng vào chạy); trên không thì thân thẳng, thu gọn.
     if (p.dashT > 0) return { k: p.air ? "dashAir" : "dash", once: true, speed: 1.2, fade: 0.04 };
     if (p.air) {
-      p._landT = T;
       return p.vz > 0 ? { k: "jumpUp", once: true, fade: 0.08 } : { k: "jumpAir", fade: 0.2 };
     }
-    if (p._landT !== undefined && T - p._landT < 0.22) return { k: "jumpLand", once: true, speed: 1.4, fade: 0.06 };
+    // Tiếp đất nhẹ / lăn / nặng và dừng nhẹ / vừa / mạnh theo máy trạng thái di chuyển.
+    const ms = p.mst as MoveState | undefined;
+    const armed0 = !hero!.wfx || hero!.wfx.st === "hand" || hero!.wfx.st === "stowing";
+    if (ms && (isLand(ms) || isStop(ms))) {
+      const c = moveClip(ms, armed0 ? A.move : undefined)!;
+      return { k: `${c.k}#${ms}`, once: true, speed: c.speed, fade: 0.08 };
+    }
     // S27: cầm vũ khí thì dùng thế chờ / chạy theo vũ khí; đã cất thì tay không thả lỏng.
     const armed = !hero!.wfx || hero!.wfx.st === "hand" || hero!.wfx.st === "stowing";
     if (p.moving) {
-      const sprint = GS.holdDash && p.dashHeld > 0.25 && p.stamina > 0,
-        mv = armed ? A.move : undefined;
-      return sprint
-        ? { k: mv?.sprint ?? "sprint", fade: 0.2 }
-        : { k: mv?.run ?? "run", fade: 0.18, speed: p.atkAnim > 0 ? 0.6 : 1 };
+      const mv = armed ? A.move : undefined,
+        c = moveClip(ms === "walk" || ms === "sprint" ? ms : "run", mv)!;
+      return { k: c.k, fade: ms === "sprint" ? 0.2 : 0.18, speed: (c.speed ?? 1) * (p.atkAnim > 0 ? 0.6 : 1) };
     }
     if (hero!.wfx?.clip) return { k: hero!.wfx.clip, once: true, fade: 0.12 };
     return armed
@@ -696,9 +700,15 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       else if (p.moving || p.dashT > 0) ty = Math.atan2(p.dirX, p.dirY);
       let d = ty - heroYaw;
       d = Math.atan2(Math.sin(d), Math.cos(d));
-      heroYaw += d * Math.min(1, dt * (attacking ? 30 : 14));
+      heroYaw += d * (attacking ? Math.min(1, dt * 30) : turnK(dt));
       hero.obj.rotation.y = heroYaw;
       hero.obj.position.set(pos.x, pos.y + (hero.obj.userData.yOff ?? 0), pos.z);
+      if (hero.footIK) {
+        const gPx = lift(p).g;
+        hero.footIK.ground = (x, z) => groundY(x * TS, z * TS, gPx);
+        hero.footIK.planeY = pos.y;
+        hero.footIK.active = !p.air && p.dashT <= 0 && m.alive;
+      }
       hero.obj.visible = !(p.iframes > 0 && p.hurt > 0 && Math.floor(t * 20) % 2);
       const acting = !!p.act && ACT_WIN[p.act.k] !== undefined && G.time - p.act.t0 < ACT_WIN[p.act.k];
       const handFree = !hero.wfx || hero.wfx.st !== "hand";
