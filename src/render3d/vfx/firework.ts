@@ -81,7 +81,8 @@ export class Fireworks {
   }
   /** Bắn một quả từ `from`, nổ ở `to` sau 24 khung. scale = bán kính chùm (m) so với bản mẫu 2,2 m. */
   launch(from: THREE.Vector3, to: THREE.Vector3, mai: boolean, delayFrames = 0, scale = 0.6, first = false) {
-    if (this.shells.length >= 8) this.shells.shift();
+    // Đầy thì bỏ quả mới, không đẩy quả cũ chưa kịp nổ.
+    if (this.shells.length >= 10) return;
     const st: Streak[] = [];
     const n = Math.round((mai ? 175 : 140) * Math.max(0.4, this.q));
     for (let i = 0; i < n; i++) st.push({ p: new THREE.Vector3(), v: new THREE.Vector3(), kind: 0, tip: 0 });
