@@ -4,15 +4,15 @@ Ngày khảo sát: 24/11/2026. Đã đọc mã nguồn, chỉ đọc chứ khôn
 
 ## 1. Nguồn và giấy phép
 
-| Repo | Giấy phép | Engine | Dùng như thế nào |
-|---|---|---|---|
-| 526077247/GenshinGamePlay | MIT (© 2023 大大的奥斯卡) | Unity C# | Học kiến trúc. Code C# không chạy được trên web, phải viết lại bằng TypeScript |
-| Wafflus/unity-genshin-impact-movement-system | MIT (© 2022 Gustavo Vieira) | Unity C# | Lấy bộ thông số và các trạng thái di chuyển |
-| Gaolingx/GenshinCelShaderURP | MIT (© 2023 Gaolingx) | Unity HLSL | Học kỹ thuật shader. Không lấy thư mục `Model/` (có thể là mô hình trích từ game gốc) |
-| kaze-mio/UnityGenshinToonShader | MIT (© 2023 风澪瑟) | Unity HLSL | Chuyển thuật toán sang GLSL cho Three.js |
-| norio/vrm-game-starter | MIT (© 2026 norio) | Three.js WebGPU, TypeScript | Cùng ngôn ngữ, có thể chuyển trực tiếp phần toán (va chạm camera, IK chân) |
-| aymenhayderhtml-pixel/pick-me-up-web-three-js | **Không có giấy phép** | Three.js | **Không được chép**, chỉ xem để biết |
-| Hoyotoon, PrimoToon | | | **Loại bỏ.** Làm ra để hiển thị mô hình trích xuất trái phép |
+| Repo                                          | Giấy phép                   | Engine                      | Dùng như thế nào                                                                      |
+| --------------------------------------------- | --------------------------- | --------------------------- | ------------------------------------------------------------------------------------- |
+| 526077247/GenshinGamePlay                     | MIT (© 2023 大大的奥斯卡)   | Unity C#                    | Học kiến trúc. Code C# không chạy được trên web, phải viết lại bằng TypeScript        |
+| Wafflus/unity-genshin-impact-movement-system  | MIT (© 2022 Gustavo Vieira) | Unity C#                    | Lấy bộ thông số và các trạng thái di chuyển                                           |
+| Gaolingx/GenshinCelShaderURP                  | MIT (© 2023 Gaolingx)       | Unity HLSL                  | Học kỹ thuật shader. Không lấy thư mục `Model/` (có thể là mô hình trích từ game gốc) |
+| kaze-mio/UnityGenshinToonShader               | MIT (© 2023 风澪瑟)         | Unity HLSL                  | Chuyển thuật toán sang GLSL cho Three.js                                              |
+| norio/vrm-game-starter                        | MIT (© 2026 norio)          | Three.js WebGPU, TypeScript | Cùng ngôn ngữ, có thể chuyển trực tiếp phần toán (va chạm camera, IK chân)            |
+| aymenhayderhtml-pixel/pick-me-up-web-three-js | **Không có giấy phép**      | Three.js                    | **Không được chép**, chỉ xem để biết                                                  |
+| Hoyotoon, PrimoToon                           |                             |                             | **Loại bỏ.** Làm ra để hiển thị mô hình trích xuất trái phép                          |
 
 Quy tắc:
 
@@ -25,17 +25,17 @@ Quy tắc:
 
 Máy trạng thái gồm Idle → Walk/Run/Sprint → Stop (nhẹ/vừa/mạnh) → Dash → Jump/Fall → Land (nhẹ/lăn/nặng).
 
-| Thông số | Giá trị gốc | Ý nghĩa |
-|---|---|---|
-| BaseSpeed | 5 m/s | tốc độ chạy cơ sở |
-| Walk | ×0,225 | đi bộ (giữ phím đi hoặc cần analog nghiêng nhẹ) |
-| Run | ×1,0 | chạy |
-| Sprint | ×1,7 | chạy nhanh. Đang sprint mà nhả phím quá 1 s thì về run, quá 0,5 s nữa thì về walk |
-| Dash | ×2,0 | lướt. Tối đa 2 lần liên tiếp, mỗi lần cách nhau dưới 1 s. Vượt giới hạn thì hồi 1,75 s |
-| Stop | lực hãm 5 / 6,5 / 5 | dừng nhẹ sau walk, dừng vừa sau run, dừng mạnh sau sprint. Mỗi kiểu dùng một clip riêng |
-| Fall | giới hạn tốc độ rơi 10 m/s | rơi từ trên 3 m thì tiếp đất nặng; đang chạy mà rơi thì lăn |
-| Rotation | thời gian xoay tới hướng đích khoảng 0,14 s | xoay người mượt, không giật quay đầu |
-| Camera recentering | | sau vài giây không xoay camera, camera tự vòng về sau lưng khi nhân vật chạy trong một dải góc nhất định |
+| Thông số           | Giá trị gốc                                 | Ý nghĩa                                                                                                  |
+| ------------------ | ------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| BaseSpeed          | 5 m/s                                       | tốc độ chạy cơ sở                                                                                        |
+| Walk               | ×0,225                                      | đi bộ (giữ phím đi hoặc cần analog nghiêng nhẹ)                                                          |
+| Run                | ×1,0                                        | chạy                                                                                                     |
+| Sprint             | ×1,7                                        | chạy nhanh. Đang sprint mà nhả phím quá 1 s thì về run, quá 0,5 s nữa thì về walk                        |
+| Dash               | ×2,0                                        | lướt. Tối đa 2 lần liên tiếp, mỗi lần cách nhau dưới 1 s. Vượt giới hạn thì hồi 1,75 s                   |
+| Stop               | lực hãm 5 / 6,5 / 5                         | dừng nhẹ sau walk, dừng vừa sau run, dừng mạnh sau sprint. Mỗi kiểu dùng một clip riêng                  |
+| Fall               | giới hạn tốc độ rơi 10 m/s                  | rơi từ trên 3 m thì tiếp đất nặng; đang chạy mà rơi thì lăn                                              |
+| Rotation           | thời gian xoay tới hướng đích khoảng 0,14 s | xoay người mượt, không giật quay đầu                                                                     |
+| Camera recentering |                                             | sau vài giây không xoay camera, camera tự vòng về sau lưng khi nhân vật chạy trong một dải góc nhất định |
 
 Việc cần làm: thêm các trạng thái Stop ba mức và Land ba mức vào hệ thống di chuyển. S27 đang chuẩn bị nhóm động tác di chuyển, nên làm hai việc này cùng một đợt.
 
@@ -67,9 +67,9 @@ Chân bám bậc thang và dốc. Bàn chân xoay theo pháp tuyến mặt đấ
 
 ## 3. Thứ tự đề xuất
 
-| Đợt | Hạng mục | Phụ thuộc |
-|---|---|---|
-| 1 | A (di chuyển) + D (IK chân) | đi cùng S27 nhóm di chuyển |
-| 2 | B1, B2, B3 (bóng mặt, ramp, viền sáng) | sau khi đủ mô hình VRM đội khởi đầu |
-| 3 | C (camera) | |
-| 4 | B4, B5, B6 và E | lối chơi dài hạn |
+| Đợt | Hạng mục                               | Phụ thuộc                           |
+| --- | -------------------------------------- | ----------------------------------- |
+| 1   | A (di chuyển) + D (IK chân)            | đi cùng S27 nhóm di chuyển          |
+| 2   | B1, B2, B3 (bóng mặt, ramp, viền sáng) | sau khi đủ mô hình VRM đội khởi đầu |
+| 3   | C (camera)                             |                                     |
+| 4   | B4, B5, B6 và E                        | lối chơi dài hạn                    |
