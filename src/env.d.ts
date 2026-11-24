@@ -2,6 +2,8 @@
 /// <reference types="vite-plugin-pwa/client" />
 /** Số phiên bản trong package.json, Vite thay lúc build. */
 declare const __APP_VERSION__: string;
+/** Mã băm humanoid.json + kits.json, Vite thay lúc build. */
+declare const __ANIM_V__: string;
 declare module "*.yaml" {
   const data: unknown;
   export default data;
