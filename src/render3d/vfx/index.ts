@@ -2,6 +2,7 @@
  * Điểm vào VFX bộ chiêu (S30). renderer3d gọi paintVfx mỗi khung; hiệu ứng nào có painter thì vẽ bằng
  * hệ mới (mesh + shader + hạt có hình), còn lại rơi về kit-fx cũ (trả về false).
  */
+import { impactRing } from "./impact";
 import type { Vfx } from "./system";
 import { HAVY } from "./chars/havy";
 import { SUONGMAI } from "./chars/suongmai";
@@ -76,6 +77,7 @@ export function paintHit(f: any, X: Vfx) {
     pw = Math.min(2.5, Math.max(0.5, f.pw ?? 1)) * (f.crit ? 1.4 : 1),
     [c1, c2, h0, h1] = HIT[f.el ?? "phys"] ?? HIT.phys;
   if (X.first(f)) {
+    if (pw >= 0.7 || f.crit) impactRing(x, y, z, f.crit ? 0.032 : 0.026);
     X.emit(Math.round(6 * pw), () => {
       const t = Math.random() * 6.28,
         u = Math.random() * 0.8 + 0.2,

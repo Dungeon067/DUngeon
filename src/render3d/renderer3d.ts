@@ -6,6 +6,7 @@ import * as THREE from "three";
 import { KITS } from "../data/kits";
 import { kitFx, kitField, kitTrail, type FxCtx } from "./kit-fx";
 import { Vfx } from "./vfx/system";
+import { RefractShader, updateImpact } from "./vfx/impact";
 import { Catalyst, catProj } from "./vfx/weapons";
 import { ECON } from "../data/economy";
 import { weaponOf } from "../economy/core";
@@ -181,6 +182,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     scene.add(l);
   }
 
+  let refract: ShaderPass | null = null;
   let composer: EffectComposer | null = null,
     tilt: ShaderPass | null = null;
   let world: THREE.Group | null = null,
@@ -327,6 +329,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     composer?.dispose();
     composer = null;
     tilt = null;
+    refract = null;
     if (!Q.bloom && !Q.dof) return;
     // Đích vẽ 8 bit: giá trị HDR quá lớn (đèn sát mặt, NaN) không làm bloom loang trắng cả màn hình.
     const rt = new THREE.WebGLRenderTarget(4, 4, { samples: Q.msaa });
@@ -337,6 +340,9 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       tilt = new ShaderPass(TiltShift);
       composer.addPass(tilt);
     }
+    refract = new ShaderPass(RefractShader);
+    refract.enabled = false;
+    composer.addPass(refract);
     composer.addPass(new OutputPass());
   }
 
@@ -970,7 +976,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     };
     const vq = Q.lights >= 8 ? 1 : Q.lights >= 4 ? 0.7 : 0.4;
     vfx.setQuality(vq);
-    vfx.begin({ TS, t, dt, ground: kc.ground, glow: kc.glow, q: vq, hero: pos, heroYaw });
+    vfx.begin({ TS, t, dt, ground: kc.ground, glow: kc.glow, q: vq, hero: pos, heroYaw, cam: camera });
     const heroVfx = paintHero(G, m, vfx);
     for (const tu of G.turrets) PAINTERS[tu.m?.c.id]?.turret?.(tu, vfx);
     // Pháp khí (S30): sách lơ lửng cạnh tay trái thay cho mô hình cầm tay.
@@ -1145,6 +1151,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     });
 
     updateFade();
+    if (refract) refract.enabled = updateImpact(refract.uniforms as any, camera, dt, GS.VW / Math.max(1, GS.VH));
     if (composer) composer.render();
     else gl.render(scene, camera);
     return true;

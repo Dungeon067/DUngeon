@@ -41,12 +41,15 @@ function funnel(
   k: number,
   al: number,
   c: [string, string, string],
+  wave = -10,
+  wc = c[2],
 ) {
   for (let i = 0; i < n; i++) {
     const e = X.use("bv-helix", () => SH.helix(1.8, 0.35, 1, 1, 0.22), {
       soft: [0.15, 0.15, 0.5, 0.5],
       fres: 2,
       fresAlpha: true,
+      wave: true,
     });
     if (!e) break;
     e.m.position.set(x, gy + 0.05, z);
@@ -60,7 +63,18 @@ function funnel(
     e.u.uScroll.value.set(-2.5, 0);
     e.u.uNs.value.set(12, 1.5);
     e.u.uNA.value = 1;
+    e.u.uWaveY.value = wave;
+    e.u.uWC.value.set(wc);
   }
+}
+/** Hút nguyên tố: dải màu leo từ đáy phễu lên đỉnh trong 0,8 s; trả về độ cao sóng (trục Y cục bộ 0..1) và bộ màu dùng cho lớp khác. */
+const absorbed = new WeakMap<object, { el: string; t: number }>();
+function climb(fl: any, t: number): { y: number; c: [string, string, string] } {
+  if (!fl.hutEl) return { y: -10, c: WIND };
+  let s = absorbed.get(fl);
+  if (!s || s.el !== fl.hutEl) absorbed.set(fl, (s = { el: fl.hutEl, t }));
+  const y = ((t - s.t) / 0.8) * 1.2 - 0.1;
+  return { y, c: y >= 1 ? cols(fl.hutEl) : WIND };
 }
 /** Lưỡi gió cong nằm ngang quay quanh tâm ở các độ cao khác nhau. */
 function blades(
@@ -166,10 +180,11 @@ export const BACHVU: Painters = {
         z = fl.y / V.TS,
         gy = V.ground(fl.x, fl.y),
         R = (fl.r ?? 110) / V.TS,
-        c = cols(fl.hutEl),
+        w = climb(fl, V.t),
+        c = w.c,
         born = ease(a * fl.max * 3),
         out = Math.min(1, (fl.life ?? 1) * 4);
-      funnel(X, x, gy, z, R * 0.7 * born, 2.2 * born, 4, born, out, c);
+      funnel(X, x, gy, z, R * 0.7 * born, 2.2 * born, 4, born, out, WIND, w.y, cols(fl.hutEl)[2]);
       blades(X, x, gy, z, R * 0.85, 2, 0.8 * out, c);
       X.rune("wind", x, gy, z, R, Math.min(0.5, a * 3), c, 0.7 * out, -1.5);
       X.shock(x, gy, z, R * 1.1, (V.t * 2.5) % 1, c, 0.45 * out);
@@ -185,10 +200,11 @@ export const BACHVU: Painters = {
         z = fl.y / V.TS,
         gy = V.ground(fl.x, fl.y),
         R = (fl.r ?? 170) / V.TS,
-        c = cols(fl.hutEl),
+        w = climb(fl, V.t),
+        c = w.c,
         born = ease(a * fl.max * 1.5),
         out = Math.min(1, (fl.life ?? 1) * 2);
-      funnel(X, x, gy, z, R * 0.8 * born, 3.6 * born, 4, born, out * 0.55, c);
+      funnel(X, x, gy, z, R * 0.8 * born, 3.6 * born, 4, born, out * 0.55, WIND, w.y, cols(fl.hutEl)[2]);
       blades(X, x, gy, z, R * 0.9, 3, 0.55 * out, c, 0.3);
       X.rune("wind", x, gy, z, R * 1.05, Math.min(0.5, a * 4), c, 0.8 * out, -0.8);
       X.shock(x, gy, z, R * 1.2, (V.t * 1.5) % 1, c, 0.5 * out);

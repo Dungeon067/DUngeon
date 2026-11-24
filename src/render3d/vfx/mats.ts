@@ -25,6 +25,8 @@ export interface FxMatOpt {
   soft?: [number, number, number, number];
   /** Bóng mờ (dùng cho tinh thể đặc: có mặt sáng tối giả). */
   facet?: boolean;
+  /** Dải màu leo theo trục Y cục bộ (uWaveY): phía dưới đổi sang uWC, viền sóng lóe sáng. */
+  wave?: boolean;
 }
 
 export type FxMat = THREE.ShaderMaterial & {
@@ -42,6 +44,8 @@ export type FxMat = THREE.ShaderMaterial & {
     uWin: { value: THREE.Vector2 };
     uRot: { value: number };
     uGlow: { value: number };
+    uWaveY: { value: number };
+    uWC: { value: THREE.Color };
   };
 };
 
@@ -59,6 +63,7 @@ export function fxMat(o: FxMatOpt = {}): FxMat {
       ...(o.fres ? { FRES: o.fres.toFixed(2) } : {}),
       ...(o.fresAlpha ? { FRES_ALPHA: 1 } : {}),
       ...(o.facet ? { FACET: 1 } : {}),
+      ...(o.wave ? { WAVE: 1 } : {}),
     },
     uniforms: {
       uT: { value: 0 },
@@ -74,13 +79,16 @@ export function fxMat(o: FxMatOpt = {}): FxMat {
       uWin: { value: new THREE.Vector2(-1, 2) },
       uRot: { value: 0 },
       uGlow: { value: 1 },
+      uWaveY: { value: -10 },
+      uWC: { value: new THREE.Color(0xffffff) },
       uMap: { value: o.map ?? null },
       uSoft: { value: new THREE.Vector4(...soft) },
     },
     vertexShader: /* glsl */ `
-      varying vec2 vUv; varying vec3 vN; varying vec3 vV; varying vec3 vW;
+      varying vec2 vUv; varying vec3 vN; varying vec3 vV; varying vec3 vW; varying float vLy;
       void main(){
         vUv = uv;
+        vLy = position.y;
         vec4 w = modelMatrix * vec4(position, 1.0);
         vW = w.xyz;
         vN = normalize(mat3(modelMatrix) * normal);
@@ -88,7 +96,8 @@ export function fxMat(o: FxMatOpt = {}): FxMat {
         gl_Position = projectionMatrix * viewMatrix * w;
       }`,
     fragmentShader: /* glsl */ `
-      uniform float uT, uAge, uA, uDis, uNA, uRot, uGlow;
+      uniform float uT, uAge, uA, uDis, uNA, uRot, uGlow, uWaveY;
+      uniform vec3 uWC; varying float vLy;
       uniform vec3 uC0, uC1, uC2;
       uniform vec2 uScroll, uNs, uWin;
       uniform vec4 uSoft;
@@ -100,6 +109,11 @@ export function fxMat(o: FxMatOpt = {}): FxMat {
         float n = fbm(uv * uNs + uScroll * uT);
         vec3 col = uAge < .5 ? mix(uC0, uC1, uAge * 2.) : mix(uC1, uC2, (uAge - .5) * 2.);
         col = mix(col, uC0, smoothstep(.6, .95, n) * .6);
+        #ifdef WAVE
+          float am = smoothstep(uWaveY + .12, uWaveY - .12, vLy);
+          col = mix(col, uWC * (.75 + n * .6), am * .85);
+          col += uWC * exp(-pow((vLy - uWaveY) * 9., 2.)) * step(-.5, uWaveY) * .9;
+        #endif
         float a = uA * mix(1., .45 + n * 1.1, uNA);
         #ifdef USE_FXMAP
           vec2 c = uv - .5; float cs = cos(uRot), sn = sin(uRot);

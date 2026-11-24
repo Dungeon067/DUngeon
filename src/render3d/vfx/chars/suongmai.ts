@@ -74,31 +74,23 @@ function droplets(X: Vfx, x: number, y: number, z: number, n: number, v: number,
     };
   });
 }
+// Sương nước: cụm khói mềm (SDF 9 vòng), nhỏ.
 function mist(X: Vfx, x: number, y: number, z: number, n: number, R: number) {
-  X.emit(
-    n,
-    () => {
-      const t = Math.random() * 6.28,
-        r = Math.random() * R;
-      return {
-        cell: "khoi",
-        x: x + Math.cos(t) * r,
-        y: y + 0.1,
-        z: z + Math.sin(t) * r,
-        vx: Math.cos(t) * 0.3,
-        vy: 0.2,
-        vz: Math.sin(t) * 0.3,
-        life: 1.1,
-        size: 0.8,
-        size1: 1.6,
-        col: "#eaf6ff",
-        col1: "#9fcfff",
-        a: 0.16,
-        rot: Math.random() * 6,
-      };
-    },
-    true,
-  );
+  for (let i = 0; i < Math.max(1, Math.round(n / 4)); i++) {
+    const t = Math.random() * 6.28,
+      r = Math.random() * R;
+    X.puffs.spawn(
+      x + Math.cos(t) * r,
+      y + 0.15,
+      z + Math.sin(t) * r,
+      "mist",
+      0.3,
+      40,
+      Math.cos(t) * 0.25,
+      Math.sin(t) * 0.25,
+      0.35,
+    );
+  }
 }
 
 export const SUONGMAI: Painters = {
