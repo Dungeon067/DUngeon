@@ -51,7 +51,9 @@ const GameSchema = z
           .strict(),
       })
       .strict(),
-    chienLuc: z.object({ trongSoTanCong: n, trongSoMau: n }).strict(),
+    chienLuc: z
+      .object({ trongSoTanCong: n, trongSoMau: n, trongSoTinhThong: n.optional(), trongSoHoiNang: n.optional() })
+      .strict(),
   })
   .strict();
 

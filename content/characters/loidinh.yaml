@@ -6,6 +6,7 @@ w: spear
 title: Ngọn Thương Gọi Sấm
 desc: Vị tướng trẻ được thần sấm truyền ngọn thương. Lao vào trận như tia chớp và gọi sét đánh xuống kẻ thù.
 hp: 1000
+chiSoPhu: { tinhThong: 0, hoiNang: 0.2, hoTro: 0 }
 atk: 136
 skill:
   name: Lôi Thương Đột Kích

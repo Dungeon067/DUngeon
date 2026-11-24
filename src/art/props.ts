@@ -3,6 +3,8 @@ import { ctx } from "../core/canvas";
 import { TAU, rgba, rr } from "../core/util";
 import { EL, ENEMY } from "../data/content";
 import { FEEL } from "../combat/feel";
+import { STATUS } from "../data/kits";
+import { iconSvg } from "../ui/icons/icons";
 
 export function drawTurret(t: any, tm: number) {
   const col = EL[t.el].c,
@@ -183,6 +185,45 @@ function drawStunStars(x: number, y: number, r: number) {
     ctx.fill();
   }
 }
+const stsImg = new Map<string, HTMLImageElement>();
+/** Ảnh biểu tượng buff/debuff cho canvas (SVG trong icons.ts, tô màu theo loại). */
+function stsIcon(name: string, col: string) {
+  const k = name + col;
+  let im = stsImg.get(k);
+  if (!im && typeof Image !== "undefined") {
+    im = new Image();
+    im.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(iconSvg(name, { size: 24 }).replace("<svg", `<svg xmlns="http://www.w3.org/2000/svg" style="color:${col}" color="${col}"`))}`;
+    stsImg.set(k, im);
+  }
+  return im;
+}
+/** Hàng biểu tượng debuff trên đầu quái (S30): nền tối, số tầng ở góc. */
+export function drawEnemyStatuses(e: any, x: number, y: number) {
+  const ls = (e.sts as any[] | undefined)?.filter((s) => STATUS[s.id]?.loai === "debuff" && s.id !== "dongBang") ?? [];
+  if (!ls.length) return;
+  const sz = 13,
+    gap = 2,
+    w = ls.length * (sz + gap) - gap;
+  let cx = x - w / 2;
+  for (const s of ls) {
+    const d = STATUS[s.id]!,
+      col = s.el && EL[s.el] ? EL[s.el].c : "#ffd38a";
+    ctx.fillStyle = "rgba(10,18,48,.78)";
+    ctx.fillRect(cx - 1, y - 1, sz + 2, sz + 2);
+    const im = stsIcon(d.icon, col);
+    if (im?.complete && im.naturalWidth > 0) ctx.drawImage(im, cx, y, sz, sz);
+    // vạch thời gian còn lại
+    ctx.fillStyle = col;
+    ctx.fillRect(cx, y + sz + 1, sz * Math.max(0, Math.min(1, s.t / s.max)), 1.5);
+    if (s.n > 1) {
+      ctx.font = "700 8px 'Be Vietnam Pro',sans-serif";
+      ctx.textAlign = "right";
+      ctx.fillStyle = "#fff";
+      ctx.fillText(String(s.n), cx + sz + 1, y + sz);
+    }
+    cx += sz + gap;
+  }
+}
 export function drawEnemyUi(e: any) {
   const top = e.type === "golem" ? 78 : e.type === "slime" ? 34 : 46;
   if (e.hp < e.maxHp) {
@@ -203,6 +244,7 @@ export function drawEnemyUi(e: any) {
   const lb = `Lv${e.lv}${ENEMY[e.type].elite ? " ✦" : ""}`;
   ctx.strokeText(lb, e.x, e.y - top - 5);
   ctx.fillText(lb, e.x, e.y - top - 5);
+  drawEnemyStatuses(e, e.x, e.y - top - 32);
   if (e.aura) {
     ctx.fillStyle = EL[e.aura].c;
     ctx.beginPath();

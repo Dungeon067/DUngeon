@@ -1,0 +1,68 @@
+# Bộ chiêu Bạch Vũ (S30). Thiết kế: docs/characters/bachvu/bo-chieu.md
+id: bachvu
+vaiTro: [hoTro, khongChe]
+dacTrung: [gioDocTen, baoTrang, longHac]
+mau: { c: "#9ff5d8", c2: "#ffffff" }
+thuong:
+  - { m: 0.8 }
+  - { m: 0.95 }
+  - { m: 1.05, el: true }
+  - { m: 1.8, el: true, kb: 40 }
+trongKich:
+  ten: Dây Diều Kéo Gió
+  mo: Quăng dây diều tầm xa, kéo quái về trước mặt rồi xoáy kiếm 140% Phong.
+  theLuc: 20
+  muc:
+    - giay: 0.35
+      clip: bachvu.charge
+      khoi:
+        - { k: keo, r: 120, xa: 150, luc: 120, sts: [{ id: biGom, t: 0.6 }], fx: dayDieu }
+        - { k: chem, tre: 0.15, r: 95, goc: 360, m: 1.4, el: wind, kb: 0 }
+kyNang:
+  ten: Lốc Xoáy Lông Vũ
+  cd: 9
+  cdGiu: 12
+  bam:
+    ten: Lốc Nhỏ
+    mo: Lốc quanh người 1,2 giây hút quái, 45% Phong mỗi 0,4 giây, hút nguyên tố để Khuếch Tán. Đồng đội nhận 4 năng lượng nộ.
+    clip: bachvu.skillTap
+    khoi:
+      - { k: vung, r: 110, t: 1.2, ti: 0.4, keo: 160, theo: true, hut: true, m: 0.45, el: wind, fx: locLongVu }
+      - { k: hoiNang, n: 4, doi: dongDoi }
+  giu:
+    ten: Lốc Tụ Lực
+    mo: Tụ lốc rồi phóng đi 3 giây, hút quái và nguyên tố. Gió hất Bạch Vũ lên cao. Cả đội +80 tinh thông nguyên tố 10 giây (Lông Hạc).
+    clip: bachvu.skillHold
+    khoi:
+      - { k: vung, r: 130, t: 3, ti: 0.5, keo: 180, troi: 140, xa: 60, hut: true, m: 0.5, el: wind, fx: locLongVu }
+      - { k: nhay, cao: 1.5 }
+      - { k: buff, sts: [{ id: longHac, v: 80, t: 10, doi: doi }] }
+no:
+  ten: Bão Trắng
+  mo: Bão lông hạc trôi chậm 6 giây, hút quái, 55% Phong mỗi 0,5 giây. Hút được nguyên tố nào thì cả đội +20% sát thương nguyên tố đó 10 giây.
+  clip: bachvu.burst
+  cost: 50
+  cine: 1.2
+  khoi:
+    - k: vung
+      r: 170
+      t: 6
+      ti: 0.5
+      keo: 120
+      troi: 40
+      xa: 80
+      hut: true
+      m: 0.55
+      el: wind
+      fx: baoTrang
+      sts: [{ id: biGom, t: 0.6 }, { id: baoTrang, v: 0.2, t: 10, el: hut, doi: doi }]
+biDong:
+  - {
+      ten: Gió Đọc Tên,
+      mo: "Khuếch Tán do Bạch Vũ gây ra giảm 20% kháng nguyên tố bị khuếch tán của quái trúng đòn trong 10 giây.",
+    }
+  - {
+      ten: Người Đưa Thư,
+      mo: "Lốc của Bạch Vũ trúng quái lần đầu mỗi lần thi triển thì cả đội nhận thêm 2 năng lượng.",
+    }
+khamPha: { ten: Diều Gió, mo: "Nhảy cao hơn 25% khi Bạch Vũ ra sân.", nhay: 1.25 }
