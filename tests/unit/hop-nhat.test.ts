@@ -28,6 +28,17 @@ describe("Hợp nhất A: máy trạng thái di chuyển", () => {
     expect(run(f, 0.9, { len: 1 }).st).toBe("sprint");
     expect(run(f, 0.2, { len: 1 }).st).toBe("run");
   });
+  it("hết thể lực thì bỏ ân hạn chạy nhanh; rơi không giữ tốc độ mặt đất", () => {
+    const f = new MoveFSM();
+    run(f, 1, { len: 1, sprint: true });
+    expect(f.update(1 / 60, { len: 1, tired: true }).st).toBe("run");
+    const g = new MoveFSM();
+    run(g, 1, { len: 1 });
+    g.update(1 / 60, { len: 0, air: true });
+    expect(g.v).toBe(0);
+    g.land(0.5, false);
+    expect(run(g, 0.1, { len: 0 }).v).toBe(0);
+  });
   it("dừng nhẹ / vừa / mạnh theo trạng thái trước, trượt hãm rồi về đứng yên", () => {
     for (const [inp, st] of [
       [{ len: 0.3 }, "stopLight"],

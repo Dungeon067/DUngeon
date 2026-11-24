@@ -83,13 +83,23 @@ export function update(dt: number) {
     if (p.dashT <= 0) p.dashHit = null;
   } else if (p.dashT > 0) {
     p.mst = F.update(dt, { len: ml }).st;
+    const dl = Math.hypot(p.dvx, p.dvy);
+    if (dl > 0) {
+      p.dirX = p.dvx / dl;
+      p.dirY = p.dvy / dl;
+    }
     p.dashT -= dt;
     moveC(p, p.dvx * dt, p.dvy * dt, 9);
     dashHitStep(p);
     if (p.dashT <= 0) p.dashHit = null;
   } else {
     // Máy trạng thái di chuyển (content/movement.yaml): đi / chạy / chạy nhanh, dừng có trượt hãm, khóa khi tiếp đất nặng.
-    const r = F.update(dt, { len: p.moving ? ml : 0, sprint: sprintHeld, walk: !!GS.holdWalk });
+    const r = F.update(dt, {
+      len: p.moving ? ml : 0,
+      sprint: sprintHeld,
+      walk: !!GS.holdWalk,
+      tired: GS.holdDash && p.stamina <= 0,
+    });
     p.mst = r.st;
     if (r.v > 0) {
       const sp = r.v * (p.atkAnim > 0 ? 0.45 : 1) * effectAt(GS.G.map, p.x, p.y, "moveSpeed") * exploreSpeed();

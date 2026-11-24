@@ -32,6 +32,8 @@ export interface MoveInput {
   sprint?: boolean;
   /** Đang trên không (do logic nhảy / rơi quyết định). */
   air?: boolean;
+  /** Hết thể lực: bỏ thời gian ân hạn chạy nhanh. */
+  tired?: boolean;
 }
 
 const STOP: Record<string, MoveState> = { walk: "stopLight", run: "stopMedium", sprint: "stopHard", dash: "stopHard" };
@@ -96,7 +98,11 @@ export class MoveFSM {
     this.t += dt;
     this.dashCd = Math.max(0, this.dashCd - dt);
     if (inp.air) {
-      if (this.st !== "dash" || this.t >= C.luot.thoiGian) this.go("fall");
+      // Trên không, vận tốc ngang do logic nhảy quyết định: không giữ tốc độ mặt đất để khỏi trượt khi đáp.
+      if (this.st !== "dash" || this.t >= C.luot.thoiGian) {
+        this.go("fall");
+        this.v = 0;
+      }
       return { st: this.st, v: this.v };
     }
     if (this.st === "fall") this.land(0, inp.len > 0.15);
@@ -120,7 +126,7 @@ export class MoveFSM {
       if (inp.sprint) {
         want = "sprint";
         this.sprintOff = 0;
-      } else if (this.st === "sprint") {
+      } else if (this.st === "sprint" && !inp.tired) {
         this.sprintOff += dt;
         if (this.sprintOff < C.toc.nhaChayNhanh) want = "sprint";
       }
