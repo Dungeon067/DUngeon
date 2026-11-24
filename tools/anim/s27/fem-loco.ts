@@ -27,6 +27,10 @@ export interface LocoOpt {
   /** Hông xoay (yaw) và nghiêng (roll) theo nhịp (độ). */
   sway: number;
   roll: number;
+  /** Tay được chỉnh (tay cầm vũ khí giữ nguyên theo clip). */
+  free?: "l" | "r" | "both";
+  /** Tay không vung cao hơn mức này dưới vai (m, theo trục đứng của hông). */
+  cap?: number;
 }
 const Y = new THREE.Vector3(0, 1, 0);
 const v = new THREE.Vector3();
@@ -34,10 +38,12 @@ const v = new THREE.Vector3();
 function arms(r: Rig, o: LocoOpt) {
   const hipsQ = r.quat("hips");
   const inv = hipsQ.clone().invert();
+  const free = o.free ?? "both";
   for (const [s, sg] of [
     ["l", 1],
     ["r", -1],
   ] as const) {
+    if (free !== "both" && free !== s) continue;
     const L = r.arms[s];
     const sh = L.a.getWorldPosition(new THREE.Vector3());
     const hand = L.c.getWorldPosition(new THREE.Vector3());
@@ -47,6 +53,8 @@ function arms(r: Rig, o: LocoOpt) {
     off.z *= o.arm;
     off.x = THREE.MathUtils.lerp(off.x, sg * 0.06, 0.5);
     off.multiplyScalar(1 - 0.12 * o.tuck);
+    // Không đánh tay lên ngang mặt như lính chạy: bàn tay luôn thấp hơn vai.
+    off.y = Math.min(off.y, -(o.cap ?? 0.22));
     const t = sh.clone().add(off.applyQuaternion(hipsQ));
     const pole = new THREE.Vector3(sg * 0.35, -0.25, -1).applyQuaternion(hipsQ).normalize();
     solveLimb(L, t, pole, hq);
@@ -105,17 +113,57 @@ export function femLoco(from: string, o: LocoOpt): OverlayDef {
   };
 }
 
+const WALK: LocoOpt = {
+  arm: 0.45,
+  tuck: 0.6,
+  stride: 0.82,
+  halfX: 0.035,
+  toe: 18,
+  lift: 0.6,
+  sway: 5,
+  roll: 3,
+  cap: 0.3,
+};
+const RUN: LocoOpt = {
+  arm: 0.45,
+  tuck: 0.5,
+  stride: 0.9,
+  halfX: 0.05,
+  toe: 10,
+  lift: 0.8,
+  sway: 4,
+  roll: 2,
+  cap: 0.24,
+};
+const SPRINT: LocoOpt = {
+  arm: 0.55,
+  tuck: 0.4,
+  stride: 0.95,
+  halfX: 0.06,
+  toe: 6,
+  lift: 0.9,
+  sway: 3,
+  roll: 1.5,
+  cap: 0.2,
+};
+/** Cầm vũ khí khi di chuyển: chỉ chỉnh tay rảnh (kiếm / đại kiếm / thương cầm tay phải, cung cầm tay trái). */
+const armedSet = (p: string, free: "l" | "r") =>
+  Object.fromEntries(
+    (
+      [
+        ["Walk", WALK],
+        ["Run", RUN],
+        ["Sprint", SPRINT],
+      ] as const
+    ).map(([n, o]) => [`${p}${n}F`, femLoco(`${p}${n}`, { ...o, free })]),
+  ) as Record<string, OverlayDef>;
+
 export const FEM_LOCO: Record<string, OverlayDef> = {
-  walkF: femLoco("walk", { arm: 0.45, tuck: 0.6, stride: 0.82, halfX: 0.035, toe: 18, lift: 0.6, sway: 5, roll: 3 }),
-  runF: femLoco("run", { arm: 0.6, tuck: 0.4, stride: 0.9, halfX: 0.05, toe: 10, lift: 0.8, sway: 4, roll: 2 }),
-  sprintF: femLoco("sprint", {
-    arm: 0.75,
-    tuck: 0.3,
-    stride: 0.95,
-    halfX: 0.06,
-    toe: 6,
-    lift: 0.9,
-    sway: 3,
-    roll: 1.5,
-  }),
+  walkF: femLoco("walk", WALK),
+  runF: femLoco("run", RUN),
+  sprintF: femLoco("sprint", SPRINT),
+  ...armedSet("sw", "l"),
+  ...armedSet("gr", "l"),
+  ...armedSet("sp", "l"),
+  ...armedSet("bow", "r"),
 };

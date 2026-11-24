@@ -547,8 +547,12 @@ function moveDemo(src: string) {
     if (r.st === "fall") play("jumpAir", { fade: M.chuyen });
     else if (r.st === "walk" || r.st === "run" || r.st === "sprint") {
       cur = "loco";
+      // Như game: vũ khí còn trên tay (hoặc đang cất) thì chạy theo bộ cầm vũ khí.
+      const held = !a!.wfx || a!.wfx.st === "hand" || a!.wfx.st === "stowing";
       a!.locomote(
-        (["walk", "run", "sprint"] as const).map((x) => moveClip(x)!.k),
+        (["walk", "run", "sprint"] as const).map(
+          (x) => moveClip(x, held ? MODELS.hoatAnh[w as keyof typeof MODELS.hoatAnh]?.move : undefined)!.k,
+        ),
         locoSpeeds(),
         r.v,
         M.chuyen,
