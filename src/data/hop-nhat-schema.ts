@@ -38,6 +38,24 @@ export const MoveSchema = z.object({
   xoay: pos,
   clip: z.object(Object.fromEntries(STATES.map((s) => [s, clip])) as Record<(typeof STATES)[number], typeof clip>),
   ikChan: z.object({ bat: z.boolean(), toiDa: pos, muot: pos, nghieng: num.min(0) }),
+  muot: z.object({
+    chuyen: z.number().min(0.15).max(0.25),
+    chuyenNhanh: pos,
+    blend: z.object({ pha: z.object({ walk: num, run: num, sprint: num }) }),
+    batDau: z.object({ t: num.min(0), k: z.number().min(0).max(1) }),
+    quay: z.object({ goc: z.number().min(90).max(180), t: pos, giu: z.number().min(0).max(1) }),
+    than: z.object({
+      chay: num,
+      chayNhanh: num,
+      gia: num.min(0),
+      phanh: num.min(0),
+      nhun: num.min(0),
+      tanSo: pos,
+      giam: pos,
+      nhin: num.min(0),
+    }),
+    phu: z.object({ quanTinh: num.min(0), toiDa: num.min(0) }),
+  }),
 });
 export type MoveCfg = z.infer<typeof MoveSchema>;
 

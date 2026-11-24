@@ -1,6 +1,15 @@
 import * as THREE from "three";
 import { describe, expect, it } from "vitest";
-import { MOVE, MoveFSM, missingClips, moveClip, turnK } from "../../src/combat/movement";
+import {
+  MOVE,
+  MoveFSM,
+  Spring,
+  locoSpeeds,
+  locoWeights,
+  missingClips,
+  moveClip,
+  turnK,
+} from "../../src/combat/movement";
 import { footOffset, groundNormal } from "../../src/render3d/toon/foot-ik";
 import { CAMERA, CamCollide, CamStack, collideDistance } from "../../src/core/camera-rig";
 import { CHAR_SHADER, applyCharShader, depthRim, faceShadow, rampV } from "../../src/render3d/toon/char-shader";
@@ -38,6 +47,28 @@ describe("Hợp nhất A: máy trạng thái di chuyển", () => {
     expect(g.v).toBe(0);
     g.land(0.5, false);
     expect(run(g, 0.1, { len: 0 }).v).toBe(0);
+  });
+  it("blend 1D theo tốc độ, lò xo có quá đà, khởi động chậm, pivot khi quay đầu", () => {
+    const sp = locoSpeeds();
+    expect(locoWeights(sp, 0)).toEqual([1, 0, 0]);
+    const w = locoWeights(sp, (sp[1] + sp[2]) / 2);
+    expect(w[1]).toBeCloseTo(0.5);
+    expect(w[2]).toBeCloseTo(0.5);
+    expect(locoWeights(sp, 999)).toEqual([0, 0, 1]);
+    const k = new Spring();
+    let peak = 0;
+    for (let i = 0; i < 120; i++) peak = Math.max(peak, k.step(1 / 60, 1, 2.6, 0.42));
+    expect(peak).toBeGreaterThan(1);
+    expect(k.x).toBeCloseTo(1, 1);
+    const f = new MoveFSM();
+    const v1 = run(f, 0.1, { len: 1 }).v;
+    expect(v1).toBeLessThan(MOVE.toc.coSo * 0.5);
+    run(f, 1, { len: 1 });
+    const v0 = f.v;
+    const r = f.turn(Math.PI, 1 / 60);
+    expect(f.pivotT).toBeGreaterThan(0);
+    expect(f.v).toBeCloseTo(v0 * MOVE.muot.quay.giu);
+    expect(r).toBeGreaterThan(Math.PI * turnK(1 / 60));
   });
   it("dừng nhẹ / vừa / mạnh theo trạng thái trước, trượt hãm rồi về đứng yên", () => {
     for (const [inp, st] of [

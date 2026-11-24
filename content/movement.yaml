@@ -15,9 +15,9 @@ luot:
   cuaSo: 1 # mỗi lần cách nhau dưới 1 s mới tính là liên tiếp
   hoi: 1.75 # vượt giới hạn thì hồi 1,75 s
 dung: # lực hãm (1/s, vận tốc giảm theo e^-k·t); hết khi tốc độ < 10% hoặc hết thời gian clip
-  nhe: { ham: 5, toiDa: 0.35 } # sau đi bộ
-  vua: { ham: 6.5, toiDa: 0.45 } # sau chạy
-  manh: { ham: 5, toiDa: 0.6 } # sau chạy nhanh / lướt
+  nhe: { ham: 5, toiDa: 0.45 } # sau đi bộ
+  vua: { ham: 6.5, toiDa: 0.5 } # sau chạy
+  manh: { ham: 5, toiDa: 0.7 } # sau chạy nhanh / lướt
 roi:
   gioiHan: 10 # m/s
   nangTu: 3 # m: rơi từ cao hơn thì tiếp đất nặng (đứng yên) hoặc lăn (đang chạy)
@@ -42,3 +42,20 @@ ikChan:
   toiDa: 0.4 # m chỉnh tối đa
   muot: 14 # tốc độ làm mượt
   nghieng: 0.5 # rad nghiêng bàn chân tối đa theo dốc
+# Mượt hóa chuyển động (vòng 2).
+# chuyen: crossfade giữa mọi trạng thái di chuyển (s); chuyenNhanh: vào lướt / tiếp đất.
+# blend: đi / chạy / chạy nhanh trộn theo tốc độ (blend 1D), đồng bộ pha bước; pha: lệch pha từng clip (0..1).
+# batDau: t giây đầu khi khởi động, tốc độ đích nhân k (dồn trọng tâm, bước đầu ngắn).
+# quay: hướng mới lệch quá `goc` độ khi đang chạy thì pivot: tốc độ còn `giu`, xoay tới hướng mới trong `t` giây.
+# than: lớp thủ tục trên hông/lưng. chay / chayNhanh: đổ người theo tốc độ (độ); gia: độ thêm mỗi (tốc độ cơ sở/s)
+#   gia tốc; phanh: ngả sau tối đa (độ); nhun: hông nhún mỗi bước (m); tanSo (Hz) + giam (<1 có quá đà): lò xo;
+#   nhin: đầu nhìn trước theo hướng sắp đi, tối đa (độ).
+# phu: tóc / vải theo quán tính thân: lực = -gia tốc (m/s²) × quanTinh, tối đa toiDa.
+muot:
+  chuyen: 0.2
+  chuyenNhanh: 0.15
+  blend: { pha: { walk: 0, run: 0, sprint: 0 } }
+  batDau: { t: 0.15, k: 0.45 }
+  quay: { goc: 135, t: 0.1, giu: 0.35 }
+  than: { chay: 6, chayNhanh: 12, gia: 3, phanh: 9, nhun: 0.02, tanSo: 2.6, giam: 0.42, nhin: 45 }
+  phu: { quanTinh: 0.05, toiDa: 1.2 }

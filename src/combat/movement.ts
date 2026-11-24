@@ -48,6 +48,9 @@ export class MoveFSM {
   /** Tốc độ mặt phẳng hiện tại (px/s). */
   v = 0;
   private sprintOff = 0;
+  private startT = 0;
+  /** Còn bao nhiêu giây pivot (quay đầu gấp). */
+  pivotT = 0;
   private dashN = 0;
   private dashLast = -99;
   private now = 0;
@@ -87,6 +90,22 @@ export class MoveFSM {
   limitFall(vz: number, perM: number) {
     return Math.max(vz, -this.C.roi.gioiHan * perM);
   }
+  /**
+   * Bước xoay người về hướng đích (d = góc lệch, rad). Đang chạy mà lệch quá `quay.goc` thì pivot:
+   * hãm tốc độ, xoay nhanh trên chân trụ thay vì xoay cả người như tượng.
+   */
+  turn(d: number, dt: number) {
+    const Q = this.C.muot.quay;
+    if (
+      this.pivotT <= 0 &&
+      Math.abs(d) > (Q.goc * Math.PI) / 180 &&
+      (this.st === "walk" || this.st === "run" || this.st === "sprint")
+    ) {
+      this.pivotT = Q.t;
+      this.v *= Q.giu;
+    }
+    return d * turnK(dt, this.pivotT > 0 ? Q.t : this.C.xoay);
+  }
   /** Tốc độ đích theo trạng thái di chuyển. */
   speedOf(s: MoveState) {
     const T = this.C.toc;
@@ -97,6 +116,7 @@ export class MoveFSM {
     this.now += dt;
     this.t += dt;
     this.dashCd = Math.max(0, this.dashCd - dt);
+    this.pivotT = Math.max(0, this.pivotT - dt);
     if (inp.air) {
       // Trên không, vận tốc ngang do logic nhảy quyết định: không giữ tốc độ mặt đất để khỏi trượt khi đáp.
       if (this.st !== "dash" || this.t >= C.luot.thoiGian) {
@@ -130,9 +150,17 @@ export class MoveFSM {
         this.sprintOff += dt;
         if (this.sprintOff < C.toc.nhaChayNhanh) want = "sprint";
       }
+      // Khởi động từ đứng yên / đang dừng: vài khung đầu tốc độ thấp (dồn trọng tâm, bước đầu ngắn).
+      if (this.st === "idle" || isStop(this.st) || isLand(this.st))
+        this.startT = this.v < C.toc.coSo * 0.3 ? C.muot.batDau.t : 0;
       this.go(want);
+      let tgt = this.speedOf(want);
+      if (this.startT > 0) {
+        this.startT -= dt;
+        tgt *= C.muot.batDau.k;
+      }
       // Đổi tốc độ mượt (gia tốc ~0,15 s), không giật.
-      this.v += (this.speedOf(want) - this.v) * Math.min(1, dt * 7);
+      this.v += (tgt - this.v) * Math.min(1, dt * 7);
       return { st: this.st, v: this.v };
     }
     if (STOP[this.st]) this.go(STOP[this.st]);
@@ -185,3 +213,36 @@ export const missingClips = () =>
     .map(([s, c]) => ({ state: s, need: c.can!, temp: c.tam }));
 /** Hệ số nội suy mũ để xoay tới hướng đích ~95% trong `MOVE.xoay` giây. */
 export const turnK = (dt: number, reach = MOVE.xoay) => 1 - Math.exp((-3 * dt) / reach);
+
+/** Tốc độ của từng clip trong blend 1D (đi, chạy, chạy nhanh). */
+export const locoSpeeds = (C: MoveCfg = MOVE) => [C.toc.di, C.toc.chay, C.toc.chayNhanh].map((k) => k * C.toc.coSo);
+/** Trọng số blend 1D theo tốc độ: nội suy tuyến tính giữa hai clip kề nhau, tổng = 1. */
+export function locoWeights(sp: number[], v: number) {
+  const w = sp.map(() => 0);
+  if (v <= sp[0]) w[0] = 1;
+  else if (v >= sp[sp.length - 1]) w[sp.length - 1] = 1;
+  else
+    for (let i = 0; i < sp.length - 1; i++)
+      if (v <= sp[i + 1]) {
+        const k = (v - sp[i]) / (sp[i + 1] - sp[i]);
+        w[i] = 1 - k;
+        w[i + 1] = k;
+        break;
+      }
+  return w;
+}
+/** Lò xo giảm chấn (tanSo Hz, giam < 1 thì có quá đà). Chia bước nhỏ để ổn định khi khung chậm. */
+export class Spring {
+  x = 0;
+  v = 0;
+  step(dt: number, target: number, hz: number, zeta: number) {
+    const w = 2 * Math.PI * hz,
+      n = Math.max(1, Math.ceil(dt / (1 / 120)));
+    for (let i = 0; i < n; i++) {
+      const h = dt / n;
+      this.v += (w * w * (target - this.x) - 2 * zeta * w * this.v) * h;
+      this.x += this.v * h;
+    }
+    return this.x;
+  }
+}

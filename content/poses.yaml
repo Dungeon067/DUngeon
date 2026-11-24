@@ -28,17 +28,19 @@ vuKhi:
   hien: 0.14
   hat: { so: 48, coDo: 0.05, bay: 0.5 }
   noi:
-    # Kiếm: tra vào bao bên hông trái (clip cất mocap), rút từ hông rồi xoay một vòng cổ tay.
+    # Kiếm: cất chéo sau lưng (vung qua vai như đại kiếm), rút xoay một vòng cổ tay. chay: chạy trong trận thì
+    # mũi kiếm hạ thấp, chéo ra sau người (không chĩa ngang hông).
     sword:
       {
-        bone: hips,
-        pos: [0.17, 0.02, 0.02],
-        rot: [0, 0, 110],
-        clip: swStow,
-        luc: 0.62,
+        bone: upperChest,
+        pos: [-0.1, 0.1, -0.14],
+        rot: [0, 0, -150],
+        clip: grStow,
+        luc: 0.85,
         rut: swDraw,
         xoay: [0.55, 0.9, 1],
         truc: z,
+        chay: [0, 0, 60],
       }
     # Đại kiếm: tay phải vung qua vai đặt chéo sau lưng; rút từ lưng kéo vòng qua đầu rồi vác vai.
     great: { bone: upperChest, pos: [-0.12, 0.12, -0.15], rot: [0, 0, -150], clip: grStow, luc: 0.85, rut: grDraw }

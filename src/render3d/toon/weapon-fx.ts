@@ -19,6 +19,8 @@ const OPEN = -150 * D;
 /** Neo sách so với gốc nhân vật (+X trái, +Z trước; y so với ngực), đơn vị m ở tỉ lệ 1. */
 const BOOK = { x: 0.42, y: -0.05, z: 0.3 };
 
+const _e = new THREE.Euler(),
+  _qI = new THREE.Quaternion();
 export class WeaponFx {
   st: St = "hand";
   /** Clip cất đang chạy (renderer ưu tiên phát), null nếu không. */
@@ -194,6 +196,9 @@ export class WeaponFx {
     setWorldQuat(this.holder, this.bf.quat.clone().multiply(this.floatQuat));
   }
   private t2 = 0;
+  /** 0..1: đang chạy trong trận (vũ khí hạ thấp chéo sau người theo `noi.chay`). */
+  runW = 0;
+  private runQ = new THREE.Quaternion();
 
   /** Đặt trạng thái mong muốn mỗi khung. standing: đang đứng yên (mới chạy clip cất). */
   want(out: boolean, standing: boolean, scene: THREE.Object3D | null, idle = standing) {
@@ -302,6 +307,12 @@ export class WeaponFx {
     if (this.st === "hand" && !this.cat && this.holder.parent === this.hand) {
       this.holder.position.copy(this.handPos);
       this.holder.quaternion.copy(this.handQuat);
+      const c = this.noi.chay;
+      if (c && this.runW > 0.001) {
+        _e.set(...(c.map((d) => (d * Math.PI) / 180) as [number, number, number]));
+        this.runQ.setFromEuler(_e);
+        this.holder.quaternion.multiply(_qI.identity().slerp(this.runQ, this.runW));
+      }
     }
     if (this.st === "hand" && this.clip) this.twirl();
     if (this.cat && this.st === "hand") this.float(dt);

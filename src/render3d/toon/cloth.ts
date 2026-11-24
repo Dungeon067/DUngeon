@@ -63,6 +63,8 @@ export class ClothGuard {
   private js: Joint[] = [];
   /** Gió (hệ thế giới) cho khung tới; chủ actor đặt mỗi khung. */
   wind = new THREE.Vector3();
+  /** Lực quán tính từ gia tốc thân (actor đặt mỗi khung), cộng như gió theo trọng số loại vải. */
+  inertia = new THREE.Vector3();
   /** Góc lệch lớn nhất (độ, cả chuỗi) ở khung vừa rồi theo loại vải, để kiểm tra. */
   dev: Partial<Record<Vai, number>> = {};
   /** Góc lệch lớn nhất của váy và vạt áo (độ). */
@@ -157,7 +159,7 @@ export class ClothGuard {
   private blow() {
     for (const J of this.js) {
       if (!J.s) continue;
-      va.copy(J.g0).multiplyScalar(J.p0).addScaledVector(this.wind, J.w);
+      va.copy(J.g0).multiplyScalar(J.p0).addScaledVector(this.wind, J.w).addScaledVector(this.inertia, J.w);
       const L = va.length();
       J.s.gravityPower = L;
       if (L > 1e-6) J.s.gravityDir.copy(va).divideScalar(L);
