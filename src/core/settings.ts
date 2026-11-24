@@ -23,6 +23,8 @@ export interface Settings {
   /** Lớp vẽ thế giới: tự chọn (3D nếu máy đủ mạnh, không thì 2D), 3D, hoặc Canvas 2D cũ. */
   renderer: RendererPref;
   shake: boolean;
+  /** Lực đòn: khựng 2 khung ở đòn thường và vòng khúc xạ màn hình khi trúng. */
+  impactFx: boolean;
   vibrate: boolean;
   fontScale: number;
   colorMode: ColorMode;
@@ -41,6 +43,7 @@ export function defaultSettings(): Settings {
   const d = CONTROLS.defaults;
   return {
     ...clone(d),
+    impactFx: true,
     joystick: {
       mode: CONTROLS.joystick.mode,
       deadzone: CONTROLS.joystick.deadzone,
@@ -63,7 +66,7 @@ export function sanitize(raw: any): Settings {
   num("sfx");
   if (["high", "medium", "low"].includes(raw.quality)) s.quality = raw.quality;
   if (["auto", "3d", "2d"].includes(raw.renderer)) s.renderer = raw.renderer;
-  for (const k of ["shake", "vibrate", "mouseAim", "showHints", "reduceMotion"] as const)
+  for (const k of ["shake", "impactFx", "vibrate", "mouseAim", "showHints", "reduceMotion"] as const)
     if (typeof raw[k] === "boolean") s[k] = raw[k];
   if (typeof raw.fontScale === "number") s.fontScale = clamp(raw.fontScale, 0.8, 1.4);
   if (["none", "protan", "deutan", "tritan"].includes(raw.colorMode)) s.colorMode = raw.colorMode;

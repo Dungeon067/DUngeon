@@ -527,7 +527,8 @@ export function catProj(pr: any, X: Vfx) {
   V.glow(x, y, z, cols[1], 1.4);
 }
 
-/** Vụ nổ nhỏ có hình khi đạn phép trúng. */
+const iceSeen = new WeakSet<object>();
+/** Vụ nổ nhỏ có hình khi đạn phép trúng; Băng mọc cụm gai từ đất rồi vỡ. */
 export function catBurst(f: any, X: Vfx) {
   const V = X.V,
     el = f.el ?? "water",
@@ -547,7 +548,12 @@ export function catBurst(f: any, X: Vfx) {
     e.u.uDis.value = 0.2 + a * 0.8;
     e.u.uNs.value.set(5, 5);
   }
-  if (el === "ice" || el === "earth")
+  if (el === "ice") {
+    if (!iceSeen.has(f)) {
+      iceSeen.add(f);
+      X.ice.spawn(x, gy, z);
+    }
+  } else if (el === "earth")
     for (let i = 0; i < 5; i++) {
       const t = (i / 5) * Math.PI * 2;
       X.crystal(

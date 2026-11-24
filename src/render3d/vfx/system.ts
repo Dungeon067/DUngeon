@@ -8,6 +8,9 @@ import { fxMat, setCols, type FxMat, type FxMatOpt } from "./mats";
 import { Sprites, type Emit } from "./sprites";
 import { runeTex, type Rune } from "./tex";
 import * as SH from "./shapes";
+import { Puffs } from "./puff";
+import { Fireworks } from "./firework";
+import { IceClusters } from "./ice";
 
 export interface VCtx {
   TS: number;
@@ -19,6 +22,7 @@ export interface VCtx {
   q: number;
   hero: THREE.Vector3;
   heroYaw: number;
+  cam: THREE.Camera;
 }
 type Pool = { list: { m: THREE.Mesh; u: FxMat["uniforms"] }[]; i: number };
 
@@ -30,15 +34,22 @@ export class Vfx {
   private seen = new WeakSet<object>();
   private last = new WeakMap<object, number>();
   V!: VCtx;
+  readonly puffs: Puffs;
+  readonly fw: Fireworks;
+  readonly ice = new IceClusters();
   constructor(parent: THREE.Object3D) {
     this.add = new Sprites(1400, true);
     this.soft = new Sprites(500, false);
     this.group.add(this.add.mesh, this.soft.mesh);
+    this.puffs = new Puffs(this.group);
+    this.fw = new Fireworks(this.group);
     parent.add(this.group);
   }
   setQuality(q: number) {
     this.add.cap = Math.round(1400 * q);
     this.soft.cap = Math.round(500 * q);
+    this.puffs.cap = Math.round(32 * q);
+    this.fw.q = q;
   }
   begin(V: VCtx) {
     this.V = V;
@@ -80,9 +91,12 @@ export class Vfx {
     return e;
   }
   end() {
+    this.ice.update(this, this.V.dt);
+    this.fw.update(this, this.V.dt, this.V.cam);
     for (const p of this.pools.values()) for (let i = p.i; i < p.list.length; i++) p.list[i].m.visible = false;
     this.add.update(this.V.dt);
     this.soft.update(this.V.dt);
+    this.puffs.update(this.V.dt, this.V.cam);
   }
   /** Lần đầu thấy đối tượng logic này (để phát hạt một lần). */
   first(o: object) {

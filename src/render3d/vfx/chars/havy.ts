@@ -108,28 +108,24 @@ const snowBurst = (X: Vfx, x: number, y: number, z: number, n: number, sp: numbe
     spin: 3,
   }));
 };
-const mist = (X: Vfx, x: number, y: number, z: number, R: number, n: number, life = 1.4) =>
-  X.emit(n, () => {
+// Sương lạnh: cụm khói mềm Băng (SDF 9 vòng), nhỏ và ít để không che chiêu.
+const mist = (X: Vfx, x: number, y: number, z: number, R: number, n: number, life = 1.4) => {
+  for (let i = 0; i < Math.max(1, Math.round(n / 4)); i++) {
     const a = Math.random() * Math.PI * 2,
       r = Math.sqrt(Math.random()) * R;
-    return {
-      cell: "khoi",
-      x: x + Math.cos(a) * r,
-      y: y + 0.15,
-      z: z + Math.sin(a) * r,
-      vx: Math.cos(a) * 0.6,
-      vy: 0.15,
-      vz: Math.sin(a) * 0.6,
-      drag: 1,
-      life,
-      size: 1.2,
-      size1: 2.4,
-      col: "#bfeaff",
-      col1: "#4f86d8",
-      a: 0.16,
-      spin: 0.4,
-    };
-  });
+    X.puffs.spawn(
+      x + Math.cos(a) * r,
+      y + 0.2,
+      z + Math.sin(a) * r,
+      "ice",
+      0.3,
+      Math.round(life * 36),
+      Math.cos(a) * 0.4,
+      Math.sin(a) * 0.4,
+      0.3,
+    );
+  }
+};
 
 export const HAVY: Painters = {
   fx: {

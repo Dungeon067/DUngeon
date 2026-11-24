@@ -256,37 +256,27 @@ export const MAILINH: Painters = {
         x = f.x / V.TS,
         z = f.y / V.TS,
         gy = V.ground(f.x, f.y),
-        R = (f.r ?? 90) / V.TS,
-        hy = gy + 1.7;
-      plum(X, x, hy, z, 0.9 * ease(a * 2.5), a * 2.5, a * 2, (1 - a) * 0.9, 0, Math.max(0, a - 0.5) * 2);
+        R = (f.r ?? 90) / V.TS;
       X.rune("fire", x, gy, z, R, a, PLUM, (1 - a) * 0.8, 0.6);
       X.shock(x, gy, z, R * 1.2, a, FIRE, 0.5);
-      if (X.first(f)) {
-        X.flash(x, hy, z, PLUM[1], 2, 1.3);
-        X.emit(36, (i) => {
-          const th = Math.acos(1 - 2 * Math.random()),
-            ph = Math.random() * TAU,
-            s = 2.4 + Math.random() * 0.9;
-          return {
-            cell: i % 4 ? "sao4" : "canhMai",
-            x,
-            y: hy,
-            z,
-            vx: Math.sin(th) * Math.cos(ph) * s,
-            vy: Math.cos(th) * s,
-            vz: Math.sin(th) * Math.sin(ph) * s,
-            grav: 2.5,
-            drag: 1.8,
-            life: 1,
-            size: 0.22,
-            size1: 0.05,
-            col: i % 2 ? PLUM[0] : FIRE[0],
-            col1: i % 3 ? FIRE[1] : "#ff5aa0",
-            spin: 4,
-            stretch: 2,
-          };
-        });
-      }
+      // 5 quả bắn so le, quả giữa nổ hình bông mai; tâm nổ thấp (2,3–2,9 m) để nằm trong khung máy quay game.
+      if (X.first(f))
+        for (let i = 0; i < 5; i++) {
+          // Đồ họa vừa/thấp: 3 quả thay vì 5.
+          if (V.q < 1 && (i === 1 || i === 3)) continue;
+          const t = (i / 5) * TAU + 0.4,
+            r = i === 2 ? 0 : R * 0.55,
+            ox = Math.cos(t) * r,
+            oz = Math.sin(t) * r;
+          X.fw.launch(
+            new THREE.Vector3(x + ox * 0.4, gy + 0.3, z + oz * 0.4),
+            new THREE.Vector3(x + ox, gy + (i === 2 ? 2.9 : 2.3 + (i % 2) * 0.35), z + oz),
+            i === 2,
+            [0, 8, 14, 20, 26][i],
+            i === 2 ? 0.75 : 0.5,
+            i === 0,
+          );
+        }
     },
   },
   /** Cảnh nộ: năm đèn lồng bay vòng lên quanh người, hoa mai nở dưới chân, cánh mai cuốn. */

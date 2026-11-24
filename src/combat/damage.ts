@@ -12,7 +12,7 @@ import { EL } from "../data/content";
 import { bossDefeated } from "../entities/boss";
 import { fxBurst, fxParticles, fxRing, fxText } from "../entities/fx";
 import { cur } from "../entities/party";
-import { FEEL, charFx, enemyFeel, hitstop, shake } from "../combat/feel";
+import { FEEL, charFx, enemyFeel, feelState, hitstop, shake } from "../combat/feel";
 import { partyWipe, showBanner } from "../modes/session";
 import { Server } from "../server/server";
 import { ECON } from "../data/economy";
@@ -88,6 +88,7 @@ export function hitEnemy(e: any, m: any, mult: number, el: string | null, o: any
   // Va chạm (S30): tia lửa theo nguyên tố ở lớp 3D, khựng hình và rung nhẹ theo lực đòn.
   GS.G.fx.push({ k: "hit", x: e.x, y: e.y, el, pw: mult, crit, w: m.c.w, normal: !!o.normal, life: 0.28, max: 0.28 });
   if (mult >= 0.7) hitstop("heavy");
+  else if (settings.impactFx) feelState.stop = Math.max(feelState.stop, 2 / 60);
   shake("light", Math.min(2, mult));
   if (crit) hitstop("crit");
   if (r.mult > 1) {
