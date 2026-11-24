@@ -129,7 +129,7 @@ export class Fireworks {
         S = s.scale;
       // Bay lên 24 khung, đầu đạn sáng và vệt lấp lánh lắc nhẹ.
       if (f < 24) {
-        const e = 1 - Math.pow(1 - f / 23, 2.2);
+        const e = 1 - Math.pow(1 - Math.min(1, f / 23), 2.2);
         const hp = this.t0.lerpVectors(s.from, s.to, e);
         X.V.glow(hp.x, hp.y, hp.z, "#ffb347", 0.8);
         if (s.tr.length < 30 && s.tr.length < f + 1)
