@@ -37,8 +37,8 @@ const step = (n: number, dt: number) =>
   `new Promise((r) => requestAnimationFrame(() => { const T = window.__tinhtu; ${PIN} T.capStep(${n}, ${dt}); requestAnimationFrame(() => r(0)); }))`;
 const atk = `${C}.press("atk")`;
 const hold = (on: boolean) => `window.__tinhtu.S.holdAtk = ${on}`;
-/** Cần di chuyển ảo (x phải, y xuống màn hình); chỉ chạy trên vite dev (nhập module nguồn). */
-const move = (x: number, y = 0) => `import("/src/core/input.ts").then((m) => { m.joy.x = ${x}; m.joy.y = ${y}; })`;
+/** Cần di chuyển ảo (x phải, y xuống màn hình). */
+const move = (x: number, y = 0) => `${C}.joy.x = ${x}; ${C}.joy.y = ${y}`;
 
 const SHOTS: Shot[] = [
   {

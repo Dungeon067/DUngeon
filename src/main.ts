@@ -11,7 +11,7 @@ import { makeEnemy } from "./entities/enemy";
 import { SAVE_KEY, Server } from "./server/server";
 import { ECON_KEY, reloadEcon } from "./data/economy";
 import { init as initCanvas } from "./core/canvas";
-import { init as initInput } from "./core/input";
+import { init as initInput, joy } from "./core/input";
 import { init as initModal } from "./ui/modal";
 import { exitToMenu, updateWallets } from "./ui/screens";
 import { initHud } from "./ui/hud";
@@ -79,7 +79,7 @@ if (new URLSearchParams(location.search).has("e2e"))
       saveSettings,
       r3: renderer3d,
       capStep,
-      cap: { press, castKitSkill, castKitBurst, skipCine, makeEnemy },
+      cap: { press, castKitSkill, castKitBurst, skipCine, makeEnemy, joy },
       menu: { openMenu, closeMenu, currentScreen },
       wishVideo: videoNow,
       pz: { pulse: pulseElement, startDomain, exitDomain, data: { DOMAINS, MINI, PZ } },
