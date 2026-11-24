@@ -103,15 +103,22 @@ function hairShadow(faces: MeshM[], rest: { p: Float32Array; hair: Uint8Array }[
       Math.floor(x / C) + 512 + (Math.floor(y / C) + 512) * 1024 + (Math.floor(z / C) + 512) * 1048576;
   for (const r of rest)
     for (let i = 0; i < r.p.length; i += 3) if (r.hair[i / 3]) occ.add(key(r.p[i], r.p[i + 1], r.p[i + 2]));
-  const q = new THREE.Quaternion(),
-    hw = new THREE.Vector3();
-  head.getWorldQuaternion(q);
-  const L = new THREE.Vector3(0, 1, 0.35).normalize().applyQuaternion(q);
-  for (const m of faces) {
+  const hw = head.getWorldPosition(new THREE.Vector3()),
+    fwd = new THREE.Vector3(),
+    ps = faces.map((m) => {
+      const p = new Float32Array(m.geometry.attributes.position.count * 3);
+      restPos(m, p);
+      for (let i = 0; i < p.length; i += 3) fwd.add(new THREE.Vector3(p[i], p[i + 1], p[i + 2]).sub(hw));
+      return p;
+    });
+  // hướng nhìn lấy từ khối mặt so với khớp đầu (trục xương đầu khác nhau giữa các rig)
+  fwd.setY(0);
+  if (fwd.lengthSq() < 1e-8) fwd.set(0, 0, 1);
+  const L = new THREE.Vector3(0, 1, 0).addScaledVector(fwd.normalize(), 0.35).normalize();
+  for (const [k, m] of faces.entries()) {
     const c = m.geometry.attributes.position.count,
-      p = new Float32Array(c * 3),
+      p = ps[k],
       sh = new Float32Array(c);
-    restPos(m, p);
     for (let i = 0; i < c; i++) {
       let s = 0;
       for (let t = 0.004; t < 0.03; t += 0.0015) {
@@ -128,7 +135,7 @@ function hairShadow(faces: MeshM[], rest: { p: Float32Array; hair: Uint8Array }[
         s *
         Math.max(
           THREE.MathUtils.smoothstep(p[i * 3 + 1], eyeY - 0.012, eyeY + 0.002),
-          THREE.MathUtils.smoothstep(Math.abs(p[i * 3] - head.getWorldPosition(hw).x), 0.046, 0.056) *
+          THREE.MathUtils.smoothstep(Math.abs(p[i * 3] - hw.x), 0.046, 0.056) *
             THREE.MathUtils.smoothstep(p[i * 3 + 1], eyeY - 0.035, eyeY - 0.02),
         );
     }
@@ -222,6 +229,12 @@ function patch(m: any, kind: "hair" | "face") {
   if (kind === "hair") {
     m.matcapFactor?.set(0, 0, 0);
     m.parametricRimColorFactor?.set(0, 0, 0);
+    // HAIR_FRAG lấy màu trung bình ở mip nhỏ nhất, cần mipmap
+    if (m.map && m.map.minFilter !== THREE.LinearMipmapLinearFilter) {
+      m.map.generateMipmaps = true;
+      m.map.minFilter = THREE.LinearMipmapLinearFilter;
+      m.map.needsUpdate = true;
+    }
   }
   const prevKey = m.customProgramCacheKey?.bind(m);
   m.customProgramCacheKey = () => `${prevKey?.() ?? ""}|tt-${kind}`;
