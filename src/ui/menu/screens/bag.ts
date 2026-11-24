@@ -24,6 +24,7 @@ import {
   type WSort,
 } from "../weapon-ui";
 import { chipGroup, lockBtn } from "./weapons";
+import { renderBaoAnBag } from "./bao-an";
 import "../tu-do.css";
 
 /* Tủ Đồ (S24b): tab theo loại, lưới thẻ đồ bên trái, thanh dưới (sắp xếp, lọc, sức chứa), bảng chi tiết bên phải.
@@ -258,10 +259,7 @@ function render(host: HTMLElement, params: any = {}) {
   let detail: HTMLElement;
   const bar = h("div", { class: "tt-tudo-bar" });
   if (st.tab === "bao-an") {
-    host.append(
-      tl,
-      h("div", { class: "tt-soon tt-tudo-soon" }, [icon("bao-an", { size: 44 }), h("b", {}, ["Bảo Ấn"]), "Sắp có"]),
-    );
+    renderBaoAnBag(host, params, tl);
     return;
   }
   if (st.tab === "vu-khi") {

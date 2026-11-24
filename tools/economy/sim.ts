@@ -3,6 +3,7 @@
  * Hai banner (nhân vật giới hạn, vũ khí "Binh Khí Tinh Tú") dùng đúng công thức với game (src/economy/core.ts).
  * KHÔNG có thanh toán: tiền nạp chỉ là con số đổi ra Đá Sao theo bảng gói đề xuất.
  */
+import { baoAnFlow, simBaoAn } from "./bao-an-sim";
 import type { Economy } from "../../src/data/economy-schema";
 import {
   caps,
@@ -60,12 +61,18 @@ export function investOnDay(day: number, p: Profile | null, E: Economy, wx = wea
   const T = E.thietKe,
     ht = hoTinhLevel(day, E),
     cp = caps(ht, E);
+  const BA = baoAnFlow(E),
+    BC = simBaoAn().biCanh,
+    baDays = Math.max(0, day - Math.max(1, BA.openDay) + 1);
   const B = T.vuKhi.nguon.biCanh,
     // Bí Cảnh ăn bớt Linh Lực của Lòng Sao; lượt ngày đầu trả bằng Linh Lực đầy sẵn lúc tạo hồ sơ (mô hình cũ không tính phần này).
     runs = Math.max(
       0,
       Math.floor(
-        (day * T.linhLuc.hoiMoiNgay - Math.max(0, day - 1) * B.linhLuc * B.luotMoiNgay) / T.linhLuc.moiLuotLongSao,
+        (day * T.linhLuc.hoiMoiNgay -
+          Math.max(0, day - 1) * B.linhLuc * B.luotMoiNgay -
+          baDays * BC.linhLuc * simBaoAn().moPhong.luotMoiNgay) /
+          T.linhLuc.moiLuotLongSao,
       ),
     );
   const U = E.game.thuong.uyThac,
@@ -77,7 +84,8 @@ export function investOnDay(day: number, p: Profile | null, E: Economy, wx = wea
     Math.floor(day * B.luotMoiNgay) * B.xu +
     day * 4 * U.moiViec.xu +
     Math.floor(day / 7) * T.thuNhap.tuan.xu +
-    seasons * E.goiNap.hoChieuSao.xu -
+    seasons * E.goiNap.hoChieuSao.xu +
+    Math.floor(BA.xu[Math.min(day, BA.xu.length - 1)] ?? 0) -
     wx;
   let loi = runs * T.linhLuc.thuongMoiLuot.loiSao;
   let lv = 1,
@@ -105,7 +113,7 @@ export function investOnDay(day: number, p: Profile | null, E: Economy, wx = wea
       lv,
       khai,
       kyNang: Math.min(cp.kyNang, T.kyNang.toiDaTheoKhaiTinh[khai]!),
-      baoAn: T.baoAn.chatLuongTheoThienTuong[cp.thienTuong]! * Math.min(1, day / 30),
+      baoAn: BA.bonus[Math.min(day, BA.bonus.length - 1)] ?? null,
     } satisfies Omit<Invest, "cons" | "vuKhi">,
     coinLeft: coin,
   };

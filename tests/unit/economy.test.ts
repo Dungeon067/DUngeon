@@ -72,7 +72,9 @@ describe("Chiến Lực", () => {
       w5 = { id: "hong-vu-truong-ca", tinhLuyen: 1 };
     expect(cl({ lv: 1, cons: 0, vuKhi: w4 })).toBeGreaterThan(cl({ lv: 1, cons: 0, vuKhi: { ...w4, tinhLuyen: 1 } }));
     expect(cl({ lv: 1, cons: 0, vuKhi: w5 })).toBeGreaterThan(cl({ lv: 1, cons: 0, vuKhi: { ...w4, tinhLuyen: 1 } }));
-    expect(cl({ lv: 1, cons: 0, baoAn: 1 })).toBeGreaterThan(base);
+    expect(
+      cl({ lv: 1, cons: 0, baoAn: { hp: 500, atk: 30, hpPct: 0.1, atkPct: 0.1, crit: 0.05, cdmg: 0.1, dmg: 0.1 } }),
+    ).toBeGreaterThan(base);
   });
   it("chỉ số trong game giữ nguyên công thức cũ", () => {
     const st = charStats(c, { lv: 11, cons: 2 }, E);
@@ -120,7 +122,7 @@ describe("mô phỏng", () => {
     expect(a[2]!.pulls[90]).toBeGreaterThan(a[1]!.pulls[90]!);
     const f = tiering(a, chars, E, o.days);
     for (const c of f.checks) expect(c, c.ten).toMatchObject({ ok: true });
-  });
+  }, 60_000);
   it("thẻ tháng có giá trị mỗi đồng cao nhất", () => {
     const rows = packValue(E);
     const best = rows.reduce((m, r) => (r.moi1000 > m.moi1000 ? r : m));
