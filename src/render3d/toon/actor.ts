@@ -7,6 +7,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { VRMLoaderPlugin, VRMUtils, type VRM } from "@pixiv/three-vrm";
 import modelsRaw from "../../../content/models.yaml";
 import { validateModels, type WeaponType } from "../../data/models-schema";
+import { toonHair } from "./hair";
 import { outlineMat, toonMat } from "./mat";
 
 export const MODELS = validateModels(modelsRaw);
@@ -188,6 +189,7 @@ export class VrmActor {
         m.rimLightingMixFactor = 1;
       }
     });
+    toonHair(vrm);
     const look = { ...MODELS.macDinh, ...(MODELS.nhanVat[id] ?? {}) };
     const box = new THREE.Box3().setFromObject(vrm.scene);
     const s = look.height / Math.max(0.1, box.max.y - box.min.y);

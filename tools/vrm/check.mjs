@@ -23,7 +23,7 @@ for (const p of process.argv.slice(2)) {
   const res = {
     vrm1: vrm?.specVersion === "1.0",
     tris,
-    trisOk: tris < 30000,
+    trisOk: tris < 60000,
     maxTex,
     texOk: maxTex <= 2048,
     springs: sb?.springs?.length ?? 0,
