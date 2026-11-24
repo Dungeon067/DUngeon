@@ -157,7 +157,10 @@ class Ghosts {
     for (const g of this.sets) for (const m of g.mats) m.color.copy(this.col);
   }
   private build(a: VrmActor) {
-    for (const g of this.sets) for (const m of g.meshes) this.group.remove(m);
+    for (const g of this.sets) {
+      for (const m of g.meshes) this.group.remove(m);
+      for (const m of g.mats) m.dispose();
+    }
     this.sets = [];
     this.src = a;
     const orig: THREE.SkinnedMesh[] = [];

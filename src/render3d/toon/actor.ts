@@ -476,6 +476,7 @@ export class VrmActor {
 
   dispose() {
     this.wfx?.dispose();
+    this.bow?.dispose();
     this.mixer.stopAllAction();
     this.obj.removeFromParent();
     VRMUtils.deepDispose(this.vrm.scene);

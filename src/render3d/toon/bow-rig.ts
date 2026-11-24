@@ -175,6 +175,17 @@ export class BowRig {
     const sc = par.getWorldScale(_v5).x || 1;
     this.arrow.scale.setScalar(1 / sc);
   }
+
+  /** Mũi tên nằm ngoài cảnh VRM: tự gỡ và giải phóng. */
+  dispose() {
+    this.arrow.removeFromParent();
+    this.arrow.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (!m.isMesh) return;
+      m.geometry.dispose();
+      (m.material as THREE.Material).dispose();
+    });
+  }
 }
 
 const _v1 = new THREE.Vector3(),
