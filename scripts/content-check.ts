@@ -4,6 +4,7 @@ import { validateEconomy } from "../src/data/economy-schema";
 import { validateWeapons } from "../src/data/weapons-schema";
 import { puzzleGems, validatePuzzles } from "../src/data/puzzles-schema";
 import { validateModels } from "../src/data/models-schema";
+import { clipsOfKit, validateKits } from "../src/data/kit-schema";
 import { validateBaoAn } from "../src/data/bao-an-schema";
 import {
   loadRawContent,
@@ -12,6 +13,7 @@ import {
   loadRawWeapons,
   loadRawPuzzles,
   loadRawModels,
+  loadRawKits,
   loadRawBaoAn,
 } from "./load-content";
 import { existsSync, readFileSync } from "node:fs";
@@ -37,6 +39,20 @@ try {
     for (const k of [a.stand, ...a.atk, a.charge, a.skill, a.burst])
       if (!clips[k])
         throw new Error(`models.yaml hoatAnh.${t}: không có clip ${k} trong public/media/anim/humanoid.json`);
+  const rk = loadRawKits();
+  const kv = validateKits(
+    rk.kits,
+    rk.statuses,
+    c.characters.map((x) => x.id),
+  );
+  const kc = JSON.parse(readFileSync("public/media/anim/kits.json", "utf8")).clips;
+  for (const [id, k] of Object.entries(kv.kits)) {
+    if (k.no.cost !== c.characters.find((x) => x.id === id)!.burst.cost)
+      throw new Error(`kits/${id}.yaml: no.cost khác burst.cost trong characters/${id}.yaml`);
+    for (const cl of clipsOfKit(k))
+      if (!kc[cl] && !clips[cl])
+        throw new Error(`kits/${id}.yaml: không có clip ${cl} trong public/media/anim/kits.json`);
+  }
   for (const [t, id] of Object.entries(md.vuKhiMacDinh))
     if (!existsSync(`public/media/models/weapons/${id}.glb`))
       throw new Error(`models.yaml vuKhiMacDinh.${t}: thiếu public/media/models/weapons/${id}.glb`);
@@ -48,7 +64,7 @@ try {
       `economy.yaml thietKe.thuNhap.cauDo.daSao = ${e.thietKe.thuNhap.cauDo.daSao}, nhưng puzzles.yaml cho ${g} Đá Sao`,
     );
   console.log(
-    `content/ hợp lệ: ${c.characters.length} nhân vật, ${Object.keys(c.enemies).length} loại quái, boss ${c.boss.name}; ${m.items.items.length} vật phẩm, ${m.quests.length} nhiệm vụ, ${m.codex.creatures.length + m.codex.places.length} mục Bách khoa; kinh tế: ${e.goiNap.daSao.length} gói Đá Sao, ${e.hoSo.length} hồ sơ mô phỏng; ${w.danhSach.length} vũ khí; Bảo Ấn ${ba.baoAn!.bo.length} bộ × ${ba.baoAn!.o.length} ô, ${ba.baoAn!.biCanh.danhSach.length} bí cảnh; ${pz.cauDo.length} câu đố, ${pz.biCanh.length} bí cảnh, ${pz.mini.length} quest mini; mô hình 3D: mẫu ${md.mau}, ${Object.keys(clips).length} clip hoạt ảnh.`,
+    `content/ hợp lệ: ${c.characters.length} nhân vật, ${Object.keys(c.enemies).length} loại quái, boss ${c.boss.name}; ${m.items.items.length} vật phẩm, ${m.quests.length} nhiệm vụ, ${m.codex.creatures.length + m.codex.places.length} mục Bách khoa; kinh tế: ${e.goiNap.daSao.length} gói Đá Sao, ${e.hoSo.length} hồ sơ mô phỏng; ${w.danhSach.length} vũ khí; Bảo Ấn ${ba.baoAn!.bo.length} bộ × ${ba.baoAn!.o.length} ô, ${ba.baoAn!.biCanh.danhSach.length} bí cảnh; ${pz.cauDo.length} câu đố, ${pz.biCanh.length} bí cảnh, ${pz.mini.length} quest mini; mô hình 3D: mẫu ${md.mau}, ${Object.keys(clips).length} clip hoạt ảnh; ${Object.keys(kv.kits).length} bộ chiêu riêng, ${kv.statuses.trangThai.length} buff/debuff, ${Object.keys(kc).length} clip chiêu.`,
   );
 } catch (e) {
   console.error((e as Error).message);

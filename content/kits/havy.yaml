@@ -1,0 +1,83 @@
+# Bộ chiêu Hạ Vy (S30). Thiết kế: docs/characters/havy/bo-chieu.md
+id: havy
+vaiTro: [baoVe, khongChe, hoTro]
+dacTrung: [khauBang, aoBuom, gioDauMua]
+mau: { c: "#8fdcff", c2: "#ffb057" }
+thuong:
+  - { m: 0.8 }
+  - { m: 0.9 }
+  - { m: 0.5, vien: 2 }
+  - { m: 1.5, el: true }
+trongKich:
+  ten: Tên Hoa Tuyết
+  mo: Giữ để ngắm. Mức 1 (0,45 giây) bắn tên băng 130%. Mức 2 (1,3 giây) tên nở hoa tuyết 90% quanh điểm trúng, khâu tối đa 3 quái bằng chỉ băng (Khâu Băng, nhận thêm 12% sát thương, 8 giây).
+  theLuc: 0
+  muc:
+    - giay: 0.45
+      clip: havy.aim1
+      khoi: [{ k: ban, kind: arrow, toc: 900, song: 0.9, m: 1.3, el: ice }]
+    - giay: 1.3
+      clip: havy.aim2
+      khoi:
+        - k: ban
+          kind: flower
+          toc: 900
+          song: 0.9
+          r: 7
+          m: 1.9
+          el: ice
+          no:
+            - { k: chem, r: 80, goc: 360, m: 0.9, el: ice, fx: hoaTuyet }
+            - { k: dac, ham: khauBang, r: 180, sts: [{ id: khauBang, v: 0.12, t: 8 }] }
+kyNang:
+  ten: Hoa Băng Nở
+  cd: 8
+  cdGiu: 14
+  bam:
+    ten: Vòng Hoa Băng
+    mo: Vòng hoa băng 160% làm chậm 30% trong 4 giây, Hạ Vy bật lùi ra sau và tự bọc khiên 12% máu (Áo Buồm, không bị ngắt chiêu).
+    clip: havy.skillTap
+    khoi:
+      - { k: chem, r: 120, goc: 360, m: 1.6, el: ice, kb: 160, fx: vongHoaBang, sts: [{ id: hamBang, v: 0.3, t: 4 }] }
+      - { k: lao, quang: 110, t: 0.25, lui: true, r: 1, m: 0 }
+      - { k: khien, hp: 0.12, t: 8, kgd: true, doi: banThan, sts: [{ id: aoBuom, t: 8, doi: banThan }] }
+  giu:
+    ten: Hầm Băng
+    mo: Đặt Hầm Băng 7 giây phía trước, 30% Băng mỗi 0,7 giây, làm chậm 35%.
+    clip: havy.skillHold
+    khoi:
+      [
+        {
+          k: vung,
+          r: 140,
+          t: 7,
+          ti: 0.7,
+          xa: 90,
+          m: 0.3,
+          el: ice,
+          fx: hamBang,
+          sts: [{ id: hamBang, v: 0.35, t: 1.5 }],
+        },
+      ]
+no:
+  ten: Gió Lạnh Đầu Mùa
+  mo: Bắn một mũi tên lên trời, mưa hoa tuyết 5 giây hút quái vào giữa, 60% Băng mỗi 0,5 giây. Cả đội +15% tỉ lệ chí mạng 12 giây.
+  clip: havy.burst
+  cost: 50
+  cine: 1.2
+  khoi:
+    - k: ban
+      kind: arrow
+      cao: true
+      song: 0.5
+      m: 0
+      el: ice
+      no: [{ k: vung, r: 170, t: 5, ti: 0.5, keo: 90, m: 0.6, el: ice, fx: muaHoaTuyet, sts: [{ id: biGom, t: 0.6 }] }]
+    - { k: buff, sts: [{ id: gioDauMua, v: 0.15, t: 12, doi: doi }] }
+biDong:
+  - {
+      ten: Mũi Vá Buồm,
+      mo: "Nhân vật đang đánh còn dưới 30% máu thì Hạ Vy (kể cả ngoài sân) bọc khiên 30% máu tối đa của Hạ Vy kèm Áo Buồm 10 giây. Hồi 20 giây.",
+    }
+  - { ten: Chỉ Khâu Chặt, mo: "Quái đang Khâu Băng bị Đóng Băng lâu hơn 1 giây." }
+khamPha: { ten: Chân Sáo Mùa Hè, mo: "Chạy nhanh hơn 10% khi ngoài trận.", chay: 1.1 }

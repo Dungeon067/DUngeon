@@ -18,9 +18,14 @@ const glbLoader = new GLTFLoader();
 type ClipData = { n: number; bones: Record<string, { q: number[][] }>; hips: number[][] };
 let animLib: Promise<{ fps: number; clips: Record<string, ClipData> } | null> | null = null;
 function loadAnims() {
+  // Clip riêng theo nhân vật (S30, `<id>.<chiêu>`) nằm ở kits.json; thiếu file vẫn chạy bằng clip chung.
+  const kits = fetch(`${base}media/anim/kits.json`)
+    .then((r) => (r.ok ? r.json() : {}))
+    .catch(() => ({}));
   return (animLib ??= fetch(`${base}media/anim/humanoid.json`)
     .then((r) => (r.ok ? r.json() : null))
-    .catch(() => null));
+    .catch(() => null)
+    .then(async (h) => h && { ...h, clips: { ...h.clips, ...(((await kits) as any)?.clips ?? {}) } }));
 }
 
 const exists = new Map<string, Promise<boolean>>();

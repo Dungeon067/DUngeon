@@ -305,6 +305,66 @@ export const ICONS: Record<string, IconDef> = {
   "bao-loi": { group: "trang-thai", label: "Lỗi", body: Ci(12, 12, 9) + S("M8.8 8.8l6.4 6.4M15.2 8.8l-6.4 6.4") },
   sao: { group: "trang-thai", label: "Sao (độ hiếm)", body: F(star(12, 12.6, 9.6, 4, 5)) },
   moi: { group: "trang-thai", label: "Mới", body: sparkle(12, 12, 9.6) + sparkle(19.2, 4.8, 2.6) },
+  /* ---------- Buff và debuff của bộ chiêu (S30): viền tròn = buff, viền vuông = debuff ---------- */
+  "bf-tan-cong": {
+    group: "trang-thai",
+    label: "Tăng tấn công",
+    body: S("M5 19 15 9M12.5 6.5l5 5M15 9l3-3M18 3v3h3") + S("M4 7l3-3 3 3M7 4v7"),
+  },
+  "bf-nguyen-to": {
+    group: "trang-thai",
+    label: "Tăng sát thương nguyên tố",
+    body: sparkle(10, 13, 7) + S("M16 8l3-3 3 3M19 5v7"),
+  },
+  "bf-chi-mang": { group: "trang-thai", label: "Tăng chí mạng", body: F(star(12, 12, 9.6, 3, 4)) + Ci(12, 12, 9) },
+  "bf-giam-st": {
+    group: "trang-thai",
+    label: "Giảm sát thương nhận vào",
+    body: S("M12 3l7.6 3v5.6c0 4.6-3.2 8-7.6 9.4-4.4-1.4-7.6-4.8-7.6-9.4V6ZM8.4 12h7.2"),
+  },
+  "bf-khien": {
+    group: "trang-thai",
+    label: "Khiên kháng gián đoạn",
+    body: S("M12 3l7.6 3v5.6c0 4.6-3.2 8-7.6 9.4-4.4-1.4-7.6-4.8-7.6-9.4V6ZM12 7v10M12 7c2.6 2 3.6 5 3.6 8H12"),
+  },
+  "bf-nang-luong": {
+    group: "trang-thai",
+    label: "Hồi năng lượng",
+    body: Ci(12, 12, 9) + S("M13 6.5 9 13h3.4l-1.4 4.5L15 11h-3.4Z"),
+  },
+  "bf-tinh-thong": {
+    group: "trang-thai",
+    label: "Tăng tinh thông nguyên tố",
+    body:
+      Ci(12, 12, 2.2, true) + S("M12 4c3 3 3 13 0 16M12 4c-3 3-3 13 0 16M4.5 8.5c4 0 11 7 15 7M4.5 15.5c4 0 11-7 15-7"),
+  },
+  "bf-tang": { group: "trang-thai", label: "Tầng cộng dồn", body: S("M6 13l6-6 6 6M6 19l6-6 6 6") },
+  "db-bang": {
+    group: "trang-thai",
+    label: "Đóng băng / khâu băng",
+    body: S("M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.6 4.6 12 7l2.4-2.4M9.6 19.4 12 17l2.4 2.4"),
+  },
+  "db-cham": { group: "trang-thai", label: "Làm chậm", body: S("M4 4h16v16H4ZM12 8v4l3 2") },
+  "db-dau": {
+    group: "trang-thai",
+    label: "Bị đánh dấu",
+    body: S("M4 4h16v16H4Z") + Ci(12, 12, 4.6) + Ci(12, 12, 1.4, true),
+  },
+  "db-giam-giap": {
+    group: "trang-thai",
+    label: "Giảm phòng thủ",
+    body: S("M4 4h16v16H4ZM12 7l4.6 2v3.4c0 2.6-2 4.4-4.6 5.4-2.6-1-4.6-2.8-4.6-5.4V9ZM13 8.4l-2 3.4 2 1.4-1.6 3"),
+  },
+  "db-giam-khang": {
+    group: "trang-thai",
+    label: "Giảm kháng",
+    body: S("M4 4h16v16H4ZM12 6.6c-2.4 3-3.4 4.6-3.4 6.2a3.4 3.4 0 0 0 6.8 0c0-1.6-1-3.2-3.4-6.2ZM10.4 13.4h3.2"),
+  },
+  "db-gom": {
+    group: "trang-thai",
+    label: "Bị gom",
+    body: S("M4 4h16v16H4ZM12 12a1.6 1.6 0 1 1 1.6-1.6c0 2.4-2 3.6-3.8 3.6A4 4 0 0 1 6 10c0-3 2.4-4.6 5-4.6"),
+  },
   "hen-gio": {
     group: "trang-thai",
     label: "Hẹn giờ",

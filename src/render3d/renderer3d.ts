@@ -3,6 +3,13 @@
  * Chỉ đọc GS, không ghi logic. Kiến trúc và ngân sách hiệu năng: docs/art/renderer-3d.md.
  */
 import * as THREE from "three";
+import { KITS } from "../data/kits";
+import { kitFx, kitField, kitTrail, type FxCtx } from "./kit-fx";
+import { Vfx } from "./vfx/system";
+import { Catalyst, catProj } from "./vfx/weapons";
+import { ECON } from "../data/economy";
+import { weaponOf } from "../economy/core";
+import { PAINTERS, paintField, paintFx, paintHero, paintHit, paintProj } from "./vfx";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
@@ -193,6 +200,8 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   scene.add(blob);
   const fxGroup = new THREE.Group();
   scene.add(fxGroup);
+  const vfx = new Vfx(scene);
+  const cat = new Catalyst(scene);
 
   // Vệt kiếm: dải nối các vị trí mũi vũ khí gần nhất.
   const TRAIL = 14;
@@ -415,7 +424,14 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     if (a && ACT_WIN[a.k]) {
       const win = ACT_WIN[a.k] / (a.k.startsWith("atk") ? A.speed : 1);
       if (T - a.t0 < win) {
-        const k = a.k.startsWith("atk") ? A.atk[+a.k.slice(3) - 1] : a.k === "skill" ? A.skill : A.burst;
+        const k =
+          a.clip && hero!.has?.(a.clip)
+            ? a.clip
+            : a.k.startsWith("atk")
+              ? A.atk[+a.k.slice(3) - 1]
+              : a.k === "skill"
+                ? A.skill
+                : A.burst;
         const d = hero!.duration(k);
         return { k: `${k}#${a.t0}`, once: true, speed: d / win, fade: 0.08 };
       }
@@ -459,7 +475,8 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
 
   function frame(t: number): boolean {
     if (gl.getContext().isContextLost()) return false;
-    const dt = Math.min(0.05, t - lastT || 0.016);
+    // Đồng hồ có thể nhảy lùi khi chuyển sang chế độ quay xác định: khi đó coi như một khung chuẩn.
+    const dt = t > lastT ? Math.min(0.05, t - lastT) : 0.016;
     lastT = t;
     cv.style.display = "block";
     gl.info.reset();
@@ -483,23 +500,37 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     if (!camInit) camTarget.copy(want);
     camInit = true;
     camTarget.lerp(want, 1 - Math.exp(-dt * 10));
-    const yaw = GS.camYaw ?? 0,
+    const look = camTarget.clone();
+    let yaw = GS.camYaw ?? 0,
       pitch = Math.min(1.2, Math.max(0.2, GS.camPitch ?? 0.62));
     let dist = Math.min(24, Math.max(5, GS.camDist ?? 13));
+    // Cảnh nộ (S30): camera vòng ra trước mặt nhân vật, hạ thấp và áp sát, rồi trả về khi hết cảnh.
+    if (G.cine) {
+      const k = 1 - Math.max(0, G.cine.t) / G.cine.max,
+        w = Math.min(1, k * 5, (1 - k) * 6),
+        e = w * w * (3 - 2 * w);
+      // Theo hướng mặt của mô hình (hướng ra chiêu), không theo hướng chạy.
+      const front = -heroYaw + 0.5 - k * 0.9;
+      const dy = Math.atan2(Math.sin(front - yaw), Math.cos(front - yaw));
+      yaw += dy * e;
+      pitch += (0.22 - pitch) * e;
+      dist += (Math.max(4, dist * 0.42) - dist) * e;
+      look.y += 0.35 * e;
+    }
     const dir = new THREE.Vector3(-Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), Math.cos(yaw) * Math.cos(pitch));
     if (F)
       for (let s = 1; s <= 24; s++) {
         const d = (dist * s) / 24,
-          q = camTarget.clone().addScaledVector(dir, d);
+          q = look.clone().addScaledVector(dir, d);
         if (F.at(q.x, q.z) + 0.35 > q.y) {
           dist = Math.max(2.5, d - 0.6);
           break;
         }
       }
     const shake = G.shake ? (Math.random() - 0.5) * G.shake * 0.02 : 0;
-    camera.position.copy(camTarget).addScaledVector(dir, dist);
+    camera.position.copy(look).addScaledVector(dir, dist);
     camera.position.x += shake;
-    camera.lookAt(camTarget);
+    camera.lookAt(look);
     sky.mesh.position.copy(camera.position);
     sky.mesh.visible = !arena;
 
@@ -728,6 +759,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     let tti = 0;
     const turretGlow: { x: number; y: number; z: number; c: THREE.Color; i: number }[] = [];
     for (const tu of G.turrets) {
+      if (tu.tag === "den" && PAINTERS[tu.m?.c.id]?.turret) continue;
       let o = turretPool[tti];
       if (!o) {
         o = new THREE.Group();
@@ -746,8 +778,11 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       const orb = o.children[1] as THREE.Mesh,
         om = orb.material as THREE.MeshToonMaterial,
         c = EL[tu.el]?.c ?? "#ffffff";
-      om.color.set(EL[tu.el]?.c2 ?? c);
-      om.emissive.set(c);
+      // Đèn hoa mai, Cọc Sấm, hoa băng: màu theo bộ chiêu, đèn nạp dầu sáng hơn.
+      const TK = tu.tag && tu.m ? KITS[tu.m.c.id] : null;
+      om.color.set(TK ? TK.mau.c2 : (EL[tu.el]?.c2 ?? c));
+      om.emissive.set(TK ? TK.mau.c : c);
+      orb.scale.setScalar(tu.tag === "den" ? 1.5 + (tu.oil > 0 ? 0.3 : 0) : 1);
       o.visible = !(tu.life < 2 && Math.floor(t * 8) % 2);
       o.position.set(tu.x / TS, groundY(tu.x, tu.y, 0), tu.y / TS);
       orb.position.y = 0.85 + Math.sin(t * 4) * 0.05;
@@ -868,10 +903,48 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
       parts.setColorAt(pi, cc.set(col));
       pi++;
     };
+    const kc: FxCtx = {
+      addP,
+      glow: (x, y, z, c, i) => glow.push({ x, y, z, c: new THREE.Color(c), i }),
+      ground: (x, y) => groundY(x, y, 0),
+      TS,
+      t,
+    };
+    const vq = Q.lights >= 8 ? 1 : Q.lights >= 4 ? 0.7 : 0.4;
+    vfx.setQuality(vq);
+    vfx.begin({ TS, t, dt, ground: kc.ground, glow: kc.glow, q: vq, hero: pos, heroYaw });
+    const heroVfx = paintHero(G, m, vfx);
+    for (const tu of G.turrets) PAINTERS[tu.m?.c.id]?.turret?.(tu, vfx);
+    // Pháp khí (S30): sách lơ lửng cạnh tay trái thay cho mô hình cầm tay.
+    if (m?.c.w === "cat") {
+      if (hero?.weapon) hero.weapon.visible = false;
+      const vk = Server.P.owned?.[m.c.id]?.vk,
+        wi = vk ? Server.P.weapons?.[vk] : null;
+      let w = null;
+      try {
+        w = wi ? { id: wi.id, r: weaponOf(wi.id, ECON).r, tl: wi.tl ?? 1 } : null;
+      } catch {
+        w = null;
+      }
+      cat.update(vfx, G, m, w);
+    } else cat.hide();
+    for (const pr of G.projs)
+      if (pr.m && paintProj(pr, vfx)) continue;
+      else if (pr.m?.c.w === "cat" && pr.kind === "orb" && !pr.skin) {
+        if (vfx.first(pr)) cat.muzzle(vfx, { x: pr.vx, z: pr.vy });
+        catProj(pr, vfx);
+      } else if (pr.skin && pr.m) {
+        const K = KITS[pr.m.c.id];
+        if (K) kitTrail(pr, kc, groundY(pr.x, pr.y, 0) + 0.9, K.mau.c, K.mau.c2);
+      }
+    for (const fl of G.fields) if (fl.k === "kvung" && !paintField(fl, vfx)) kitField(fl, kc, fl.m?.c.id ?? "");
     for (const f of G.fx) {
       const k = f.life / f.max,
         gy = groundY(f.x, f.y, 0);
-      if (f.k === "dot")
+      if (f.k === "kfx") {
+        if (!paintFx(f, vfx)) kitFx(f, kc);
+      } else if (f.k === "hit") paintHit(f, vfx);
+      else if (f.k === "dot")
         addP(
           f.x / TS,
           gy + 0.2 + (f.z ?? 0) / TS + (1 - k) * 0.4,
@@ -949,7 +1022,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
     }
     // Tuyết xoáy quanh chân khi dùng nộ hoặc kỹ năng Băng.
     const inBurst = p.act?.k === "burst" && G.time - p.act.t0 < 1.3;
-    if (m && (inBurst || (p.act?.k === "skill" && G.time - p.act.t0 < 0.7))) {
+    if (m && !heroVfx && !PAINTERS[m.c.id] && (inBurst || (p.act?.k === "skill" && G.time - p.act.t0 < 0.7))) {
       const elc = EL[m.c.el];
       for (let j = 0; j < (inBurst ? 32 : 14); j++) {
         const a = j * 2.4 + t * (inBurst ? 4 : 2),
@@ -973,6 +1046,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         c: new THREE.Color(EL[fl.el].c),
         i: 1.5,
       });
+    vfx.end();
     parts.count = pi;
     parts.instanceMatrix.needsUpdate = true;
     if (parts.instanceColor) parts.instanceColor.needsUpdate = true;

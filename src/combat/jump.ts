@@ -1,4 +1,6 @@
 import { GS } from "../core/state";
+import { kitPlunge } from "./kits/run";
+import { kitOf } from "../data/kits";
 import { sfx } from "../core/audio";
 import { dist } from "../core/util";
 import { EL } from "../data/content";
@@ -47,7 +49,7 @@ export function tryJump(): boolean {
   const J = FEEL.jump;
   if (p.stamina < J.stamina) return false;
   p.stamina -= J.stamina;
-  const { v0 } = jumpPhysics();
+  const v0 = jumpPhysics().v0 * Math.sqrt(kitOf(m)?.khamPha?.nhay ?? 1);
   const long = p.dashT > 0;
   let vx = 0,
     vy = 0;
@@ -157,6 +159,7 @@ function land(p: any, ground: number) {
       hitEnemy(e, m, mult, m.c.el, { kb: 160 });
       hit = true;
     }
+    kitPlunge(m);
     fxRing(p.x, p.y, P.radius, EL[m.c.el].c, 0.35, 6);
     fxBurst(p.x, p.y, EL[m.c.el].c, 14, 170);
     shake("heavy", 1 + levels * 0.3);
