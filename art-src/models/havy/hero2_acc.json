@@ -1,0 +1,85 @@
+{
+  "chains": [
+    {
+      "name": "SashL",
+      "bone": "hips",
+      "start": [0.13, 0.03, 0.0],
+      "dir": [0.12, 0.05, -1],
+      "length": 0.5,
+      "width": 0.07,
+      "bones": 4,
+      "strips": 2,
+      "gap": 0.05,
+      "color": "#a9d6ff",
+      "shade": "#5f8fd0",
+      "point": true
+    },
+    {
+      "name": "TasselL",
+      "bone": "hips",
+      "start": [0.1, 0.11, -0.06],
+      "dir": [0.02, 0.1, -1],
+      "length": 0.16,
+      "width": 0.018,
+      "bones": 2,
+      "color": "#f2a227",
+      "shade": "#a8661a",
+      "taper": 0.1
+    }
+  ],
+  "emblems": [
+    {
+      "bone": "spine",
+      "pos": [0.075, 0.105, -0.012],
+      "normal": [0.35, 1, 0],
+      "size": 0.03,
+      "gem": "#7fe0ff",
+      "gemShade": "#3aa6d8",
+      "glow": 2.5
+    }
+  ],
+  "hairRing": {
+    "color": "#d6ecff",
+    "ny": 0.68,
+    "width": 0.14,
+    "strength": 1.2
+  },
+  "pauldrons": [
+    {
+      "bone": "left_shoulder",
+      "pos": [0.01, 0.0, -0.005],
+      "scale": [0.08, 0.075, 0.065],
+      "lames": 3,
+      "top": 0.98,
+      "step": 0.26,
+      "band": 0.4,
+      "grow": 0.07,
+      "arc": [-15, 195],
+      "colors": [
+        ["#c9d6ea", "#6f7f9e"],
+        ["#b4c4de", "#5e6d8c"],
+        ["#f2a227", "#8a5a14"]
+      ],
+      "thick": 0.005,
+      "bevel": 0.0018,
+      "at": "left_upper_arm",
+      "tilt": 15
+    }
+  ],
+  "buckles": [
+    {
+      "bone": "spine",
+      "pos": [0.0, 0.112, -0.005],
+      "normal": [0, 1, 0],
+      "size": [0.05, 0.038, 0.012],
+      "color": "#f2a227",
+      "shade": "#8a5a14",
+      "gem": "#7fe0ff",
+      "gemShade": "#3aa6d8",
+      "glow": 1.5
+    }
+  ],
+  "decimate": {
+    "Hair": 0.88
+  }
+}

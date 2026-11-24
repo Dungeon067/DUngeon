@@ -352,6 +352,24 @@ if fc is not False and face_ob:
         sc = Vector(x.shade_color_factor)
         x.shade_color_factor = list(sc.lerp(Vector((1.0, 0.86, 0.84)), fc.get("shadeLift", 0.55)))
         x.outline_width_factor = x.outline_width_factor * fc.get("outline", 0.45)
+        if "blush" in fc:
+            # giảm má hồng: điểm ảnh đỏ hơn màu da nền bị kéo về màu da (blush=1 giữ nguyên, 0 bỏ hẳn)
+            import numpy as np
+
+            bimg = m.vrm_addon_extension.mtoon1.pbr_metallic_roughness.base_color_texture.index.source
+            if bimg is not None and not bimg.get("tt_blush"):
+                a = np.empty(bimg.size[0] * bimg.size[1] * 4, np.float32)
+                bimg.pixels.foreach_get(a)
+                a = a.reshape(-1, 4)
+                op = a[:, 3] > 0.5
+                red = a[:, 0] - (a[:, 1] + a[:, 2]) / 2
+                skin_c = np.median(a[op, :3], 0)
+                ex = np.clip((red - np.median(red[op])) / max(1e-4, np.percentile(red[op], 99.5) - np.median(red[op])), 0, 1)
+                k = (ex * (1 - fc["blush"]))[:, None]
+                a[:, :3] = a[:, :3] * (1 - k) + skin_c * k
+                bimg.pixels.foreach_set(a.ravel())
+                bimg.pack()
+                bimg["tt_blush"] = 1
         img = x.outline_width_multiply_texture.index.source
         if img is None or img.get("tt_masked"):
             continue

@@ -1,0 +1,25 @@
+{
+  "pins": [
+    {
+      "side": 1,
+      "ray": [60, 0.05],
+      "turn": 35,
+      "size": 0.034,
+      "lift": 0.1
+    },
+    {
+      "side": -1,
+      "ray": [60, 0.05],
+      "turn": 35,
+      "size": 0.034,
+      "lift": 0.1
+    }
+  ],
+  "springRename": {
+    "TopsUpperArm": "CoatSkirt"
+  },
+  "skirtColliders": true,
+  "face": {
+    "blush": 0.35
+  }
+}

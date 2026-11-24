@@ -14,6 +14,7 @@ import { BowRig } from "./bow-rig";
 import { ClothGuard } from "./cloth";
 import { solveLimb, type Limb } from "./ik";
 import { validateModels, type WeaponType } from "../../data/models-schema";
+import { toonHair } from "./hair";
 import { outlineMat, toonMat } from "./mat";
 
 const _v = new THREE.Vector3(),
@@ -240,6 +241,7 @@ export class VrmActor {
         m.rimLightingMixFactor = 1;
       }
     });
+    toonHair(vrm);
     const look = { ...MODELS.macDinh, ...(MODELS.nhanVat[id] ?? {}) };
     const box = new THREE.Box3().setFromObject(vrm.scene);
     const s = look.height / Math.max(0.1, box.max.y - box.min.y);
