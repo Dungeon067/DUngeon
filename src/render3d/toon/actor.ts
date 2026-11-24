@@ -18,6 +18,7 @@ import { solveLimb, type Limb } from "./ik";
 import { validateModels, type WeaponType } from "../../data/models-schema";
 import { toonHair } from "./hair";
 import { outlineMat, toonMat } from "./mat";
+import { fixStrayFingerWeights } from "./skin-fix";
 
 const _v3 = new THREE.Vector3();
 const _v = new THREE.Vector3(),
@@ -225,6 +226,9 @@ export class VrmActor {
     VRMUtils.removeUnnecessaryVertices(vrm.scene);
     VRMUtils.combineSkeletons(vrm.scene);
     VRMUtils.rotateVRM0(vrm);
+    // Đỉnh áo gắn nhầm vào xương ngón tay kéo lưới thành que mảnh khi vung tay.
+    const stray = fixStrayFingerWeights(vrm.scene);
+    if (stray) console.info(`[3d] ${id}: sửa ${stray} đỉnh gắn nhầm xương ngón tay`);
     // Nhân vật chưa có mô hình riêng: nhuộm mẫu tạm theo màu YAML để còn phân biệt được.
     const tint = url !== own && colors ? tintFor(colors) : null;
     vrm.scene.traverse((o: any) => {
