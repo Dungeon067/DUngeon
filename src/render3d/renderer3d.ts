@@ -207,6 +207,7 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
   const wind = new WindField(POSES.gio),
     fieldLife = new WeakMap<object, number>();
   let dashW = 0;
+  let castT0 = -1;
   const dashDir = new THREE.Vector2();
   const heroWind = (h: VrmActor, at: THREE.Vector3, dt: number) => {
     const G = GS.G,
@@ -640,6 +641,10 @@ export function createRenderer3D(onLost: () => void): WorldRenderer {
         dash: p.dashT > 0,
       };
       if (hero.wfx) hero.wfx.orbit = acting && m.c.w === "cat";
+      if (hero.wfx && m.c.w === "cat" && acting && p.act && p.act.t0 !== castT0) {
+        castT0 = p.act.t0;
+        hero.wfx.cast(p.act.k === "burst" ? 2 : p.act.k === "atk3" || p.act.k === "skill" ? 1.5 : 1);
+      }
       heroWind(hero, pos, dt);
       hero.update(dt);
       const fin = !!p.act && (p.act.k === "atk3" || p.act.k === "skill" || p.act.k === "burst");

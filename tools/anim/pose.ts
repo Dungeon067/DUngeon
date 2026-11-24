@@ -347,6 +347,7 @@ export function overlay(o: OverlayDef, lib: Record<string, ClipData>, names: str
   const base = lib[o.from];
   if (!base) throw new Error(`thiếu clip nền ${o.from}`);
   const out: ClipData = { n: base.n, bones: {}, hips: [] };
+  if (base.str) out.str = [...base.str];
   for (const b of names) out.bones[b] = { q: [] };
   for (let i = 0; i < base.n; i++) {
     rig.setFrame(base, i);

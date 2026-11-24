@@ -92,7 +92,7 @@ const act = (a as any).actions.get(a.variant(clip)) as THREE.AnimationAction;
   a.grip2();
   for (let i = 0; i < 30; i++) a.wfx?.update(0.05);
   a.vrm.update(0);
-  a.bow?.update(a.strNow());
+  a.bow?.update(a.strNow(), a.strRel());
   gl.render(scene, cam);
   return true;
 };
@@ -218,6 +218,7 @@ function sequence(src: string) {
     cur = "";
   const lab = document.createElement("div");
   lab.style.cssText = "position:fixed;left:12px;top:10px;font:600 20px sans-serif;color:#223;";
+  if (q.get("hud") === "0") lab.style.display = "none";
   document.body.appendChild(lab);
   if (a!.wfx) a!.wfx.color.set(q.get("col") ?? "#7fd0ff");
   const fx = new HeroFx();
@@ -245,6 +246,7 @@ function sequence(src: string) {
         a!.wfx?.want(true, true, scene);
         const c = s.k.startsWith("atk") ? A.atk[+s.k.slice(3) - 1] : s.k === "skill" ? A.skill : A.burst;
         play(c, { once: true, speed: a!.duration(c) / s.d, fade: 0.08, restart: true });
+        a!.wfx?.cast(s.k === "burst" ? 2 : s.k === "atk3" || s.k === "skill" ? 1.5 : 1);
       }
       if (s.k === "vortex" && ban) {
         vAge = 0;

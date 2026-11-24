@@ -331,6 +331,17 @@ export class VrmActor {
     return s[Math.min(s.length - 1, Math.max(0, Math.round(a.time * this.fps)))];
   }
 
+  /** Giây kể từ lúc thả dây (độ kéo tụt từ ≥0,5 xuống), -1 nếu không vừa thả. */
+  strRel() {
+    const a = this.cur;
+    const s = a && this.strs.get(a.getClip().name);
+    if (!a || !s) return -1;
+    const i = Math.min(s.length - 1, Math.max(0, Math.round(a.time * this.fps)));
+    if (s[i] >= 0.5) return -1;
+    for (let j = i; j > 0 && i - j < this.fps; j--) if (s[j - 1] >= 0.5) return (a.time * this.fps - j + 1) / this.fps;
+    return -1;
+  }
+
   duration(name: string) {
     return this.actions.get(this.variant(name))?.getClip().duration ?? 0.5;
   }
@@ -385,7 +396,10 @@ export class VrmActor {
     this.grip2();
     this.cloth.update(dt);
     this.wfx?.update(dt);
-    if (this.bow) this.bow.update(this.wfx && this.wfx.st !== "hand" ? 0 : this.strNow());
+    if (this.bow) {
+      const on = !this.wfx || this.wfx.st === "hand";
+      this.bow.update(on ? this.strNow() : 0, on ? this.strRel() : -1);
+    }
   }
 
   /** Trộn cách cầm lúc chờ / lúc ra đòn theo offW. */
