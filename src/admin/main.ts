@@ -12,6 +12,9 @@ import { button, field, h, tabs, tag, toggle } from "../ui/ds";
 import { icon } from "../ui/icons/icons";
 import { filterHistory } from "../ui/menu/logic";
 import { DOMAINS, MINI, PUZZLES } from "../data/puzzles";
+import { BA } from "../data/bao-an";
+import { SLOT_IDS, type SlotId, type StatId } from "../data/bao-an-schema";
+import { slotOf } from "../economy/bao-an";
 import { checkPassword, endSession, hasSession, startSession } from "./auth";
 
 type Kid = Node | string | null;
@@ -251,6 +254,80 @@ function wish() {
 }
 
 let wipeArm = 0;
+/** Cấp Bảo Ấn để thử (S31): chọn bộ, ô, độ hiếm, chỉ số chính, dòng phụ, cấp. */
+function baoAnCard() {
+  const sel = (id: string, opts: [string, string][]) => {
+    const s = h("select", { class: "tt-input", id });
+    for (const [v, t] of opts) s.add(new Option(t, v));
+    return s;
+  };
+  const fieldOf = (label: string, el: HTMLElement) =>
+    h("div", { class: "tt-field" }, [h("label", { for: el.id }, [label]), el]);
+  const bo = sel(
+    "admBaBo",
+    BA.bo.map((b) => [b.id, `${b.sao.ten} · ${b.ten}`]),
+  );
+  const o = sel(
+    "admBaO",
+    SLOT_IDS.map((x) => [x, slotOf(BA, x).ten]),
+  );
+  const r = sel("admBaR", [
+    ["5", "5★"],
+    ["4", "4★"],
+    ["3", "3★"],
+  ]);
+  const lv = field("Cấp", { type: "number", value: "0" });
+  const chinh = sel("admBaChinh", []);
+  const phu = h("div", { class: "tt-admin-row", id: "admBaPhu" });
+  const fill = () => {
+    const cur = chinh.value;
+    chinh.replaceChildren(new Option("Ngẫu nhiên", ""));
+    for (const k of Object.keys(slotOf(BA, o.value as SlotId).chinh) as StatId[])
+      chinh.add(new Option(BA.chiSo[k].ten + (k.endsWith("Pct") ? " %" : ""), k));
+    chinh.value = [...chinh.options].some((x) => x.value === cur) ? cur : "";
+    phu.replaceChildren(
+      ...Object.keys(BA.phu.trongSo).map((k) => {
+        const cb = h("input", { type: "checkbox", value: k, disabled: k === chinh.value }) as HTMLInputElement;
+        return h("label", { class: "tt-admin-chk" }, [
+          cb,
+          ` ${BA.chiSo[k as StatId].ten}${k.endsWith("Pct") ? " %" : ""}`,
+        ]);
+      }),
+    );
+  };
+  o.addEventListener("change", fill);
+  chinh.addEventListener("change", fill);
+  fill();
+  const give = button("Cấp Bảo Ấn", {
+    variant: "primary",
+    icon: "them",
+    onClick: () => {
+      const picked = [...phu.querySelectorAll<HTMLInputElement>("input:checked")].map((x) => x.value).slice(0, 4);
+      const res = Server.req("giveBaoAn", {
+        bo: bo.value,
+        o: o.value,
+        r: Number(r.value),
+        chinh: chinh.value || undefined,
+        phu: picked.length ? picked : undefined,
+        lv: input(lv).value,
+      });
+      if (res.ok)
+        done(`Đã cấp ${BA.bo.find((b) => b.id === bo.value)!.mon[o.value as SlotId].ten} ${r.value}★ +${res.data.lv}`);
+    },
+  });
+  give.id = "admBaGive";
+  return card("Bảo Ấn", [
+    fieldOf("Bộ", bo),
+    fieldOf("Ô", o),
+    fieldOf("Độ hiếm", r),
+    fieldOf("Chỉ số chính", chinh),
+    lv,
+    h("p", { class: "tt-admin-note" }, ["Dòng phụ (chọn tối đa 4, bỏ trống thì ngẫu nhiên 3–4 dòng):"]),
+    phu,
+    h("div", { class: "tt-admin-row" }, [give]),
+  ]);
+}
+
 function grants() {
   const amt = field("Số lượng", { type: "number", value: "1600" });
   const give = (kind: string, label: string) =>
@@ -335,6 +412,7 @@ function grants() {
         }),
       ]),
     ]),
+    baoAnCard(),
     card(
       "Vùng nguy hiểm",
       [h("p", { class: "tt-admin-note" }, ["Xóa toàn bộ hồ sơ trên trình duyệt này. Không hoàn tác được."]), wipe],

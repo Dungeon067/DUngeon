@@ -30,7 +30,9 @@ export function exitToMenu(screen?: string) {
             ? `tầng ${GS.G.tower.floor}`
             : GS.G.mode === "domain"
               ? GS.G.dom.d.ten
-              : `cấp ${GS.G.opt?.lv}`,
+              : GS.G.mode === "baoan"
+                ? `${GS.G.ba.ten} · Thiên Tượng ${GS.G.ba.tt}`
+                : `cấp ${GS.G.opt?.lv}`,
       });
   }
   closeModal();

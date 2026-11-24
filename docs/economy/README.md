@@ -6,6 +6,7 @@ Thiết kế và mô phỏng kinh tế của Vọng Tinh Giới, sẵn sàng cho
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [phan-cap-suc-manh.md](phan-cap-suc-manh.md) | Các nguồn sức mạnh, vũ khí và banner vũ khí, hai pool 5★, công thức Chiến Lực, bốn hồ sơ người chơi, mô hình phân tầng nội dung, những gì bán và không bao giờ bán |
 | [vu-khi.md](vu-khi.md)                       | 26 vũ khí (S23): tên, bị động R1–R5, nguồn, nhân vật đặc trưng, tên cũ                                                                                             |
+| [bao-an.md](bao-an.md)                       | Bảo Ấn 5 ô (S31): chỉ số chính/phụ, mốc +4, 8 Bộ Ấn, Bí Cảnh Bảo Ấn, phân rã, đổi, Chiến Lực                                                                       |
 | [kinh-te.md](kinh-te.md)                     | Dòng Đá Sao, Xu, Sách Kinh Nghiệm, nguyên liệu, Linh Lực theo ngày, tuần, tháng; lạm phát và chỗ tiêu                                                              |
 | [goi-nap-de-xuat.md](goi-nap-de-xuat.md)     | Gói nạp đề xuất (VND), giá trị mỗi đồng, bảo vệ người chơi, yêu cầu pháp lý ở Việt Nam                                                                             |
 | [ket-qua/](ket-qua/)                         | Kết quả lần chạy chuẩn: `tom-tat.md`, `bao-cao.html` (biểu đồ), các file CSV                                                                                       |

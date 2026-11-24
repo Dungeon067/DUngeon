@@ -189,12 +189,7 @@ thietKe:
           - { id: dot-pha-1, ten: Lần đầu đột phá, loai: dotPha, can: 1, phoi: 2 }
           - { id: tinh-luyen-1, ten: Lần đầu tinh luyện, loai: tinhLuyen, can: 1, phoi: 2 }
     # Danh sách vũ khí (tên, bị động, truyện, chỉ số): content/weapons.yaml, ghép vào thietKe.vuKhi.danhSach khi nạp.
-  # Bảo Ấn: 4 ô. Chất lượng rơi theo Thiên Tượng (0..1). Bộ Ấn thêm sát thương khi đủ 4 ô.
-  baoAn:
-    tanCongToiDa: 0.32
-    mauToiDa: 0.24
-    boAn: 0.12
-    chatLuongTheoThienTuong: [0.3, 0.4, 0.5, 0.6, 0.7, 0.78, 0.86, 0.93, 1]
+  # Bảo Ấn (5 Mảnh Sao): content/bao-an.yaml.
   # Linh Lực: năng lượng để nhận thưởng Lòng Sao. Không bán.
   linhLuc:
     toiDa: 160

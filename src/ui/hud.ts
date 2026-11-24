@@ -164,6 +164,7 @@ export function currentObjective(): { text: string; target: string | null } {
   const G = GS.G;
   if (G.mode === "tower") return { text: OBJECTIVES.tower.replace("{floor}", String(G.tower.floor)), target: null };
   if (G.mode === "boss") return { text: OBJECTIVES.boss, target: null };
+  if (G.mode === "baoan") return { text: `${G.ba.ten}: hạ hết các đợt quái trước khi hết giờ`, target: null };
   const so = storyObjective();
   if (so) return so;
   const tq = trackedObjective();
@@ -338,7 +339,7 @@ export function updateHud() {
   }
   GS.G.objTarget = ob.target;
   let info = "";
-  if (GS.G.mode === "tower") {
+  if (GS.G.mode === "tower" || GS.G.mode === "baoan") {
     const T = GS.G.tower;
     info = `Đợt ${Math.max(1, T.wave)}/${T.waves.length} · ${Math.max(0, Math.ceil(T.timeLeft))} giây`;
   }

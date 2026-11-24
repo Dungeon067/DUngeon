@@ -150,9 +150,6 @@ const DesignSchema = z
         danhSach: z.array(VuKhiSchema).min(1),
       })
       .strict(),
-    baoAn: z
-      .object({ tanCongToiDa: n, mauToiDa: n, boAn: n, chatLuongTheoThienTuong: z.array(pct).length(9) })
-      .strict(),
     linhLuc: z
       .object({
         toiDa: int,

@@ -400,7 +400,7 @@ export function update(dt: number) {
   }
   if (GS.G.mode === "domain") domainLogic(dt);
   if (GS.G.map?.puzzles) puzzleTick(dt);
-  if (GS.G.mode === "tower") towerLogic(dt);
+  if (GS.G.mode === "tower" || GS.G.mode === "baoan") towerLogic(dt);
   // camera
   const ct = cameraTarget(dt),
     cf = Math.min(1, dt * FEEL.camera.follow);
