@@ -70,6 +70,9 @@ game:
   chienLuc:
     trongSoTanCong: 1
     trongSoMau: 0.08
+    # S30: mỗi điểm tinh thông nguyên tố, và mỗi 100% hồi năng lượng cộng thêm (nhân với Chiến Lực).
+    trongSoTinhThong: 0.3
+    trongSoHoiNang: 0.2
 
 # ---------- Thiết kế (tài liệu + mô phỏng, chưa có trong game) ----------
 thietKe:

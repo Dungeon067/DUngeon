@@ -11,6 +11,8 @@ export interface BaseChar {
   r: number;
   hp: number;
   atk: number;
+  /** Chỉ số phụ S30: tinh thông, hồi năng lượng cộng thêm, giá trị hỗ trợ đội. */
+  chiSoPhu?: { tinhThong: number; hoiNang: number; hoTro: number };
 }
 /** Mức đầu tư của một nhân vật. Các trường thiết kế (khai, kyNang, vuKhi, baoAn) để trống khi tính trong game. */
 export interface Invest {
@@ -34,6 +36,12 @@ export interface Stats {
   dmg: number;
   /** Thưởng kỹ năng nhân vào Chiến Lực. */
   skill: number;
+  /** Tinh thông nguyên tố. */
+  tt: number;
+  /** Hồi năng lượng (1 = 100%). */
+  hn: number;
+  /** Giá trị buff/khiên/khống chế cho đội, quy ra phần trăm Chiến Lực. */
+  hoTro: number;
 }
 
 const rk = (r: number) => (r >= 5 ? "5" : "4") as "4" | "5";
@@ -104,6 +112,9 @@ export function charStats(b: BaseChar, s: Invest, E: Economy): Stats {
     cdmg: cm.satThuong + ph("satThuongChiMang") + (ba?.cdmg ?? 0),
     dmg: (w ? passiveAt(w, s.vuKhi!.tinhLuyen, E) : 0) + (ba?.dmg ?? 0),
     skill: Math.max(0, (s.kyNang ?? 1) - 1) * T.kyNang.tangMoiCap,
+    tt: b.chiSoPhu?.tinhThong ?? 0,
+    hn: 1 + (b.chiSoPhu?.hoiNang ?? 0),
+    hoTro: b.chiSoPhu?.hoTro ?? 0,
   };
 }
 
@@ -112,7 +123,9 @@ export const effAtk = (st: Stats) => st.atk * (1 + st.crit * st.cdmg) * (1 + st.
 
 export function chienLuc(st: Stats, E: Economy) {
   const w = E.game.chienLuc;
-  return Math.round((effAtk(st) * w.trongSoTanCong + st.hp * w.trongSoMau) * (1 + st.skill));
+  const base = effAtk(st) * w.trongSoTanCong + st.hp * w.trongSoMau + (st.tt ?? 0) * (w.trongSoTinhThong ?? 0);
+  const phu = 1 + (st.hoTro ?? 0) + ((st.hn ?? 1) - 1) * (w.trongSoHoiNang ?? 0);
+  return Math.round(base * (1 + st.skill) * phu);
 }
 
 /** Chiến Lực đội = tổng 4 người mạnh nhất. */

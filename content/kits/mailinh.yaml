@@ -1,0 +1,80 @@
+# Bộ chiêu Mai Linh (S30). Thiết kế: docs/characters/mailinh/bo-chieu.md
+id: mailinh
+vaiTro: [phu, hoTro]
+dacTrung: [denCanh, tanPhao]
+mau: { c: "#ff5a3c", c2: "#ffd34a" }
+thuong:
+  - { m: 0.8, el: true }
+  - { m: 0.9, el: true }
+  - { m: 1.35, el: true, nay: 2 }
+trongKich:
+  ten: Thả Đèn Trời
+  mo: Thả một đèn trời rơi xuống chỗ quái, nổ 160% Hỏa, nạp dầu cho mọi đèn hoa mai (3 phát tiếp mạnh gấp rưỡi).
+  theLuc: 25
+  muc:
+    - giay: 0.4
+      clip: mailinh.charge
+      khoi:
+        - k: ban
+          kind: lantern
+          cao: true
+          song: 0.7
+          r: 14
+          m: 0
+          el: fire
+          no: [{ k: chem, r: 80, goc: 360, m: 1.6, el: fire, fx: denTroi }]
+        - { k: dac, ham: napDau }
+kyNang:
+  ten: Đèn Lồng Hoa Mai
+  cd: 10
+  bam:
+    ten: Một Đèn Hoa Mai
+    mo: Treo một đèn lớn 12 giây, cứ 1,2 giây bắn 90% Hỏa. Đứng gần đèn được Đèn Canh (+20% tấn công của Mai Linh). Tối đa 3 đèn.
+    clip: mailinh.skillTap
+    khoi:
+      - k: trieu
+        tag: den
+        toiDa: 3
+        t: 12
+        cd: 1.2
+        m: 0.9
+        el: fire
+        fx: denHoaMai
+        hao: { r: 150, sts: [{ id: denCanh, v: 0.2, theo: atk, t: 1.5, doi: dangDanh }] }
+  giu:
+    ten: Dây Ba Đèn
+    mo: Treo ba đèn nhỏ thành hàng chắn đường 8 giây, mỗi đèn 45% Hỏa mỗi 1,6 giây, cũng tỏa Đèn Canh.
+    clip: mailinh.skillHold
+    khoi:
+      - k: trieu
+        tag: den
+        toiDa: 3
+        soLuong: 3
+        xa: 60
+        t: 8
+        cd: 1.6
+        m: 0.45
+        el: fire
+        fx: denHoaMai
+        hao: { r: 150, sts: [{ id: denCanh, v: 0.2, theo: atk, t: 1.5, doi: dangDanh }] }
+no:
+  ten: Pháo Hoa Đêm Hội
+  mo: Năm quả pháo hoa rơi quanh quái, mỗi quả 80% Hỏa và gắn Tàn Pháo (-15% kháng Hỏa, 10 giây). Mọi đèn đang treo nổ 100% Hỏa rồi treo lại đủ thời gian.
+  clip: mailinh.burst
+  cost: 50
+  cine: 1.3
+  khoi:
+    - k: ban
+      kind: lantern
+      n: 5
+      toa: 70
+      cao: true
+      song: 0.6
+      r: 12
+      m: 0
+      el: fire
+      no: [{ k: chem, r: 90, goc: 360, m: 0.8, el: fire, fx: phaoHoa, sts: [{ id: tanPhao, v: 0.15, t: 10 }] }]
+    - { k: dac, ham: noDen, tre: 0.6, m: 1, r: 100, el: fire }
+biDong:
+  - { ten: Tay Nghề Làm Đèn, mo: "Đèn hoa mai đã nạp dầu bắn đạn lớn hơn, gây thêm 50% sát thương." }
+  - { ten: Hội Đèn Đông Vui, mo: "Mỗi đèn đang treo tăng 4% sát thương Hỏa cho Mai Linh." }

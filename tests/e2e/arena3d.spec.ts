@@ -11,7 +11,8 @@ const r3 = (page: any) =>
 
 test("đấu trường 3D cho Tháp và Hắc Giao, về đảo thì dọn sạch", async ({ page }, info) => {
   test.skip(info.project.name !== "desktop", "Một máy đủ: kiểm tra lớp vẽ, không phụ thuộc màn hình");
-  test.setTimeout(150_000);
+  // Dựng 2 đấu trường bằng SwiftShader trên CI mất 1,5–2,5 phút, sát mức 150 s cũ.
+  test.setTimeout(240_000);
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(String(e)));
   await page.goto("./?e2e&renderer=3d");

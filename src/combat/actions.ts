@@ -12,6 +12,11 @@ import { Server } from "../server/server";
 import { canAirDash, tryJump, tryPlunge } from "./jump";
 import { pulseElement } from "../world/puzzles";
 import { gust } from "./elements";
+import { kitOf } from "../data/kits";
+import { infusionOf } from "./status";
+import { hooksOf } from "./kits/hooks";
+import { runBlocks } from "./kits/blocks";
+import { castKitBurst, castKitSkill, kitAtkSpeed } from "./kits/run";
 
 /* ---------- đệm lệnh: bấm sớm trong FEEL.input.buffer giây vẫn được nhận ---------- */
 export type BufferedAct = "atk" | "skill" | "burst" | "dash" | "jump";
@@ -42,18 +47,30 @@ export function tryAttack(): boolean {
   if (p.air) return tryPlunge();
   if (p.atkCd > 0 || p.dashT > 0) return false;
   const W = WEAP[m.c.w];
-  if (p.comboT <= 0) p.combo = 0;
+  // Bộ chiêu riêng (S30): chuỗi 3–5 đòn theo content/kits/<id>.yaml; còn lại 3 đòn theo vũ khí.
+  const K = kitOf(m),
+    chain = K ? (hooksOf(m).chain?.(m) ?? K.thuong) : null,
+    L = chain ? chain.length : 3;
+  if (p.comboT <= 0 || p.combo >= L) p.combo = 0;
   const step = p.combo;
-  p.combo = (p.combo + 1) % 3;
+  p.combo = (p.combo + 1) % L;
   p.comboT = 1.1;
-  p.atkCd = W.int;
+  p.atkCd = W.int * (K ? kitAtkSpeed(m) : 1);
   p.atkAnim = 1;
-  p.act = { k: `atk${step + 1}`, t0: GS.G.time };
+  const T: any = chain?.[step];
+  const k = !T ? `atk${step + 1}` : step < 2 ? `atk${step + 1}` : step === L - 1 ? "atk3" : "atk2";
+  p.act = { k, clip: T?.clip, t0: GS.G.time };
   aim();
   const ang = p.ang,
-    el = m.c.w === "cat" || step === 2 ? m.c.el : null,
-    mult = W.mult[step],
+    el = T
+      ? (infusionOf(m) ?? (T.el || m.c.w === "cat" ? m.c.el : null))
+      : m.c.w === "cat" || step === 2
+        ? m.c.el
+        : null,
+    mult = T ? T.m : W.mult[step],
     F = charFx(m.c.id);
+  const fin = T ? step === L - 1 : step === 2;
+  if (T?.khoi) runBlocks(T.khoi, { m, x: p.x, y: p.y, ang, cast: null, normal: true });
   if (W.kind === "melee") {
     fxSlash(p.x, p.y - 16, ang, W.range!, el ? F.c : F.c2, m.c.w, F.trail, el ? F.c2 : "#ffffff");
     if (el) fxParticles(p.x + Math.cos(ang) * W.range! * 0.7, p.y - 16 + Math.sin(ang) * W.range! * 0.7, F, 5);
@@ -71,32 +88,43 @@ export function tryAttack(): boolean {
       while (da > Math.PI) da -= TAU;
       while (da < -Math.PI) da += TAU;
       if (Math.abs(da) > W.arc! && d > e.r + 10) continue;
-      hitEnemy(e, m, mult, el, { ang, kb: m.c.w === "great" ? 160 : 70, heavy: step === 2 || m.c.w === "great" });
+      hitEnemy(e, m, mult, el, {
+        ang,
+        kb: T?.kb ?? (m.c.w === "great" ? 160 : 70),
+        heavy: fin || m.c.w === "great",
+        normal: true,
+      });
       landed = true;
     }
-    if (landed && (step === 2 || m.c.w === "great")) {
+    if (landed && (fin || m.c.w === "great")) {
       hitstop("heavy");
       shake("heavy");
     }
     sfx(m.c.w === "great" ? "swing_great" : "swing");
   } else {
     const sp = W.kind === "arrow" ? 640 : 400;
-    GS.G.projs.push({
-      own: "p",
-      h0: groundAt(p.x, p.y),
-      x: p.x + Math.cos(ang) * 14,
-      y: p.y - 16 + Math.sin(ang) * 14,
-      vx: Math.cos(ang) * sp,
-      vy: Math.sin(ang) * sp,
-      r: W.kind === "arrow" ? 5 : 8,
-      life: 0.8,
-      m,
-      mult,
-      el,
-      kind: W.kind,
-      home: W.kind === "orb",
-      heavy: step === 2,
-    });
+    const n = T?.vien ?? 1;
+    for (let i = 0; i < n; i++) {
+      const a = ang + (n > 1 ? (i / (n - 1) - 0.5) * 0.16 : 0);
+      GS.G.projs.push({
+        own: "p",
+        h0: groundAt(p.x, p.y),
+        x: p.x + Math.cos(a) * 14,
+        y: p.y - 16 + Math.sin(a) * 14,
+        vx: Math.cos(a) * sp,
+        vy: Math.sin(a) * sp,
+        r: W.kind === "arrow" ? 5 : 8,
+        life: 0.8,
+        m,
+        mult,
+        el,
+        kind: W.kind,
+        home: W.kind === "orb",
+        heavy: fin,
+        nay: T?.nay ?? 0,
+        normal: true,
+      });
+    }
     sfx(W.kind === "arrow" ? "shoot" : "cast");
   }
   return true;
@@ -134,6 +162,7 @@ export function castSkill(): boolean {
   const p = GS.G.p,
     m = cur();
   if (!m || !m.alive || GS.G.over || GS.G.cine) return false;
+  if (kitOf(m)) return castKitSkill("bam");
   if (m.skillCd > 0 && !Server.P.gm.nocd) return false;
   const S = m.c.skill,
     el = m.c.el,
@@ -202,6 +231,7 @@ export function castBurst(): boolean {
   const p = GS.G.p,
     m = cur();
   if (!m || !m.alive || GS.G.over || GS.G.cine) return false;
+  if (kitOf(m)) return castKitBurst();
   if (m.energy < m.c.burst.cost && !Server.P.gm.nocd) return false;
   feelState.burstT = FEEL.camera.burstHold;
   m.energy = 0;

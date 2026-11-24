@@ -7,6 +7,7 @@ dang: nu-nho
 title: Cô Bé Đèn Lồng
 desc: Cô bé làm đèn lồng ở phố cổ, mang theo những chiếc đèn biết bắn lửa.
 hp: 820
+chiSoPhu: { tinhThong: 40, hoiNang: 0.1, hoTro: 0.08 }
 atk: 92
 skill:
   name: Đèn Lồng Hoa Mai

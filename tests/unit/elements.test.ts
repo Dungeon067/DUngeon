@@ -48,7 +48,7 @@ describe("applyElement: 8 phản ứng", () => {
   it("Điện Cảm: gây sát thương theo nhịp", () => {
     const e = enemyWith("water");
     applyElement(e, "bolt", m);
-    expect(e.ec).toEqual({ t: 0.5, n: 4, dmg: m.st.atk * 0.55 });
+    expect(e.ec).toMatchObject({ t: 0.5, n: 4, dmg: m.st.atk * 0.55 });
   });
 
   it("Đóng Băng: quái thường 3 giây, boss 1.2 giây", () => {

@@ -7,6 +7,7 @@ dang: nu-teen
 title: Kiếm Khách Bình Minh
 desc: Luyện kiếm mỗi sáng bên bờ sông. Đường kiếm nhẹ như giọt sương mà chém đứt cả đá.
 hp: 900
+chiSoPhu: { tinhThong: 0, hoiNang: 0.1, hoTro: 0 }
 atk: 86
 skill:
   name: Giọt Sương Kiếm

@@ -18,6 +18,7 @@
     "admin:hash": "tsx scripts/admin-hash.ts",
     "fps": "tsx tests/perf/fps.ts",
     "record": "tsx tests/perf/record.ts",
+    "capture:vfx": "tsx tools/capture/vfx.ts",
     "icons": "tsx scripts/icons.ts",
     "cap:sync": "pnpm build && cap sync",
     "android:apk": "pnpm cap:sync && cd android && ./gradlew assembleRelease",

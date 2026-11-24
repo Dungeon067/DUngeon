@@ -32,9 +32,16 @@ const glbLoader = new GLTFLoader();
 type ClipData = { n: number; bones: Record<string, { q: number[][] }>; hips: number[][]; str?: number[] };
 let animLib: Promise<{ fps: number; clips: Record<string, ClipData> } | null> | null = null;
 function loadAnims() {
-  return (animLib ??= fetch((globalThis as { __animUrl?: string }).__animUrl ?? `${base}media/anim/humanoid.json`)
+  // Clip riêng theo nhân vật (S30, `<id>.<chiêu>`) nằm ở kits.json; thiếu file vẫn chạy bằng clip chung.
+  // `?v=` theo mã băm nội dung: bộ đệm media CacheFirst của PWA không giữ thư viện clip cũ sau khi cập nhật.
+  const v = `?v=${typeof __ANIM_V__ === "undefined" ? "dev" : __ANIM_V__}`;
+  const kits = fetch(`${base}media/anim/kits.json${v}`)
+    .then((r) => (r.ok ? r.json() : {}))
+    .catch(() => ({}));
+  return (animLib ??= fetch((globalThis as { __animUrl?: string }).__animUrl ?? `${base}media/anim/humanoid.json${v}`)
     .then((r) => (r.ok ? r.json() : null))
-    .catch(() => null));
+    .catch(() => null)
+    .then(async (h) => h && { ...h, clips: { ...h.clips, ...(((await kits) as any)?.clips ?? {}) } }));
 }
 
 const exists = new Map<string, Promise<boolean>>();

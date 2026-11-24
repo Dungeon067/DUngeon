@@ -1,4 +1,6 @@
 import { GS } from "../core/state";
+import { statSum, tickStatuses } from "../combat/status";
+import { hooksOf } from "../combat/kits/hooks";
 import { FEEL, shake } from "../combat/feel";
 import { teleWarn } from "./telegraph";
 import { dealRaw, hurtPlayer } from "../combat/damage";
@@ -62,6 +64,9 @@ export function updateEnemy(e: any, dt: number) {
     if (e.auraT <= 0) e.aura = null;
   }
   if (e.vuln > 0) e.vuln -= dt;
+  tickStatuses(e, dt);
+  // Làm chậm (S30): tốc độ gốc giữ ở spd0.
+  e.spd = (e.spd0 ??= e.spd) * (1 - statSum(e, "lamCham"));
   if (e.hitT > 0) e.hitT -= dt;
   tickPoise(e, dt);
   if (e.ec) {
@@ -71,6 +76,7 @@ export function updateEnemy(e: any, dt: number) {
       e.ec.n--;
       fxBolt(e.x, e.y - 10, EL.bolt.c);
       dealRaw(e, e.ec.dmg, EL.bolt.c2);
+      if (e.ec?.m) hooksOf(e.ec.m).onEc?.(e.ec.m);
       if (e.ec && e.ec.n <= 0) e.ec = null;
     }
   }

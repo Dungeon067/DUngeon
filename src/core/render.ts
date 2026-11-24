@@ -23,7 +23,8 @@ import { groundAt } from "../world/collision";
 const PLAYER_3D = wants3D();
 
 export function render() {
-  const tm = performance.now() / 1000;
+  // Chế độ quay xác định (?capture): đồng hồ hiển thị theo bước cố định, không theo giờ thật.
+  const tm = GS.capT ?? performance.now() / 1000;
   ctx.setTransform(GS.DPR, 0, 0, GS.DPR, 0, 0);
   if (GS.scene !== "play") {
     renderer3d()?.hide?.();

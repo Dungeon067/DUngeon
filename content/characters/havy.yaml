@@ -7,6 +7,7 @@ dang: nu-teen
 title: Cung Thủ Sương Giá
 desc: Cô gái mùa hè lại mang sức mạnh băng giá, khiến ai cũng ngạc nhiên.
 hp: 840
+chiSoPhu: { tinhThong: 0, hoiNang: 0.1, hoTro: 0.1 }
 atk: 90
 skill:
   name: Hoa Băng Nở

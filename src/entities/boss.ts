@@ -2,6 +2,7 @@ import { GS } from "../core/state";
 import { spawnWave } from "../combat/jump";
 import { FEEL, shake, slowmo } from "../combat/feel";
 import { tickPoise } from "./enemy";
+import { tickStatuses } from "../combat/status";
 import { teleWarn } from "./telegraph";
 import { sfx } from "../core/audio";
 import { dealRaw, hurtPlayer } from "../combat/damage";
@@ -22,6 +23,7 @@ export function updateBoss(b: any, dt: number) {
   if (b.vuln > 0) b.vuln -= dt;
   if (b.hitT > 0) b.hitT -= dt;
   tickPoise(b, dt);
+  tickStatuses(b, dt);
   if (b.ec) {
     b.ec.t -= dt;
     if (b.ec.t <= 0) {
