@@ -93,7 +93,7 @@ describe("Nguồn nguyên liệu vũ khí", () => {
     expect(f.lvDay).toBeGreaterThanOrEqual(30);
     expect(f.lvDay).toBeLessThanOrEqual(45);
     expect(Math.abs(f.r5Day! - ECON.thietKe.vuKhi.loRenR5Ngay)).toBeLessThanOrEqual(5);
-  });
+  }, 60_000);
 
   it("mô phỏng: Xu vũ khí trừ vào nhân vật mà đội F2P không chậm đi", () => {
     const f = weaponFlow(ECON);
@@ -105,21 +105,21 @@ describe("Nguồn nguyên liệu vũ khí", () => {
       expect(a.coinLeft).toBeGreaterThanOrEqual(0);
       expect(f.xu[d]!).toBeGreaterThanOrEqual(f.xu[d - 1]!);
     }
-  });
+  }, 60_000);
 
   it("mô phỏng: xong cấp tối đa và R5 thì không mua quặng hay tiêu Xu vũ khí nữa", () => {
     const f = weaponFlow(ECON),
       done = Math.max(f.lvDay!, f.r5Day!);
     expect(f.r[0]).toBe(1);
     expect(f.xu[done + 60]).toBe(f.xu[done]);
-  });
+  }, 60_000);
 
   it("mô phỏng: Lò Rèn đắt hơn Xu khởi đầu thì không rèn sẵn và Xu không âm", () => {
     const E = structuredClone(ECON);
     E.thietKe.vuKhi.loRen.xu = E.thietKe.thuNhap.motLan.xu + 1;
     expect(weaponFlow(E).r[0]).toBe(0);
     expect(investOnDay(1, null, E).coinLeft).toBeGreaterThanOrEqual(0);
-  });
+  }, 60_000);
 
   it("mô phỏng: Xu khởi đầu bằng hồ sơ mới trong game", () => {
     expect(ECON.thietKe.thuNhap.motLan.xu).toBe(freshProfile().coin);

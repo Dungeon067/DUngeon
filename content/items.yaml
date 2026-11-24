@@ -87,6 +87,30 @@ items:
     rarity: 4
     region: Đảo Lạc
     story: Thỏi kim loại mang về từ Lòng Sao, còn ấm như vừa ra lò. Đủ tám thỏi, Lò Rèn sẽ đúc nên một binh khí mới.
+  - id: sap-an-tho
+    name: Sáp Ấn Thô
+    type: nguyen-lieu
+    rarity: 3
+    region: Đảo Lạc
+    story: Thỏi sáp đỏ đục người Phố Vạn Đăng dùng gắn niêm thư. Hơ lên rồi miết vào Bảo Ấn, vết khắc cũ sâu thêm một chút.
+  - id: sap-an
+    name: Sáp Ấn
+    type: nguyen-lieu
+    rarity: 4
+    region: Đảo Lạc
+    story: Sáp đã lọc qua lửa ba lần, trong như mật ong để lâu. Thợ khắc ấn chỉ dùng nó cho món mình muốn giữ.
+  - id: sap-an-sao
+    name: Sáp Ấn Sao
+    type: nguyen-lieu
+    rarity: 5
+    region: Bãi Sao Rơi
+    story: Sáp nấu từ nhựa cây mọc quanh hố sao rơi, nguội rồi vẫn còn đốm sáng bên trong. Một thỏi đủ làm một Bảo Ấn thức giấc.
+  - id: bui-an
+    name: Bụi Ấn
+    type: nguyen-lieu
+    rarity: 4
+    region: Đảo Lạc
+    story: Bụi lấp lánh còn lại khi tách một Bảo Ấn ra thành nguyên liệu. Gom đủ một túi, thợ khắc ấn sẽ nặn lại thành món mới theo ý người mang.
   - id: sach-kinh-nghiem
     name: Sách Kinh Nghiệm
     type: nguyen-lieu

@@ -3,6 +3,7 @@
  * Không đọc trạng thái toàn cục: mọi con số lấy từ `E` (content/economy.yaml).
  */
 import type { Economy, Weapon } from "../data/economy-schema";
+import type { BaoAnBonus } from "./bao-an";
 
 export type Rng = () => number;
 
@@ -19,8 +20,8 @@ export interface Invest {
   kyNang?: number;
   /** Vũ khí theo id trong thietKe.vuKhi.danhSach, tinh luyện 1–5. */
   vuKhi?: { id: string; tinhLuyen: number; lv?: number } | null;
-  /** Chất lượng Bảo Ấn 0..1 (đủ bộ 4 ô khi > 0). */
-  baoAn?: number;
+  /** Bảo Ấn đang mặc đã quy đổi (src/economy/bao-an.ts bonusOf). */
+  baoAn?: BaoAnBonus | null;
 }
 export interface Stats {
   lv: number;
@@ -88,20 +89,20 @@ export function charStats(b: BaseChar, s: Invest, E: Economy): Stats {
     cb = 1 + s.cons * G.netSao.tangMoiNet,
     kt = 1 + (s.khai ?? 0) * T.khaiTinh.tangMoiBac;
   const w = s.vuKhi ? weaponOf(s.vuKhi.id, E) : null;
-  const ba = s.baoAn ?? 0;
+  const ba = s.baoAn;
   const ws = w ? weaponLvScale(s.vuKhi!.lv, E) : 0;
   const ph = (k: Weapon["phu"]["loai"]) => (w && w.phu.loai === k ? w.phu.giaTri * ws : 0);
-  const atkPct = 1 + (w ? w.tanCong * ws : 0) + ph("tanCong") + ba * T.baoAn.tanCongToiDa,
-    hpPct = 1 + ba * T.baoAn.mauToiDa;
+  const atkPct = 1 + (w ? w.tanCong * ws : 0) + ph("tanCong") + (ba?.atkPct ?? 0),
+    hpPct = 1 + (ba?.hpPct ?? 0);
   const cm = G.chiMang[rk(b.r)];
   return {
     lv: s.lv,
     cons: s.cons,
-    hp: Math.round(b.hp * g * cb * kt * hpPct),
-    atk: Math.round(b.atk * g * cb * kt * atkPct),
-    crit: Math.min(1, cm.tiLe + ph("chiMang")),
-    cdmg: cm.satThuong + ph("satThuongChiMang"),
-    dmg: (w ? passiveAt(w, s.vuKhi!.tinhLuyen, E) : 0) + (ba > 0 ? T.baoAn.boAn : 0),
+    hp: Math.round(b.hp * g * cb * kt * hpPct + (ba?.hp ?? 0)),
+    atk: Math.round(b.atk * g * cb * kt * atkPct + (ba?.atk ?? 0)),
+    crit: Math.min(1, cm.tiLe + ph("chiMang") + (ba?.crit ?? 0)),
+    cdmg: cm.satThuong + ph("satThuongChiMang") + (ba?.cdmg ?? 0),
+    dmg: (w ? passiveAt(w, s.vuKhi!.tinhLuyen, E) : 0) + (ba?.dmg ?? 0),
     skill: Math.max(0, (s.kyNang ?? 1) - 1) * T.kyNang.tangMoiCap,
   };
 }

@@ -1,5 +1,7 @@
 media/weapons/**/*.png filter=lfs diff=lfs merge=lfs -text
+media/bao-an/**/*.png filter=lfs diff=lfs merge=lfs -text
 art-src/**/*.vroid filter=lfs diff=lfs merge=lfs -text
 art-src/**/*.blend filter=lfs diff=lfs merge=lfs -text
 art-src/**/*.psd filter=lfs diff=lfs merge=lfs -text
+media/bao-an/**/*.mp4 filter=lfs diff=lfs merge=lfs -text
 art-src/**/*.vrm filter=lfs diff=lfs merge=lfs -text

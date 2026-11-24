@@ -8,10 +8,10 @@ import { ECON } from "../../../data/economy";
 import { Server, lvCost, powerOf, statsOf } from "../../../server/server";
 import { sfx } from "../../../core/audio";
 import { button, elementBadge, h, progress, stars, tabs, tag } from "../../ds";
-import { icon } from "../../icons/icons";
 import { blocksEl, sectionsEl, typewriter } from "../md";
 import { openMenu, registerScreen, rerender } from "../shell";
 import { weaponCard } from "../weapon-ui";
+import { charBaoAnPanel } from "./bao-an";
 
 /* Màn Nhân vật (S10, bố cục S24): thanh chọn nhanh bên trái, nhân vật lớn ở giữa, cột thẻ dọc bên phải.
    Danh sách đọc thẳng từ content/characters, hồ sơ từ docs/characters/<id>/. ←/→ hoặc vuốt đổi người; Q/E đổi thẻ. */
@@ -202,14 +202,7 @@ async function render(host: HTMLElement, params: any) {
       panel.append(weaponCard(w, [swap, upg, ref]));
     }
   } else if (tab === "baoan") {
-    panel.append(
-      h("div", { class: "tt-soon" }, [
-        icon("bao-an", { size: 48 }),
-        h("h4", { class: "tt-h3" }, ["Bảo Ấn"]),
-        tag("Sắp có", "warn"),
-        h("p", { class: "tt-dim" }, ["Bốn ô Bảo Ấn sẽ mở ở bản sau."]),
-      ]),
-    );
+    charBaoAnPanel(panel, c.id, art(c.id, 240, 300, "card"));
   } else if (tab === "skills") {
     const sk = c.skill as any,
       bu = c.burst as any;

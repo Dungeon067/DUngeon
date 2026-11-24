@@ -12,6 +12,8 @@ export interface ChestLoot {
   icon: string;
   qty: number;
   rarity: Rarity;
+  /** Ảnh riêng thay biểu tượng (Bảo Ấn). */
+  art?: () => Node;
 }
 const TIER: Record<ChestTier, { ten: string; c: string; c2: string }> = {
   thuong: { ten: "Rương Thường", c: "#9fb7d8", c2: "#e8f0ff" },
@@ -53,6 +55,7 @@ export function showChestReveal(tier: ChestTier, loot: ChestLoot[], done?: () =>
     { class: "cr-cards" },
     loot.map((l, i) => {
       const c = itemCard({ name: l.name, rarity: l.rarity, icon: l.icon, qty: l.qty });
+      if (l.art) c.querySelector(".art > svg")?.replaceWith(l.art());
       c.style.setProperty("--d", `${0.75 + i * 0.12}s`);
       c.tabIndex = -1;
       return c;

@@ -8,6 +8,12 @@ import { buildHudParty } from "../ui/hud";
 import { openModal } from "../ui/modal";
 import { requestLandscape } from "../ui/hud/rotate";
 import { showFirstHints } from "../ui/hud/hints";
+import { showChestReveal, type ChestLoot } from "../ui/chest-reveal";
+import { BA } from "../data/bao-an";
+import { setOf } from "../economy/bao-an";
+import type { SlotId } from "../data/bao-an-schema";
+import { baoAnImg } from "../ui/bao-an-art";
+import { ITEM_BY_ID } from "../data/menu-content";
 
 export function enterPlay() {
   GS.scene = "play";
@@ -71,6 +77,35 @@ export function endRun(win: any, reason = "", stars = 0) {
       html = `<h3>Chiến thắng!</h3><p class="muted">Hắc Giao cấp độ ${GS.G.opt.lv} đã bị đánh bại${d.first ? " lần đầu" : ""}.</p><div class="rewards">${coinHtml("gem", d.gems)}${coinHtml("coin", d.coin)}${coinHtml("book", d.books)}</div><div class="row">${GS.G.opt.lv < 5 ? `<button class="btn gold" data-act="bnext">Cấp độ ${GS.G.opt.lv + 1}</button>` : ""}<button class="btn" data-act="retry">Đánh lại</button><button class="btn" data-act="menu">Về đảo</button></div>`;
     } else
       html = `<h3>Thất bại</h3><p class="muted">${esc(reason)}. Hắc Giao còn ${Math.round((GS.G.boss.hp / GS.G.boss.maxHp) * 100)}% máu. Dùng Lướt để né đòn lao và vùng mưa.</p><div class="row"><button class="btn gold" data-act="retry">Thử lại</button><button class="btn" data-act="menu">Về đảo</button></div>`;
+  } else if (GS.G.mode === "baoan") {
+    const B = GS.G.ba,
+      again = `<div class="row"><button class="btn gold" data-act="retry">Đánh lại</button><button class="btn" data-act="bamenu">Bí Cảnh Bảo Ấn</button><button class="btn" data-act="menu">Về đảo</button></div>`;
+    if (win) {
+      const r = Server.req("baoAnDomain", { id: B.id, tt: B.tt });
+      if (r.ok) {
+        const d = r.data;
+        const items = d.items.map((u: string) => Server.P.baoAn[u]!);
+        const loot: ChestLoot[] = items.map((a: any) => ({
+          name: setOf(BA, a.bo).mon[a.o as SlotId].ten,
+          icon: "bao-an",
+          qty: 1,
+          rarity: a.r,
+          art: () => baoAnImg(a.bo, a.o, 128),
+        }));
+        for (const [k, n] of Object.entries(d.sap as Record<string, number>))
+          loot.push({ name: ITEM_BY_ID[k]?.name ?? k, icon: "nang-cap", qty: n, rarity: ITEM_BY_ID[k]?.rarity ?? 3 });
+        loot.push({ name: "Xu", icon: "xu", qty: d.coin, rarity: 3 });
+        const top = Math.max(3, ...items.map((a: any) => a.r));
+        html = `<h3>${esc(B.ten)} · Thiên Tượng ${B.tt}</h3><p class="muted">Nhận ${items.length} Bảo Ấn. Còn ${fmt(d.ll)} Linh Lực.</p>${again}`;
+        setTimeout(
+          () => showChestReveal(top >= 5 ? "tinhXao" : top >= 4 ? "quy" : "thuong", loot, () => openModal(html)),
+          300,
+        );
+        return;
+      }
+      html = `<h3>Chưa nhận thưởng</h3><p class="muted">${esc(r.error)}</p>${again}`;
+    } else
+      html = `<h3>Thất bại</h3><p class="muted">${esc(reason)}. Linh Lực chưa bị trừ. Thử mức Thiên Tượng thấp hơn hoặc nâng Bảo Ấn.</p>${again}`;
   }
   setTimeout(() => openModal(html), win ? 300 : 900);
 }

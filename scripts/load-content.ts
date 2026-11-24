@@ -44,5 +44,6 @@ export function loadRawMenuContent(raw: RawContent): RawMenuContent {
 export const loadRawPuzzles = () => read("content/puzzles.yaml");
 export const loadRawWeapons = () => read("content/weapons.yaml");
 export const loadRawModels = () => read("content/models.yaml");
+export const loadRawBaoAn = () => read("content/bao-an.yaml");
 /** economy.yaml cộng danh sách vũ khí từ weapons.yaml (thietKe.vuKhi.danhSach). */
 export const loadRawEconomy = () => withWeapons(read("content/economy.yaml"), loadRawWeapons());
